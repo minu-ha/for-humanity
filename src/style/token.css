@@ -8,7 +8,7 @@
 	color-scheme: light;
 
 	--app-color-ground: #f7f8fa;
-	--app-color-surface: #ffffff;
+	--app-color-surface: #fff;
 	--app-color-text: #414a56;
 	--app-color-text-strong: #1b2027;
 	--app-color-text-muted: #7b8593;
@@ -27,8 +27,10 @@
 	 * JetBrains Mono 의 영문 폭 0.6em 이 흐름도 격자 칸 (12px 에 7.2px) 과 같다. 글꼴 파일은 style/base.css 가 불러온다
 	 */
 	--app-font-sans:
-		"Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", sans-serif;
-	--app-font-mono: "JetBrains Mono", "Pretendard Variable", Pretendard, ui-monospace, SFMono-Regular, Menlo, monospace;
+		"Pretendard Variable", "Pretendard", -apple-system, "BlinkMacSystemFont", system-ui, "Apple SD Gothic Neo",
+		sans-serif;
+	--app-font-mono:
+		"JetBrains Mono", "Pretendard Variable", "Pretendard", ui-monospace, "SFMono-Regular", "Menlo", monospace;
 
 	/* 여러 부품이 함께 쓰는 글자 크기. 작은 표지 · 줄 앞 표지 · 곁들이는 글 · 촘촘한 목록과 표 */
 	--app-font-size-label: 10.5px;
@@ -70,7 +72,7 @@
 	color-scheme: light;
 
 	--app-color-ground: #f7f8fa;
-	--app-color-surface: #ffffff;
+	--app-color-surface: #fff;
 	--app-color-text: #414a56;
 	--app-color-text-strong: #1b2027;
 	--app-color-text-muted: #7b8593;

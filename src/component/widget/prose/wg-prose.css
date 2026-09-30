@@ -14,6 +14,10 @@
 		text-wrap: balance;
 	}
 
+	& p {
+		margin: 0 0 12px;
+	}
+
 	/* 제목 밑 첫 문단이 이 문서가 답하는 것이다 */
 	& h1 + p {
 		font-size: 16.5px;
@@ -69,10 +73,6 @@
 		font-weight: 600;
 	}
 
-	& p {
-		margin: 0 0 12px;
-	}
-
 	& a {
 		color: var(--app-color-accent);
 		text-underline-offset: 2px;
@@ -107,12 +107,10 @@
 		margin-bottom: 5px;
 	}
 
-	/* biome-ignore lint/style/noDescendingSpecificity: Biome 가 & 뒤 결합자 선택자의 명시도를 & 없이 센다. 실제로는 앞 블록보다 높다 */
 	& li > ul {
 		margin: 5px 0 0;
 	}
 
-	/* biome-ignore lint/style/noDescendingSpecificity: Biome 가 & 뒤 결합자 선택자의 명시도를 & 없이 센다. 실제로는 앞 블록보다 높다 */
 	& li > ol {
 		margin: 5px 0 0;
 	}
@@ -141,7 +139,6 @@
 		line-height: 1.7;
 	}
 
-	/* biome-ignore lint/style/noDescendingSpecificity: Biome 가 & 뒤 결합자 선택자의 명시도를 & 없이 센다. 실제로는 앞 블록보다 높다 */
 	& pre code {
 		padding: 0;
 		background: none;

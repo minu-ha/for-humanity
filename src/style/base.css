@@ -14,8 +14,7 @@
 	scroll-behavior: smooth;
 }
 
-/* 움직임 줄이기. 목차로 옮길 때도 바로 간다 */
-/* biome-ignore-start lint/complexity/noImportantStyles: 움직임 줄이기는 컴포넌트의 선언을 모두 이겨야 해 전역에서 이곳만 쓴다 */
+/* 움직임 줄이기. 목차로 옮길 때도 바로 간다. 컴포넌트의 선언을 모두 이겨야 해 !important 는 전역에서 이곳만 쓴다 */
 @media (prefers-reduced-motion: reduce) {
 	*,
 	*::before,
@@ -28,4 +27,3 @@
 		scroll-behavior: auto !important;
 	}
 }
-/* biome-ignore-end lint/complexity/noImportantStyles: 위와 같다 */

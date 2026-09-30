@@ -182,8 +182,7 @@
 	}
 
 	.wg_shellNav__list {
-		flex-direction: row;
-		flex-wrap: wrap;
+		flex-flow: row wrap;
 		gap: 6px;
 		border-left: 0;
 	}

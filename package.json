@@ -28,9 +28,10 @@
 		"dev": "pnpm build:cli && node dist/cli.js dev templates/document",
 		"build": "pnpm build:cli && node dist/cli.js build templates/document",
 		"preview": "node dist/cli.js preview templates/document",
-		"check": "biome check",
-		"check:fix": "biome check --write",
-		"typecheck": "tsc --noEmit",
+		"lint": "biome check && stylelint \"src/**/*.css\"",
+		"lint:fix": "biome check --write && stylelint \"src/**/*.css\" --fix",
+		"typecheck": "pnpm build:cli && node dist/cli.js sync templates/document && astro-check",
+		"check": "pnpm lint && pnpm typecheck",
 		"prepack": "pnpm build:cli"
 	},
 	"dependencies": {
@@ -48,13 +49,16 @@
 		"unist-util-visit": "^5.1.0"
 	},
 	"devDependencies": {
+		"@astrojs/check": "^0.9.10",
 		"@biomejs/biome": "^2.5.14",
 		"@types/hast": "^3.0.5",
 		"@types/mdast": "^4.0.4",
 		"@types/node": "^26.6.3",
 		"esbuild": "^0.28.2",
 		"mdast-util-to-hast": "^13.2.1",
-		"typescript": "^7.0.2",
+		"stylelint": "^17.15.0",
+		"stylelint-config-standard": "^40.0.0",
+		"typescript": "^6.0.3",
 		"vfile": "^6.0.3"
 	}
 }

@@ -13,6 +13,7 @@
 	font-family: var(--app-font-sans);
 	font-size: 15px;
 	line-height: 1.75;
+
 	/* 한국어는 낱말 안에서 줄을 끊지 않는다. 긴 식별자만 예외로 끊는다 */
 	word-break: keep-all;
 	overflow-wrap: break-word;
@@ -22,6 +23,7 @@
 
 .wg_shell__main {
 	min-width: 0;
+
 	/* 끝 여백은 마지막 절도 읽는 선 (--app-space-anchor) 까지 올라올 만큼 둔다 */
 	padding-block: 44px calc(100vh - var(--app-space-anchor));
 }

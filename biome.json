@@ -21,6 +21,14 @@
 			"semicolons": "always"
 		}
 	},
+	"css": {
+		"linter": {
+			"enabled": false
+		}
+	},
+	"html": {
+		"experimentalFullSupportEnabled": true
+	},
 	"plugins": ["./no-literal-fallback.grit"],
 	"linter": {
 		"enabled": true,
@@ -140,7 +148,7 @@
 			}
 		},
 		{
-			"includes": ["src/component/ui/**"],
+			"includes": ["src/component/ui/**/*.ts", "src/component/ui/**/*.astro"],
 			"linter": {
 				"rules": {
 					"style": {
@@ -164,7 +172,7 @@
 			}
 		},
 		{
-			"includes": ["src/component/widget/**"],
+			"includes": ["src/component/widget/**/*.ts", "src/component/widget/**/*.astro"],
 			"linter": {
 				"rules": {
 					"style": {
@@ -188,7 +196,7 @@
 			}
 		},
 		{
-			"includes": ["src/page/home/**"],
+			"includes": ["src/page/home/**/*.ts", "src/page/home/**/*.astro"],
 			"linter": {
 				"rules": {
 					"style": {
@@ -212,7 +220,7 @@
 			}
 		},
 		{
-			"includes": ["src/page/doc/**"],
+			"includes": ["src/page/doc/**/*.ts", "src/page/doc/**/*.astro"],
 			"linter": {
 				"rules": {
 					"style": {
@@ -235,8 +243,5 @@
 				}
 			}
 		}
-	],
-	"html": {
-		"experimentalFullSupportEnabled": true
-	}
+	]
 }
