@@ -1,0 +1,37 @@
+---
+/**
+ * 첫 화면. 라우트 / 의 진입 파일이다.
+ * 설정의 제목과 설명, 그리고 문서 카드를 놓는다. 카드는 묶음 순, 묶음 안에서는 이름 순이다
+ */
+
+import {getCollection} from "astro:content";
+import {siteConfig} from "virtual:for-humanity/config";
+import WgProse from "@/component/widget/prose/wg-prose.astro";
+import WgShell from "@/component/widget/shell/wg-shell.astro";
+import {copy_overview_name} from "@/constant/copy";
+import {locale_doc_group, locale_doc_name} from "@/constant/locale";
+import "./pg-home.css";
+
+const docs = (await getCollection("docs")).toSorted(
+	(a, b) =>
+		a.data.group.localeCompare(b.data.group, locale_doc_group) ||
+		a.data.name.localeCompare(b.data.name, locale_doc_name),
+);
+---
+
+<WgShell>
+	<WgProse
+		head={{eyebrow: [siteConfig.title, copy_overview_name], title: copy_overview_name, lead: siteConfig.description}}
+	/>
+	<div class="pg_home__cards">
+		{
+			docs.map((doc) => (
+				<a class="pg_home__card" href={`/${doc.id}/`}>
+					<span class="pg_home__cardGroup">{doc.data.group}</span>
+					<span class="pg_home__cardTitle">{doc.data.name}</span>
+					<span class="pg_home__cardLabel">{doc.data.label}</span>
+				</a>
+			))
+		}
+	</div>
+</WgShell>

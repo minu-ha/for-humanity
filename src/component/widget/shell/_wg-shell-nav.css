@@ -1,0 +1,213 @@
+/*
+ * 사이드바 (_wg-shell-nav.astro). 문서 목록과 목차가 같은 목록 모양을 쓴다
+ */
+.wg_shellNav__root {
+	/* 뷰포트에 붙는다. 조상인 <body> 와 <html> 에는 overflow 가 없다 */
+	position: sticky;
+	top: 0;
+	align-self: start;
+	max-height: 100vh;
+	overflow-y: auto;
+	padding-block: 44px;
+}
+
+.wg_shellNav__brand {
+	display: block;
+	color: var(--app-color-text-muted);
+	font-family: var(--app-font-mono);
+	font-size: var(--app-font-size-mark);
+	font-weight: 500;
+	letter-spacing: 0.14em;
+	text-decoration: none;
+	text-transform: uppercase;
+
+	&:hover {
+		color: var(--app-color-text-strong);
+	}
+
+	&:focus-visible {
+		outline: var(--app-outline-focus);
+		outline-offset: var(--app-outline-focus-offset);
+	}
+}
+
+/* 두 목록 (문서, 목차) 위에 붙는 작은 표지 */
+.wg_shellNav__label {
+	margin: 16px 0 6px;
+	color: var(--app-color-text-muted);
+	font-family: var(--app-font-mono);
+	font-size: var(--app-font-size-label);
+	letter-spacing: var(--app-letter-spacing-label);
+}
+
+/* 문서 목록을 감싸고 이 문서의 목차와 선으로 가른다 */
+.wg_shellNav__docs {
+	margin: 0 0 18px;
+	padding: 0 0 16px;
+	border-bottom: 1px solid var(--app-color-border);
+}
+
+/* 목록 — 문서 목록과 목차가 함께 쓴다. 목차는 가름마다 목록이 끊겨 왼쪽 선도 끊긴다 */
+.wg_shellNav__list {
+	display: flex;
+	flex-direction: column;
+	margin: 0;
+	padding: 0;
+	gap: 1px;
+	border-left: 1px solid var(--app-color-border);
+	list-style: none;
+}
+
+.wg_shellNav__link {
+	display: flex;
+	align-items: baseline;
+	margin-left: -1px;
+	padding: 5px 0 5px 14px;
+	gap: 8px;
+	border-left: 2px solid transparent;
+	color: var(--app-color-text);
+	font-size: var(--app-font-size-dense);
+	line-height: 1.45;
+	text-decoration: none;
+
+	&:hover {
+		border-left-color: var(--app-color-border);
+		color: var(--app-color-text-strong);
+	}
+
+	&:focus-visible {
+		outline: var(--app-outline-focus);
+		outline-offset: var(--app-outline-focus-offset);
+	}
+}
+
+/* 지금 연 문서, 지금 읽고 있는 절 */
+.wg_shellNav__link--active {
+	border-left-color: var(--app-color-accent);
+	color: var(--app-color-text-strong);
+	font-weight: 600;
+}
+
+/* 줄 앞 표지 — 목차는 절 번호, 문서 목록은 영어 이름의 첫 글자. 두 칸 너비라 이름 줄이 맞는다 */
+.wg_shellNav__mark {
+	flex: none;
+	min-width: 2ch;
+	color: var(--app-color-text-muted);
+	font-family: var(--app-font-mono);
+	font-size: var(--app-font-size-mark);
+	font-weight: 400;
+}
+
+/* 목차 묶음 이름 — 본문의 가름 머리와 같은 이름으로 절을 가른다 */
+.wg_shellNav__group {
+	margin: 0 0 8px;
+	color: var(--app-color-text-muted);
+	font-size: var(--app-font-size-label);
+	letter-spacing: 0.02em;
+
+	/* 앞 묶음의 목록 뒤에 오는 묶음 이름만 위를 띄운다 */
+	.wg_shellNav__list + & {
+		margin-top: 24px;
+	}
+}
+
+/* 절 안의 소제목 — 지금 읽는 절의 것만 펼친다 */
+.wg_shellNav__sub {
+	display: none;
+	margin: 1px 0 6px;
+	padding: 0;
+	list-style: none;
+}
+
+.wg_shellNav__sub--open {
+	display: block;
+}
+
+.wg_shellNav__subLink {
+	display: flex;
+	align-items: baseline;
+	margin-left: -1px;
+	padding: 3px 0 3px 26px;
+	gap: 8px;
+	border-left: 2px solid transparent;
+	color: var(--app-color-text-muted);
+	font-size: var(--app-font-size-detail);
+	line-height: 1.5;
+	text-decoration: none;
+
+	&:hover {
+		color: var(--app-color-text-strong);
+	}
+
+	&:focus-visible {
+		outline: var(--app-outline-focus);
+		outline-offset: var(--app-outline-focus-offset);
+	}
+}
+
+.wg_shellNav__subLink--active {
+	border-left-color: var(--app-color-border);
+	color: var(--app-color-text-strong);
+}
+
+.wg_shellNav__theme {
+	margin-top: 20px;
+	padding: 5px 11px;
+	border: 1px solid var(--app-color-border);
+	border-radius: 999px;
+	background: var(--app-color-surface);
+	color: var(--app-color-text);
+	font-family: var(--app-font-mono);
+	font-size: var(--app-font-size-mark);
+	letter-spacing: 0.04em;
+	cursor: pointer;
+
+	&:hover {
+		border-color: var(--app-color-accent);
+		color: var(--app-color-text-strong);
+	}
+
+	&:focus-visible {
+		outline: var(--app-outline-focus);
+		outline-offset: var(--app-outline-focus-offset);
+	}
+}
+
+/* 좁은 화면에서는 본문 위에 놓이고, 두 목록을 알약 줄로 편다 */
+@media (width < 1024px) {
+	.wg_shellNav__root {
+		position: static;
+		max-height: none;
+		padding-block: 28px 0;
+	}
+
+	.wg_shellNav__list {
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: 6px;
+		border-left: 0;
+	}
+
+	.wg_shellNav__link {
+		margin-left: 0;
+		padding: 3px 10px;
+		border: 1px solid var(--app-color-border);
+		border-radius: 999px;
+		font-size: var(--app-font-size-detail);
+	}
+
+	.wg_shellNav__link--active {
+		border-color: var(--app-color-accent);
+	}
+
+	.wg_shellNav__group {
+		.wg_shellNav__list + & {
+			margin-top: 14px;
+		}
+	}
+
+	/* 목차가 알약 줄이면 소제목은 두지 않는다 */
+	.wg_shellNav__sub--open {
+		display: none;
+	}
+}

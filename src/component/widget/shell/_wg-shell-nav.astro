@@ -1,0 +1,120 @@
+---
+/**
+ * 사이드바. 문서 목록 (영어 이름 abc 순, 첫 글자 표지) 과 이 문서의 목차 (가름마다 끊긴 목록) 를 빌드 때 그린다.
+ * 브라우저에서는 테마 단추와 읽는 절 표시만 돈다
+ */
+
+import type {CollectionEntry} from "astro:content";
+import {siteConfig} from "virtual:for-humanity/config";
+import {toTocGroups} from "@/component/widget/shell/_function/to-toc-groups";
+import type {DocOutline} from "@/component/widget/shell/_type/doc-outline";
+import {
+	copy_nav_aria_label,
+	copy_nav_docs_label,
+	copy_nav_toc_label,
+	copy_overview_label,
+	copy_overview_mark,
+	copy_overview_name,
+	copy_theme_label,
+} from "@/constant/copy";
+import {locale_doc_name} from "@/constant/locale";
+import "./_wg-shell-nav.css";
+
+interface Props {
+	/**
+	 * 문서 모음 전부
+	 */
+	docs: CollectionEntry<"docs">[];
+	/**
+	 * 지금 연 문서의 id. 첫 화면은 없다
+	 */
+	current?: string;
+	/**
+	 * 이 문서의 목차 재료. 첫 화면은 없다
+	 */
+	outline?: DocOutline;
+}
+
+const docs = Astro.props.docs.toSorted((a, b) => a.data.name.localeCompare(b.data.name, locale_doc_name));
+const tocGroups = Astro.props.outline && toTocGroups(Astro.props.outline);
+---
+
+<nav class="wg_shellNav__root" aria-label={copy_nav_aria_label}>
+	<a class="wg_shellNav__brand" href="/">{siteConfig.title}</a>
+	<div class="wg_shellNav__label">{copy_nav_docs_label}</div>
+	<div class="wg_shellNav__docs">
+		<ul class="wg_shellNav__list">
+			<li>
+				<a
+					class:list={["wg_shellNav__link", {"wg_shellNav__link--active": Astro.props.current === undefined}]}
+					href="/"
+					title={copy_overview_label}
+					aria-current={Astro.props.current === undefined ? "page" : undefined}
+				>
+					<span class="wg_shellNav__mark">{copy_overview_mark}</span>
+					{copy_overview_name}
+				</a>
+			</li>
+			{
+				docs.map((doc) => (
+					<li>
+						<a
+							class:list={["wg_shellNav__link", {"wg_shellNav__link--active": doc.id === Astro.props.current}]}
+							href={`/${doc.id}/`}
+							title={doc.data.label}
+							aria-current={doc.id === Astro.props.current ? "page" : undefined}
+						>
+							<span class="wg_shellNav__mark">{doc.data.name[0]}</span>
+							{doc.data.name}
+						</a>
+					</li>
+				))
+			}
+		</ul>
+	</div>
+	{
+		tocGroups !== undefined && tocGroups.length > 0 && (
+			<Fragment>
+				<div class="wg_shellNav__label">{copy_nav_toc_label}</div>
+				<div class="wg_shellNav__toc">
+					{tocGroups.map((group) => (
+						<Fragment>
+							{group.part && <div class="wg_shellNav__group">{group.part}</div>}
+							<ul class="wg_shellNav__list">
+								{group.sections.map((section) => (
+									<li>
+										<a class="wg_shellNav__link" href={`#${section.heading.slug}`}>
+											<span class="wg_shellNav__mark">{section.number}</span>
+											{section.heading.text}
+										</a>
+										{section.subs.length > 0 && (
+											<ul class="wg_shellNav__sub">
+												{section.subs.map((sub) => (
+													<li>
+														<a class="wg_shellNav__subLink" href={`#${sub.heading.slug}`}>
+															<span class="wg_shellNav__mark">{sub.number}</span>
+															{sub.heading.text}
+														</a>
+													</li>
+												))}
+											</ul>
+										)}
+									</li>
+								))}
+							</ul>
+						</Fragment>
+					))}
+				</div>
+			</Fragment>
+		)
+	}
+	<button class="wg_shellNav__theme" type="button">{copy_theme_label.system}</button>
+</nav>
+
+<script>
+	import {startSectionSpy} from "@/component/widget/shell/_function/start-section-spy";
+	import {startThemeToggle} from "@/component/widget/shell/_function/start-theme-toggle";
+
+	startThemeToggle();
+	startSectionSpy();
+</script>

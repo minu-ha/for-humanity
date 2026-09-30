@@ -1,0 +1,45 @@
+---
+/**
+ * 문서 본문. Markdown 이 만든 태그와 빌드 때 붙은 부품 (머리, 가름, 절 번호, 알약, 색 칩, 흐름도, 표 상자) 의 모양을 맡는다.
+ * 부품을 그리는 remark · rehype 플러그인은 _function 에 있고, 명령 (cli.ts) 이 Markdown 처리기에 건다
+ */
+
+import "./wg-prose.css";
+
+interface Props {
+	/**
+	 * Markdown 없이 그리는 머리. 문서는 rehype-head 가 Markdown 안에서 같은 모양을 그리므로 넘기지 않는다
+	 */
+	head?: {
+		/**
+		 * 제목 위 눈썹 줄에 차례로 놓는 글
+		 */
+		eyebrow: string[];
+		/**
+		 * h1
+		 */
+		title: string;
+		/**
+		 * 제목 밑 첫 문단
+		 */
+		lead?: string;
+	};
+}
+---
+
+<article class="wg_prose__root">
+	{
+		Astro.props.head && (
+			<header class="wg_prose__head">
+				<div class="wg_prose__eyebrow">
+					{Astro.props.head.eyebrow.map((text) => (
+						<span>{text}</span>
+					))}
+				</div>
+				<h1>{Astro.props.head.title}</h1>
+				{Astro.props.head.lead && <p>{Astro.props.head.lead}</p>}
+			</header>
+		)
+	}
+	<slot />
+</article>

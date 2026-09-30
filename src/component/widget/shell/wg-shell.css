@@ -1,0 +1,50 @@
+/*
+ * 모든 쪽의 틀 (wg-shell.astro). <body> 를 두 칸 격자로 놓는다. 사이드바와 본문은 차례대로 칸에 들어간다
+ */
+.wg_shell__root {
+	display: grid;
+	max-width: 1920px;
+	margin: 0 auto;
+	padding: 0 32px;
+	gap: 56px;
+	grid-template-columns: 264px minmax(0, 1fr);
+	background: var(--app-color-ground);
+	color: var(--app-color-text);
+	font-family: var(--app-font-sans);
+	font-size: 15px;
+	line-height: 1.75;
+	/* 한국어는 낱말 안에서 줄을 끊지 않는다. 긴 식별자만 예외로 끊는다 */
+	word-break: keep-all;
+	overflow-wrap: break-word;
+	text-wrap: pretty;
+	-webkit-font-smoothing: antialiased;
+}
+
+.wg_shell__main {
+	min-width: 0;
+	/* 끝 여백은 마지막 절도 읽는 선 (--app-space-anchor) 까지 올라올 만큼 둔다 */
+	padding-block: 44px calc(100vh - var(--app-space-anchor));
+}
+
+/* 좁은 화면에서는 한 칸으로 쌓는다. 사이드바가 위, 본문이 아래다 */
+@media (width < 1024px) {
+	.wg_shell__root {
+		gap: 0;
+		padding: 0 20px;
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.wg_shell__main {
+		padding-block: 28px calc(100vh - var(--app-space-anchor));
+	}
+}
+
+@media (width < 640px) {
+	.wg_shell__root {
+		padding: 0 16px;
+	}
+
+	.wg_shell__main {
+		padding-block: 20px calc(100vh - var(--app-space-anchor));
+	}
+}
