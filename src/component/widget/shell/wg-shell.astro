@@ -3,11 +3,13 @@
  * 모든 쪽의 틀. 왼쪽 칸이 사이드바, 오른쪽 칸이 본문이다. 테마는 그리기 전에 머리에서 정한다
  */
 
+import {Font} from "astro:assets";
 import {getCollection} from "astro:content";
 import {siteConfig} from "virtual:for-humanity/config";
 import favicon from "@/asset/favicon.svg?url";
 import type {DocOutline} from "@/component/widget/shell/_type/doc-outline";
 import WgShellNav from "@/component/widget/shell/_wg-shell-nav.astro";
+import {font_css_variable_mono, font_css_variable_sans} from "@/constant/font";
 import {theme_mode, theme_storage_key} from "@/constant/theme";
 import "@/style/base.css";
 import "@/style/token.css";
@@ -38,6 +40,9 @@ const docs = await getCollection("docs");
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>{Astro.props.title ? `${Astro.props.title} · ${siteConfig.title}` : siteConfig.title}</title>
 		<link rel="icon" href={favicon} type="image/svg+xml" />
+		<!-- 글꼴의 @font-face. 본문 글꼴은 글자 조각이 많아 미리 받지 않고, 코드 글꼴은 파일 하나라 미리 받는다 -->
+		<Font cssVariable={font_css_variable_sans} />
+		<Font cssVariable={font_css_variable_mono} preload />
 		<script is:inline define:vars={{themeStorageKey: theme_storage_key, storedThemes: [theme_mode.light, theme_mode.dark]}}>
 			// 쪽을 여는 동안은 부드러운 스크롤을 끈다. 아래 settleHashScroll 이 자리를 맞춘 뒤 다시 켠다
 			document.documentElement.style.scrollBehavior = "auto";

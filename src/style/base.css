@@ -1,9 +1,7 @@
 /*
- * 모든 쪽의 바탕. 글꼴 파일, 상자 크기 계산, 부드러운 스크롤, 움직임 줄이기를 전역에서 한 번 정한다.
- * 글꼴은 둘 다 CDN 이다. @import 는 스타일시트 맨 앞에 와야 하므로 wg-shell.astro 가 이 파일을 가장 먼저 불러온다
+ * 모든 쪽의 바탕. 상자 크기 계산, 부드러운 스크롤, 움직임 줄이기를 전역에서 한 번 정한다.
+ * 글꼴 파일은 cli.ts 의 fonts 설정이 빌드 때 받아 넣고 wg-shell.astro 머리의 <Font> 가 @font-face 를 적는다
  */
-@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
-@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap");
 
 * {
 	box-sizing: border-box;

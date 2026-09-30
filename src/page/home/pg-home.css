@@ -14,7 +14,7 @@
 	padding: 16px 18px;
 	gap: 4px;
 	border: 1px solid var(--app-color-border);
-	border-radius: 8px;
+	border-radius: var(--app-radius-card);
 	background: var(--app-color-surface);
 	text-decoration: none;
 
@@ -37,9 +37,9 @@
 
 .pg_home__cardTitle {
 	color: var(--app-color-text-strong);
-	font-size: 16px;
-	font-weight: 600;
-	line-height: 1.4;
+	font-size: var(--app-font-size-lead);
+	font-weight: var(--app-font-weight-strong);
+	line-height: var(--app-line-height-tight);
 }
 
 .pg_home__cardLabel {

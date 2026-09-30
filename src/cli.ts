@@ -12,8 +12,10 @@ import {fileURLToPath, pathToFileURL} from "node:url";
 import {unified} from "@astrojs/markdown-remark";
 import mdx from "@astrojs/mdx";
 import react from "@astrojs/react";
-import {type AstroInlineConfig, build, dev, preview, sync} from "astro";
+import {type AstroInlineConfig, type AstroUserConfig, build, dev, preview, sync} from "astro";
+import {fontProviders} from "astro/config";
 import remarkDirective from "remark-directive";
+import {createCssVariablesTheme} from "shiki";
 import {rehypeHead} from "@/component/widget/prose/_function/rehype-head";
 import {rehypeSections} from "@/component/widget/prose/_function/rehype-sections/rehype-sections";
 import {rehypeTables} from "@/component/widget/prose/_function/rehype-tables";
@@ -25,6 +27,7 @@ import {remarkSwatch} from "@/component/widget/prose/_function/remark-swatch";
 import {remarkUnknownDirectives} from "@/component/widget/prose/_function/remark-unknown-directives";
 import {cli_config_file_name, cli_config_module_id, cli_default_command, cli_default_docs_dir} from "@/constant/cli";
 import {copy_error_prefix, copy_error_unknown_command, copy_toolbar_name} from "@/constant/copy";
+import {font_css_variable_mono, font_css_variable_sans} from "@/constant/font";
 import {site_config_absent} from "@/constant/site";
 import {toolbar_app_id, toolbar_report_event} from "@/constant/toolbar";
 import {remarkReport} from "@/toolbar/remark-report";
@@ -49,6 +52,42 @@ if (run === undefined) {
 	process.exit(1);
 }
 
+/**
+ * 글꼴 두 가족. 빌드 때 받아 결과 폴더에 넣으므로 읽는 사람은 CDN 에 닿지 않는다. 처음 빌드 한 번만 네트워크가 필요하고 cacheDir 에 남는다.
+ * 코드 글꼴에 없는 한글이 본문 글꼴로 떨어지는 것은 token.css 가 잇는다.
+ * 공급자마다 options 타입이 달라 defineConfig 처럼 공급자 목록을 타입에 넘긴다
+ */
+const fonts: AstroUserConfig<
+	never,
+	never,
+	[ReturnType<typeof fontProviders.npm>, ReturnType<typeof fontProviders.fontsource>]
+>["fonts"] = [
+	{
+		provider: fontProviders.npm(),
+		name: "Pretendard Variable",
+		cssVariable: font_css_variable_sans,
+		options: {
+			package: "pretendard",
+			// ponytail: unifont 의 npm 공급자는 CSS 속 상대 경로 (./woff2-dynamic-subset/…) 를 CSS 파일 자리가 아니라 패키지 뿌리에서 푼다.
+			// 그래서 CSS 가 든 폴더를 버전 뒤에 이어 뿌리를 그 폴더로 옮긴다. unifont 가 고쳐지면 version 은 "1.3.9", file 은 "dist/web/variable/…" 로 되돌린다
+			version: "1.3.9/dist/web/variable",
+			file: "pretendardvariable-dynamic-subset.css",
+		},
+		// 마지막이 generic 이라 Astro 가 라틴 글자의 폭을 맞춘 대체 글꼴을 함께 만든다
+		fallbacks: ["system-ui", "Apple SD Gothic Neo", "sans-serif"],
+	},
+	{
+		provider: fontProviders.fontsource(),
+		name: "JetBrains Mono",
+		cssVariable: font_css_variable_mono,
+		// 가변 글꼴 파일 하나가 이 범위를 다 낸다
+		weights: ["100 800"],
+		styles: ["normal"],
+		// 대체 글꼴은 token.css 가 본문 글꼴로 잇는다
+		fallbacks: [],
+	},
+];
+
 // 이 파일은 dist/cli.js 로 묶여 돈다. 거기서 한 칸 올라가면 패키지 뿌리다
 const kitRoot = fileURLToPath(new URL("../", import.meta.url));
 const srcDir = join(kitRoot, "src");
@@ -71,6 +110,10 @@ await run({
 	outDir: join(docsRoot, "dist"),
 	cacheDir: join(docsRoot, "node_modules", ".for-humanity"),
 	configFile: false,
+	// 링크에 마우스를 올리거나 포커스가 가면 그 쪽을 미리 받는다. 쪽이 정적 HTML 이라 비용이 작다
+	prefetch: {prefetchAll: true},
+	// AstroInlineConfig 의 fonts 는 공급자마다 다른 options 타입을 몰라, 위에서 공급자 타입으로 검사한 값을 넓혀 넘긴다
+	fonts: fonts as AstroInlineConfig["fonts"],
 	integrations: [
 		mdx(),
 		react(),
@@ -96,7 +139,9 @@ await run({
 		},
 	],
 	markdown: {
-		syntaxHighlight: false,
+		// 코드 색은 token.css 의 --app-code-* 가 정한다. Shiki 는 그 변수 이름만 inline style 로 적는다
+		syntaxHighlight: "shiki",
+		shikiConfig: {theme: createCssVariablesTheme({name: "for-humanity", variablePrefix: "--app-code-"})},
 		// Astro 7 의 기본 처리기 (Sätteri) 는 remark · rehype 플러그인을 받지 않아 unified 처리기를 쓴다
 		processor: unified({
 			remarkPlugins: [

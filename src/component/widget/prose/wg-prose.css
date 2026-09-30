@@ -5,33 +5,33 @@
 .wg_prose__root {
 	/* stylelint-disable selector-disallowed-list -- 문서 본문은 Markdown 이 만든 태그다 */
 	& h1 {
-		margin: 14px 0 12px;
+		margin: 14px 0 var(--app-space-stack);
 		color: var(--app-color-text-strong);
-		font-size: clamp(30px, 3.4vw, 42px);
-		font-weight: 700;
-		line-height: 1.14;
-		letter-spacing: -0.02em;
+		font-size: var(--app-font-size-title);
+		font-weight: var(--app-font-weight-title);
+		line-height: var(--app-line-height-title);
+		letter-spacing: var(--app-letter-spacing-title);
 		text-wrap: balance;
 	}
 
 	& p {
-		margin: 0 0 12px;
+		margin: 0 0 var(--app-space-stack);
 	}
 
 	/* 제목 밑 첫 문단이 이 문서가 답하는 것이다 */
 	& h1 + p {
-		font-size: 16.5px;
+		font-size: var(--app-font-size-lead);
 	}
 
 	& h2 {
-		margin: 56px 0 14px;
+		margin: var(--app-space-section) 0 14px;
 		padding-top: 22px;
 		border-top: 1px solid var(--app-color-border);
 		color: var(--app-color-text-strong);
-		font-size: 23px;
-		font-weight: 600;
-		line-height: 1.35;
-		letter-spacing: -0.01em;
+		font-size: var(--app-font-size-section);
+		font-weight: var(--app-font-weight-strong);
+		line-height: var(--app-line-height-heading);
+		letter-spacing: var(--app-letter-spacing-heading);
 		text-wrap: balance;
 		scroll-margin-top: var(--app-space-anchor);
 	}
@@ -53,24 +53,24 @@
 	& h3 {
 		margin: 34px 0 8px;
 		color: var(--app-color-text-strong);
-		font-size: 16.5px;
-		font-weight: 600;
-		line-height: 1.45;
+		font-size: var(--app-font-size-lead);
+		font-weight: var(--app-font-weight-strong);
+		line-height: var(--app-line-height-tight);
 		scroll-margin-top: var(--app-space-anchor);
 	}
 
 	& h4 {
 		margin: 24px 0 6px;
 		color: var(--app-color-text-strong);
-		font-size: 14.5px;
-		font-weight: 600;
+		font-size: var(--app-font-size-body);
+		font-weight: var(--app-font-weight-strong);
 	}
 
 	& h5 {
 		margin: 18px 0 6px;
 		color: var(--app-color-text-muted);
 		font-size: var(--app-font-size-dense);
-		font-weight: 600;
+		font-weight: var(--app-font-weight-strong);
 	}
 
 	& a {
@@ -83,23 +83,23 @@
 	}
 
 	& a:focus-visible {
-		border-radius: 2px;
+		border-radius: var(--app-radius-mark);
 		outline: var(--app-outline-focus);
 		outline-offset: var(--app-outline-focus-offset);
 	}
 
 	& strong {
 		color: var(--app-color-text-strong);
-		font-weight: 600;
+		font-weight: var(--app-font-weight-strong);
 	}
 
 	& ul {
-		margin: 0 0 14px;
+		margin: 0 0 var(--app-space-stack);
 		padding-left: 20px;
 	}
 
 	& ol {
-		margin: 0 0 14px;
+		margin: 0 0 var(--app-space-stack);
 		padding-left: 22px;
 	}
 
@@ -118,7 +118,7 @@
 	/* 합자를 끈다. JetBrains Mono 는 >= 와 != 를 한 글자 (≥ ≠) 로 그려 비교식을 옮겨 적을 때 헷갈린다 */
 	& code {
 		padding: 1px 5px;
-		border-radius: 3px;
+		border-radius: var(--app-radius-inline);
 		background: var(--app-color-code);
 		color: var(--app-color-text-strong);
 		font-family: var(--app-font-mono);
@@ -126,31 +126,33 @@
 		font-variant-ligatures: none;
 	}
 
+	/* 코드 상자. 글자 색은 Shiki 가 token.css 의 --app-code-* 로 칠한다 */
 	& pre {
 		overflow-x: auto;
-		margin: 14px 0;
+		margin: var(--app-space-block) 0;
 		padding: 14px 18px;
 		border: 1px solid var(--app-color-border);
-		border-radius: 6px;
+		border-radius: var(--app-radius-box);
 		background: var(--app-color-code);
 		font-family: var(--app-font-mono);
 		font-size: var(--app-font-size-detail);
 		font-variant-ligatures: none;
-		line-height: 1.7;
+		line-height: var(--app-line-height-code);
 	}
 
 	& pre code {
 		padding: 0;
 		background: none;
+		color: inherit;
 		font-size: inherit;
 	}
 
 	/* 원문 인용과 문서 첫머리의 당부 */
 	& blockquote {
-		margin: 16px 0;
+		margin: var(--app-space-block) 0;
 		padding: 12px 18px;
 		border-left: 3px solid var(--app-color-accent);
-		border-radius: 0 5px 5px 0;
+		border-radius: 0 var(--app-radius-box) var(--app-radius-box) 0;
 		background: var(--app-color-accent-soft);
 	}
 
@@ -171,8 +173,8 @@
 		color: var(--app-color-text-muted);
 		font-family: var(--app-font-mono);
 		font-size: var(--app-font-size-mark);
-		font-weight: 500;
-		letter-spacing: 0.06em;
+		font-weight: var(--app-font-weight-mark);
+		letter-spacing: var(--app-letter-spacing-label);
 		text-align: left;
 		vertical-align: bottom;
 		white-space: nowrap;
@@ -217,10 +219,10 @@
 .wg_prose__eyebrow {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 10px;
+	gap: var(--app-space-inline);
 	color: var(--app-color-text-muted);
 	font-family: var(--app-font-mono);
-	font-size: 11.5px;
+	font-size: var(--app-font-size-mark);
 	letter-spacing: var(--app-letter-spacing-label);
 	text-transform: uppercase;
 }
@@ -231,8 +233,8 @@
 	padding-top: 14px;
 	border-top: 2px solid var(--app-color-text-strong);
 	color: var(--app-color-text-strong);
-	font-size: 19px;
-	font-weight: 600;
+	font-size: var(--app-font-size-part);
+	font-weight: var(--app-font-weight-strong);
 }
 
 /* 제목 앞 절 번호 (01.A). 목차도 같은 글자를 쓴다 */
@@ -241,16 +243,16 @@
 	color: var(--app-color-accent);
 	font-family: var(--app-font-mono);
 	font-size: 0.62em;
-	font-weight: 500;
+	font-weight: var(--app-font-weight-mark);
 	letter-spacing: 0;
 }
 
 /* 표 — 넓으면 상자 안에서 가로로 민다 */
 .wg_prose__table {
 	overflow-x: auto;
-	margin: 16px 0;
+	margin: var(--app-space-block) 0;
 	border: 1px solid var(--app-color-border);
-	border-radius: 6px;
+	border-radius: var(--app-radius-box);
 	background: var(--app-color-surface);
 }
 
@@ -258,9 +260,9 @@
 .wg_prose__pill {
 	display: inline-block;
 	padding: 0 7px;
-	border-radius: 3px;
+	border-radius: var(--app-radius-inline);
 	font-size: var(--app-font-size-detail);
-	font-weight: 600;
+	font-weight: var(--app-font-weight-strong);
 	line-height: 1.6;
 	white-space: nowrap;
 }
@@ -286,7 +288,7 @@
 		height: 0.8em;
 		margin-right: 5px;
 		border: 1px solid var(--app-color-border);
-		border-radius: 2px;
+		border-radius: var(--app-radius-mark);
 		background: var(--wg-prose-chip-color, transparent);
 		content: "";
 		vertical-align: -0.05em;
@@ -296,10 +298,10 @@
 /* 흐름도 — ```mermaid 원문을 remark-flow 가 빌드 때 격자 SVG 로 그린 상자 */
 .wg_prose__flow {
 	overflow-x: auto;
-	margin: 16px 0;
+	margin: var(--app-space-block) 0;
 	padding: 20px 16px;
 	border: 1px solid var(--app-color-border);
-	border-radius: 6px;
+	border-radius: var(--app-radius-box);
 	background: var(--app-color-surface);
 
 	/* stylelint-disable-next-line selector-disallowed-list -- 렌더러가 그린 마크업이다 */

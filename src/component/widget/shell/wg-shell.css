@@ -3,16 +3,16 @@
  */
 .wg_shell__root {
 	display: grid;
-	max-width: 1920px;
+	max-width: var(--app-size-page);
 	margin: 0 auto;
-	padding: 0 32px;
-	gap: 56px;
-	grid-template-columns: 264px minmax(0, 1fr);
+	padding: 0 var(--app-space-gutter);
+	gap: var(--app-space-column);
+	grid-template-columns: var(--app-size-sidebar) minmax(0, 1fr);
 	background: var(--app-color-ground);
 	color: var(--app-color-text);
 	font-family: var(--app-font-sans);
-	font-size: 15px;
-	line-height: 1.75;
+	font-size: var(--app-font-size-body);
+	line-height: var(--app-line-height-body);
 
 	/* 한국어는 낱말 안에서 줄을 끊지 않는다. 긴 식별자만 예외로 끊는다 */
 	word-break: keep-all;
@@ -25,28 +25,13 @@
 	min-width: 0;
 
 	/* 끝 여백은 마지막 절도 읽는 선 (--app-space-anchor) 까지 올라올 만큼 둔다 */
-	padding-block: 44px calc(100vh - var(--app-space-anchor));
+	padding-block: var(--app-space-page-top) calc(100vh - var(--app-space-anchor));
 }
 
-/* 좁은 화면에서는 한 칸으로 쌓는다. 사이드바가 위, 본문이 아래다 */
+/* 좁은 화면에서는 한 칸으로 쌓는다. 사이드바가 위, 본문이 아래다. 좌우와 위 여백은 token.css 가 같은 조건에서 줄인다 */
 @media (width < 1024px) {
 	.wg_shell__root {
 		gap: 0;
-		padding: 0 20px;
 		grid-template-columns: minmax(0, 1fr);
-	}
-
-	.wg_shell__main {
-		padding-block: 28px calc(100vh - var(--app-space-anchor));
-	}
-}
-
-@media (width < 640px) {
-	.wg_shell__root {
-		padding: 0 16px;
-	}
-
-	.wg_shell__main {
-		padding-block: 20px calc(100vh - var(--app-space-anchor));
 	}
 }

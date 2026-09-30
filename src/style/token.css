@@ -1,107 +1,138 @@
 /*
- * 공통 토큰의 단일 출처. 테마는 여기서 값만 바꾼다.
- * 차례는 :root 기본값 (밝게) → 시스템 테마 → 목차에서 고른 테마다. 뒤에 오고 명시도도 높은 선택자가 앞을 이긴다.
+ * 공통 토큰의 단일 출처. 이름은 값이 아니라 쓰임으로 짓는다 (--app-종류-쓰임). 어디에 무엇을 쓰는지는 DESIGN.md 에 있다.
+ * 색은 light-dark(밝게, 어둡게) 한 줄이고, 테마는 :root 의 color-scheme 만 바꾼다. 컴포넌트 CSS 에는 테마 분기가 없다.
+ * 화면 폭 기준 (1024px, 640px) 은 CSS 변수로 쓸 수 없어 wg-shell.css, _wg-shell-nav.css 와 이 파일 아래에 같은 숫자를 적는다.
  * 모양은 sk-ax-gas-pp 와 uoo 의 blueprint 에서 가져왔다
  */
 
 :root {
-	color-scheme: light;
+	/* 기본은 시스템 테마다. 목차의 단추가 고른 테마는 아래 data-theme 블록이 고정한다 */
+	color-scheme: light dark;
 
-	--app-color-ground: #f7f8fa;
-	--app-color-surface: #fff;
-	--app-color-text: #414a56;
-	--app-color-text-strong: #1b2027;
-	--app-color-text-muted: #7b8593;
-	--app-color-border: #dfe3e9;
-	--app-color-border-soft: #eceff3;
-	--app-color-accent: #2e3f5e;
-	--app-color-accent-soft: #eef1f7;
-	--app-color-code: #f2f4f7;
-	--app-color-verified: #157f45;
-	--app-color-verified-soft: #e9f4ed;
-	--app-color-unverified: #9a6400;
-	--app-color-unverified-soft: #fdf4e3;
+	/* 색 — 바탕. ground 위에 surface 상자가 놓이고, 코드 상자만 code 다 */
+	--app-color-ground: light-dark(#f7f8fa, #13171d);
+	--app-color-surface: light-dark(#fff, #191e25);
+	--app-color-code: light-dark(#f2f4f7, #10141a);
+
+	/* 색 — 글. 본문은 text, 제목과 강조는 strong, 표지와 곁들이는 글은 muted. 어느 바탕 위에서도 4.5:1 이상이다 */
+	--app-color-text: light-dark(#414a56, #c2cad6);
+	--app-color-text-strong: light-dark(#1b2027, #eef1f6);
+	--app-color-text-muted: light-dark(#6e7784, #8892a1);
+
+	/* 색 — 선. 상자와 목록의 선은 border, 표 안의 가로선처럼 옅어야 하는 선은 soft */
+	--app-color-border: light-dark(#dfe3e9, #2b323d);
+	--app-color-border-soft: light-dark(#eceff3, #232932);
+
+	/* 색 — 강조 하나. 링크, 절 번호, 지금 읽는 절, 포커스. soft 는 그 바탕 (인용, 표 줄 hover) */
+	--app-color-accent: light-dark(#2e3f5e, #93a9d4);
+	--app-color-accent-soft: light-dark(#eef1f7, #1d2634);
+
+	/* 색 — 상태. 알약에만 쓴다. 글색은 soft 바탕 위에서 4.5:1 이상이다 */
+	--app-color-verified: light-dark(#157e44, #5cc183);
+	--app-color-verified-soft: light-dark(#e9f4ed, #17281e);
+	--app-color-unverified: light-dark(#9a6400, #d8a54a);
+	--app-color-unverified-soft: light-dark(#fdf4e3, #2a2317);
 
 	/*
-	 * 본문은 Pretendard, 코드 · 표지 · 흐름도는 JetBrains Mono (한글은 Pretendard 로 떨어진다).
-	 * JetBrains Mono 의 영문 폭 0.6em 이 흐름도 격자 칸 (12px 에 7.2px) 과 같다. 글꼴 파일은 style/base.css 가 불러온다
+	 * 글꼴. 파일과 @font-face 는 cli.ts 의 fonts 설정이 만들고, wg-shell.astro 머리의 <Font> 가 --app-font-face-* 에 이름을 넣는다.
+	 * 본문은 Pretendard, 표지 · 코드 · 흐름도는 JetBrains Mono. JetBrains Mono 의 영문 폭 0.6em 이 흐름도 격자 칸 (12px 에 7.2px) 과 같다.
+	 * 코드 글꼴에 없는 한글은 본문 글꼴로 떨어진다
 	 */
-	--app-font-sans:
-		"Pretendard Variable", "Pretendard", -apple-system, "BlinkMacSystemFont", system-ui, "Apple SD Gothic Neo",
-		sans-serif;
-	--app-font-mono:
-		"JetBrains Mono", "Pretendard Variable", "Pretendard", ui-monospace, "SFMono-Regular", "Menlo", monospace;
+	--app-font-sans: var(--app-font-face-sans);
+	--app-font-mono: var(--app-font-face-mono), var(--app-font-face-sans);
 
-	/* 여러 부품이 함께 쓰는 글자 크기. 작은 표지 · 줄 앞 표지 · 곁들이는 글 · 촘촘한 목록과 표 */
+	/* 글자 크기 사다리. 어느 부품이든 이 아홉 칸 가운데서 고른다 */
 	--app-font-size-label: 10.5px;
 	--app-font-size-mark: 11px;
 	--app-font-size-detail: 12.5px;
 	--app-font-size-dense: 13.5px;
+	--app-font-size-body: 15px;
+	--app-font-size-lead: 16.5px;
+	--app-font-size-part: 19px;
+	--app-font-size-section: 23px;
+	--app-font-size-title: clamp(30px, 3.4vw, 42px);
+
+	/* 굵기. 본문은 글꼴 기본 (400) 이라 토큰이 없다 */
+	--app-font-weight-mark: 500;
+	--app-font-weight-strong: 600;
+	--app-font-weight-title: 700;
+
+	/* 행간. 글자가 클수록 좁다 */
+	--app-line-height-title: 1.14;
+	--app-line-height-heading: 1.35;
+	--app-line-height-tight: 1.45;
+	--app-line-height-code: 1.7;
+	--app-line-height-body: 1.75;
+
+	/* 자간. 작은 모노 표지는 벌리고, 큰 제목은 좁힌다 */
 	--app-letter-spacing-label: 0.08em;
+	--app-letter-spacing-brand: 0.14em;
+	--app-letter-spacing-heading: -0.01em;
+	--app-letter-spacing-title: -0.02em;
+
+	/* 간격 — 리듬. 여러 부품이 같은 박자로 쓰는 넷이다. 한 부품 안의 보정 (상자 안 여백, 들여쓰기) 은 그 자리에 값으로 둔다 */
+	--app-space-inline: 8px;
+	--app-space-stack: 12px;
+	--app-space-block: 16px;
+	--app-space-section: 56px;
+
+	/* 간격 — 쪽의 틀. 좁은 화면 값은 아래 @media 에 있다 */
+	--app-space-page-top: 44px;
+	--app-space-gutter: 32px;
+	--app-space-column: 56px;
+	--app-size-sidebar: 264px;
+	--app-size-page: 1920px;
+
+	/* 목차 · 링크로 옮기면 제목이 화면 이 높이에 선다. 목차의 읽는 선도 이 값을 읽는다 (sk-ax-gas-pp 의 --anchor-offset) */
+	--app-space-anchor: 40vh;
+
+	/* 모서리. 본문 속 상자는 box, 첫 화면 카드는 card, 줄 안의 코드와 알약은 inline, 색 칩과 링크 포커스는 mark, 단추는 pill */
+	--app-radius-pill: 999px;
+	--app-radius-card: 8px;
+	--app-radius-box: 6px;
+	--app-radius-inline: 3px;
+	--app-radius-mark: 2px;
 
 	/* 키보드로 옮겨 온 자리 */
 	--app-outline-focus: 2px solid var(--app-color-accent);
 	--app-outline-focus-offset: 2px;
 
-	/* 목차 · 링크로 옮기면 제목이 화면 이 높이에 선다. 목차의 읽는 선도 이 값을 읽는다 (sk-ax-gas-pp 의 --anchor-offset) */
-	--app-space-anchor: 40vh;
-}
-
-@media (prefers-color-scheme: dark) {
-	:root {
-		color-scheme: dark;
-
-		--app-color-ground: #13171d;
-		--app-color-surface: #191e25;
-		--app-color-text: #c2cad6;
-		--app-color-text-strong: #eef1f6;
-		--app-color-text-muted: #8892a1;
-		--app-color-border: #2b323d;
-		--app-color-border-soft: #232932;
-		--app-color-accent: #93a9d4;
-		--app-color-accent-soft: #1d2634;
-		--app-color-code: #10141a;
-		--app-color-verified: #5cc183;
-		--app-color-verified-soft: #17281e;
-		--app-color-unverified: #d8a54a;
-		--app-color-unverified-soft: #2a2317;
-	}
+	/*
+	 * 코드 강조. Shiki 가 이 이름으로 색을 칠한다 (cli.ts 의 shikiConfig). 새 색을 만들지 않고 위의 역할 색을 다시 쓴다.
+	 * 밝은 테마에서 accent 는 text 와 가까워 키워드는 strong 으로, 함수 이름은 accent 로 둔다
+	 */
+	--app-code-foreground: var(--app-color-text);
+	--app-code-background: var(--app-color-code);
+	--app-code-token-keyword: var(--app-color-text-strong);
+	--app-code-token-function: var(--app-color-accent);
+	--app-code-token-string: var(--app-color-verified);
+	--app-code-token-string-expression: var(--app-color-verified);
+	--app-code-token-constant: var(--app-color-unverified);
+	--app-code-token-parameter: var(--app-color-text);
+	--app-code-token-comment: var(--app-color-text-muted);
+	--app-code-token-punctuation: var(--app-color-text-muted);
+	--app-code-token-link: var(--app-color-accent);
 }
 
 :root[data-theme="light"] {
 	color-scheme: light;
-
-	--app-color-ground: #f7f8fa;
-	--app-color-surface: #fff;
-	--app-color-text: #414a56;
-	--app-color-text-strong: #1b2027;
-	--app-color-text-muted: #7b8593;
-	--app-color-border: #dfe3e9;
-	--app-color-border-soft: #eceff3;
-	--app-color-accent: #2e3f5e;
-	--app-color-accent-soft: #eef1f7;
-	--app-color-code: #f2f4f7;
-	--app-color-verified: #157f45;
-	--app-color-verified-soft: #e9f4ed;
-	--app-color-unverified: #9a6400;
-	--app-color-unverified-soft: #fdf4e3;
 }
 
 :root[data-theme="dark"] {
 	color-scheme: dark;
+}
 
-	--app-color-ground: #13171d;
-	--app-color-surface: #191e25;
-	--app-color-text: #c2cad6;
-	--app-color-text-strong: #eef1f6;
-	--app-color-text-muted: #8892a1;
-	--app-color-border: #2b323d;
-	--app-color-border-soft: #232932;
-	--app-color-accent: #93a9d4;
-	--app-color-accent-soft: #1d2634;
-	--app-color-code: #10141a;
-	--app-color-verified: #5cc183;
-	--app-color-verified-soft: #17281e;
-	--app-color-unverified: #d8a54a;
-	--app-color-unverified-soft: #2a2317;
+/* 좁은 화면. 조건은 wg-shell.css, _wg-shell-nav.css 의 것과 같다 */
+@media (width < 1024px) {
+	:root {
+		--app-space-page-top: 28px;
+		--app-space-gutter: 20px;
+	}
+}
+
+@media (width < 640px) {
+	:root {
+		--app-space-page-top: 20px;
+		--app-space-gutter: 16px;
+	}
 }
