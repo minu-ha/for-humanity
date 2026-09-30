@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
- * for-humanity <dev|build|preview> [문서 폴더]
+ * for-humanity <dev|build|preview|sync> [문서 폴더]
  * 문서 폴더의 for-humanity.config.mjs 를 읽어 Astro 를 돌린다. 폴더를 빼면 지금 폴더다.
  * 앱 (쪽, 컴포넌트, 스타일) 은 이 패키지의 src 에 있고, 문서 폴더에는 Markdown 과 설정만 있다.
  * 앱의 진입 파일이라 쪽, 부품의 플러그인, 설정을 여기서 한데 잇는다
@@ -12,7 +12,7 @@ import {fileURLToPath, pathToFileURL} from "node:url";
 import {unified} from "@astrojs/markdown-remark";
 import mdx from "@astrojs/mdx";
 import react from "@astrojs/react";
-import {type AstroInlineConfig, build, dev, preview} from "astro";
+import {type AstroInlineConfig, build, dev, preview, sync} from "astro";
 import remarkDirective from "remark-directive";
 import {rehypeHead} from "@/component/widget/prose/_function/rehype-head";
 import {rehypeSections} from "@/component/widget/prose/_function/rehype-sections/rehype-sections";
@@ -29,12 +29,14 @@ import {site_config_absent} from "@/constant/site";
 import {siteConfigSchema} from "@/type/site-config";
 
 /**
- * 명령 이름과 Astro 함수의 짝. 명령 이름은 Astro CLI 의 dev · build · preview 를 그대로 따른다
+ * 명령 이름과 Astro 함수의 짝. 명령 이름은 Astro CLI 의 dev · build · preview · sync 를 그대로 따른다.
+ * sync 는 문서 모음의 타입만 만든다 (astro-check 가 읽는다)
  */
 const commands = new Map<string, (config: AstroInlineConfig) => Promise<unknown>>([
 	["dev", dev],
 	["build", build],
 	["preview", preview],
+	["sync", sync],
 ]);
 const [command = cli_default_command, docsDir = cli_default_docs_dir] = process.argv.slice(2);
 const run = commands.get(command);
@@ -45,15 +47,22 @@ if (run === undefined) {
 }
 
 // 이 파일은 dist/cli.js 로 묶여 돈다. 거기서 한 칸 올라가면 패키지 뿌리다
-const srcDir = fileURLToPath(new URL("../src/", import.meta.url));
+const kitRoot = fileURLToPath(new URL("../", import.meta.url));
+const srcDir = join(kitRoot, "src");
 const docsRoot = resolve(docsDir);
 const configFile = join(docsRoot, cli_config_file_name);
 const siteConfig = siteConfigSchema.parse(
 	existsSync(configFile) ? (await import(pathToFileURL(configFile).href)).default : site_config_absent,
 );
 
+// 빌드는 쪽을 미리 그리는 번들 (.prerender) 을 결과 폴더가 지금 폴더 안이면 그 안에, 밖이면 지금 폴더의 .astro 에 쓰고,
+// 그 번들이 react 같은 의존성을 제자리에서 찾는다. 지금 폴더를 이 패키지로 옮겨 그 번들이 이 패키지 안에 생기게 한다
+process.chdir(kitRoot);
+
 await run({
-	root: docsRoot,
+	// Vite 는 astro, @astrojs/react 같은 이름을 root 에서 찾는다. pnpm 은 이 패키지의 의존성을 이 패키지 옆에만 두므로
+	// root 를 문서 폴더가 아니라 이 패키지로 잡는다. 문서 폴더가 쓰는 자리 (공개 파일, 결과, 캐시) 는 아래에서 따로 준다
+	root: kitRoot,
 	srcDir,
 	publicDir: join(docsRoot, "public"),
 	outDir: join(docsRoot, "dist"),
@@ -90,7 +99,7 @@ await run({
 		}),
 	},
 	vite: {
-		resolve: {alias: [{find: /^@\//, replacement: srcDir}]},
+		resolve: {alias: [{find: /^@\//, replacement: `${srcDir}/`}]},
 		plugins: [
 			{
 				name: "for-humanity:config",

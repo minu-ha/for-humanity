@@ -52,7 +52,7 @@ export const copy_theme_label = {
 export const copy_error_prefix = "for-humanity";
 
 /**
- * 명령 이름이 dev, build, preview 가 아닐 때
+ * 명령 이름이 dev, build, preview, sync 가 아닐 때
  */
 export const copy_error_unknown_command = "모르는 명령이다";
 
