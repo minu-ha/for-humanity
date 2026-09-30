@@ -1,0 +1,28 @@
+---
+/*
+ * 문서 한 장. 문서 이름의 첫 글자가 겹치면 사이드바 표지가 겹치므로 빌드를 멈춘다
+ */
+import { getCollection, render } from 'astro:content'
+import Base from '../layouts/Base.astro'
+
+export async function getStaticPaths() {
+  const docs = await getCollection('docs')
+  const byMark = Map.groupBy(docs, (doc) => doc.data.name[0].toUpperCase())
+  const clashes = [...byMark].filter(([, group]) => group.length > 1)
+
+  if (clashes.length > 0) {
+    const list = clashes.map(([mark, group]) => `${mark} (${group.map((doc) => doc.data.name).join(', ')})`).join(' / ')
+
+    throw new Error(`for-humanity: 문서 이름의 첫 글자가 겹친다: ${list}`)
+  }
+
+  return docs.map((entry) => ({ params: { slug: entry.id }, props: { entry } }))
+}
+
+const { entry } = Astro.props
+const { Content, headings, remarkPluginFrontmatter } = await render(entry)
+---
+
+<Base title={entry.data.name} current={entry.id} headings={headings} parts={remarkPluginFrontmatter.fhParts ?? {}}>
+  <Content />
+</Base>

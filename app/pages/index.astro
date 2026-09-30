@@ -1,0 +1,31 @@
+---
+/*
+ * 첫 화면. 설정의 제목과 설명, 그리고 문서 카드 (묶음 순, 묶음 안에서는 이름 순)
+ */
+import config from 'virtual:for-humanity/config'
+import { getCollection } from 'astro:content'
+import Base from '../layouts/Base.astro'
+
+const docs = (await getCollection('docs')).sort(
+  (a, b) => a.data.group.localeCompare(b.data.group, 'ko') || a.data.name.localeCompare(b.data.name, 'en'),
+)
+---
+
+<Base>
+  <header class="fh_index__head">
+    <div class="fh_index__eyebrow"><span>{config.title}</span><span>Overview</span></div>
+    <h1>Overview</h1>
+    {config.description && <p>{config.description}</p>}
+  </header>
+  <div class="fh_index__cards">
+    {
+      docs.map((doc) => (
+        <a class="fh_index__card" href={`/${doc.id}/`}>
+          <span class="fh_index__cardGroup">{doc.data.group}</span>
+          <span class="fh_index__cardTitle">{doc.data.name}</span>
+          <span class="fh_index__cardLabel">{doc.data.label}</span>
+        </a>
+      ))
+    }
+  </div>
+</Base>

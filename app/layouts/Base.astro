@@ -1,0 +1,44 @@
+---
+/*
+ * 모든 쪽의 틀. 왼쪽이 사이드바, 오른쪽이 문서다. 테마는 그리기 전에 머리에서 정한다
+ */
+import config from 'virtual:for-humanity/config'
+import { getCollection } from 'astro:content'
+import Nav from '../components/Nav.astro'
+import favicon from '../favicon.svg?url'
+import '../styles/index.css'
+
+const { title, current, headings = [], parts = {} } = Astro.props
+const docs = await getCollection('docs')
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title ? `${title} · ${config.title}` : config.title}</title>
+    <link rel="icon" href={favicon} type="image/svg+xml" />
+    <script is:inline>
+      // 쪽을 여는 동안은 부드러운 스크롤을 끈다. scripts/nav.ts 가 자리를 맞춘 뒤 다시 켠다
+      document.documentElement.style.scrollBehavior = 'auto'
+
+      try {
+        const theme = localStorage.getItem('fh-theme')
+
+        if (theme === 'light' || theme === 'dark') {
+          document.documentElement.setAttribute('data-theme', theme)
+        }
+      } catch {}
+    </script>
+  </head>
+  <body class="fh_index__root">
+    <Nav docs={docs} current={current} headings={headings} parts={parts} />
+    <main class="fh_index__doc">
+      <slot />
+    </main>
+    <script>
+      import '../scripts/nav.ts'
+    </script>
+  </body>
+</html>

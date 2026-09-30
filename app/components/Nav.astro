@@ -1,0 +1,95 @@
+---
+/*
+ * 사이드바. 문서 목록(영어 이름 abc 순, 첫 글자 표지)과 이 문서의 목차(가름마다 끊긴 목록)를 빌드 때 그린다.
+ * 지금 읽는 절 표시만 scripts/nav.ts 가 붙인다
+ */
+import config from 'virtual:for-humanity/config'
+import { tocNumbers } from '../../src/markdown/plugins.mjs'
+
+const { docs, current, headings = [], parts = {} } = Astro.props
+const sorted = [...docs].sort((a, b) => a.data.name.localeCompare(b.data.name, 'en'))
+const toc = headings.filter((heading) => heading.depth === 2 || heading.depth === 3)
+const numbers = tocNumbers(toc)
+const groups = []
+let h2 = -1
+
+toc.forEach((heading, index) => {
+  if (heading.depth === 2) {
+    h2 += 1
+
+    if (groups.length === 0 || parts[h2]) {
+      groups.push({ part: parts[h2] ?? null, sections: [] })
+    }
+
+    groups.at(-1).sections.push({ heading, number: numbers[index], subs: [] })
+  } else {
+    groups.at(-1)?.sections.at(-1)?.subs.push({ heading, number: numbers[index] })
+  }
+})
+---
+
+<nav class="fh_index__nav" aria-label="목차">
+  <a class="fh_index__brand" href="/">{config.title}</a>
+  <div class="fh_index__navLabel">문서</div>
+  <div class="fh_index__docs">
+    <ul class="fh_index__navList">
+      <li>
+        <a class:list={['fh_index__navLink', { 'fh_index__navLink--active': !current }]} href="/" title="한눈에" aria-current={current ? undefined : 'page'}>
+          <span class="fh_index__navMark">·</span>Overview
+        </a>
+      </li>
+      {
+        sorted.map((doc) => (
+          <li>
+            <a
+              class:list={['fh_index__navLink', { 'fh_index__navLink--active': doc.id === current }]}
+              href={`/${doc.id}/`}
+              title={doc.data.label}
+              aria-current={doc.id === current ? 'page' : undefined}
+            >
+              <span class="fh_index__navMark">{doc.data.name[0]}</span>
+              {doc.data.name}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+  {
+    groups.length > 0 && (
+      <>
+        <div class="fh_index__navLabel">목차</div>
+        <div class="fh_index__toc">
+          {groups.map((group) => (
+            <>
+              {group.part && <div class="fh_index__navGroup">{group.part}</div>}
+              <ul class="fh_index__navList">
+                {group.sections.map((section) => (
+                  <li>
+                    <a class="fh_index__navLink" href={`#${section.heading.slug}`}>
+                      <span class="fh_index__navMark">{section.number}</span>
+                      {section.heading.text}
+                    </a>
+                    {section.subs.length > 0 && (
+                      <ul class="fh_index__tocSub">
+                        {section.subs.map((sub) => (
+                          <li>
+                            <a class="fh_index__tocSubLink" href={`#${sub.heading.slug}`}>
+                              <span class="fh_index__navMark">{sub.number}</span>
+                              {sub.heading.text}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </>
+          ))}
+        </div>
+      </>
+    )
+  }
+  <button class="fh_index__theme" type="button">테마 · 시스템</button>
+</nav>

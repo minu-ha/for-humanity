@@ -1,0 +1,37 @@
+{
+  "name": "for-humanity",
+  "version": "0.1.0",
+  "description": "Documents written for humans to read: a docs kit with a sidebar, parts, numbered sections and flowcharts, built on Astro",
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "for-humanity": "./bin/for-humanity.mjs"
+  },
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "files": [
+    "bin",
+    "src",
+    "app"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "node bin/for-humanity.mjs dev templates/document",
+    "build": "node bin/for-humanity.mjs build templates/document",
+    "preview": "node bin/for-humanity.mjs preview templates/document"
+  },
+  "dependencies": {
+    "@astrojs/markdown-remark": "^7.3.1",
+    "@astrojs/mdx": "^8.0.2",
+    "@astrojs/react": "^7.0.0",
+    "astro": "^7.3.5",
+    "beautiful-mermaid": "^1.1.3",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "remark-directive": "^4.0.0",
+    "unist-util-visit": "^5.1.0"
+  }
+}
