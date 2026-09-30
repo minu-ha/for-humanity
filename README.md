@@ -9,7 +9,7 @@ Markdown 폴더 하나를 사이드바, 절 번호, 흐름도가 있는 정적 �
 [![License: MIT](https://img.shields.io/badge/license-MIT-2e3f5e)](LICENSE)
 ![Node 22+](https://img.shields.io/badge/node-22%2B-2e3f5e)
 ![Astro 7](https://img.shields.io/badge/engine-Astro%207-2e3f5e)
-![Biome](https://img.shields.io/badge/lint-Biome-2e3f5e)
+![Biome](https://img.shields.io/badge/lint-Biome%20%C2%B7%20Stylelint-2e3f5e)
 ![Prototype](https://img.shields.io/badge/status-prototype-9a6400)
 
 <br>
@@ -63,14 +63,17 @@ docs/
 ```
 
 ```sh
-for-humanity dev docs        # 고치면서 본다
-for-humanity build docs      # docs/dist 에 정적 사이트를 만든다
-for-humanity preview docs    # 만든 사이트를 띄운다
+npx for-humanity dev docs        # 고치면서 본다
+npx for-humanity build docs      # docs/dist 에 정적 사이트를 만든다
+npx for-humanity preview docs    # 만든 사이트를 띄운다
 ```
 
 > [!NOTE]
-> 아직 npm에 올리지 않았다. 지금은 문서 폴더가 이 저장소 안에 있어야 한다 (예: `templates/` 아래).
-> 저장소 밖에 두면 Vite가 문서 폴더에서 `astro`를 찾지 못한다.
+> 아직 npm에 올리지 않았다. 올리기 전에는 이 저장소에서 `pnpm pack`으로 만든 파일을 설치해 쓴다.
+>
+> ```sh
+> pnpm add -D ./for-humanity-0.1.0.tgz    # npm i -D 도 된다
+> ```
 
 ## 문서 한 장
 
@@ -143,23 +146,28 @@ templates/document/        가상의 예시 문서
 - 파일은 kebab-case로 짓고, 컴포넌트에는 레이어 접두사를 붙인다 (`pg-home.astro`, `wg-shell.astro`)
 - 클래스는 `범위_식별자__요소--수정자` 꼴이다 (`wg_prose__pill--verified`)
 - 가져오기는 `@/`로 쓴다. 자기만 쓰는 파일은 `_`로 시작하고, 함수 · 타입 · 상수는 `_function` · `_type` · `_constant`에 둔다
-- 기계로 볼 수 있는 규칙은 Biome이 본다. `??` 오른쪽의 리터럴은 `no-literal-fallback.grit`이 잡는다
+- 브라우저 스크립트는 그 요소를 그리는 컴포넌트의 `<script>`에 두고, 스크립트가 잡는 요소에는 클래스 대신 `data-*`를 단다
+- 기계로 볼 수 있는 규칙은 Biome (TS · Astro · JSON) 과 Stylelint (CSS) 가 본다. `??` 오른쪽의 리터럴은 `no-literal-fallback.grit`이 잡는다
+- 타입은 `astro-check`가 `.astro`까지 함께 본다. `tsc`는 `.astro`를 읽지 못한다
 - `src/util/mermaid/render-flow.js`의 격자 렌더러는 다른 저장소와 diff로 맞춰 보려고 글자 그대로 둔다. 그래서 Biome 검사에서 뺐다
 
 ## 개발
 
 ```sh
-pnpm check        # Biome: 린트, 포맷, import 차례
-pnpm check:fix    # 고칠 수 있는 것은 고친다
-pnpm typecheck    # tsc
+pnpm lint         # Biome (린트, 포맷, import 차례) 과 Stylelint
+pnpm lint:fix     # 고칠 수 있는 것은 고친다
+pnpm typecheck    # 문서 모음의 타입을 만든 뒤 astro-check 로 .astro 와 .ts 를 본다
+pnpm check        # lint 와 typecheck 를 한 번에
 pnpm build:cli    # src/cli.ts 를 dist/cli.js 로 묶는다 (esbuild)
 ```
+
+`.mcp.json`에 [Astro 문서 MCP 서버](https://docs.astro.build/en/guides/build-with-ai/)를 걸어 두었다. Claude Code 같은 에이전트가 이 저장소를 열면 Astro 문서를 바로 찾아본다.
 
 ## 다음 차례
 
 - [ ] **blueprint** 종류 (화면 설계)
 - [ ] `for-humanity init`으로 문서 폴더 만들기
-- [ ] 저장소 밖의 문서 폴더, npm 배포
+- [ ] npm 배포
 - [ ] 검색
 - [ ] 이 모양대로 문서를 쓰는 에이전트 스킬
 
