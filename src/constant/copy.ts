@@ -75,3 +75,23 @@ export const copy_error_flow = "흐름도를 그리지 못했다";
  * 어느 플러그인도 맡지 않은 블록 지시문 (`::이름`) 을 만났을 때. 대개 오타다
  */
 export const copy_error_unknown_directive = "모르는 부품이다";
+
+/**
+ * 다른 문서의 .md 로 건 링크인데 그 파일이 없을 때. 빌드는 이어 가고 dev toolbar 의 문서 검사에 모인다
+ */
+export const copy_warn_broken_link = "없는 문서로 건 링크다";
+
+/**
+ * 괄호 안이 날짜로 끝나 알약 문구 같은데 설정에 없는 글을 만났을 때. 대개 문구의 오타다
+ */
+export const copy_warn_unknown_status = "설정에 없는 알약 문구다";
+
+/**
+ * dev toolbar 에 보이는 문서 검사 앱의 이름
+ */
+export const copy_toolbar_name = "문서 검사";
+
+/**
+ * 문서 검사에 걸린 것이 없을 때
+ */
+export const copy_toolbar_empty = "걸린 것이 없다";

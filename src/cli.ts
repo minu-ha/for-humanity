@@ -24,8 +24,11 @@ import {remarkStatus} from "@/component/widget/prose/_function/remark-status";
 import {remarkSwatch} from "@/component/widget/prose/_function/remark-swatch";
 import {remarkUnknownDirectives} from "@/component/widget/prose/_function/remark-unknown-directives";
 import {cli_config_file_name, cli_config_module_id, cli_default_command, cli_default_docs_dir} from "@/constant/cli";
-import {copy_error_prefix, copy_error_unknown_command} from "@/constant/copy";
+import {copy_error_prefix, copy_error_unknown_command, copy_toolbar_name} from "@/constant/copy";
 import {site_config_absent} from "@/constant/site";
+import {toolbar_app_id, toolbar_report_event} from "@/constant/toolbar";
+import {remarkReport} from "@/toolbar/remark-report";
+import {report} from "@/toolbar/report";
 import {siteConfigSchema} from "@/type/site-config";
 
 /**
@@ -78,6 +81,16 @@ await run({
 				"astro:config:setup": (options) => {
 					options.injectRoute({pattern: "/", entrypoint: join(srcDir, "page/home/pg-home.astro")});
 					options.injectRoute({pattern: "/[...slug]", entrypoint: join(srcDir, "page/doc/pg-doc.astro")});
+					options.addDevToolbarApp({
+						id: toolbar_app_id,
+						name: copy_toolbar_name,
+						icon: "file-search",
+						entrypoint: join(srcDir, "toolbar/app.ts"),
+					});
+				},
+				// dev toolbar 의 문서 검사 앱이 결과를 달라고 하면 모아 둔 줄을 다 보낸다
+				"astro:server:setup": ({toolbar}) => {
+					toolbar.on(toolbar_report_event, () => toolbar.send(toolbar_report_event, [...report.values()].flat()));
 				},
 			},
 		},
@@ -94,6 +107,7 @@ await run({
 				remarkSwatch,
 				[remarkLinks, {root: docsRoot}],
 				remarkUnknownDirectives,
+				[remarkReport, {root: docsRoot}],
 			],
 			rehypePlugins: [[rehypeHead, {title: siteConfig.title}], rehypeSections, rehypeTables],
 		}),
