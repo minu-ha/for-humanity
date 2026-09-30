@@ -39,7 +39,7 @@ const docs = await getCollection("docs");
 		<title>{Astro.props.title ? `${Astro.props.title} · ${siteConfig.title}` : siteConfig.title}</title>
 		<link rel="icon" href={favicon} type="image/svg+xml" />
 		<script is:inline define:vars={{themeStorageKey: theme_storage_key, storedThemes: [theme_mode.light, theme_mode.dark]}}>
-			// 쪽을 여는 동안은 부드러운 스크롤을 끈다. settle-hash-scroll 이 자리를 맞춘 뒤 다시 켠다
+			// 쪽을 여는 동안은 부드러운 스크롤을 끈다. 아래 settleHashScroll 이 자리를 맞춘 뒤 다시 켠다
 			document.documentElement.style.scrollBehavior = "auto";
 
 			try {
@@ -59,9 +59,36 @@ const docs = await getCollection("docs");
 			<slot />
 		</main>
 		<script>
-			import {settleHashScroll} from "@/component/widget/shell/_function/settle-hash-scroll";
+			import {findHashTarget} from "@/util/dom/find-hash-target";
 
-			settleHashScroll();
+			const hashTarget = findHashTarget(location.hash);
+			const userScroll = new AbortController();
+
+			for (const type of ["wheel", "touchmove", "keydown", "mousedown"]) {
+				addEventListener(type, () => userScroll.abort(), {once: true, passive: true});
+			}
+
+			/**
+			 * 주소의 #절로 들어오면 글꼴이 늦게 와 높이가 바뀐 뒤 한 번 더 맞춘다. 그새 사용자가 스크롤을 시작했으면 건너뛴다.
+			 * 쪽을 여는 동안은 머리의 인라인 스크립트가 부드러운 스크롤을 꺼 둔다. 켜 두면 브라우저가 처음 옮기는 움직임이
+			 * 글꼴이 오기 전 자리로 이어져, 여기서 맞춘 자리를 덮는다. 맞춘 뒤에 다시 켠다
+			 */
+			const settleHashScroll = async () => {
+				await document.fonts.ready;
+
+				if (hashTarget && !userScroll.signal.aborted) {
+					hashTarget.scrollIntoView({behavior: "instant"});
+				}
+
+				document.documentElement.style.removeProperty("scroll-behavior");
+			};
+
+			// 글꼴 파일은 쪽의 load 무렵에야 요청이 끝나므로 load 뒤에 fonts.ready 를 기다린다
+			if (document.readyState === "complete") {
+				settleHashScroll();
+			} else {
+				addEventListener("load", settleHashScroll, {once: true});
+			}
 		</script>
 	</body>
 </html>

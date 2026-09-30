@@ -1,7 +1,7 @@
 ---
 /**
  * 사이드바. 문서 목록 (영어 이름 abc 순, 첫 글자 표지) 과 이 문서의 목차 (가름마다 끊긴 목록) 를 빌드 때 그린다.
- * 브라우저에서는 테마 단추와 읽는 절 표시만 돈다
+ * 브라우저에서는 테마 단추와 읽는 절 표시만 돈다. 스크립트가 잡는 요소에는 클래스 대신 data-* 를 단다
  */
 
 import type {CollectionEntry} from "astro:content";
@@ -76,45 +76,127 @@ const tocGroups = Astro.props.outline && toTocGroups(Astro.props.outline);
 		tocGroups !== undefined && tocGroups.length > 0 && (
 			<Fragment>
 				<div class="wg_shellNav__label">{copy_nav_toc_label}</div>
-				<div class="wg_shellNav__toc">
-					{tocGroups.map((group) => (
-						<Fragment>
-							{group.part && <div class="wg_shellNav__group">{group.part}</div>}
-							<ul class="wg_shellNav__list">
-								{group.sections.map((section) => (
-									<li>
-										<a class="wg_shellNav__link" href={`#${section.heading.slug}`}>
-											<span class="wg_shellNav__mark">{section.number}</span>
-											{section.heading.text}
-										</a>
-										{section.subs.length > 0 && (
-											<ul class="wg_shellNav__sub">
-												{section.subs.map((sub) => (
-													<li>
-														<a class="wg_shellNav__subLink" href={`#${sub.heading.slug}`}>
-															<span class="wg_shellNav__mark">{sub.number}</span>
-															{sub.heading.text}
-														</a>
-													</li>
-												))}
-											</ul>
-										)}
-									</li>
-								))}
-							</ul>
-						</Fragment>
-					))}
-				</div>
+				{tocGroups.map((group) => (
+					<Fragment>
+						{group.part && <div class="wg_shellNav__group">{group.part}</div>}
+						<ul class="wg_shellNav__list">
+							{group.sections.map((section) => (
+								<li>
+									<a class="wg_shellNav__link" href={`#${section.heading.slug}`} data-toc-link>
+										<span class="wg_shellNav__mark">{section.number}</span>
+										{section.heading.text}
+									</a>
+									{section.subs.length > 0 && (
+										<ul class="wg_shellNav__sub" data-toc-sub>
+											{section.subs.map((sub) => (
+												<li>
+													<a class="wg_shellNav__subLink" href={`#${sub.heading.slug}`} data-toc-sub-link>
+														<span class="wg_shellNav__mark">{sub.number}</span>
+														{sub.heading.text}
+													</a>
+												</li>
+											))}
+										</ul>
+									)}
+								</li>
+							))}
+						</ul>
+					</Fragment>
+				))}
 			</Fragment>
 		)
 	}
-	<button class="wg_shellNav__theme" type="button">{copy_theme_label.system}</button>
+	<button class="wg_shellNav__theme" type="button" data-theme-toggle>{copy_theme_label.system}</button>
 </nav>
 
 <script>
-	import {startSectionSpy} from "@/component/widget/shell/_function/start-section-spy";
-	import {startThemeToggle} from "@/component/widget/shell/_function/start-theme-toggle";
+	import {reading_line_slack_px} from "@/component/widget/shell/_constant/reading-line";
+	import {copy_theme_label} from "@/constant/copy";
+	import {theme_mode, theme_order, theme_storage_key} from "@/constant/theme";
+	import {findHashTarget} from "@/util/dom/find-hash-target";
 
-	startThemeToggle();
-	startSectionSpy();
+	const themeButton = document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
+
+	/**
+	 * 지금 테마. 기억한 테마는 그리기 전에 wg-shell.astro 머리가 data-theme 으로 붙였다
+	 */
+	const readThemeMode = () =>
+		theme_order.find((mode) => mode === document.documentElement.getAttribute("data-theme")) ?? theme_mode.system;
+
+	if (themeButton) {
+		/**
+		 * 테마 단추. 누를 때마다 시스템 → 밝게 → 어둡게 차례로 바꾸고 고른 것을 기억한다
+		 */
+		const handleThemeClick = () => {
+			const next = theme_order[(theme_order.indexOf(readThemeMode()) + 1) % theme_order.length];
+
+			if (next === theme_mode.system) {
+				document.documentElement.removeAttribute("data-theme");
+			} else {
+				document.documentElement.setAttribute("data-theme", next);
+			}
+
+			themeButton.textContent = copy_theme_label[next];
+
+			try {
+				localStorage.setItem(theme_storage_key, next);
+			} catch {
+				// 저장이 막혀도 이번 방문에는 적용된 채로 둔다
+			}
+		};
+
+		themeButton.textContent = copy_theme_label[readThemeMode()];
+		themeButton.addEventListener("click", handleThemeClick);
+	}
+
+	// 목차의 절과 소제목, 그 링크가 가리키는 제목. 읽는 절의 소제목만 펼친다
+	const tocSections = [...document.querySelectorAll<HTMLAnchorElement>("[data-toc-link]")].flatMap((link) => {
+		const heading = findHashTarget(link.hash);
+		const item = link.parentElement;
+
+		if (!heading || !item) {
+			return [];
+		}
+
+		return [
+			{
+				heading,
+				link,
+				list: item.querySelector("[data-toc-sub]"),
+				subs: [...item.querySelectorAll<HTMLAnchorElement>("[data-toc-sub-link]")].flatMap((sub) => {
+					const subHeading = findHashTarget(sub.hash);
+
+					return subHeading ? [{heading: subHeading, link: sub}] : [];
+				}),
+			},
+		];
+	});
+	const firstSection = tocSections.at(0);
+
+	if (firstSection) {
+		/**
+		 * 읽는 선에 걸린 절과 소제목을 켠다. 읽는 선은 제목이 서는 높이 (--app-space-anchor) 라 목차로 옮긴 곳이 곧 켜진다.
+		 * 스크롤 이벤트는 브라우저가 그림마다 한 번만 보내므로 따로 줄이지 않는다
+		 */
+		const markActive = () => {
+			// scroll-margin-top 은 vh 를 px 로 푼 값으로 읽힌다
+			const line = Number.parseFloat(getComputedStyle(firstSection.heading).scrollMarginTop) + reading_line_slack_px;
+			const current =
+				tocSections.findLast((section) => section.heading.getBoundingClientRect().top <= line) ?? firstSection;
+			const sub = current.subs.findLast((item) => item.heading.getBoundingClientRect().top <= line);
+
+			for (const section of tocSections) {
+				section.link.classList.toggle("wg_shellNav__link--active", section === current);
+				section.list?.classList.toggle("wg_shellNav__sub--open", section === current);
+
+				for (const item of section.subs) {
+					item.link.classList.toggle("wg_shellNav__subLink--active", item === sub);
+				}
+			}
+		};
+
+		addEventListener("scroll", markActive, {passive: true});
+		addEventListener("resize", markActive);
+		markActive();
+	}
 </script>

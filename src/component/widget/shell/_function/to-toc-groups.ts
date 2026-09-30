@@ -6,7 +6,7 @@ import type {TocGroup, TocSection} from "@/component/widget/shell/_type/toc-grou
 /**
  * 목차 묶음. 절 (h2) 마다 그 밑의 소제목 (h3) 을 모으고, 가름이 달린 절에서 묶음을 끊는다.
  * 첫 절보다 앞에 온 소제목은 들 절이 없어 목차에 넣지 않는다.
- * 부르는 곳은 _wg-shell-nav.astro 하나지만 .astro 머리는 tsc 가 보지 않아 계산을 이 .ts 에 둔다
+ * 부르는 곳은 _wg-shell-nav.astro 하나다. 사이드바 파일이 길어 도메인 계산만 여기로 뺐고, 브라우저에서 도는 생명주기는 컴포넌트에 둔다
  */
 export const toTocGroups = (outline: DocOutline): TocGroup[] => {
 	const entries = outline.headings
