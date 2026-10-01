@@ -60,7 +60,7 @@ test("navigation shows every document group in reading order with default icons"
         ["Getting started", "Guide"],
     );
     assert.doesNotMatch(html, /<details\b/);
-    assert.equal([...html.matchAll(/<svg\b[^>]*class="wg_shellNav__docIcon"/g)].length, docs.length);
+    assert.equal([...html.matchAll(/<svg\b[^>]*class="wg_shellNav__docIcon\b/g)].length, docs.length);
     assert.equal([...html.matchAll(/href="\/"/g)].length, 1);
     assert.doesNotMatch(html, />Documents<|>Overview</);
     assert.ok(html.indexOf('href="/writing/"') < html.indexOf('href="/parts/"'));
@@ -85,7 +85,7 @@ test("frontmatter supports BOM, CRLF and a closing fence at EOF", async (t) => {
     assert.ok(api);
     assert.ok(empty);
     assert.match(api.html, /예:이것/);
-    assert.match(empty.html, /<h1[^>]*>Empty<\/h1>/);
+    assert.match(empty.html, /<h1[^>]*><span[^>]*>Empty<\/span><\/h1>/);
     assert.ok(docs.every((doc) => !doc.html.includes("wg_prose__eyebrow")));
 });
 
@@ -112,7 +112,10 @@ test("a plain root README renders at home and relative home links resolve from n
     t.after(() => rm(root, {recursive: true, force: true}));
     await mkdir(join(root, "guide"));
     await Promise.all([
-        writeFile(join(root, "readme.md"), "# My library\n\nWelcome home.\n\n## Start\n\n[Guide](guide/setup.md)\n\n```js\nconst ready = true;\n```\n"),
+        writeFile(
+            join(root, "readme.md"),
+            '<div align="center">\n\n<img src="/favicon.svg" width="96" height="96" alt="Library face">\n\n# My library\n\nWelcome home.\n\n</div>\n\n## Start\n\n[Guide](guide/setup.md)\n\n```js\nconst ready = true;\n```\n',
+        ),
         writeFile(join(root, "guide/setup.md"), "---\nname: Setup\nlabel: Setup\ngroup: Guide\n---\n\n[Home](../readme.md#start)\n\n## Details\n"),
     ]);
 
@@ -126,8 +129,10 @@ test("a plain root README renders at home and relative home links resolve from n
         docs.map((doc) => doc.id),
         ["guide/setup"],
     );
-    assert.match(html, /<h1[^>]*>My library<\/h1>/);
+    assert.match(html, /<h1[^>]*><span[^>]*>My library<\/span><\/h1>/);
     assert.match(html, /Welcome home\./);
+    assert.match(html, /<div align="center">/);
+    assert.match(html, /src="\/favicon\.svg" width="96" height="96"/);
     assert.match(html, /href="\/guide\/setup\/"/);
     assert.match(html, /href="#start" data-toc-link/);
     assert.match(html, /class="shiki/);
@@ -149,4 +154,20 @@ test("a missing README provides a creation hint without generated overview cards
     assert.equal(home, undefined);
     assert.match(html, /문서 폴더에 README\.md를 추가/);
     assert.doesNotMatch(html, /pg_home__card|>Overview<|>Documents</);
+});
+
+test("repository controls use the configured provider and never leak the template repository", () => {
+    const absent = renderToStaticMarkup(WgShellNav({site: siteConfigSchema.parse({}), docs: []}));
+
+    assert.doesNotMatch(absent, /aria-label="GitHub"|aria-label="GitLab"/);
+
+    for (const provider of ["github", "gitlab"]) {
+        const site = siteConfigSchema.parse({repository: {provider, url: `https://${provider}.com/example/docs`}});
+        const html = renderToStaticMarkup(WgShellNav({site, docs: []}));
+
+        assert.match(html, new RegExp(`href="https://${provider}\\.com/example/docs"`));
+        assert.match(html, new RegExp(`aria-label="${provider === "github" ? "GitHub" : "GitLab"}"`));
+    }
+
+    assert.equal(siteConfigSchema.safeParse({repository: {provider: "github", url: "javascript:alert(1)"}}).success, false);
 });

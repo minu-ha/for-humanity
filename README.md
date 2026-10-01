@@ -50,7 +50,8 @@ Cloudflare Pages can host the site on a `pages.dev` address without a custom dom
 ## Make it yours
 
 A document folder is enough to get started. Without a site configuration, the sidebar shows **for humanity**. The pixel face appears in the browser tab and follows the mouse on desktop.
-The folder's `README.md` becomes the home page at `/`, with no frontmatter required. Click the site name to return home. Edit [this site's README](templates/document/README.md) to change its home page.
+The folder's `README.md` becomes the home page at `/`, with no frontmatter required. Click the site name to return home.
+This repository generates [the documentation home](templates/document/README.md) from its root README.md. Edit the repository's root README.md, then run `pnpm sync:readme`; `pnpm dev` and `pnpm build` also sync it on startup.
 Set your own name in `for-humanity.config.mjs`:
 
 ```js
@@ -58,6 +59,7 @@ export default {
     title: "Project notes",
     description: "Decisions, working notes and the details behind them.",
     navigation: ["Getting started", "Guide", "Reference", "Examples"],
+    repository: {provider: "github", url: "https://github.com/you/your-project"},
 };
 ```
 

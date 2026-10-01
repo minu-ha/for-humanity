@@ -18,6 +18,12 @@
         margin: 0 0 var(--app-space-stack);
     }
 
+    & img {
+        max-width: 100%;
+        height: auto;
+        vertical-align: middle;
+    }
+
     /* 제목 아래 첫 문단 · 소개 크기 */
     & h1 + p {
         font-size: var(--app-font-size-lead);
@@ -215,6 +221,39 @@
     & > :last-child {
         margin-bottom: 0;
     }
+
+    /* stylelint-disable selector-disallowed-list -- README의 가운데 정렬 HTML 소개 */
+    & [align="center"] {
+        padding: var(--app-space-group) 0;
+        text-align: center;
+    }
+
+    & [align="center"] > h1 {
+        margin-block: var(--app-space-group);
+        font-size: clamp(28px, 3vw, 36px);
+    }
+
+    & [align="center"] > p {
+        margin-bottom: var(--app-space-block);
+    }
+
+    & [align="center"] > img {
+        image-rendering: pixelated;
+    }
+    /* stylelint-enable selector-disallowed-list */
+}
+
+/* 제목 글자만 강조 · 여러 줄에서도 각 줄을 칠하고 문서 배치는 유지 */
+.wg_prose__headingText {
+    box-decoration-break: clone;
+
+    /* 줄바꿈된 글자 뒤의 바탕은 opacity 레이어로 분리할 수 없어 배경색만 전환 */
+    transition: background-color var(--app-motion-duration-highlight-fade) var(--app-motion-easing-out);
+}
+
+.wg_prose__headingText--highlighted {
+    background-color: var(--app-color-anchor-highlight);
+    transition: none;
 }
 
 /* ::part 가름의 공통 표현 */

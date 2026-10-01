@@ -53,6 +53,8 @@ README가 없으면 추가 안내를 표시. 사이드바의 사이트 이름을
 
 하위 폴더의 README는 일반 문서로 처리하며 frontmatter 필수.
 홈 템플릿을 선택하는 별도 설정은 아직 없음.
+이 저장소 자체의 문서 홈은 최상위 README와 동기화. 최상위 `README.md` 수정 후 `pnpm sync:readme` 실행.
+저장소의 `pnpm dev`·`pnpm build`도 시작할 때 동기화하며, 패키지를 쓰는 다른 프로젝트의 README에는 관여하지 않음.
 
 ## Frontmatter
 
@@ -108,6 +110,9 @@ YAML 영역은 `remark-frontmatter`, 값은 `yaml`, 필드 검증은 Zod로 처�
 상대 Markdown 링크 → 사이트 문서 URL. GitHub에서도 같은 파일로 이동.
 루트 README 링크는 `/`로 변환. 하위 문서의 `../README.md#start`도 `/#start`로 변환.
 외부 URL, 절대 URL, 같은 문서의 hash는 원문 유지.
+앵커로 이동한 제목은 약 3초 동안 형광색으로 강조한 뒤 서서히 해제.
+같은 앵커를 다시 누르면 강조 시간을 다시 시작. 접힌 Details의 제목도 펼친 뒤 표시.
+움직임 감소 설정에서는 전환 효과 없이 강조만 표시·해제.
 
 ::part[Content]
 

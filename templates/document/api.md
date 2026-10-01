@@ -54,12 +54,14 @@ pnpm exec for-humanity preview docs
 | `title`       | string                             | `for humanity`            |
 | `description` | string · HTML 설명 메타데이터        | 생략                      |
 | `navigation`  | 중복 없는 비어 있지 않은 string 배열 | 묶음 이름순              |
+| `repository`  | `{provider, url}`                  | 하단 링크 생략            |
 | `status`      | 상태 문구 객체 배열                | 기본 상태 문구            |
 
 `navigation: []`도 허용. 지정하지 않은 묶음은 마지막에서 이름순 배치.
 상태 객체: `phrase`는 빈칸만 있지 않은 string, `kind`는 `verified` 또는 `unverified`, `date`는 선택 boolean.
 `status`를 지정하면 기본 목록 전체 교체. `status: []`는 상태 표지 비활성.
 설정 검증은 시작 시 수행. 변경한 설정을 반영하려면 서버 재시작.
+`repository.provider`: `github` 또는 `gitlab`. `repository.url`: `http`·`https` URL.
 
 ## Frontmatter
 

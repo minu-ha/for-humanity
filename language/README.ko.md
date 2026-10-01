@@ -51,7 +51,8 @@ Cloudflare Pages는 도메인 구매 없이 `pages.dev` 주소로 배포 가능.
 
 문서 폴더로 시작. 사이트 설정을 생략하면 사이드바에 **for humanity**. 픽셀 얼굴은 탭 아이콘과 데스크톱 마우스 옆의 장식으로 표시.
 문서 폴더의 `README.md`는 홈(`/`)으로 표시하며 frontmatter 불필요. 사이트 이름을 누르면 홈으로 이동.
-이 사이트의 홈 내용은 [문서 폴더 README](../templates/document/README.md)에서 수정.
+이 사이트의 홈은 [최상위 README](../README.md)와 동기화. 원본 수정 후 `pnpm sync:readme` 실행.
+`pnpm dev`와 `pnpm build`도 시작할 때 [문서 폴더 README](../templates/document/README.md)를 동기화.
 `for-humanity.config.mjs`의 `title`로 자신의 사이트 이름 지정.
 
 ```js
@@ -59,6 +60,7 @@ export default {
     title: "Project notes",
     description: "결정·작업 기록·구현의 근거를 담는 문서.",
     navigation: ["Getting started", "Guide", "Reference", "Examples"],
+    repository: {provider: "github", url: "https://github.com/you/your-project"},
 };
 ```
 

@@ -21,6 +21,13 @@
     /* 장식 아이콘 · 링크 이름보다 옅은 색 */
     --app-color-icon: light-dark(#999, #888);
 
+    /* 앵커로 도착한 제목 · 형광펜 바탕과 테마별 읽기 대비 */
+    --app-color-anchor-highlight: light-dark(#f4f58a, #666322);
+
+    /* 제목 강조 해제 · 움직임 감소는 base.css에서 일괄 차단 */
+    --app-motion-duration-highlight-fade: 600ms;
+    --app-motion-easing-out: ease-out;
+
     /* 선 · border 상자·목록, soft 표 구분 */
     --app-color-border: light-dark(#aaa, #555);
     --app-color-border-soft: light-dark(#ddd, #333);

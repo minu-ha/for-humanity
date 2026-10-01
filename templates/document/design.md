@@ -21,6 +21,7 @@ order: 20
 - Brand: 기본 이름 `for humanity` · 사이드바는 텍스트 · 이름은 `title` 설정
 - 커서 장식: 24px 픽셀 얼굴 · 기본 커서에서 16px 간격 · 클릭·드래그·문서 이동에서도 표시 유지
 - 문서 탐색: 목적별 묶음 · 읽는 순서 · 모든 문서 표시 · 16px 격자에 맞춘 옅은 아웃라인 얼굴 표지
+- 홈 소개: README의 얼굴·슬로건·배지·바로가기 · 가운데 정렬
 
 ::part[Tokens]
 
@@ -55,6 +56,7 @@ order: 20
 | `text-strong`             | 제목·굵은 글·현재 section              |
 | `text-muted`              | 라벨·번호                    |
 | `icon`                    | 장식 문서 아이콘 · 라벨보다 옅은 색     |
+| `anchor-highlight`        | 앵커로 도착한 제목의 형광펜 바탕       |
 | `border` / `border-soft`  | 상자·목록·점선 / 표 구분선             |
 | `accent` / `accent-soft`  | 번호·현재 section·코드 / 행 hover 바탕 |
 | `link`                    | 본문·탐색 링크·포커스                  |
@@ -134,6 +136,9 @@ Shiki는 기존 역할색 참조: 키워드 strong, 함수 accent, 문자열 ver
 - Theme: System 모니터 · Light 해 · Dark 달 · 현재 모드의 tooltip·접근 가능한 이름
 - focus-visible: 모든 상호작용 요소에 공통 outline
 - 현재 문서·section: accent 선 · strong 글
+- 문서 아이콘: 기본은 옅은 색 · 선택은 strong · hover·키보드 포커스는 링크 강조색
+- 하단 도구: 테마 버튼 · 선택한 GitHub/GitLab 저장소 링크
+- 앵커 제목: 3초 강조 후 600ms 해제 · 여러 줄의 글자 배경만 칠하고 배치 유지
 - Note: 보충 설명의 제목·왼쪽 선 · 기본 본문 토큰
 - Details: native marker·파란 제목·얇은 점선 · 접힌 본문의 hash 이동 시 공개
 - 도메인 상태: `--active`, `--open` 수정자

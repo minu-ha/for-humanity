@@ -45,7 +45,7 @@ for humanity의 CLI는 빌드할 때만 Node.js에서 실행. 배포 후에는 �
 2. GitHub 계정 연결 후 이 저장소 선택
 3. 위 빌드 설정 입력
 4. `Save and Deploy`로 첫 배포 실행
-5. 생성된 `<project>.pages.dev` 주소에서 Overview와 각 문서 직접 접속 확인
+5. 생성된 `<project>.pages.dev` 주소에서 README 홈과 각 문서 직접 접속 확인
 
 프로젝트 이름으로 기본 주소 생성. 사용할 수 있는 이름은 생성 시 결정.
 연결 후 `main`에 push하면 문서를 다시 빌드해 배포 · [Git integration](https://developers.cloudflare.com/pages/get-started/git-integration/).
@@ -84,7 +84,7 @@ CLI 설치는 [Commands](commands.md#use-in-another-project).
   Cache-Control: public, max-age=31536000, immutable
 ```
 
-없는 문서가 Overview로 보이지 않도록 `docs/dist/404.html`도 배포 결과에 포함.
+없는 문서가 README 홈으로 보이지 않도록 `docs/dist/404.html`도 배포 결과에 포함.
 두 파일은 빌드가 지우는 `dist` 밖에 보관하고, 자신의 배포 명령에서 빌드 후 복사.
 
 ## Other hosts

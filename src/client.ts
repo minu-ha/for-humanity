@@ -3,6 +3,7 @@
  * 서버 HTML의 data-* 연결 · React hydration 없음
  */
 
+import {heading_highlight_hold_ms} from "@/component/widget/prose/_constant/heading-highlight";
 import {cursor_face_offset_px, cursor_face_storage_key} from "@/component/widget/shell/_constant/cursor-face";
 import {reading_line_slack_px} from "@/component/widget/shell/_constant/reading-line";
 import {setThemeButton} from "@/component/widget/shell/_function/set-theme-button";
@@ -177,12 +178,77 @@ if (themeButton) {
 
 const hashTarget = revealHashTarget(location.hash);
 
+// 값 조립이 아닌 현재 강조의 수명 상태 · 새 이동은 이전 타이머를 취소
+let highlightedHeading: HTMLElement | null = null;
+let highlightTimer = 0;
+let highlightScroll: AbortController | null = null;
+
+/**
+ * 강조 해제와 도착 감시 정리 · 다음 앵커의 오래된 타이머 개입 방지
+ */
+const clearHeadingHighlight = () => {
+    clearTimeout(highlightTimer);
+    highlightScroll?.abort();
+    highlightScroll = null;
+    highlightedHeading?.classList.remove("wg_prose__headingText--highlighted");
+    highlightedHeading = null;
+};
+
+/**
+ * 도착한 제목만 잠시 강조 · 같은 대상 재클릭도 유지 시간 재시작
+ */
+const highlightHeading = (target: HTMLElement | null) => {
+    clearHeadingHighlight();
+    highlightedHeading = target === null ? null : target.querySelector<HTMLElement>(".wg_prose__headingText");
+
+    if (highlightedHeading === null) {
+        return;
+    }
+
+    highlightedHeading.classList.add("wg_prose__headingText--highlighted");
+    highlightTimer = window.setTimeout(clearHeadingHighlight, heading_highlight_hold_ms);
+    highlightScroll = new AbortController();
+
+    // 부드러운 스크롤이 끝난 뒤에도 3초 확보 · 움직이지 않거나 scrollend가 없으면 위 타이머 사용
+    document.addEventListener("scrollend", handleHighlightArrival, {signal: highlightScroll.signal});
+};
+
+/**
+ * 본문 스크롤의 첫 도착에서 유지 시간 갱신 · 사이드바 스크롤은 제외
+ */
+const handleHighlightArrival = (event: Event) => {
+    if (event.target !== document) {
+        return;
+    }
+
+    clearTimeout(highlightTimer);
+    highlightScroll?.abort();
+    highlightScroll = null;
+    highlightTimer = window.setTimeout(clearHeadingHighlight, heading_highlight_hold_ms);
+};
+
 /**
  * 같은 hash를 다시 눌러도 접힌 대상 공개 · 기본 링크 이동 유지
  */
-const handleHashClick: EventListener = (event) => {
-    if (event.currentTarget instanceof HTMLAnchorElement) {
-        revealHashTarget(event.currentTarget.hash);
+const handleHashClick = (event: MouseEvent) => {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+        return;
+    }
+
+    if (
+        event.currentTarget instanceof HTMLAnchorElement &&
+        (event.currentTarget.target === "" || event.currentTarget.target === "_self") &&
+        !event.currentTarget.hasAttribute("download") &&
+        event.currentTarget.origin === location.origin &&
+        event.currentTarget.pathname === location.pathname &&
+        event.currentTarget.search === location.search &&
+        event.currentTarget.hash
+    ) {
+        const target = revealHashTarget(event.currentTarget.hash);
+
+        if (event.currentTarget.hash === location.hash) {
+            highlightHeading(target);
+        }
     }
 };
 
@@ -190,10 +256,13 @@ const handleHashClick: EventListener = (event) => {
  * hash 변경의 숨은 대상 공개와 위치 보정
  */
 const handleHashChange = () => {
-    revealHashTarget(location.hash)?.scrollIntoView();
+    const target = revealHashTarget(location.hash);
+
+    target?.scrollIntoView();
+    highlightHeading(target);
 };
 
-for (const link of document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')) {
+for (const link of document.querySelectorAll<HTMLAnchorElement>("a[href]")) {
     link.addEventListener("click", handleHashClick);
 }
 
@@ -265,6 +334,7 @@ const settleHashScroll = async () => {
 
     if (hashTarget && !userScroll.signal.aborted) {
         hashTarget.scrollIntoView({behavior: "instant"});
+        highlightHeading(hashTarget);
     }
 
     document.documentElement.style.removeProperty("scroll-behavior");

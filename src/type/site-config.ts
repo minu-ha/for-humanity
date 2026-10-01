@@ -1,6 +1,6 @@
 import {z} from "zod";
 import {copy_error_navigation_clash, copy_site_title_default} from "@/constant/copy";
-import {site_navigation_default} from "@/constant/site";
+import {site_navigation_default, site_repository_provider} from "@/constant/site";
 import {status_default_phrases, status_kind} from "@/constant/status";
 
 /**
@@ -16,6 +16,21 @@ export const siteConfigSchema = z.object({
      * HTML 설명 메타데이터 · 선택
      */
     description: z.string().optional(),
+    /**
+     * 사이드바 하단의 저장소 링크 · 생략하면 아이콘 숨김
+     */
+    repository: z
+        .object({
+            /**
+             * 표시할 서비스 아이콘
+             */
+            provider: z.enum(site_repository_provider),
+            /**
+             * 웹으로 방문할 저장소 또는 프로필 URL
+             */
+            url: z.url({protocol: /^https?$/}),
+        })
+        .optional(),
     /**
      * 탐색 묶음의 읽는 순서 · 미지정 묶음은 뒤에서 이름순
      */

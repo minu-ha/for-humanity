@@ -24,6 +24,8 @@ export const rehypeHeadingIds = () => (tree: Root, file: VFile) => {
 
         node.properties.id = typeof node.properties.id === "string" ? node.properties.id : slugger.slug(text);
         headings.push({depth: Number(depth), slug: node.properties.id, text});
+        // 텍스트 노드에는 className을 줄 수 없어 강조 영역을 분리 · 번호와 제목의 기존 줄바꿈 유지
+        node.children = [{type: "element", tagName: "span", properties: {className: ["wg_prose__headingText"]}, children: node.children}];
     });
 
     if (file.data.fh) {
