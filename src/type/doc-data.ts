@@ -2,7 +2,7 @@ import {z} from "zod";
 import {doc_type} from "@/constant/doc";
 
 /**
- * 문서 머리말 스키마 · 검증 실패 시 빌드 중단
+ * 문서 frontmatter 스키마 · 검증 실패 시 빌드 중단
  */
 export const docDataSchema = z.object({
     /**
@@ -10,7 +10,7 @@ export const docDataSchema = z.object({
      */
     name: z.string().trim().min(1),
     /**
-     * 한글 이름 · 카드 설명과 사이드바 툴팁
+     * 짧은 문서 설명 · 카드와 사이드바 툴팁
      */
     label: z.string(),
     /**
@@ -24,6 +24,6 @@ export const docDataSchema = z.object({
 });
 
 /**
- * 기본값을 적용한 문서 머리말
+ * 기본값을 적용한 문서 frontmatter
  */
 export type DocData = z.infer<typeof docDataSchema>;

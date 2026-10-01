@@ -10,17 +10,17 @@ export const copy_site_title_default = "Documents";
 /**
  * 사이드바의 접근 가능한 이름
  */
-export const copy_nav_aria_label = "목차";
+export const copy_nav_aria_label = "Document navigation";
 
 /**
  * 문서 목록 라벨
  */
-export const copy_nav_docs_label = "문서";
+export const copy_nav_docs_label = "Documents";
 
 /**
  * 현재 문서 목차 라벨
  */
-export const copy_nav_toc_label = "목차";
+export const copy_nav_toc_label = "Contents";
 
 /**
  * 첫 화면 영어 이름 · 목록·제목·머리 라벨
@@ -28,9 +28,9 @@ export const copy_nav_toc_label = "목차";
 export const copy_overview_name = "Overview";
 
 /**
- * 첫 화면 한글 툴팁
+ * 첫 화면 툴팁 · 목록 이름과 동일
  */
-export const copy_overview_label = "한눈에";
+export const copy_overview_label = copy_overview_name;
 
 /**
  * 첫 화면의 목록 표지 · 문서는 영어 이름 첫 글자
@@ -38,12 +38,12 @@ export const copy_overview_label = "한눈에";
 export const copy_overview_mark = "·";
 
 /**
- * 테마 버튼 문구 · 시스템 → 밝게 → 어둡게
+ * 테마 버튼 문구 · System → Light → Dark
  */
 export const copy_theme_label = {
-    system: "테마 · 시스템",
-    light: "테마 · 밝게",
-    dark: "테마 · 어둡게",
+    system: "Theme · System",
+    light: "Theme · Light",
+    dark: "Theme · Dark",
 } as const;
 
 /**
@@ -62,9 +62,9 @@ export const copy_error_unknown_command = "모르는 명령이다";
 export const copy_error_config = "설정이 틀렸다";
 
 /**
- * 문서 머리말 오류 · 파일과 항목 추가
+ * 문서 frontmatter 오류 · 파일과 항목 추가
  */
-export const copy_error_frontmatter = "머리말이 틀렸다";
+export const copy_error_frontmatter = "frontmatter가 올바르지 않다";
 
 /**
  * 문서 이름의 첫 글자 표지 중복
@@ -99,4 +99,4 @@ export const copy_warn_broken_link = "없는 문서로 건 링크다";
 /**
  * 미등록 날짜 상태 문구 경고
  */
-export const copy_warn_unknown_status = "설정에 없는 알약 문구다";
+export const copy_warn_unknown_status = "설정에 없는 상태 문구다";

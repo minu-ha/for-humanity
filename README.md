@@ -4,27 +4,27 @@
 
 # for-humanity
 
-**사람이 읽는 문서를 위한 Markdown 킷**
+**사람이 읽는 문서를 위한 Markdown 문서 도구**
 
-문서 폴더 하나. 사이드바, 절 번호, 흐름도까지.
+문서 폴더 하나. 사이드바, 자동 번호, 흐름도까지.
 
 [![MIT](https://img.shields.io/badge/license-MIT-2e3f5e)](LICENSE)
 ![Node 22+](https://img.shields.io/badge/node-22%2B-2e3f5e)
 ![Hono · React](https://img.shields.io/badge/Hono-%C2%B7%20React-2e3f5e)
 ![Prototype](https://img.shields.io/badge/status-prototype-9a6400)
 
-[시작하기](templates/document/commands.md) · [문서 작성](templates/document/writing.md) · [설정](templates/document/settings.md) · [기여](templates/document/maintenance.md)
+[Getting started](templates/document/commands.md) · [Writing](templates/document/writing.md) · [Settings](templates/document/settings.md) · [Contributing](templates/document/maintenance.md)
 
 <br>
 
 <picture>
     <source media="(prefers-color-scheme: dark)" srcset=".github/readme/commands-dark.png">
-    <img src=".github/readme/commands-light.png" width="100%" alt="for-humanity 문서 화면. 사이드바, 절 번호, 표와 흐름도">
+    <img src=".github/readme/commands-light.png" width="100%" alt="for-humanity 문서 화면. 사이드바, 자동 번호, 표와 흐름도">
 </picture>
 
 </div>
 
-## Quick Start
+## Quick start
 
 ```sh
 pnpm install
@@ -35,10 +35,10 @@ pnpm dev
 
 ## Features
 
-- **읽는 흐름** — 문서 목록, 가름별 목차, 자동 절 번호, 현재 위치 표시
-- **Markdown 그대로** — 코드 강조, 흐름도, 상태 표지, 색 칩
-- **가벼운 결과물** — 정적 HTML, 작은 브라우저 스크립트, 자체 호스팅 글꼴
-- **세 가지 테마** — 시스템, 밝게, 어둡게
+- **Navigation** — 문서 목록, part별 TOC, 자동 section 번호, 현재 위치 표시
+- **Markdown** — 코드 강조, 흐름도, status badge, swatch
+- **Static output** — 정적 HTML, 작은 브라우저 스크립트, 자체 호스팅 폰트
+- **Themes** — System, Light, Dark
 
 ## Documentation
 
