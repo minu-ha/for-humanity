@@ -3,7 +3,7 @@
  */
 export interface SiteAssets {
     /**
-     * @font-face와 --app-font-face-* · head의 style 내용
+     * 내장 @font-face · head의 style 내용
      */
     fontCss: string;
     /**

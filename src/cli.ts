@@ -17,7 +17,7 @@ import {createApp} from "@/app";
 import {asset_client_path, asset_favicon_path, asset_font_dir, asset_style_path} from "@/constant/asset";
 import {cli_config_file_name, cli_default_command, cli_default_docs_dir, cli_dev_port} from "@/constant/cli";
 import {copy_error_config, copy_error_prefix, copy_error_unknown_command} from "@/constant/copy";
-import {font_css_variable_mono, font_css_variable_sans, font_mono_css, font_mono_family, font_sans_css, font_sans_fallbacks, font_sans_family} from "@/constant/font";
+import {font_mono_css, font_sans_css} from "@/constant/font";
 import {site_config_absent} from "@/constant/site";
 import {createProcessor} from "@/content/create-processor";
 import {readDocs} from "@/content/read-docs";
@@ -59,14 +59,10 @@ const main = async () => {
     }
 
     const siteConfig = parsedConfig.data;
-    // 내장 글꼴 CSS와 파일 수집 · token.css의 font-face 변수 연결
+    // 내장 @font-face와 파일 수집 · font-family는 token.css 소유
     const sans = toFontCss({css: join(kitRoot, font_sans_css), fontDir: asset_font_dir});
     const mono = toFontCss({css: join(kitRoot, font_mono_css), fontDir: asset_font_dir});
-    const fontCss = [
-        sans.css,
-        mono.css,
-        `:root{${font_css_variable_sans}:${[font_sans_family, ...font_sans_fallbacks].map((family) => JSON.stringify(family)).join(",")};${font_css_variable_mono}:${JSON.stringify(font_mono_family)}}`,
-    ].join("\n");
+    const fontCss = [sans.css, mono.css].join("\n");
     const files = new Map([
         [asset_style_path, join(kitRoot, "dist/cli.css")],
         [asset_client_path, join(kitRoot, "dist/client.js")],

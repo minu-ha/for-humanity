@@ -4,6 +4,7 @@ import {toTocGroups} from "@/component/widget/shell/_function/to-toc-groups";
 import type {DocOutline} from "@/component/widget/shell/_type/doc-outline";
 import {copy_nav_aria_label, copy_nav_docs_label, copy_nav_toc_label, copy_overview_label, copy_overview_mark, copy_overview_name, copy_theme_label} from "@/constant/copy";
 import {locale_doc_name} from "@/constant/locale";
+import {theme_mode} from "@/constant/theme";
 import type {Doc} from "@/type/doc";
 import type {SiteConfig} from "@/type/site-config";
 import "./_wg-shell-nav.css";
@@ -111,8 +112,30 @@ export const WgShellNav = (props: WgShellNavProps) => {
                     ))}
                 </Fragment>
             )}
-            <button className={clsx("wg_shellNav__theme")} type="button" data-theme-toggle="">
-                {copy_theme_label.system}
+            <button className={clsx("wg_shellNav__theme")} type="button" aria-label={copy_theme_label.system} title={copy_theme_label.system} data-theme-toggle="">
+                <svg
+                    className={clsx("wg_shellNav__themeIcon")}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                    focusable="false"
+                >
+                    <g className={clsx("wg_shellNav__themeSymbol", "wg_shellNav__themeSymbol--active")} data-theme-icon={theme_mode.system}>
+                        <rect x="3" y="4" width="18" height="12" rx="1" />
+                        <path d="M12 16V20M8 20H16" />
+                    </g>
+                    <g className={clsx("wg_shellNav__themeSymbol")} data-theme-icon={theme_mode.light}>
+                        <circle cx="12" cy="12" r="4" />
+                        <path d="M12 2V4M12 20V22M2 12H4M20 12H22M5 5L6.5 6.5M17.5 17.5L19 19M5 19L6.5 17.5M17.5 6.5L19 5" />
+                    </g>
+                    <g className={clsx("wg_shellNav__themeSymbol")} data-theme-icon={theme_mode.dark}>
+                        <path d="M21 12.8A9 9 0 1 1 11.2 3A7 7 0 0 0 21 12.8Z" />
+                    </g>
+                </svg>
             </button>
         </nav>
     );

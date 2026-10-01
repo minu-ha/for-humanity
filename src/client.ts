@@ -4,7 +4,7 @@
  */
 
 import {reading_line_slack_px} from "@/component/widget/shell/_constant/reading-line";
-import {copy_theme_label} from "@/constant/copy";
+import {setThemeButton} from "@/component/widget/shell/_function/set-theme-button";
 import {theme_mode, theme_order, theme_storage_key} from "@/constant/theme";
 import {findHashTarget} from "@/util/dom/find-hash-target";
 
@@ -30,7 +30,7 @@ if (themeButton) {
             document.documentElement.setAttribute("data-theme", next);
         }
 
-        themeButton.textContent = copy_theme_label[next];
+        setThemeButton(themeButton, next);
 
         try {
             localStorage.setItem(theme_storage_key, next);
@@ -39,7 +39,7 @@ if (themeButton) {
         }
     };
 
-    themeButton.textContent = copy_theme_label[readThemeMode()];
+    setThemeButton(themeButton, readThemeMode());
     themeButton.addEventListener("click", handleThemeClick);
 }
 

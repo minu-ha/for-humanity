@@ -58,7 +58,7 @@ export default {
 
 테마는 읽는 사람의 선택. System → Light → Dark 순환, 브라우저에 저장.
 
-- 본문: Pretendard Variable
-- 코드·section 번호·라벨·흐름도: JetBrains Mono Variable
+- 본문·라벨: Pretendard Variable
+- 코드·section 번호·흐름도: JetBrains Mono Variable
 - 폰트 파일: 빌드 결과 포함 · CDN 요청 없음
 - 색과 간격: `src/style/token.css` · [Design](design.md)

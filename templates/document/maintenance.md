@@ -5,7 +5,7 @@ group: Development
 ---
 
 코드 변경, 컨벤션, 검증, 패키지 배포 기준.
-엔진은 [Architecture](architecture.md), 표현 기준은 [Design](design.md).
+엔진은 [Architecture](architecture.md), 표현 기준은 [Design](design.md), 다음 작업은 [Roadmap](roadmap.md).
 
 ## Overview
 
@@ -77,8 +77,5 @@ pnpm pack
 
 ## Roadmap
 
-- `blueprint` 전용 문서 표현
-- `for-humanity init`
-- 검색
-- 문서 작성용 에이전트 스킬
-- 하위 URL 경로 배포 설정
+진행 순서, 단계별 산출물과 완료 기준은 [Roadmap](roadmap.md).
+다음 작업은 실제 샘플을 기준으로 부품과 작성 문법 정의.

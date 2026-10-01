@@ -9,74 +9,80 @@
     color-scheme: light dark;
 
     /* 바탕 · ground 페이지, surface 상자, code 코드 */
-    --app-color-ground: light-dark(#f7f8fa, #13171d);
-    --app-color-surface: light-dark(#fff, #191e25);
-    --app-color-code: light-dark(#f2f4f7, #10141a);
+    --app-color-ground: light-dark(#fff, #181818);
+    --app-color-surface: light-dark(#fff, #181818);
+    --app-color-code: light-dark(#f1f1eb, #22221f);
 
     /* 글 · text 본문, strong 강조, muted 라벨 */
-    --app-color-text: light-dark(#414a56, #c2cad6);
-    --app-color-text-strong: light-dark(#1b2027, #eef1f6);
-    --app-color-text-muted: light-dark(#646e7b, #8892a1);
+    --app-color-text: light-dark(#333, #d5d5d5);
+    --app-color-text-strong: light-dark(#222, #eee);
+    --app-color-text-muted: light-dark(#666, #aaa);
 
     /* 선 · border 상자·목록, soft 표 구분 */
-    --app-color-border: light-dark(#dfe3e9, #2b323d);
-    --app-color-border-soft: light-dark(#eceff3, #232932);
+    --app-color-border: light-dark(#aaa, #555);
+    --app-color-border-soft: light-dark(#ddd, #333);
 
-    /* 강조 · 링크·번호·현재 절·포커스 · soft 강조 바탕 */
-    --app-color-accent: light-dark(#2e3f5e, #93a9d4);
-    --app-color-accent-soft: light-dark(#eef1f7, #1d2634);
+    /* 강조 · 번호·현재 절·코드 · soft 행 hover 바탕 */
+    --app-color-accent: light-dark(#555, #b5b5b5);
+    --app-color-accent-soft: light-dark(#f5f5f2, #222);
+
+    /* 링크 · 기본·방문·hover */
+    --app-color-link: light-dark(#11a, #9db8ff);
+    --app-color-link-visited: light-dark(#51a, #c5a5ed);
+    --app-color-link-hover: light-dark(#44d, #c1d1ff);
 
     /* 상태 표지 · verified 초록, unverified amber */
-    --app-color-verified: light-dark(#157e44, #5cc183);
-    --app-color-verified-soft: light-dark(#e9f4ed, #17281e);
-    --app-color-unverified: light-dark(#9a6400, #d8a54a);
-    --app-color-unverified-soft: light-dark(#fdf4e3, #2a2317);
+    --app-color-verified: light-dark(#176b36, #82cf95);
+    --app-color-verified-soft: light-dark(#edf5ed, #1d2c20);
+    --app-color-unverified: light-dark(#855700, #dfb26c);
+    --app-color-unverified-soft: light-dark(#faf2df, #30291c);
 
     /*
-     * 내장 글꼴 · CLI의 --app-font-face-* 연결
-     * 본문 Pretendard · 코드·라벨·흐름도 JetBrains Mono · 한글 fallback
+     * 내장 글꼴 · CLI는 @font-face와 자원 URL 생성
+     * 본문·라벨 Pretendard · 코드·번호·흐름도 JetBrains Mono · 한글 fallback
      * 영문 폭 0.6em = 흐름도 12px 격자의 7.2px
      */
-    --app-font-sans: var(--app-font-face-sans);
-    --app-font-mono: var(--app-font-face-mono), var(--app-font-face-sans);
+    --app-font-sans: "Pretendard Variable", system-ui, "Apple SD Gothic Neo", sans-serif;
+    --app-font-mono: "JetBrains Mono Variable", var(--app-font-sans);
 
     /* 글자 크기 · 역할별 9단계 */
-    --app-font-size-label: 10.5px;
-    --app-font-size-mark: 11px;
+    --app-font-size-label: 12px;
+    --app-font-size-mark: 12px;
     --app-font-size-detail: 12.5px;
     --app-font-size-dense: 13.5px;
     --app-font-size-body: 15px;
-    --app-font-size-lead: 16.5px;
-    --app-font-size-part: 19px;
-    --app-font-size-section: 23px;
-    --app-font-size-title: clamp(30px, 3.4vw, 42px);
+    --app-font-size-lead: 15px;
+    --app-font-size-part: 15px;
+    --app-font-size-section: 19px;
+    --app-font-size-title: clamp(24px, 2.4vw, 28px);
 
     /* 굵기 · 본문 기본 400 */
-    --app-font-weight-mark: 500;
+    --app-font-weight-mark: 400;
     --app-font-weight-strong: 600;
-    --app-font-weight-title: 700;
+    --app-font-weight-title: 600;
 
     /* 행간 · 제목부터 본문 순 */
-    --app-line-height-title: 1.14;
-    --app-line-height-heading: 1.35;
+    --app-line-height-title: 1.3;
+    --app-line-height-heading: 1.4;
     --app-line-height-tight: 1.45;
-    --app-line-height-code: 1.7;
-    --app-line-height-body: 1.75;
+    --app-line-height-code: 1.65;
+    --app-line-height-body: 1.65;
 
-    /* 자간 · 모노 라벨 확대, 큰 제목 축소 */
-    --app-letter-spacing-label: 0.08em;
-    --app-letter-spacing-brand: 0.14em;
-    --app-letter-spacing-heading: -0.01em;
-    --app-letter-spacing-title: -0.02em;
+    /* 자간 · 글꼴 기본 리듬 */
+    --app-letter-spacing-label: 0;
+    --app-letter-spacing-brand: 0;
+    --app-letter-spacing-heading: 0;
+    --app-letter-spacing-title: 0;
 
-    /* 공통 간격 · 부품 내부 보정은 지역 값 */
+    /* 공통 간격 · margin·padding·gap의 리듬 · 단독 보정은 지역 값 */
     --app-space-inline: 8px;
     --app-space-stack: 12px;
     --app-space-block: 16px;
-    --app-space-section: 56px;
+    --app-space-group: 24px;
+    --app-space-section: 40px;
 
     /* 페이지 틀 · 좁은 화면 값은 아래 @media */
-    --app-space-page-top: 44px;
+    --app-space-page-top: 32px;
     --app-space-gutter: 32px;
     --app-space-column: 56px;
     --app-size-sidebar: 264px;
@@ -85,15 +91,15 @@
     /* hash 제목 위치와 목차 읽는 선의 공통 기준 */
     --app-space-anchor: 40vh;
 
-    /* 모서리 · 역할별 5단계 */
-    --app-radius-pill: 999px;
-    --app-radius-card: 8px;
-    --app-radius-box: 6px;
-    --app-radius-inline: 3px;
-    --app-radius-mark: 2px;
+    /* 모서리 · 직각 기본값 */
+    --app-radius-pill: 0;
+    --app-radius-card: 0;
+    --app-radius-box: 0;
+    --app-radius-inline: 0;
+    --app-radius-mark: 0;
 
     /* 키보드 포커스 표시 */
-    --app-outline-focus: 2px solid var(--app-color-accent);
+    --app-outline-focus: 2px solid var(--app-color-link);
     --app-outline-focus-offset: 2px;
 
     /*
@@ -110,7 +116,7 @@
     --app-code-token-parameter: var(--app-color-text);
     --app-code-token-comment: var(--app-color-text-muted);
     --app-code-token-punctuation: var(--app-color-text-muted);
-    --app-code-token-link: var(--app-color-accent);
+    --app-code-token-link: var(--app-color-link);
 }
 
 :root[data-theme="light"] {

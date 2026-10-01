@@ -6,8 +6,9 @@
     box-sizing: border-box;
 }
 
-/* 절 이동의 smooth scroll · 초기 위치 보정 중 일시 중지 */
+/* 페이지 바탕과 절 이동 · 초기 hash 보정 중 smooth scroll 일시 중지 */
 :root {
+    background: var(--app-color-ground);
     scroll-behavior: smooth;
 }
 

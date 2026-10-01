@@ -38,7 +38,7 @@ export const copy_overview_label = copy_overview_name;
 export const copy_overview_mark = "·";
 
 /**
- * 테마 버튼 문구 · System → Light → Dark
+ * 테마 버튼의 접근 가능한 이름·툴팁 · System → Light → Dark
  */
 export const copy_theme_label = {
     system: "Theme · System",
