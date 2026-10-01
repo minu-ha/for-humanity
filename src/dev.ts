@@ -4,6 +4,7 @@ import {extname} from "node:path";
 import {type Context, Hono} from "hono";
 import {streamSSE} from "hono/streaming";
 import {asset_content_type_default, asset_content_types, asset_dir, asset_favicon_path, asset_reload_path} from "@/constant/asset";
+import {font_cache_control} from "@/constant/font";
 
 /**
  * 개발 서버 입력 계약
@@ -41,6 +42,10 @@ export const createDevApp = (options: DevOptions) => {
         }
 
         c.header("content-type", asset_content_types[extname(file)] ?? asset_content_type_default);
+
+        if (extname(file) === ".woff2") {
+            c.header("Cache-Control", font_cache_control);
+        }
 
         return c.body(await readFile(file));
     };

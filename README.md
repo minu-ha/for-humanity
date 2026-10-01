@@ -15,13 +15,6 @@ Write Markdown. Keep the context. Share a static site.
 
 [Quick start](#quick-start) · [Writing](templates/document/writing.md) · [Parts](templates/document/parts.md) · [Roadmap](templates/document/roadmap.md) · [Korean](language/README.ko.md)
 
-<br>
-
-<picture>
-    <source media="(prefers-color-scheme: dark)" srcset=".github/readme/blueprint-dark.png">
-    <img src=".github/readme/blueprint-light.png" width="100%" alt="A document with a sidebar, numbered sections, a note and a flowchart">
-</picture>
-
 </div>
 
 ## A little structure. Room to read.
@@ -54,7 +47,7 @@ The package is a prototype. `init` and the first npm release are planned; see th
 
 ## Make it yours
 
-A document folder is enough to get started. Without a site configuration, the sidebar shows the pixel face and **for humanity**.
+A document folder is enough to get started. Without a site configuration, the sidebar shows **for humanity**. The pixel face appears in the browser tab and follows the mouse on desktop.
 Set your own name in `for-humanity.config.mjs`:
 
 ```js

@@ -15,13 +15,6 @@ Markdown으로 작성하고, 맥락을 남기고, 정적 사이트로 공유.
 
 [Quick start](#quick-start) · [Writing](../templates/document/writing.md) · [Parts](../templates/document/parts.md) · [Roadmap](../templates/document/roadmap.md) · [English](../README.md)
 
-<br>
-
-<picture>
-    <source media="(prefers-color-scheme: dark)" srcset="../.github/readme/blueprint-dark.png">
-    <img src="../.github/readme/blueprint-light.png" width="100%" alt="사이드바·자동 번호·Note·흐름도가 있는 문서 화면">
-</picture>
-
 </div>
 
 ## A little structure. Room to read.
@@ -54,7 +47,7 @@ pnpm preview    # 정적 사이트 미리보기
 
 ## Make it yours
 
-문서 폴더로 시작. 사이트 설정을 생략하면 사이드바에 픽셀 얼굴과 **for humanity**.
+문서 폴더로 시작. 사이트 설정을 생략하면 사이드바에 **for humanity**. 픽셀 얼굴은 탭 아이콘과 데스크톱 마우스 옆의 장식으로 표시.
 `for-humanity.config.mjs`의 `title`로 자신의 사이트 이름 지정.
 
 ```js

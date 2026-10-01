@@ -10,6 +10,7 @@ group: Development
 ## Overview
 
 ```sh
+pnpm test
 pnpm check
 pnpm build
 git diff --check
@@ -17,6 +18,7 @@ git diff --check
 
 | Command          | Scope                              |
 | ---------------- | ---------------------------------- |
+| `pnpm test`      | 글꼴 표시 정책 · 내용 지문 자원 URL |
 | `pnpm lint`      | Biome · Stylelint                  |
 | `pnpm typecheck` | TypeScript                         |
 | `pnpm build:kit` | 서버·브라우저 번들                 |
@@ -36,6 +38,7 @@ git diff --check
 - Classes: `scope_slug__element--modifier` · 조합은 `clsx`
 - Comments: 명사구 · 목적·계약·제약 · 구현 반복 설명 제거
 - Language: 제목·짧은 라벨은 영어 우선 · 본문·설명은 한국어 · [Writing](writing.md#language)
+- Commits: 영어 동사로 시작 · AI 도움을 받은 제목의 마지막은 ` | aa` · 저장소 루트 `AGENTS.md`·`CLAUDE.md`
 
 ### Lint coverage
 

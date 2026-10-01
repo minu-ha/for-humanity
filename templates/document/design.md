@@ -15,8 +15,9 @@ meepin·Pinboard의 텍스트 중심 구성. 흰 바탕, 진회색 글, 파란 �
 - 면의 구분: 가는 선 · 직각 모서리 · 그림자·그라데이션 없음
 - 페이지 폭과 사이드바 배치는 기존 기준 유지
 - 색의 선택: 역할별 토큰 · System·Light·Dark
-- favicon: 16×16 픽셀 얼굴 · 검은 점 눈·작은 미소 · 투명 배경 · 두 가지 색
-- Brand: 기본 이름 `for humanity` · 사이드바의 32px favicon · 이름은 `title` 설정
+- favicon: 여백을 줄인 픽셀 얼굴 · 검은 점 눈·작은 미소 · 투명 배경 · 두 가지 색
+- Brand: 기본 이름 `for humanity` · 사이드바는 텍스트 · 이름은 `title` 설정
+- 커서 장식: 24px 픽셀 얼굴 · 기본 커서에서 16px 간격 · 마우스 이동 시 표시
 
 ::part[Tokens]
 
@@ -83,8 +84,10 @@ Pretendard 본문·라벨, JetBrains Mono 코드·번호·흐름도. 내장 파�
 본문은 `15px`, h1은 `24–28px`. 라벨의 대문자 변환과 자간 확대 없음.
 Shiki는 기존 역할색 참조: 키워드 strong, 함수 accent, 문자열 verified, 숫자 unverified, 주석 muted, 링크 link.
 
-글꼴 이름과 fallback은 `token.css`에 정적 선언. CLI는 내장 `@font-face`와 자원 URL만 생성.
+글꼴 이름과 fallback은 `token.css`에 정적 선언. CLI는 내장 `@font-face`와 내용 지문이 붙은 자원 URL 생성.
 공통 폰트 토큰의 정의를 IDE에서도 같은 소스로 확인 가능.
+본문 공통 조각과 코드 글꼴은 선요청. `font-display: optional`로 늦게 받은 글꼴의 화면 중간 교체 방지.
+느린 첫 방문은 대체 글꼴로 읽고, 받은 파일은 다음 문서에서 재사용. dev·preview의 글꼴 응답은 장기 캐시.
 
 ::part[Layout]
 
@@ -106,7 +109,7 @@ Shiki는 기존 역할색 참조: 키워드 strong, 함수 accent, 문자열 ver
 한 소유자에만 필요한 간격·보정은 지역 값. 예: 목차 들여쓰기 14px·26px, 목록 행의 위·아래 5px.
 같은 숫자여도 아이콘 크기·글자 크기·페이지 폭은 간격과 별도 역할.
 모서리 토큰의 기본값은 `0`. 표·흐름도·첫 화면 목록은 바깥 상자 없이 표현.
-겹침 요소 추가 시 `z-index` 역할 토큰 먼저 정의. 현재 겹침 층 없음.
+겹침 요소 추가 시 `z-index` 역할 토큰 먼저 정의. 커서 장식은 `--app-z-index-popper` 층.
 
 ## Responsive layout
 
@@ -131,6 +134,7 @@ Shiki는 기존 역할색 참조: 키워드 strong, 함수 accent, 문자열 ver
 - 도메인 상태: `--active`, `--open` 수정자
 - DOM 상태: 기본 클래스 안의 pseudo-class
 - 움직임 감소: 전역 `prefers-reduced-motion`
+- 커서 장식: 클릭·텍스트 선택을 가리지 않음 · 드래그·키보드 입력·화면 이탈 시 숨김 · 터치와 움직임 감소 설정에서 비활성
 
 ::part[Review]
 

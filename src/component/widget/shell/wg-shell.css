@@ -28,6 +28,22 @@
     padding-block: var(--app-space-page-top) calc(100vh - var(--app-space-anchor));
 }
 
+.wg_shell__cursorFace {
+    /* 뷰포트 기준 · 본문 흐름과 포인터 입력에 참여하지 않는 장식 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: var(--app-z-index-popper);
+    visibility: hidden;
+    pointer-events: none;
+    user-select: none;
+    image-rendering: pixelated;
+}
+
+.wg_shell__cursorFace--visible {
+    visibility: visible;
+}
+
 /* 좁은 화면 · 사이드바 → 본문 순서의 1열 */
 @media (width < 1024px) {
     .wg_shell__root {

@@ -29,6 +29,7 @@
         "dev": "pnpm build:kit && node dist/cli.js dev templates/document",
         "build": "pnpm build:kit && node dist/cli.js build templates/document",
         "preview": "node dist/cli.js preview templates/document",
+        "test": "esbuild src/util/font/to-font-css.test.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/for-humanity-tests/to-font-css.test.mjs && node --test node_modules/.cache/for-humanity-tests/to-font-css.test.mjs",
         "lint": "biome check && stylelint \"src/**/*.css\"",
         "lint:fix": "biome check --write && stylelint \"src/**/*.css\" --fix",
         "typecheck": "tsc --noEmit",

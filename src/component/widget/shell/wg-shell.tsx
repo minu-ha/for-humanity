@@ -81,6 +81,7 @@ export const WgShell = (props: WgShellProps) => {
             <body className={clsx("wg_shell__root")}>
                 <WgShellNav site={props.site} docs={props.docs} current={props.current} outline={props.outline} />
                 <main className={clsx("wg_shell__main")}>{props.children}</main>
+                <img className={clsx("wg_shell__cursorFace")} src={asset_favicon_path} width="24" height="24" alt="" aria-hidden="true" draggable={false} data-cursor-face="" />
                 <script type="module" src={asset_client_path} />
             </body>
         </html>

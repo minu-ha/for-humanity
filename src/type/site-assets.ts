@@ -7,7 +7,7 @@ export interface SiteAssets {
      */
     fontCss: string;
     /**
-     * preload 대상 글꼴 URL · 현재 코드 글꼴 한 파일
+     * 선요청 글꼴 URL · 본문 공통 조각과 코드 글꼴
      */
     preload: string[];
     /**

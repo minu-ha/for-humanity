@@ -7,7 +7,7 @@
 import {EventEmitter} from "node:events";
 import {existsSync, watch} from "node:fs";
 import {copyFile, mkdir, rm, writeFile} from "node:fs/promises";
-import {dirname, join, relative, resolve} from "node:path";
+import {basename, dirname, join, relative, resolve} from "node:path";
 import {fileURLToPath, pathToFileURL} from "node:url";
 import {serve} from "@hono/node-server";
 import {serveStatic} from "@hono/node-server/serve-static";
@@ -16,8 +16,8 @@ import {toSSG} from "hono/ssg";
 import {createApp} from "@/app";
 import {asset_client_path, asset_favicon_path, asset_font_dir, asset_style_path} from "@/constant/asset";
 import {cli_config_file_name, cli_default_command, cli_default_docs_dir, cli_dev_port} from "@/constant/cli";
-import {copy_error_config, copy_error_prefix, copy_error_unknown_command} from "@/constant/copy";
-import {font_mono_css, font_sans_css} from "@/constant/font";
+import {copy_error_config, copy_error_font_preload, copy_error_prefix, copy_error_unknown_command} from "@/constant/copy";
+import {font_cache_control, font_mono_css, font_sans_css, font_sans_preload_file} from "@/constant/font";
 import {site_config_absent} from "@/constant/site";
 import {createProcessor} from "@/content/create-processor";
 import {readDocs} from "@/content/read-docs";
@@ -46,7 +46,17 @@ const main = async () => {
     if (command === "preview") {
         const app = new Hono();
 
-        app.use("/*", serveStatic({root: relative(process.cwd(), outDir)}));
+        app.use(
+            "/*",
+            serveStatic({
+                root: relative(process.cwd(), outDir),
+                onFound: (_path, c) => {
+                    if (c.req.path.startsWith(`${asset_font_dir}/`)) {
+                        c.header("Cache-Control", font_cache_control);
+                    }
+                },
+            }),
+        );
         serve({fetch: app.fetch, port: cli_dev_port}, (info) => console.log(`http://localhost:${info.port}/`));
 
         return;
@@ -63,6 +73,12 @@ const main = async () => {
     // 내장 @font-face와 파일 수집 · font-family는 token.css 소유
     const sans = toFontCss({css: join(kitRoot, font_sans_css), fontDir: asset_font_dir});
     const mono = toFontCss({css: join(kitRoot, font_mono_css), fontDir: asset_font_dir});
+    const sansPreload = [...sans.files].find((entry) => basename(entry[1]) === font_sans_preload_file);
+
+    if (sansPreload === undefined) {
+        throw new Error(`${copy_error_font_preload}: ${font_sans_preload_file}`);
+    }
+
     const fontCss = [sans.css, mono.css].join("\n");
     const files = new Map([
         [asset_style_path, join(kitRoot, "dist/cli.css")],
@@ -76,7 +92,7 @@ const main = async () => {
     const app = createApp({
         site: siteConfig,
         store,
-        assets: {fontCss, preload: [...mono.files.keys()], reload: command === "dev"},
+        assets: {fontCss, preload: [sansPreload[0], ...mono.files.keys()], reload: command === "dev"},
     });
 
     if (command === "build") {

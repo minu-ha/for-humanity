@@ -12,9 +12,7 @@
 }
 
 .wg_shellNav__brand {
-    display: flex;
-    align-items: center;
-    gap: var(--app-space-inline);
+    display: block;
     color: var(--app-color-text-strong);
     font-size: var(--app-font-size-body);
     font-weight: var(--app-font-weight-strong);
@@ -30,12 +28,6 @@
         outline: var(--app-outline-focus);
         outline-offset: var(--app-outline-focus-offset);
     }
-}
-
-.wg_shellNav__brandIcon {
-    display: block;
-    flex: none;
-    image-rendering: pixelated;
 }
 
 /* 문서·목차 목록 라벨 */

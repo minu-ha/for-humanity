@@ -31,9 +31,9 @@ export default {
 | `title`       | 사이드바 이름 · 탭 제목 | `for humanity` |
 | `description` | 첫 화면 소개            | 생략           |
 
-설정을 생략하면 기본 이름 `for humanity`와 픽셀 얼굴 아이콘.
+설정을 생략하면 기본 이름 `for humanity`.
 `title`을 지정하면 탭·사이드바·문서 머리에 같은 사이트 이름 적용.
-아이콘은 탭의 favicon과 같은 파일, 사이드바에서는 32px 크기.
+픽셀 얼굴은 탭의 favicon과 데스크톱 커서 옆 장식에 같은 파일 사용. 사이드바에는 이름만 표시.
 
 ## Status badges
 

@@ -1,13 +1,77 @@
 /*
- * 브라우저 동작 · 테마, 읽는 절, hash 위치 보정
+ * 브라우저 동작 · 커서 장식, 테마, 읽는 절, hash 위치 보정
  * 서버 HTML의 data-* 연결 · React hydration 없음
  */
 
+import {cursor_face_offset_px} from "@/component/widget/shell/_constant/cursor-face";
 import {reading_line_slack_px} from "@/component/widget/shell/_constant/reading-line";
 import {setThemeButton} from "@/component/widget/shell/_function/set-theme-button";
 import {theme_mode, theme_order, theme_storage_key} from "@/constant/theme";
 import {findHashTarget} from "@/util/dom/find-hash-target";
 import {revealHashTarget} from "@/util/dom/reveal-hash-target";
+
+const cursorFace = document.querySelector<HTMLImageElement>("[data-cursor-face]");
+
+if (cursorFace) {
+    const cursorMedia = matchMedia("(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)");
+    const position = {x: 0, y: 0, frame: 0};
+
+    /**
+     * 입력 전환과 화면 이탈 시 예약된 이동도 취소해 장식이 다시 나타나지 않게 함
+     */
+    const handleCursorHide = () => {
+        cancelAnimationFrame(position.frame);
+        position.frame = 0;
+        cursorFace.classList.remove("wg_shell__cursorFace--visible");
+    };
+
+    /**
+     * 비활성 전환에서만 숨김 · 활성화 알림이 새 마우스 이동을 취소하지 않도록 함
+     */
+    const handleCursorMediaChange = () => {
+        if (!cursorMedia.matches) {
+            handleCursorHide();
+        }
+    };
+
+    /**
+     * 최신 마우스 위치를 화면 갱신마다 한 번만 반영 · 선택 중과 움직임 감소 설정에서는 숨김
+     */
+    const handleDocumentPointerMove = (event: PointerEvent) => {
+        if (!cursorMedia.matches || event.pointerType !== "mouse" || event.buttons !== 0) {
+            handleCursorHide();
+
+            return;
+        }
+
+        position.x = event.clientX;
+        position.y = event.clientY;
+
+        if (position.frame !== 0) {
+            return;
+        }
+
+        position.frame = requestAnimationFrame(() => {
+            position.frame = 0;
+
+            // 포인터 좌표는 실행 중에만 결정 · transform으로 문서 재배치 방지
+            cursorFace.style.transform = `translate3d(
+                ${Math.max(0, Math.min(position.x + cursor_face_offset_px, document.documentElement.clientWidth - cursorFace.width - cursor_face_offset_px))}px,
+                ${Math.max(0, Math.min(position.y + cursor_face_offset_px, document.documentElement.clientHeight - cursorFace.height - cursor_face_offset_px))}px,
+                0
+            )`;
+            cursorFace.classList.add("wg_shell__cursorFace--visible");
+        });
+    };
+
+    document.addEventListener("pointermove", handleDocumentPointerMove, {passive: true});
+    document.addEventListener("pointerdown", handleCursorHide, {passive: true});
+    document.addEventListener("keydown", handleCursorHide);
+    document.documentElement.addEventListener("pointerleave", handleCursorHide);
+    addEventListener("blur", handleCursorHide);
+    addEventListener("resize", handleCursorHide);
+    cursorMedia.addEventListener("change", handleCursorMediaChange);
+}
 
 const themeButton = document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
 

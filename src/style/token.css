@@ -102,6 +102,9 @@
     --app-outline-focus: 2px solid var(--app-color-link);
     --app-outline-focus-offset: 2px;
 
+    /* 커서 장식처럼 문서 위에 뜨는 보조 요소 */
+    --app-z-index-popper: 300;
+
     /*
      * Shiki CSS 변수 · 기존 역할색 재사용
      * 키워드 strong · 함수 accent
