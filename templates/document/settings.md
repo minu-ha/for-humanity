@@ -1,10 +1,11 @@
 ---
 name: Settings
 label: 사이트 설정
-group: Writing
+group: Guide
+order: 30
 ---
 
-문서 폴더의 `for-humanity.config.mjs`. 제목, 소개, status badge 설정.
+문서 폴더의 `for-humanity.config.mjs`. 제목, 소개, 문서 묶음 순서, status badge 설정.
 설정 파일과 각 항목 모두 선택. 생략한 값은 기본값 적용.
 
 ## Overview
@@ -13,6 +14,7 @@ group: Writing
 export default {
     title: "for humanity",
     description: "사람이 읽는 문서를 위한 Markdown 문서 도구",
+    navigation: ["Getting started", "Guide", "Reference", "Examples"],
     status: [
         {phrase: "확인됨", kind: "verified", date: true},
         {phrase: "확인되지 않았다", kind: "unverified"},
@@ -34,6 +36,27 @@ export default {
 설정을 생략하면 기본 이름 `for humanity`.
 `title`을 지정하면 탭·사이드바·문서 머리에 같은 사이트 이름 적용.
 픽셀 얼굴은 탭의 favicon과 데스크톱 커서 옆 장식에 같은 파일 사용. 사이드바에는 이름만 표시.
+
+## Navigation
+
+`navigation`은 frontmatter의 `group` 이름을 읽는 순서대로 나열한 배열.
+사이드바와 Overview 카드에 같은 순서 적용.
+
+```js
+export default {
+    navigation: ["Getting started", "Guide", "Reference", "Examples", "Development"],
+};
+```
+
+- 묶음 이름: frontmatter의 `group`과 대소문자까지 일치
+- 같은 묶음을 두 번 지정하면 설정 오류
+- 설정에 없는 묶음: 지정한 묶음 뒤에서 이름순
+- 문서가 없는 묶음: 표시하지 않음
+- `navigation` 생략: 모든 묶음을 이름순
+- 묶음 안의 순서: frontmatter의 `order` · [Writing](writing.md#navigation-groups)
+
+하위 문서 없이도 묶음 안에 여러 페이지 배치 가능. 접고 펼치는 기능은 native Details로 제공.
+현재 페이지의 묶음은 자동으로 펼침. Overview에서는 첫 묶음 공개.
 
 ## Status badges
 

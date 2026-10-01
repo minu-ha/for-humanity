@@ -2,10 +2,11 @@
 name: Roadmap
 label: 다음 작업과 완료 기준
 group: Development
+order: 40
 ---
 
 사람이 읽는 문서를 Markdown으로 작성하고 정적 사이트로 공유하는 문서 도구.
-현재는 prototype. Note·Details 작성 문법과 기존 실시간 목록 blueprint의 축약 샘플 지원.
+현재는 prototype. 이 사이트는 라이브러리 사용법·작성 가이드·API·가상 프로젝트 예시를 제공.
 다음 작업은 blueprint의 전용 정보 구조와 표현.
 
 ## Overview
@@ -42,7 +43,7 @@ group: Development
 
 ## Parts and syntax
 
-샘플: [Blueprint](blueprint.md) · 기존 실시간 목록 설계의 핵심 흐름·결정·질문·API.
+샘플: [Blueprint](blueprint.md) · 가상 독서 목록 앱의 흐름·결정·질문·API.
 선정: [Note·Details](parts.md). Decision·Question·API reference는 section·표·링크.
 
 - [x] 본문·표·흐름도로 표현되는 부분과 새 부품이 필요한 부분 확인
@@ -52,7 +53,7 @@ group: Development
 - [x] 선택한 부품의 HTML·CSS·접근성 구현
 - [x] [Writing](writing.md)에 실제 지원 문법과 예시 반영
 
-산출물: 실제 샘플 문서, 부품 목록, 작성 문법, 렌더링 결과.
+산출물: 가상 프로젝트 예시, 부품 목록, 작성 문법, 렌더링 결과.
 완료 기준: 작성자가 소스를 보지 않고 예시만으로 같은 결과를 만들 수 있고, 두 테마·좁은 화면에서 내용이 읽힘.
 
 ::part[Next]
@@ -65,10 +66,10 @@ group: Development
 - [ ] 일반 문서와 설계 문서의 정보 구조·표현 차이 확정
 - [ ] 화면 설명·결정 사항·미결 질문·참조의 배치 기준 정의
 - [ ] 기존 문서와 같은 방식으로 링크·TOC·hash 이동 연결
-- [ ] 실제 blueprint 샘플과 일반 문서 샘플 비교
+- [ ] 가상 blueprint 샘플과 일반 문서 가이드 비교
 - [ ] [Writing](writing.md)에 `document`·`blueprint`의 사용 기준 반영
 
-산출물: blueprint 표현, 실제 샘플, 작성 가이드.
+산출물: blueprint 표현, 가상 프로젝트 예시, 작성 가이드.
 완료 기준: 한 문서에서 현재 설계·결정 이유·남은 질문을 구분해 읽을 수 있고 일반 문서도 동일하게 동작.
 
 ## Init

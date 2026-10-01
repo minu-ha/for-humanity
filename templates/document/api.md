@@ -1,0 +1,112 @@
+---
+name: API
+label: CLI·설정·문서 형식의 공개 계약
+group: Reference
+order: 10
+---
+
+현재 제공하는 사용 인터페이스: CLI 명령, 사이트 설정, Markdown frontmatter와 작성 문법.
+JavaScript용 공식 진입점은 아직 제공하지 않음. 내부 렌더러 함수는 공개 사용 계약에 포함하지 않음.
+
+## Overview
+
+| Interface   | Entry                     | Guide                            |
+| ----------- | ------------------------- | -------------------------------- |
+| CLI         | `for-humanity`            | [Commands](commands.md)          |
+| 사이트 설정 | `for-humanity.config.mjs`  | [Settings](settings.md)          |
+| 문서 형식   | `.md` · `.mdx`            | [Writing](writing.md)            |
+| 본문 부품   | Note · Details            | [Parts](parts.md)                |
+| 사이트 배포 | 문서 폴더의 `dist`        | [Deployment](deployment.md)      |
+
+이 페이지는 라이브러리의 실제 계약. [Blueprint](blueprint.md)의 HTTP API는 가상 앱의 작성 예시.
+
+::part[CLI]
+
+## Commands
+
+```text
+for-humanity <dev|build|preview> [docs-dir]
+```
+
+| Input       | Default   | Behavior                                  |
+| ----------- | --------- | ----------------------------------------- |
+| command     | `dev`     | `dev` · `build` · `preview`만 지원         |
+| `docs-dir`  | 현재 폴더 | 명령을 실행한 폴더 기준 경로              |
+
+- `dev`: 포트 `4321` · 문서 변경 후 새로고침 · 잘못된 문서는 직전 정상 결과 유지
+- `build`: `<docs-dir>/dist`를 새로 생성 · 기존 출력 전체 교체
+- `preview`: 포트 `4321` · 이미 만든 `dist` 제공
+- `init`: 아직 미구현 · npm 첫 공개도 준비 중
+
+```sh
+pnpm exec for-humanity build docs
+pnpm exec for-humanity preview docs
+```
+
+::part[Configuration]
+
+## Site configuration
+
+설정 파일의 `export default` 객체. 파일과 각 항목 모두 선택.
+
+| Field         | Type                               | Default                   |
+| ------------- | ---------------------------------- | ------------------------- |
+| `title`       | string                             | `for humanity`            |
+| `description` | string                             | 소개 생략                 |
+| `navigation`  | 중복 없는 비어 있지 않은 string 배열 | 묶음 이름순              |
+| `status`      | 상태 문구 객체 배열                | 기본 상태 문구            |
+
+`navigation: []`도 허용. 지정하지 않은 묶음은 마지막에서 이름순 배치.
+상태 객체: `phrase`는 빈칸만 있지 않은 string, `kind`는 `verified` 또는 `unverified`, `date`는 선택 boolean.
+`status`를 지정하면 기본 목록 전체 교체. `status: []`는 상태 표지 비활성.
+설정 검증은 시작 시 수행. 변경한 설정을 반영하려면 서버 재시작.
+
+## Frontmatter
+
+```yaml
+name: API
+label: 사용 계약
+group: Reference
+order: 10
+type: document
+```
+
+| Field   | Type                    | Default                          |
+| ------- | ----------------------- | -------------------------------- |
+| `name`  | 비어 있지 않은 string   | 필수                             |
+| `label` | string                  | 필수                             |
+| `group` | 비어 있지 않은 string   | 필수                             |
+| `order` | 0 이상의 정수           | 순서 지정 문서 뒤에서 제목순      |
+| `type`  | `document` · `blueprint` | `document`                       |
+
+같은 첫 글자로 시작하는 문서도 지원. 문서 id는 확장자를 제외한 소문자 파일 경로.
+예: `api.md` → `/api/`, `architecture.md` → `/architecture/`.
+이름·순서가 같은 문서도 파일 id로 구분. id가 겹치는 파일은 빌드 오류.
+예약 경로·문자의 전체 목록은 [Writing](writing.md#frontmatter).
+
+::part[Content]
+
+## Markdown features
+
+| Syntax                 | Result                       |
+| ---------------------- | ---------------------------- |
+| `##` · `###`           | 절·소절 번호와 Contents      |
+| `::part[Title]`         | 본문과 Contents의 절 묶음    |
+| `:::note[Title]`        | 보충 설명                    |
+| `:::details[Title]`     | 접힌 구현 상세               |
+| Details의 `{open}`     | 처음부터 펼친 상세           |
+| Mermaid 코드 블록      | 빌드 시 흐름도 SVG           |
+| GFM 표 · 코드 블록     | 표와 코드 강조               |
+| 상대 `.md` 링크        | 문서 URL로 변환              |
+
+부품의 입력·닫힘·중첩·오류 계약은 [Parts](parts.md).
+`.mdx`도 Markdown으로 읽음. JSX 실행은 지원하지 않음.
+
+## Failure behavior
+
+- 시작·빌드 오류: 설정, frontmatter, 문서 id, 블록 문법, 흐름도 렌더링 · 종료 코드 `1`
+- 문서 변경 오류: 개발 서버는 이전 정상 문서를 유지하고 터미널에 오류 표시
+- 링크 경고: 없는 Markdown 파일은 경고 후 빌드 계속
+- 배포 기준: 사이트 루트 `/` · 하위 URL 경로의 base path 설정은 아직 미구현
+
+실행 예시는 [Commands](commands.md), 향후 지원 범위는 [Roadmap](roadmap.md).

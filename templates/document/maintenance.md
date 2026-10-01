@@ -2,6 +2,7 @@
 name: Maintenance
 label: 기여와 유지보수
 group: Development
+order: 30
 ---
 
 코드 변경, 컨벤션, 검증, 패키지 배포 기준.
@@ -18,11 +19,12 @@ git diff --check
 
 | Command          | Scope                              |
 | ---------------- | ---------------------------------- |
-| `pnpm test`      | 글꼴 표시 정책 · 내용 지문 자원 URL |
+| `pnpm test`      | 문서 경로·묶음·순서 · 글꼴 정책     |
 | `pnpm lint`      | Biome · Stylelint                  |
 | `pnpm typecheck` | TypeScript                         |
 | `pnpm build:kit` | 서버·브라우저 번들                 |
 | `pnpm build`     | 패키지 번들 · 프로젝트 문서 사이트 |
+| `pnpm build:pages` | 문서 사이트 · Cloudflare 배포 파일 |
 | `pnpm lint:fix`  | 자동 린트·포맷 수정                |
 
 ::part[Code]
@@ -63,6 +65,7 @@ Biome 제외 이유: 기존 렌더링 알고리즘과 diff 대조.
 - 가로 넘침 · 끊긴 문서·section 링크 · 처리되지 않은 흐름도 · 콘솔 오류
 - 테마 변경과 저장 · TOC의 현재 section·subsection
 - 한국어 hash · 폰트 로드 후 위치 · 키보드 포커스
+- 문서 묶음: 읽는 순서 · 현재 묶음 공개 · Enter·Space · 같은 첫 글자의 문서
 - Note·Details: 기본 접힘·`{open}`·중첩 · Enter·Space · 숨은 제목의 hash 공개
 - 부품 문법 오류: 제목·본문·닫힘·속성 · 파일·줄 표시
 - JavaScript 비활성 상태의 본문·TOC
@@ -75,7 +78,7 @@ pnpm pack
 ```
 
 패키지 설치 후 별도 폴더에서 `dev`, `build`, `preview` 확인.
-정적 사이트는 문서 폴더의 `dist` 전체 배포. 사이트 루트 경로 기준.
+정적 사이트는 문서 폴더의 `dist` 전체 배포. 사이트 루트 경로 기준 · [Deployment](deployment.md).
 현재 상태: prototype · npm 공개 전.
 
 ::part[Next]

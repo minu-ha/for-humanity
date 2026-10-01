@@ -2,8 +2,10 @@
 name: Architecture
 label: 엔진과 처리 흐름
 group: Development
+order: 10
 ---
 
+라이브러리 내부 구현을 수정하는 사람을 위한 참고 문서.
 Hono 라우팅과 정적 출력, React 서버 렌더링, unified Markdown processor.
 브라우저 동작은 작은 DOM 스크립트 하나.
 
@@ -21,7 +23,7 @@ flowchart LR
 | `cli.ts`    | 인자 · 설정 · 문서 · 폰트 · 빌드·서버 시작   | Node.js       |
 | `app.tsx`   | 첫 화면과 문서 라우트 · React → HTML         | Node.js       |
 | `dev.ts`    | 자원 · SSE 새로고침 · 페이지 앱 위임         | Node.js · dev |
-| `client.ts` | 테마 · 읽는 section · 접힌 hash 공개·위치 보정 | Browser       |
+| `client.ts` | 커서 장식 · 테마 · 읽는 section · 접힌 hash 보정 | Browser      |
 
 ::part[Engine]
 

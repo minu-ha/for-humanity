@@ -3,7 +3,7 @@ import {join, sep} from "node:path";
 import {VFile} from "vfile";
 import {parse as parseYaml} from "yaml";
 import {asset_dir, asset_favicon_path} from "@/constant/asset";
-import {copy_error_doc_id, copy_error_doc_id_clash, copy_error_frontmatter, copy_error_mark_clash} from "@/constant/copy";
+import {copy_error_doc_id, copy_error_doc_id_clash, copy_error_frontmatter} from "@/constant/copy";
 import type {Processor} from "@/content/create-processor";
 import type {Doc} from "@/type/doc";
 import {docDataSchema} from "@/type/doc-data";
@@ -11,7 +11,7 @@ import type {DocFileData} from "@/type/doc-file-data";
 
 /**
  * Markdown 수집과 렌더링 · 루트 README.md, node_modules, dist 제외
- * 머리말·문서 식별자·표지 중복·플러그인 오류 시 실패
+ * 머리말·문서 식별자 중복·플러그인 오류 시 실패
  */
 export const readDocs = async (options: {root: string; processor: Processor}): Promise<Doc[]> => {
     const paths = (await readdir(options.root, {recursive: true})).filter(
@@ -68,12 +68,6 @@ export const readDocs = async (options: {root: string; processor: Processor}): P
 
     if (duplicateIds.length > 0) {
         throw new Error(`${copy_error_doc_id_clash}: ${duplicateIds.map((entry) => entry[0]).join(", ")}`);
-    }
-
-    const clashes = [...Map.groupBy(docs, (doc) => doc.data.name[0].toUpperCase())].filter((entry) => entry[1].length > 1);
-
-    if (clashes.length > 0) {
-        throw new Error(`${copy_error_mark_clash}: ${clashes.map((entry) => `${entry[0]} (${entry[1].map((doc) => doc.data.name).join(", ")})`).join(" / ")}`);
     }
 
     return docs;

@@ -33,11 +33,6 @@ export const copy_overview_name = "Overview";
 export const copy_overview_label = copy_overview_name;
 
 /**
- * 첫 화면의 목록 표지 · 문서는 영어 이름 첫 글자
- */
-export const copy_overview_mark = "·";
-
-/**
  * 테마 버튼의 접근 가능한 이름·툴팁 · System → Light → Dark
  */
 export const copy_theme_label = {
@@ -72,9 +67,9 @@ export const copy_error_config = "설정이 틀렸다";
 export const copy_error_frontmatter = "frontmatter가 올바르지 않다";
 
 /**
- * 문서 이름의 첫 글자 표지 중복
+ * 탐색 순서에 같은 묶음을 두 번 지정한 설정 오류
  */
-export const copy_error_mark_clash = "문서 이름의 첫 글자가 겹친다";
+export const copy_error_navigation_clash = "navigation의 묶음이 겹친다";
 
 /**
  * 빈 id·예약 경로·URL 예약 문자 오류

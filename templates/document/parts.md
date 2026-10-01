@@ -1,11 +1,13 @@
 ---
 name: Parts
 label: 부품의 목적과 작성 문법
-group: Writing
+group: Guide
+order: 20
 ---
 
 보충 설명은 Note, 구현 상세는 Details. 본문·비교·결정·질문은 Markdown의 글·목록·표·section.
-실제 사용 예는 [Blueprint](blueprint.md). 문서 전체 구조는 [Writing](writing.md).
+가상 독서 목록 앱의 사용 예는 [Blueprint](blueprint.md). 아래 데이터·API도 같은 가상 예시.
+문서 전체 구조는 [Writing](writing.md).
 
 ## Overview
 
@@ -32,9 +34,9 @@ Decision·Question·API reference의 전용 부품은 실제 샘플에서 추가
 
 ```markdown
 :::note[Scope]
-진입 등록은 Q21 확인 후 범위 결정.
+책장 탐색과 책 상세 읽기가 예시 범위.
 
-- 현재 검토 범위: 조합 목록·조건·패턴 표
+- 현재 검토 범위: 책장 목록·읽기 상태·책 상세
 - 미결 사항: [Questions](blueprint.md#questions)
 :::
 ```
@@ -42,9 +44,9 @@ Decision·Question·API reference의 전용 부품은 실제 샘플에서 추가
 #### Result
 
 :::note[Scope]
-진입 등록은 Q21 확인 후 범위 결정.
+책장 탐색과 책 상세 읽기가 예시 범위.
 
-- 현재 검토 범위: 조합 목록·조건·패턴 표
+- 현재 검토 범위: 책장 목록·읽기 상태·책 상세
 - 미결 사항: [Questions](blueprint.md#questions)
 :::
 
@@ -62,8 +64,8 @@ Decision·Question·API reference의 전용 부품은 실제 샘플에서 추가
 
 | Field          | Use                |
 |----------------|--------------------|
-| `patternCount` | 조합별 패턴 건수   |
-| `indexNm`      | 조합 표시 이름     |
+| `bookCount`    | 책장에 담긴 책 수  |
+| `name`         | 책장 표시 이름     |
 :::
 ```
 
@@ -74,8 +76,8 @@ Decision·Question·API reference의 전용 부품은 실제 샘플에서 추가
 
 | Field          | Use                |
 |----------------|--------------------|
-| `patternCount` | 조합별 패턴 건수   |
-| `indexNm`      | 조합 표시 이름     |
+| `bookCount`    | 책장에 담긴 책 수  |
+| `name`         | 책장 표시 이름     |
 :::
 
 #### Default open
@@ -103,22 +105,22 @@ Note·Details 중첩 가능. `##` section과 `::part`는 부품 밖에 작성.
 ````markdown
 ::::details[구현 상세]
 :::note[확인할 사항]
-초기 조합 선택은 Q1 확인 후 결정.
+첫 책장을 자동 선택할지는 Q1 확인 후 결정.
 :::
 
 ```text
-GET /api/realtime/pattern/groups
+GET /api/shelves
 ```
 ::::
 ````
 
 ::::details[구현 상세]
 :::note[확인할 사항]
-초기 조합 선택은 Q1 확인 후 결정.
+첫 책장을 자동 선택할지는 Q1 확인 후 결정.
 :::
 
 ```text
-GET /api/realtime/pattern/groups
+GET /api/shelves
 ```
 ::::
 

@@ -1,7 +1,8 @@
 ---
 name: Writing
 label: 문서 작성
-group: Writing
+group: Guide
+order: 10
 ---
 
 문서 한 장 = Markdown 파일 하나. frontmatter, section, part, 본문 기능의 작성 기준.
@@ -13,7 +14,8 @@ group: Writing
 ---
 name: Guide
 label: 사용 안내
-group: Getting started
+group: Guide
+order: 10
 ---
 
 문서의 범위와 핵심.
@@ -36,15 +38,34 @@ group: Getting started
 
 | Key     | Use                               | Required                   |
 | ------- | --------------------------------- | -------------------------- |
-| `name`  | 제목 · 목록 · 카드 · 첫 글자 표지 | 필수 · 비어 있지 않은 이름 |
+| `name`  | 제목 · 목록 · 카드                 | 필수 · 비어 있지 않은 이름 |
 | `label` | 짧은 문서 설명 · 카드 · 목록 툴팁 | 필수                       |
-| `group` | 카드 그룹 · 문서 header 라벨      | 필수                       |
+| `group` | 사이드바 묶음 · 카드 · header     | 필수 · 비어 있지 않은 이름 |
+| `order` | 묶음 안의 읽는 순서               | 선택 · 0 이상의 정수       |
 | `type`  | `document` / `blueprint`          | 기본 `document`            |
 
-문서 이름의 첫 글자는 대소문자 구분 없이 고유. `blueprint` 전용 표현은 아직 미구현.
+같은 첫 글자로 시작하는 이름도 허용. `API`와 `Architecture`는 각각 별도 문서.
+`blueprint` 전용 표현은 아직 미구현.
 파일 경로는 확장자를 뺀 소문자 id로 사용. `.md`와 `.mdx`, 대소문자만 다른 경로의 id 중복 금지.
 빈 경로와 예약 문자 `#`, `?`, `%`, `*`, `:`, `\`는 사용 불가. 첫 경로 `/_fh/`는 패키지 자원 전용.
 `.`·`..`·`index.html` 경로 조각, 제어문자, 첫 경로 `/favicon.svg/`는 정적 출력과 충돌하므로 사용 불가.
+
+### Navigation groups
+
+하위 폴더를 만들지 않아도 `group`으로 문서를 묶음. 묶음은 페이지가 아닌 탐색 제목.
+그 안의 각 문서는 독립적인 파일·URL·목차를 가짐.
+
+| File              | Name         | Group       | Order |
+| ----------------- | ------------ | ----------- | ----- |
+| `writing.md`      | Writing      | Guide       | 10    |
+| `parts.md`        | Parts        | Guide       | 20    |
+| `api.md`          | API          | Reference   | 10    |
+| `architecture.md` | Architecture | Development | 10    |
+
+묶음 순서는 [Settings](settings.md#navigation)의 `navigation`. 묶음 안은 작은 `order` 먼저.
+`order`를 생략한 문서는 순서를 지정한 문서 뒤에서 제목순, 제목도 같으면 파일 id순.
+파일 이름에 번호나 알파벳을 붙여 순서를 맞출 필요 없음.
+현재 문서의 묶음은 자동으로 펼침. `Contents`는 현재 문서 안의 절만 표시.
 
 ## Sections and parts
 

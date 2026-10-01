@@ -3,7 +3,8 @@
  */
 export default {
     title: "for humanity",
-    description: "사람이 읽는 문서를 위한 Markdown 문서 도구. 시작 방법, 문서 작성, 엔진과 유지보수.",
+    description: "Markdown으로 문서를 작성하고 정적 사이트로 공유하는 문서 도구. 설치와 사용법, 작성 가이드, API와 가상 프로젝트 예시.",
+    navigation: ["Getting started", "Guide", "Reference", "Examples", "Development"],
     // 상태 표지 문구 · date: 뒤의 YYYY-MM-DD 날짜 포함
     status: [
         {phrase: "확인됨", kind: "verified", date: true},

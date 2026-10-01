@@ -1,26 +1,31 @@
 ---
 name: Blueprint
-label: 실시간 패턴 목록 설계 샘플
+label: 가상 독서 목록 앱의 설계 예시
 group: Examples
+order: 10
 type: blueprint
 ---
 
-실시간 패턴 목록. Index 조합 선택 → 그 조합의 진입 예정·초기 패턴 조회.
-기존 실시간 목록 blueprint를 핵심 흐름·결정·질문·API 중심으로 축약한 샘플.
-제안과 미결 사항의 구분은 원본 기준. 작성 문법은 [Parts](parts.md).
+가상의 독서 목록 앱 **별책**. 책장 선택 → 읽기 상태 필터 → 책 상세 확인.
+화면 흐름·결정·질문·API 계약을 한 문서에 담는 작성 예시.
+등장하는 서비스·책·인물·식별자·API·결정은 모두 이 문서를 위한 가상 내용.
+
+:::note[Example]
+별책의 기능과 API는 for humanity가 제공하는 기능이 아님. 예시 API에 연결하거나 데이터를 요청하지 않음.
+라이브러리의 실제 사용 계약은 [API](api.md), 부품 작성법은 [Parts](parts.md).
+:::
 
 ## Overview
 
-| Area         | Purpose                           | Reference                |
-|--------------|-----------------------------------|--------------------------|
-| 조합 목록    | 조회할 Index 조합 선택            | [Group list](#group-list) |
-| 조건 설정    | 조합·패턴 조회 범위 적용          | [Conditions](#conditions) |
-| 패턴 표      | 선택한 조합의 패턴 비교           | [Pattern table](#pattern-table) |
-| 미결 사항    | 구현 범위와 계약의 남은 판단      | [Questions](#questions)   |
+| Area      | Purpose                   | Reference                  |
+| --------- | ------------------------- | -------------------------- |
+| 책장 목록 | 읽을 책이 담긴 책장 선택  | [Shelf list](#shelf-list)   |
+| 조건 설정 | 읽기 상태로 책 목록 좁힘  | [Conditions](#conditions)  |
+| 책 목록   | 제목·저자·읽기 상태 비교  | [Book list](#book-list)     |
+| 미결 사항 | 예시 설계의 남은 판단     | [Questions](#questions)    |
 
 :::note[Scope]
-진입 등록은 Q21 확인 전까지 보류. 조합 목록·조건·패턴 표가 현재 설계 범위.
-Last Update와 표의 미등록 필드는 API 확인 대상.
+책장 탐색과 책 상세 읽기가 예시 범위. 책 구매·회원 가입·실제 도서 검색은 다루지 않음.
 :::
 
 ::part[Screen]
@@ -29,149 +34,139 @@ Last Update와 표의 미등록 필드는 API 확인 대상.
 
 ```mermaid
 flowchart LR
-    filter("조건 설정") -->|적용| groups("Index 조합 목록")
-    groups -->|선택| patterns("패턴 표")
-    filter -->|적용| patterns
+    shelves("책장 목록") -->|선택| books("책 목록")
+    filter("읽기 상태") -->|적용| books
+    books -->|선택| detail("책 상세")
 ```
 
-조건 적용은 조합 목록과 패턴 조회에 함께 반영.
-선택한 조합은 표의 요청 path와 도구 줄의 기준.
+책장을 선택하면 해당 책 목록 조회. 읽기 상태를 적용하면 같은 책장의 목록 갱신.
+책 제목을 누르면 그 책의 상세 화면으로 이동.
 
-## Group list
+## Shelf list
 
-왼쪽 목록. 조합 이름·패턴 건수·고정 여부.
+왼쪽 목록. 책장 이름과 책 수. 예시 책장: `주말 읽기`, `다음에 읽을 책`.
 
-| Value                | Display                |
-|----------------------|------------------------|
-| `indexNm`            | 조합 이름              |
-| `patternCount`       | `N 건`                 |
-| `isFixed`            | 고정 조합 표지         |
-| `indexDisplayOrd`     | 조합 표시 순서         |
+| Value       | Display       |
+| ----------- | ------------- |
+| `shelfId`   | 선택 식별자   |
+| `name`      | 책장 이름     |
+| `bookCount` | `N 권`        |
 
 :::note[Question Q1]
-최초 조합의 자동 선택은 기획 확인 대상.
-고정 조합의 0건 노출과 표시 순서는 B6 확인 대상.
+처음 방문하면 첫 책장을 자동 선택할지, 책장 선택 안내를 먼저 보여줄지 미정.
 :::
 
 :::details[구현 상세 · 선택과 조회]
 ### Selection state
 
-- 응답의 `aIndexId`·`bIndexId`: 선택 key와 패턴 조회 path
-- 주소의 `groupAIndexId`·`groupBIndexId`: 선택 상태의 계약 · D7
-- 조합 이름을 문자열로 나눠 ID나 도구 줄 이름을 복원하지 않음 · B7·Q20
+- 선택 key와 요청 path는 응답의 `shelfId` 사용 · [D1](#decisions)
+- 책장 이름을 바꿔도 같은 식별자 유지
+- 예시 주소: `/shelves/weekend?status=reading`
 
 ```text
-GET /api/realtime/pattern/groups/{aIndexId}/{bIndexId}
+GET /api/shelves/weekend/books?status=reading
 ```
 :::
 
 ## Conditions
 
-목록 머리의 조건 설정. 폼의 draft와 적용된 조건 구분.
-지수·월 선택의 후보는 `indexList` 조회, 적용된 조건은 목록·표 조회.
+목록 머리의 읽기 상태 필터. 편집 중인 draft와 목록에 적용된 조건 구분.
+후보는 `all`, `planned`, `reading`, `finished`. `all`은 query에서 상태 생략.
 
-| State       | Use                                  |
-|-------------|--------------------------------------|
-| Draft       | 팝오버에서 편집 중인 입력            |
-| Applied     | 조합 목록·패턴 표의 요청 조건        |
-| Selection   | 목록에서 선택한 조합의 식별자        |
+| State     | Use                      |
+| --------- | ------------------------ |
+| Draft     | 편집 중인 읽기 상태      |
+| Applied   | 책 목록의 요청 조건      |
+| Selection | 선택한 책장의 식별자     |
 
 ### Condition popover
 
-D2 제안: route 트리 안의 `UiPopover`.
-기존 NiceModal의 렌더 위치에서는 nuqs의 주소 상태를 읽기 어려운 제약.
-조건 편집·적용 계약과 팝오버 배치를 함께 검토.
+[D2](#decisions): 적용 버튼에서만 목록 갱신. 취소하면 draft 폐기.
+편집 중의 선택으로 현재 목록이 계속 바뀌는 현상 방지.
 
-## Pattern table
+## Book list
 
-오른쪽 표. 선택한 조합의 패턴, 단위 전환, 정렬, 페이지 이동.
-좁은 표에서 순번·실제 Index 조합 고정, 나머지 열은 가로 스크롤.
+선택한 책장의 책 목록. 제목·저자·읽기 상태 표시.
+아래 책과 저자는 실제 도서 정보를 사용하지 않은 예시 데이터.
 
-| Columns                  | Content                           |
-|--------------------------|-----------------------------------|
-| 순번·실제 Index 조합     | 목록 위치·조합 이름·상세 이동      |
-| 해석·패턴 구간           | 방향·시작과 끝                    |
-| 패턴 길이·진입·잔여일    | 기간과 기준일 대비 위치           |
-| 반복률·재현도·Spread 차이 | 비교 지표                         |
-| Action                   | Q21 답에 따라 범위 결정           |
+| ID         | Title                | Author | Status    |
+| ---------- | -------------------- | ------ | --------- |
+| `book-101` | 비 오는 골목의 지도  | 윤가람 | `reading` |
+| `book-102` | 느린 우체국의 편지  | 서누리 | `planned` |
 
 :::details[구현 상세 · 요청과 표시]
 ### Table contract
 
-- path: 선택 조합의 `aIndexId`·`bIndexId`
-- query: 조건 9개와 `page`·`recordsPerPage`·`sortCd`·`columnSortTypeCd`
-- `patternPeriod`: 서버 문자열 유지
-- `tradingDirectionCd`·`tradingDirectionCdNm`: 해석 표시 · null과 코드 표 확인
-- `patternDayCnt`·`grade`·전체 재현도·전체 Spread: B14의 누락 필드 확인
+- path: 선택한 `shelfId`
+- query: 선택 상태의 `status` · 전체 보기에서는 생략
+- 제목순 표시 · 제목이 같으면 `bookId`순
+- 빈 목록과 조회 오류는 별도 상태로 표시
 :::
 
 ::part[Decisions]
 
 ## Decisions
 
-| ID | Status      | Proposal                               | Reason                         |
-|----|-------------|----------------------------------------|--------------------------------|
-| D2 | Recommended | 조건 설정에 route 안의 `UiPopover`     | 주소 상태와 편집의 같은 범위   |
-| D1 | Recommended | 공통 값·select 어댑터만 공유           | 계절성 변경 범위 축소          |
-| Q21 | On hold    | 진입 등록은 답 이후 구현 범위 확정     | 데모·전달 내용의 기능 범위 확인 |
+| ID | Status  | Decision                        | Reason                         |
+| -- | ------- | ------------------------------- | ------------------------------ |
+| D1 | Decided | 이름 대신 `shelfId`로 책장 참조 | 이름 변경 후에도 링크 유지     |
+| D2 | Decided | 적용 버튼에서만 조건 반영       | 편집 중인 입력과 목록 구분     |
 
 결정에는 식별자·상태·선택 이유. 미결 사항은 [Questions](#questions)에서 추적.
-현재는 표와 section 링크로 충분한 표현.
+이 표의 상태도 가상 앱의 설계 예시. 라이브러리 구현의 진행 상태와 무관.
 
 ## Questions
 
-| ID  | Topic                | Needs answer                          |
-|-----|----------------------|---------------------------------------|
-| Q1  | 초기 선택            | 첫 조합을 자동 선택할지               |
-| Q21 | Action·진입 등록     | 현재 기능 범위에 포함할지             |
-| B3  | Last Update          | 가격 데이터 최신일의 응답 위치        |
-| B6  | 고정·순서            | 0건 고정 조합과 배열·표시 순서의 계약 |
-| B14 | 표 필드              | 길이·등급·전체 지표 필드의 제공 여부   |
+| ID | Topic     | Needs answer                          |
+| -- | --------- | ------------------------------------- |
+| Q1 | 초기 선택 | 첫 책장을 자동 선택할지               |
+| Q2 | 완료한 책 | 별도 보관함으로 옮길지, 상태만 바꿀지 |
 
-Q21은 진입 등록의 범위를, B3·B14는 화면에 표시할 값을 결정하는 질문.
-답은 같은 항목에 근거와 함께 반영. 제안과 확정은 상태로 구분.
+답이 정해지면 같은 항목에 이유를 기록. 결정과 남은 질문을 나눠 적는 방법의 예시.
 
 ::part[Structure]
 
 ## API
 
-| Endpoint                                                      | Caller                | Use                         |
-|---------------------------------------------------------------|-----------------------|-----------------------------|
-| `GET /api/realtime/pattern/groups`                             | 목록·표               | 조건에 맞는 조합 조회       |
-| `GET /api/realtime/pattern/groups/{aIndexId}/{bIndexId}`         | 패턴 표               | 선택 조합의 패턴 조회       |
-| `GET /api/realtime/pattern/indexList`                           | 조건 팝오버           | draft의 지수·월 후보        |
+아래 path와 응답은 가상 계약. 실제 서버와 연결된 API가 아님.
+
+| Endpoint                               | Caller    | Use                 |
+| -------------------------------------- | --------- | ------------------- |
+| `GET /api/shelves`                      | 책장 목록 | 책장 이름·건수 조회 |
+| `GET /api/shelves/{shelfId}/books`       | 책 목록   | 책장의 책 조회      |
+| `GET /api/books/{bookId}`               | 책 상세   | 선택한 책의 상세    |
 
 ::::details[구현 상세 · 응답 필드]
 ### Response fields
 
-| Field                   | Use                  | Pending           |
-|-------------------------|----------------------|-------------------|
-| `aIndexId`·`bIndexId`    | 선택 key·요청 path   | 주소 계약 D7      |
-| `indexNm`               | 조합 표시 이름       | 도구 줄 B7·Q20    |
-| `patternCount`          | 조합별 패턴 건수     | 0건 상태          |
-| `isFixed`               | 고정 여부            | B6                |
-| `indexDisplayOrd`       | 표시 순서            | B6                |
+```json
+{
+    "shelfId": "weekend",
+    "books": [
+        {"bookId": "book-101", "title": "비 오는 골목의 지도", "author": "윤가람", "status": "reading"}
+    ]
+}
+```
 
-:::note[Question B3]
-Last Update의 기준은 가격 데이터 최신일. 응답 위치는 확인 필요.
+:::note[Empty result]
+조건에 맞는 책이 없으면 `books: []`. 조회에 실패한 응답을 빈 목록으로 표시하지 않음.
 :::
 ::::
 
 ## Checks
 
-- 선택 조합과 패턴 요청의 path 일치
+- 선택 책장과 책 목록 요청의 path 일치
 - draft 편집과 적용된 조회 조건의 구분
-- 목록·표의 로딩·빈 결과·오류 표시
-- 좁은 표의 고정 열과 내부 가로 스크롤
-- 미등록 필드와 미결 기능의 상태 구분
+- 목록의 로딩·빈 결과·오류 표시
+- 책장 이름을 바꿔도 같은 링크 사용
+- 결정한 내용과 미결 질문 구분
 
 [Selection state](#selection-state), [Table contract](#table-contract), [Response fields](#response-fields)는 접힌 구현 상세의 직접 링크.
 
-## Source
+## Writing this example
 
-원본: `sk-ax-gas-pp/.ignore/blueprint/blueprint.realtime-list.html`.
-문서 짜임·부품·두 독자의 읽는 순서는 같은 폴더의 `README.md`.
-원본의 전체 목업·질문 카드·주석 캡처는 이 축약본의 범위 밖.
+화면 흐름은 Mermaid, 값과 계약은 표·코드, 보충 설명은 Note, 구현 상세는 Details로 작성.
+소스는 이 페이지의 `blueprint.md`. 가상 내용은 자신의 프로젝트 설명으로 교체해 사용.
 
 현재 `type: blueprint`는 일반 문서와 같은 페이지 표현.
 전용 정보 구조와 표현은 [Roadmap](roadmap.md#blueprint)의 다음 단계.

@@ -2,9 +2,11 @@
 name: Design
 label: 표현과 토큰
 group: Development
+order: 20
 ---
 
-meepin·Pinboard의 텍스트 중심 구성. 흰 바탕, 진회색 글, 파란 링크, 얇은 점선.
+라이브러리의 표현을 수정하는 사람을 위한 토큰·레이아웃 참고 문서.
+흰 바탕, 진회색 글, 파란 링크, 얇은 점선.
 값의 단일 출처는 `src/style/token.css`. 이 문서는 역할과 사용 기준.
 
 ## Overview
@@ -18,6 +20,7 @@ meepin·Pinboard의 텍스트 중심 구성. 흰 바탕, 진회색 글, 파란 �
 - favicon: 여백을 줄인 픽셀 얼굴 · 검은 점 눈·작은 미소 · 투명 배경 · 두 가지 색
 - Brand: 기본 이름 `for humanity` · 사이드바는 텍스트 · 이름은 `title` 설정
 - 커서 장식: 24px 픽셀 얼굴 · 기본 커서에서 16px 간격 · 마우스 이동 시 표시
+- 문서 탐색: 이름 첫 글자 대신 목적별 묶음 · 읽는 순서 · 현재 묶음 자동 펼침
 
 ::part[Tokens]
 

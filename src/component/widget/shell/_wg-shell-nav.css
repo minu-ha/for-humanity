@@ -46,6 +46,48 @@
     border-bottom: 1px dotted var(--app-color-border);
 }
 
+.wg_shellNav__docChevron {
+    flex: none;
+    width: 14px;
+    height: 14px;
+    color: var(--app-color-text-muted);
+}
+
+.wg_shellNav__docGroup {
+    margin-top: var(--app-space-inline);
+
+    &[open] .wg_shellNav__docChevron {
+        transform: rotate(90deg);
+    }
+}
+
+.wg_shellNav__docSummary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: 6px;
+    gap: var(--app-space-inline);
+    color: var(--app-color-text-strong);
+    font-size: var(--app-font-size-dense);
+    font-weight: var(--app-font-weight-strong);
+    line-height: var(--app-line-height-tight);
+    list-style: none;
+    cursor: pointer;
+
+    &::-webkit-details-marker {
+        display: none;
+    }
+
+    &:hover {
+        color: var(--app-color-link-hover);
+    }
+
+    &:focus-visible {
+        outline: var(--app-outline-focus);
+        outline-offset: var(--app-outline-focus-offset);
+    }
+}
+
 /* 공통 목록 · 가름별 왼선 분리 */
 .wg_shellNav__list {
     display: flex;
@@ -88,7 +130,7 @@
     font-weight: var(--app-font-weight-strong);
 }
 
-/* 줄 앞 표지 · 절 번호·이름 첫 글자 · 최소 2ch */
+/* 목차의 절 번호 · 최소 2ch */
 .wg_shellNav__mark {
     flex: none;
     min-width: 2ch;

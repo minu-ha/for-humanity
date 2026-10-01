@@ -1,12 +1,12 @@
 import {z} from "zod";
-import {doc_type} from "@/constant/doc";
+import {doc_order_default, doc_type} from "@/constant/doc";
 
 /**
  * 문서 frontmatter 스키마 · 검증 실패 시 빌드 중단
  */
 export const docDataSchema = z.object({
     /**
-     * 영어 이름 · 제목·목록·카드 · 첫 글자 표지는 문서 간 고유
+     * 문서 이름 · 제목·목록·카드 · 같은 첫 글자 허용
      */
     name: z.string().trim().min(1),
     /**
@@ -18,9 +18,13 @@ export const docDataSchema = z.object({
      */
     type: z.enum(doc_type).default(doc_type.document),
     /**
-     * 첫 화면 카드와 문서 머리의 묶음
+     * 사이드바·첫 화면 카드·문서 머리의 묶음
      */
-    group: z.string(),
+    group: z.string().trim().min(1),
+    /**
+     * 묶음 안의 읽는 순서 · 미지정 문서는 뒤에서 이름순
+     */
+    order: z.number().int().nonnegative().default(doc_order_default),
 });
 
 /**

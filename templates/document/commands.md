@@ -2,10 +2,11 @@
 name: Commands
 label: 설치와 실행
 group: Getting started
+order: 10
 ---
 
 Markdown 폴더에서 정적 사이트까지. 설치, 개발 서버, 빌드, 미리보기.
-문서 형식은 [Writing](writing.md), 사이트 설정은 [Settings](settings.md).
+문서 형식은 [Writing](writing.md), 사이트 설정은 [Settings](settings.md), 배포는 [Deployment](deployment.md).
 
 ## Overview
 
@@ -82,7 +83,7 @@ pnpm exec for-humanity build docs
 
 | Kind    | Trigger                                                                   | Result                  |
 | ------- | ------------------------------------------------------------------------- | ----------------------- |
-| Error   | 설정·frontmatter 오류, 문서 id·표지 중복, 모르는 블록 지시문, 흐름도 실패 | 종료 코드 `1`           |
+| Error   | 설정·frontmatter 오류, 문서 id 중복, 모르는 블록 지시문, 흐름도 실패       | 종료 코드 `1`           |
 | Warning | 없는 Markdown 링크, 설정에 없는 날짜 상태 문구                            | 터미널 경고 · 빌드 계속 |
 
 ## preview
