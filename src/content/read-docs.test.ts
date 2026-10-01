@@ -38,7 +38,7 @@ test("normalized document URL collisions still fail", async (t) => {
     await assert.rejects(readDocs({root, processor: createProcessor({site, root})}), /문서 id가 겹친다: guide/);
 });
 
-test("navigation follows group and reading order with the current group open", async (t) => {
+test("navigation shows every document group in reading order with default icons", async (t) => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-docs-"));
     const site = siteConfigSchema.parse({navigation: ["Getting started", "Guide"]});
 
@@ -51,14 +51,14 @@ test("navigation follows group and reading order with the current group open", a
 
     const docs = await readDocs({root, processor: createProcessor({site, root})});
     const html = renderToStaticMarkup(WgShellNav({site, docs, current: "writing"}));
-    const groups = [...html.matchAll(/<details\b([^>]*)><summary\b[^>]*>([\s\S]*?)<\/summary>/g)];
+    const groups = [...html.matchAll(/<section\b[^>]*aria-label="([^"]+)"/g)];
 
     assert.deepEqual(
-        groups.map((group) => group[2].replace(/<[^>]+>/g, "").trim()),
+        groups.map((group) => group[1]),
         ["Getting started", "Guide"],
     );
-    assert.doesNotMatch(groups[0][1], /\bopen/);
-    assert.match(groups[1][1], /\bopen/);
+    assert.doesNotMatch(html, /<details\b/);
+    assert.equal([...html.matchAll(/<svg\b[^>]*class="wg_shellNav__docIcon"/g)].length, docs.length + 1);
     assert.ok(html.indexOf('href="/writing/"') < html.indexOf('href="/parts/"'));
     assert.match(html, /href="\/writing\/"[^>]*aria-current="page"/);
 });

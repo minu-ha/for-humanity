@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import {Fragment} from "react";
+import {doc_icon_path} from "@/component/widget/shell/_constant/doc-icon";
 import {toTocGroups} from "@/component/widget/shell/_function/to-toc-groups";
 import type {DocOutline} from "@/component/widget/shell/_type/doc-outline";
 import {copy_nav_aria_label, copy_nav_docs_label, copy_nav_toc_label, copy_overview_label, copy_overview_name, copy_theme_label} from "@/constant/copy";
@@ -43,7 +44,7 @@ export const WgShellNav = (props: WgShellNavProps) => {
             </a>
             <div className={clsx("wg_shellNav__label")}>{copy_nav_docs_label}</div>
             {/**
-             * 문서 이동 · 첫 화면과 독자 목적별 묶음 · 현재 문서의 묶음 공개
+             * 문서 이동 · 첫 화면과 독자 목적별 묶음 · 모든 문서 이름을 항상 공개
              */}
             <div className={clsx("wg_shellNav__docs")}>
                 <ul className={clsx("wg_shellNav__list")}>
@@ -56,36 +57,19 @@ export const WgShellNav = (props: WgShellNavProps) => {
                             title={copy_overview_label}
                             aria-current={props.current === undefined ? "page" : undefined}
                         >
+                            <svg className={clsx("wg_shellNav__docIcon")} viewBox="2 2 12 12" fill="currentColor" shapeRendering="crispEdges" aria-hidden="true" focusable="false">
+                                <path d={doc_icon_path} fillRule="evenodd" />
+                            </svg>
                             {copy_overview_name}
                         </a>
                     </li>
                 </ul>
                 {/**
-                 * native 묶음 탐색 · 제목은 토글, 문서 제목은 별도 페이지 이동
+                 * 묶음 이름과 독립 문서 · 기본 얼굴 표지는 장식이고 이름이 링크의 접근 가능한 이름
                  */}
-                {docGroups.map((group, index) => (
-                    <details
-                        className={clsx("wg_shellNav__docGroup")}
-                        key={group.name}
-                        open={group.docs.some((doc) => doc.id === props.current) || (props.current === undefined && index === 0)}
-                    >
-                        {/**
-                         * 키보드로 접고 펼치는 묶음 이름
-                         */}
-                        <summary className={clsx("wg_shellNav__docSummary")}>
-                            {group.name}
-                            <svg
-                                className={clsx("wg_shellNav__docChevron")}
-                                viewBox="0 0 16 16"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="1.5"
-                                aria-hidden="true"
-                                focusable="false"
-                            >
-                                <path d="M6 3L11 8L6 13" />
-                            </svg>
-                        </summary>
+                {docGroups.map((group) => (
+                    <section className={clsx("wg_shellNav__docGroup")} key={group.name} aria-label={group.name}>
+                        <div className={clsx("wg_shellNav__group")}>{group.name}</div>
                         {/**
                          * 문서의 URL·현재 페이지 표시는 첫 글자와 무관하게 유지
                          */}
@@ -100,12 +84,22 @@ export const WgShellNav = (props: WgShellNavProps) => {
                                         title={doc.data.label}
                                         aria-current={doc.id === props.current ? "page" : undefined}
                                     >
+                                        <svg
+                                            className={clsx("wg_shellNav__docIcon")}
+                                            viewBox="2 2 12 12"
+                                            fill="currentColor"
+                                            shapeRendering="crispEdges"
+                                            aria-hidden="true"
+                                            focusable="false"
+                                        >
+                                            <path d={doc_icon_path} fillRule="evenodd" />
+                                        </svg>
                                         {doc.data.name}
                                     </a>
                                 </li>
                             ))}
                         </ul>
-                    </details>
+                    </section>
                 ))}
             </div>
             {/**

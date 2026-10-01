@@ -65,7 +65,8 @@ order: 10
 묶음 순서는 [Settings](settings.md#navigation)의 `navigation`. 묶음 안은 작은 `order` 먼저.
 `order`를 생략한 문서는 순서를 지정한 문서 뒤에서 제목순, 제목도 같으면 파일 id순.
 파일 이름에 번호나 알파벳을 붙여 순서를 맞출 필요 없음.
-현재 문서의 묶음은 자동으로 펼침. `Contents`는 현재 문서 안의 절만 표시.
+모든 문서 묶음은 항상 표시. 각 문서의 기본 표지는 파비콘 얼굴의 아웃라인.
+`Contents`는 현재 문서 안의 절만 표시.
 
 ## Sections and parts
 

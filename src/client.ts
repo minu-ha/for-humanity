@@ -3,7 +3,7 @@
  * 서버 HTML의 data-* 연결 · React hydration 없음
  */
 
-import {cursor_face_offset_px} from "@/component/widget/shell/_constant/cursor-face";
+import {cursor_face_offset_px, cursor_face_storage_key} from "@/component/widget/shell/_constant/cursor-face";
 import {reading_line_slack_px} from "@/component/widget/shell/_constant/reading-line";
 import {setThemeButton} from "@/component/widget/shell/_function/set-theme-button";
 import {theme_mode, theme_order, theme_storage_key} from "@/constant/theme";
@@ -17,7 +17,7 @@ if (cursorFace) {
     const position = {x: 0, y: 0, frame: 0};
 
     /**
-     * 입력 전환과 화면 이탈 시 예약된 이동도 취소해 장식이 다시 나타나지 않게 함
+     * 터치 전환과 화면 이탈 시 예약된 이동도 취소해 장식이 다시 나타나지 않게 함
      */
     const handleCursorHide = () => {
         cancelAnimationFrame(position.frame);
@@ -35,18 +35,9 @@ if (cursorFace) {
     };
 
     /**
-     * 최신 마우스 위치를 화면 갱신마다 한 번만 반영 · 선택 중과 움직임 감소 설정에서는 숨김
+     * 이동·화면 크기 변경·문서 진입에 같은 위치 계산 적용 · 화면 갱신마다 한 번만 반영
      */
-    const handleDocumentPointerMove = (event: PointerEvent) => {
-        if (!cursorMedia.matches || event.pointerType !== "mouse" || event.buttons !== 0) {
-            handleCursorHide();
-
-            return;
-        }
-
-        position.x = event.clientX;
-        position.y = event.clientY;
-
+    const renderCursorFace = () => {
         if (position.frame !== 0) {
             return;
         }
@@ -64,12 +55,88 @@ if (cursorFace) {
         });
     };
 
-    document.addEventListener("pointermove", handleDocumentPointerMove, {passive: true});
-    document.addEventListener("pointerdown", handleCursorHide, {passive: true});
-    document.addEventListener("keydown", handleCursorHide);
+    /**
+     * 누른 상태도 마우스 입력으로 처리 · 클릭·텍스트 선택 중에도 얼굴 유지
+     */
+    const handleDocumentPointer = (event: PointerEvent) => {
+        const isMouse = cursorMedia.matches && event.pointerType === "mouse";
+
+        if (!isMouse) {
+            handleCursorHide();
+
+            return;
+        }
+
+        position.x = event.clientX;
+        position.y = event.clientY;
+        renderCursorFace();
+    };
+
+    /**
+     * 이미 보이는 얼굴을 새 화면 크기에 맞춰 이동 · 추가 마우스 이동 불필요
+     */
+    const handleCursorResize = () => {
+        if (cursorFace.classList.contains("wg_shell__cursorFace--visible")) {
+            renderCursorFace();
+        }
+    };
+
+    /**
+     * 전체 페이지 이동에서도 마지막 좌표 유지 · 저장 실패는 기본 마우스 동작에 영향 없음
+     */
+    const handlePageHide = () => {
+        if (!cursorFace.classList.contains("wg_shell__cursorFace--visible")) {
+            return;
+        }
+
+        try {
+            sessionStorage.setItem(cursor_face_storage_key, JSON.stringify({x: position.x, y: position.y}));
+        } catch {
+            // 저장소가 막힌 환경에서도 클릭·선택과 현재 페이지의 장식 유지
+        }
+    };
+
+    /**
+     * 첫 진입과 BFCache 복귀에서 좌표를 한 번 소비 · 이전 문서의 위치가 남지 않도록 삭제
+     */
+    const handlePageShow = () => {
+        try {
+            const stored = sessionStorage.getItem(cursor_face_storage_key);
+
+            sessionStorage.removeItem(cursor_face_storage_key);
+
+            if (stored !== null && cursorMedia.matches) {
+                const point: unknown = JSON.parse(stored);
+                // 속성 타입의 좁히기를 유지하도록 저장소 검증과 사용을 같은 분기에 둠
+                if (
+                    typeof point === "object" &&
+                    point !== null &&
+                    "x" in point &&
+                    "y" in point &&
+                    typeof point.x === "number" &&
+                    typeof point.y === "number" &&
+                    Number.isFinite(point.x) &&
+                    Number.isFinite(point.y)
+                ) {
+                    position.x = point.x;
+                    position.y = point.y;
+                    renderCursorFace();
+                }
+            }
+        } catch {
+            // 저장 실패나 잘못된 좌표는 무시하고 다음 실제 마우스 입력에서 표시
+        }
+    };
+
+    handlePageShow();
+
+    document.addEventListener("pointermove", handleDocumentPointer, {passive: true});
+    document.addEventListener("pointerdown", handleDocumentPointer, {passive: true});
     document.documentElement.addEventListener("pointerleave", handleCursorHide);
     addEventListener("blur", handleCursorHide);
-    addEventListener("resize", handleCursorHide);
+    addEventListener("resize", handleCursorResize);
+    addEventListener("pagehide", handlePageHide);
+    addEventListener("pageshow", handlePageShow);
     cursorMedia.addEventListener("change", handleCursorMediaChange);
 }
 

@@ -35,7 +35,8 @@ export default {
 
 설정을 생략하면 기본 이름 `for humanity`.
 `title`을 지정하면 탭·사이드바·문서 머리에 같은 사이트 이름 적용.
-픽셀 얼굴은 탭의 favicon과 데스크톱 커서 옆 장식에 같은 파일 사용. 사이드바에는 이름만 표시.
+픽셀 얼굴은 탭의 favicon과 데스크톱 커서 옆 장식에 같은 파일 사용.
+사이드바의 브랜드 영역에는 이름, 문서 목록에는 얼굴의 아웃라인 표지 표시.
 
 ## Navigation
 
@@ -55,8 +56,8 @@ export default {
 - `navigation` 생략: 모든 묶음을 이름순
 - 묶음 안의 순서: frontmatter의 `order` · [Writing](writing.md#navigation-groups)
 
-하위 문서 없이도 묶음 안에 여러 페이지 배치 가능. 접고 펼치는 기능은 native Details로 제공.
-현재 페이지의 묶음은 자동으로 펼침. Overview에서는 첫 묶음 공개.
+하위 문서 없이도 묶음 안에 여러 페이지 배치 가능. 모든 묶음과 문서 링크를 항상 표시.
+문서마다 기본 아웃라인 표지와 이름을 함께 표시하고, 현재 페이지는 왼쪽 선과 글자색으로 구분.
 
 ## Status badges
 
