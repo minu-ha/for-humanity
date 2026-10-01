@@ -1,5 +1,18 @@
 /**
- * 주소의 #조각이 가리키는 요소. 한글 절 이름은 주소에서 퍼센트로 적히므로 풀어서 찾는다
+ * URL hash 대상 · 한국어 제목의 percent encoding 해석
  */
-export const findHashTarget = (hash: string): HTMLElement | null =>
-	hash ? document.getElementById(decodeURIComponent(hash.slice(1))) : null;
+export const findHashTarget = (hash: string): HTMLElement | null => {
+	if (!hash) {
+		return null;
+	}
+
+	try {
+		return document.getElementById(decodeURIComponent(hash.slice(1)));
+	} catch (error) {
+		if (error instanceof URIError) {
+			return null;
+		}
+
+		throw error;
+	}
+};

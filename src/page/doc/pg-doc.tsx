@@ -5,14 +5,23 @@ import type {SiteAssets} from "@/type/site-assets";
 import type {SiteConfig} from "@/type/site-config";
 
 /**
- * 문서 한 장. 라우트 /:slug/ 의 진입 파일이다. 본문은 read-docs 가 이미 그렸으니 틀에 넣기만 한다
+ * /:slug/ 문서 페이지 입력 · 렌더링된 HTML 사용
  */
 export interface PgDocProps {
+	/**
+	 * 검증된 사이트 설정
+	 */
 	site: SiteConfig;
+	/**
+	 * 사이드바의 전체 문서
+	 */
 	docs: Doc[];
+	/**
+	 * HTML 머리의 공통 자원
+	 */
 	assets: SiteAssets;
 	/**
-	 * 이 쪽이 그리는 문서
+	 * 현재 페이지의 문서
 	 */
 	doc: Doc;
 }

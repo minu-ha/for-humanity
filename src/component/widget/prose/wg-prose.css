@@ -1,9 +1,9 @@
 /*
- * 문서 본문 (wg-prose.tsx). Markdown 이 만든 태그와 빌드 때 붙은 부품의 모양이다.
- * 본문은 태그만 쓰므로 태그는 이 뿌리 블록 안에서만 잡는다
+ * Markdown 본문과 생성 부품의 표현
+ * 요소 선택자는 소유 root 안에 한정
  */
 .wg_prose__root {
-	/* stylelint-disable selector-disallowed-list -- 문서 본문은 Markdown 이 만든 태그다 */
+	/* stylelint-disable selector-disallowed-list -- Markdown 생성 태그 영역 */
 	& h1 {
 		margin: 14px 0 var(--app-space-stack);
 		color: var(--app-color-text-strong);
@@ -18,7 +18,7 @@
 		margin: 0 0 var(--app-space-stack);
 	}
 
-	/* 제목 밑 첫 문단이 이 문서가 답하는 것이다 */
+	/* 제목 아래 첫 문단 · 소개 크기 */
 	& h1 + p {
 		font-size: var(--app-font-size-lead);
 	}
@@ -36,14 +36,14 @@
 		scroll-margin-top: var(--app-space-anchor);
 	}
 
-	/* 머리의 굵은 선 바로 밑이라 첫 절은 선을 또 긋지 않는다 */
+	/* 머리 아래 첫 절의 중복 구분선 제거 */
 	& .wg_prose__head + h2 {
 		margin-top: 40px;
 		padding-top: 0;
 		border-top: 0;
 	}
 
-	/* 가름 머리 바로 밑의 절은 가름 선이 제 선을 대신한다 */
+	/* 가름 아래 절의 중복 구분선 제거 */
 	& .wg_prose__part + h2 {
 		margin-top: 20px;
 		padding-top: 0;
@@ -115,7 +115,7 @@
 		margin: 5px 0 0;
 	}
 
-	/* 합자를 끈다. JetBrains Mono 는 >= 와 != 를 한 글자 (≥ ≠) 로 그려 비교식을 옮겨 적을 때 헷갈린다 */
+	/* JetBrains Mono 합자 비활성 · >=, != 원문 구분 */
 	& code {
 		padding: 1px 5px;
 		border-radius: var(--app-radius-inline);
@@ -126,7 +126,7 @@
 		font-variant-ligatures: none;
 	}
 
-	/* 코드 상자. 글자 색은 Shiki 가 token.css 의 --app-code-* 로 칠한다 */
+	/* 코드 블록 · Shiki의 --app-code-* 참조 */
 	& pre {
 		overflow-x: auto;
 		margin: var(--app-space-block) 0;
@@ -147,7 +147,7 @@
 		font-size: inherit;
 	}
 
-	/* 원문 인용과 문서 첫머리의 당부 */
+	/* 인용과 첫머리 안내 */
 	& blockquote {
 		margin: var(--app-space-block) 0;
 		padding: 12px 18px;
@@ -191,7 +191,7 @@
 		border-bottom: 0;
 	}
 
-	/* 넓은 표에서 읽는 줄을 짚는다 */
+	/* 표의 읽는 행 표시 */
 	& tbody tr:hover td {
 		background: var(--app-color-accent-soft);
 	}
@@ -204,13 +204,13 @@
 	/* stylelint-enable selector-disallowed-list */
 }
 
-/* 문서 머리 — 눈썹 줄, 제목, 첫 절 앞의 글. 문서는 rehype-head 가, 첫 화면은 wg-prose.tsx 가 그린다 */
+/* 공통 문서 머리 · 라벨·제목·소개 */
 .wg_prose__head {
 	margin-bottom: 8px;
 	padding-bottom: 28px;
 	border-bottom: 2px solid var(--app-color-text-strong);
 
-	/* stylelint-disable-next-line selector-disallowed-list -- 머리 안은 문서 본문 태그다 */
+	/* stylelint-disable-next-line selector-disallowed-list -- Markdown 생성 머리 */
 	& > :last-child {
 		margin-bottom: 0;
 	}
@@ -227,7 +227,7 @@
 	text-transform: uppercase;
 }
 
-/* 가름 머리 — 여러 절을 한 묶음으로 가른다. ::part[이름] 줄을 remark-parts 가 바꾼다 */
+/* ::part 가름의 공통 표현 */
 .wg_prose__part {
 	margin-top: 88px;
 	padding-top: 14px;
@@ -237,7 +237,7 @@
 	font-weight: var(--app-font-weight-strong);
 }
 
-/* 제목 앞 절 번호 (01.A). 목차도 같은 글자를 쓴다 */
+/* 제목 앞 번호 · 본문과 목차 동일 */
 .wg_prose__num {
 	margin-right: 12px;
 	color: var(--app-color-accent);
@@ -247,7 +247,7 @@
 	letter-spacing: 0;
 }
 
-/* 표 — 넓으면 상자 안에서 가로로 민다 */
+/* 넓은 표의 내부 가로 스크롤 */
 .wg_prose__table {
 	overflow-x: auto;
 	margin: var(--app-space-block) 0;
@@ -256,7 +256,7 @@
 	background: var(--app-color-surface);
 }
 
-/* 상태 알약 — 확인한 것은 초록, 확인하지 못한 것은 amber */
+/* 상태 표지 · 확인 초록, 미확인 amber */
 .wg_prose__pill {
 	display: inline-block;
 	padding: 0 7px;
@@ -277,9 +277,9 @@
 	color: var(--app-color-unverified);
 }
 
-/* 색 칩 — #rrggbb 한 덩어리인 <code> 앞. 색은 remark-swatch 가 --wg-prose-chip-color 로 넘긴다 */
+/* 인라인 hex 색 칩 · remark-swatch의 CSS 변수 */
 .wg_prose__color {
-	/* 좁은 표 칸에서 칩과 값 사이로 줄이 갈리지 않게 한다 */
+	/* 색 칩과 값 사이 줄바꿈 방지 */
 	white-space: nowrap;
 
 	&::before {
@@ -295,7 +295,7 @@
 	}
 }
 
-/* 흐름도 — ```mermaid 원문을 remark-flow 가 빌드 때 격자 SVG 로 그린 상자 */
+/* 빌드 시 생성한 격자 SVG 흐름도 */
 .wg_prose__flow {
 	overflow-x: auto;
 	margin: var(--app-space-block) 0;
@@ -304,7 +304,7 @@
 	border-radius: var(--app-radius-box);
 	background: var(--app-color-surface);
 
-	/* stylelint-disable-next-line selector-disallowed-list -- 렌더러가 그린 마크업이다 */
+	/* stylelint-disable-next-line selector-disallowed-list -- 외부 렌더러 생성 SVG */
 	& svg {
 		display: block;
 		max-width: 100%;

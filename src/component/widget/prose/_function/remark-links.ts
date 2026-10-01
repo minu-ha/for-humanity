@@ -6,15 +6,18 @@ import type {VFile} from "vfile";
 import {copy_warn_broken_link} from "@/constant/copy";
 
 /**
- * 링크. 다른 문서의 .md 로 건 링크 (GitHub 에서도 열리는 꼴) 를 사이트 주소로 바꾼다.
- * `settings.md#시간대` 는 `/settings/#시간대` 가 된다. 바깥 주소, 절대 경로, 같은 쪽의 #절은 그대로 둔다.
- * 가리키는 파일이 없으면 주소는 바꾸되 파일에 경고를 남긴다. 경고는 remark-report 가 모아 dev toolbar 에 보인다
+ * 상대 Markdown 링크 → 사이트 URL · settings.md#시간대 → /settings/#시간대
+ * 외부·절대 URL과 같은 페이지 hash 유지 · 없는 파일은 터미널 경고
  */
 export const remarkLinks = (options: {root: string}) => (tree: Root, file: VFile) => {
 	const here = dirname(relative(options.root, file.path));
 
-	visit(tree, "link", (node) => {
-		// 셋째 묶음은 #절이 없으면 빈 글이다
+	visit(tree, (node) => {
+		if (node.type !== "link" && node.type !== "definition") {
+			return;
+		}
+
+		// 셋째 capture: 선택 hash · 없으면 빈 문자열
 		const match = /^(?![a-z]+:|\/|#)([^#?]+)(\.mdx?)(#.*|)$/i.exec(node.url);
 
 		if (match) {

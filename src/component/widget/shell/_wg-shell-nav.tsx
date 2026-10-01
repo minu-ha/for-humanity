@@ -17,24 +17,24 @@ import type {SiteConfig} from "@/type/site-config";
 import "./_wg-shell-nav.css";
 
 /**
- * 사이드바. 문서 목록 (영어 이름 abc 순, 첫 글자 표지) 과 이 문서의 목차 (가름마다 끊긴 목록) 를 서버에서 그린다.
- * 브라우저에서는 테마 단추와 읽는 절 표시만 돈다 (client.ts). 스크립트가 잡는 요소에는 클래스 대신 data-* 를 단다
+ * 서버 사이드바 입력 · 영어 이름순 문서와 가름별 목차
+ * 브라우저 동작은 client.ts 소유 · data-* 연결
  */
 export interface WgShellNavProps {
 	/**
-	 * 사이드바 맨 위 이름의 출처
+	 * 사이드바 사이트 이름
 	 */
 	site: SiteConfig;
 	/**
-	 * 문서 모음 전부
+	 * 전체 문서 목록
 	 */
 	docs: Doc[];
 	/**
-	 * 지금 연 문서의 id. 첫 화면은 없다
+	 * 현재 문서 id · 첫 화면 생략
 	 */
 	current?: string;
 	/**
-	 * 이 문서의 목차 재료. 첫 화면은 없다
+	 * 현재 문서 목차 · 첫 화면 생략
 	 */
 	outline?: DocOutline;
 }
@@ -44,16 +44,16 @@ export const WgShellNav = (props: WgShellNavProps) => {
 	const tocGroups = props.outline === undefined ? [] : toTocGroups(props.outline);
 
 	return (
-		<nav className="wg_shellNav__root" aria-label={copy_nav_aria_label}>
-			<a className="wg_shellNav__brand" href="/">
+		<nav className={clsx("wg_shellNav__root")} aria-label={copy_nav_aria_label}>
+			<a className={clsx("wg_shellNav__brand")} href="/">
 				{props.site.title}
 			</a>
-			<div className="wg_shellNav__label">{copy_nav_docs_label}</div>
+			<div className={clsx("wg_shellNav__label")}>{copy_nav_docs_label}</div>
 			{/**
-			 * 문서 목록. 첫 화면이 맨 위고 문서는 영어 이름 순이다
+			 * 문서 이동 · 첫 화면 우선, 영어 이름순
 			 */}
-			<div className="wg_shellNav__docs">
-				<ul className="wg_shellNav__list">
+			<div className={clsx("wg_shellNav__docs")}>
+				<ul className={clsx("wg_shellNav__list")}>
 					<li>
 						<a
 							className={clsx("wg_shellNav__link", {"wg_shellNav__link--active": props.current === undefined})}
@@ -61,7 +61,7 @@ export const WgShellNav = (props: WgShellNavProps) => {
 							title={copy_overview_label}
 							aria-current={props.current === undefined ? "page" : undefined}
 						>
-							<span className="wg_shellNav__mark">{copy_overview_mark}</span>
+							<span className={clsx("wg_shellNav__mark")}>{copy_overview_mark}</span>
 							{copy_overview_name}
 						</a>
 					</li>
@@ -73,7 +73,7 @@ export const WgShellNav = (props: WgShellNavProps) => {
 								title={doc.data.label}
 								aria-current={doc.id === props.current ? "page" : undefined}
 							>
-								<span className="wg_shellNav__mark">{doc.data.name[0]}</span>
+								<span className={clsx("wg_shellNav__mark")}>{doc.data.name[0]}</span>
 								{doc.data.name}
 							</a>
 						</li>
@@ -81,27 +81,31 @@ export const WgShellNav = (props: WgShellNavProps) => {
 				</ul>
 			</div>
 			{/**
-			 * 이 문서의 목차. 가름마다 목록이 끊기고, 지금 읽는 절의 소제목만 client.ts 가 펼친다
+			 * 가름별 목차 · 현재 절 소제목은 client.ts에서 펼침
 			 */}
 			{tocGroups.length > 0 && (
 				<Fragment>
-					<div className="wg_shellNav__label">{copy_nav_toc_label}</div>
+					<div className={clsx("wg_shellNav__label")}>{copy_nav_toc_label}</div>
 					{tocGroups.map((group) => (
 						<Fragment key={group.sections[0].heading.slug}>
-							{group.part !== undefined && <div className="wg_shellNav__group">{group.part}</div>}
-							<ul className="wg_shellNav__list">
+							{group.part !== undefined && <div className={clsx("wg_shellNav__group")}>{group.part}</div>}
+							<ul className={clsx("wg_shellNav__list")}>
 								{group.sections.map((section) => (
 									<li key={section.heading.slug}>
-										<a className="wg_shellNav__link" href={`#${section.heading.slug}`} data-toc-link="">
-											<span className="wg_shellNav__mark">{section.number}</span>
+										<a className={clsx("wg_shellNav__link")} href={`#${section.heading.slug}`} data-toc-link="">
+											<span className={clsx("wg_shellNav__mark")}>{section.number}</span>
 											{section.heading.text}
 										</a>
 										{section.subs.length > 0 && (
-											<ul className="wg_shellNav__sub" data-toc-sub="">
+											<ul className={clsx("wg_shellNav__sub")} data-toc-sub="">
 												{section.subs.map((sub) => (
 													<li key={sub.heading.slug}>
-														<a className="wg_shellNav__subLink" href={`#${sub.heading.slug}`} data-toc-sub-link="">
-															<span className="wg_shellNav__mark">{sub.number}</span>
+														<a
+															className={clsx("wg_shellNav__subLink")}
+															href={`#${sub.heading.slug}`}
+															data-toc-sub-link=""
+														>
+															<span className={clsx("wg_shellNav__mark")}>{sub.number}</span>
 															{sub.heading.text}
 														</a>
 													</li>
@@ -115,7 +119,7 @@ export const WgShellNav = (props: WgShellNavProps) => {
 					))}
 				</Fragment>
 			)}
-			<button className="wg_shellNav__theme" type="button" data-theme-toggle="">
+			<button className={clsx("wg_shellNav__theme")} type="button" data-theme-toggle="">
 				{copy_theme_label.system}
 			</button>
 		</nav>

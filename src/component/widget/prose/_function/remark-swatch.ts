@@ -2,8 +2,8 @@ import type {Root} from "mdast";
 import {visit} from "unist-util-visit";
 
 /**
- * 색 칩. 색 값 하나만 든 코드 (`#e80030`) 앞에 그 색을 칠한다.
- * 색은 문서마다 달라 스타일시트에 미리 적을 수 없으므로 CSS 변수 하나로만 넘긴다
+ * 인라인 hex 색 값의 칩 표시
+ * 문서별 색은 --wg-prose-chip-color로 전달 · 고정 스타일시트 값 불가
  */
 export const remarkSwatch = () => (tree: Root) => {
 	visit(tree, "inlineCode", (node) => {

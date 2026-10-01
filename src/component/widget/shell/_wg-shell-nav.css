@@ -1,8 +1,8 @@
 /*
- * 사이드바 (_wg-shell-nav.tsx). 문서 목록과 목차가 같은 목록 모양을 쓴다
+ * 문서 목록과 가름별 목차의 공통 표현
  */
 .wg_shellNav__root {
-	/* 뷰포트에 붙는다. 조상인 <body> 와 <html> 에는 overflow 가 없다 */
+	/* 뷰포트 sticky · html·body에 overflow 미지정 */
 	position: sticky;
 	top: 0;
 	align-self: start;
@@ -31,7 +31,7 @@
 	}
 }
 
-/* 두 목록 (문서, 목차) 위에 붙는 작은 표지 */
+/* 문서·목차 목록 라벨 */
 .wg_shellNav__label {
 	margin: 16px 0 6px;
 	color: var(--app-color-text-muted);
@@ -40,14 +40,14 @@
 	letter-spacing: var(--app-letter-spacing-label);
 }
 
-/* 문서 목록을 감싸고 이 문서의 목차와 선으로 가른다 */
+/* 문서 목록과 목차 사이 구분선 */
 .wg_shellNav__docs {
 	margin: 0 0 18px;
 	padding: 0 0 16px;
 	border-bottom: 1px solid var(--app-color-border);
 }
 
-/* 목록 — 문서 목록과 목차가 함께 쓴다. 목차는 가름마다 목록이 끊겨 왼쪽 선도 끊긴다 */
+/* 공통 목록 · 가름별 왼선 분리 */
 .wg_shellNav__list {
 	display: flex;
 	flex-direction: column;
@@ -81,14 +81,14 @@
 	}
 }
 
-/* 지금 연 문서, 지금 읽고 있는 절 */
+/* 현재 문서·읽는 절 */
 .wg_shellNav__link--active {
 	border-left-color: var(--app-color-accent);
 	color: var(--app-color-text-strong);
 	font-weight: var(--app-font-weight-strong);
 }
 
-/* 줄 앞 표지 — 목차는 절 번호, 문서 목록은 영어 이름의 첫 글자. 두 칸 너비라 이름 줄이 맞는다 */
+/* 줄 앞 표지 · 절 번호·이름 첫 글자 · 최소 2ch */
 .wg_shellNav__mark {
 	flex: none;
 	min-width: 2ch;
@@ -98,20 +98,20 @@
 	font-weight: 400;
 }
 
-/* 목차 묶음 이름 — 본문의 가름 머리와 같은 이름으로 절을 가른다 */
+/* 본문 가름과 같은 목차 묶음 이름 */
 .wg_shellNav__group {
 	margin: 0 0 8px;
 	color: var(--app-color-text-muted);
 	font-size: var(--app-font-size-label);
 	letter-spacing: 0.02em;
 
-	/* 앞 묶음의 목록 뒤에 오는 묶음 이름만 위를 띄운다 */
+	/* 이전 목록 뒤의 묶음 간격 */
 	.wg_shellNav__list + & {
 		margin-top: 24px;
 	}
 }
 
-/* 절 안의 소제목 — 지금 읽는 절의 것만 펼친다 */
+/* 현재 절의 소제목 */
 .wg_shellNav__sub {
 	display: none;
 	margin: 1px 0 6px;
@@ -173,7 +173,7 @@
 	}
 }
 
-/* 좁은 화면에서는 본문 위에 놓이고, 두 목록을 알약 줄로 편다 */
+/* 좁은 화면 · 본문 위 알약형 목록 */
 @media (width < 1024px) {
 	.wg_shellNav__root {
 		position: static;
@@ -205,7 +205,7 @@
 		}
 	}
 
-	/* 목차가 알약 줄이면 소제목은 두지 않는다 */
+	/* 알약형 목차에서 소제목 숨김 */
 	.wg_shellNav__sub--open {
 		display: none;
 	}

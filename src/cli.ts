@@ -1,9 +1,7 @@
 #!/usr/bin/env node
 /*
- * for-humanity <dev|build|preview> [문서 폴더]
- * 문서 폴더의 for-humanity.config.mjs 를 읽고 Markdown 을 그려 Hono 앱에 싣는다. 폴더를 빼면 지금 폴더다.
- * build 는 쪽마다 HTML 을 쓰고 자원 (CSS, 스크립트, 글꼴, 아이콘) 을 복사한다. dev 는 같은 앱을 띄우고 문서가 바뀌면 쪽을 다시 연다.
- * preview 는 만든 결과 폴더를 그대로 띄운다. 앱 (쪽, 컴포넌트, 스타일) 은 이 패키지의 src 에 있고, 문서 폴더에는 Markdown 과 설정만 있다
+ * CLI · for-humanity <dev|build|preview> [문서 폴더]
+ * 기본 문서 폴더: 현재 폴더 · 출력: <문서 폴더>/dist
  */
 
 import {EventEmitter} from "node:events";
@@ -39,14 +37,15 @@ const commands = ["dev", "build", "preview"];
 const [command = cli_default_command, docsDir = cli_default_docs_dir] = process.argv.slice(2);
 
 /**
- * 명령 본문. 오류는 아래 catch 가 한 줄로 적고 1 로 끝낸다
+ * 명령 실행 · 설정 검증, 렌더링, 빌드·서버 시작
+ * 실패: 터미널 오류와 종료 코드 1
  */
 const main = async () => {
 	if (!commands.includes(command)) {
 		throw new Error(`${copy_error_unknown_command}: ${command} (${commands.join(", ")})`);
 	}
 
-	// 이 파일은 dist/cli.js 로 묶여 돈다. 거기서 한 칸 올라가면 패키지 뿌리다
+	// dist/cli.js 기준 패키지 루트
 	const kitRoot = fileURLToPath(new URL("../", import.meta.url));
 	const docsRoot = resolve(docsDir);
 	const outDir = join(docsRoot, "dist");
@@ -72,7 +71,7 @@ const main = async () => {
 	}
 
 	const siteConfig = parsedConfig.data;
-	// 본문 글꼴은 글자 조각 92개, 코드 글꼴은 라틴 한 파일이다. 변수 두 개는 token.css 가 받아 --app-font-* 를 만든다
+	// 내장 글꼴 CSS와 파일 수집 · token.css의 font-face 변수 연결
 	const sans = toFontCss({css: join(kitRoot, font_sans_css), fontDir: asset_font_dir});
 	const mono = toFontCss({css: join(kitRoot, font_mono_css), fontDir: asset_font_dir});
 	const fontCss = [
@@ -96,7 +95,7 @@ const main = async () => {
 	});
 
 	if (command === "build") {
-		// 지운 문서의 쪽이나 이름이 바뀐 자원이 남지 않게 결과 폴더를 비우고 쓴다
+		// 삭제된 문서·자원의 잔여 파일 방지
 		await rm(outDir, {recursive: true, force: true});
 
 		const result = await toSSG(app, {writeFile, mkdir}, {dir: outDir});
@@ -116,21 +115,32 @@ const main = async () => {
 	}
 
 	const reload = new EventEmitter();
+	let generation = 0;
 
 	serve({fetch: createDevApp({pages: app, files, reload}).fetch, port: cli_dev_port}, (info) =>
 		console.log(`http://localhost:${info.port}/`),
 	);
 
 	/**
-	 * 문서가 바뀌면 모두 다시 그리고 열린 쪽에 알린다. 그리다 멈추면 (머리말 오류 등) 까닭을 적고 이전 문서를 그대로 둔다
+	 * Markdown 변경 시 전체 재처리와 새로고침
+	 * 재처리 실패 시 직전 정상 문서 유지
 	 */
 	const handleDocsChange = async (_event: string, filename: string | null) => {
-		if (filename === null || !/\.mdx?$/.test(filename)) {
+		if (filename !== null && !/\.mdx?$/.test(filename)) {
 			return;
 		}
 
+		const currentGeneration = ++generation;
+
 		try {
-			store.docs = await readDocs({root: docsRoot, processor});
+			const docs = await readDocs({root: docsRoot, processor});
+
+			// 최신 변경의 처리 결과만 반영
+			if (currentGeneration !== generation) {
+				return;
+			}
+
+			store.docs = docs;
 			reload.emit("change");
 		} catch (error) {
 			console.error(`${copy_error_prefix}: ${error instanceof Error ? error.message : String(error)}`);

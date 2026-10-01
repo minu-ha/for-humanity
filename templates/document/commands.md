@@ -1,97 +1,103 @@
 ---
 name: Commands
-label: 명령 모음
-type: document
-group: 사용
+label: 설치와 실행
+group: 시작
 ---
 
-Lantern이 받는 명령을 모았다. 설치부터 검색, 실시간 보기까지 쓰는 차례대로 적었다.
-설정 파일은 [Settings](settings.md), 장애 때 쓰는 순서는 [Workflow](workflow.md)에 있다.
+Markdown 폴더에서 정적 사이트까지. 설치, 개발 서버, 빌드, 미리보기.
+문서 형식은 [Writing](writing.md), 사이트 설정은 [Settings](settings.md).
 
 ## 한눈에
 
-| 절 | 무엇을 답하나                  |
-|----|--------------------------------|
-| 01 | 어떻게 설치하고 확인하나       |
-| 02 | 첫 검색은 어떻게 하나          |
-| 03 | 낱말과 시간 범위는 어떻게 주나 |
-| 04 | 새로 들어오는 줄은 어떻게 보나 |
-| 05 | 아직 확인하지 못한 것          |
-
 ```mermaid
 flowchart LR
-    a("설치") --> b("첫 검색")
-    b --> c("범위 좁히기")
-    c --> d("실시간 보기")
+    a("Markdown") --> b("dev<br>작성과 확인")
+    b --> c("build<br>정적 HTML")
+    c --> d("preview<br>배포 전 확인")
 ```
+
+| Command | Result |
+| --- | --- |
+| `dev <폴더>` | 개발 서버 · Markdown 변경 시 새로고침 |
+| `build <폴더>` | `<폴더>/dist`에 HTML과 자원 출력 |
+| `preview <폴더>` | 빌드 결과 미리보기 |
 
 ::part[시작]
 
-## 설치
+## 저장소에서 실행
 
-Lantern은 명령 하나로 설치한다. macOS와 Linux에서 확인됨 2026-09-30.
+Node.js 22 이상과 pnpm.
 
 ```sh
-npm install -g lantern-cli
-lantern --version
+git clone https://github.com/minu-ha/for-humanity.git
+cd for-humanity
+pnpm install
+pnpm dev
 ```
 
-### 요구 사항
+접속: `http://localhost:4321/`. 기본 문서: 이 폴더의 for-humanity 문서.
 
-| 항목   | 값                              |
-|--------|---------------------------------|
-| Node   | 22 이상                         |
-| 디스크 | 색인 1GB마다 약 80MB            |
-| 권한   | 로그 폴더를 읽을 수 있어야 한다 |
-
-### 설치 확인
-
-`lantern doctor`가 색인 폴더, 권한, 글꼴을 차례로 본다. 하나라도 실패하면 이유를 한 줄로 알려 준다.
-
-## 첫 검색
-
-색인이 없으면 첫 검색 때 한 번만 만든다. 그다음부터는 바로 찾는다.
-
-```mermaid
-flowchart TD
-    q("lantern search") --> i{"색인이 있나"}
-    i -- 예 --> r("결과를 바로 보여 준다")
-    i -- 아니요 --> b("색인을 만든다<br>처음 한 번만")
-    b --> r
+```sh
+pnpm build
+pnpm preview
 ```
 
-| 옵션      | 뜻                     | 기본      |
-|-----------|------------------------|-----------|
-| `--since` | 이 시각 뒤의 줄만 본다 | 24시간 전 |
-| `--limit` | 보여 줄 줄 수          | 200       |
-| `--color` | 찾은 낱말의 강조 색    | `#e80030` |
+### 다른 프로젝트에서 사용
+
+현재 npm 공개 전. 저장소에서 만든 패키지를 문서 프로젝트에 설치.
+
+```sh
+# for-humanity 저장소
+pnpm pack
+
+# 문서 프로젝트
+pnpm add -D /path/to/for-humanity-0.1.0.tgz
+pnpm exec for-humanity dev docs
+```
 
 ::part[명령]
 
-## search
-
-### 낱말
-
-`lantern search "timeout"`처럼 낱말을 주면 그 낱말이 든 줄을 찾는다. 정규식은 `--regex`를 붙여 쓴다.
+## dev
 
 ```sh
-lantern search "timeout" --since 2h
-lantern search "5[0-9]{2}" --regex --limit 50
+pnpm exec for-humanity dev docs
 ```
 
-### 시간 범위
+- 포트: `4321`
+- Markdown 추가·수정·삭제 → 문서 재처리 → 열린 페이지 새로고침
+- 잘못된 문서 → 터미널 오류 · 직전 정상 문서 유지
+- 설정 변경 → 서버 재시작
+- 킷 소스 변경 → `pnpm dev` 재실행
 
-`--since 2h`, `--until 2026-09-30T12:00` 꼴을 받는다. 시간대는 설정의 `timezone`을 따른다 ([Settings](settings.md#시간대)).
+## build
 
-## tail
+```sh
+pnpm exec for-humanity build docs
+```
 
-`lantern tail`은 새로 들어오는 줄을 계속 보여 준다. `Ctrl+C`로 멈춘다.
+출력: `docs/dist`. 이전 결과 삭제 후 새 HTML, CSS, 스크립트, 글꼴, favicon 출력.
+배포 대상은 이 폴더 전체. URL 기준은 사이트 루트 `/`.
 
-> 한 번에 너무 많은 줄이 들어오면 화면이 따라가지 못한다. 그럴 때는 `--filter`로 먼저 좁힌다.
+### 오류와 경고
 
-::part[기록]
+| Kind | Trigger | Result |
+| --- | --- | --- |
+| Error | 설정·머리말 오류, 문서 id·표지 중복, 모르는 블록 지시문, 흐름도 실패 | 종료 코드 `1` |
+| Warning | 없는 Markdown 링크, 설정에 없는 날짜 상태 문구 | 터미널 경고 · 빌드 계속 |
 
-## 확인 안 된 것
+## preview
 
-- Windows에서 설치되는지는 확인되지 않았다.
-- 색인이 10GB를 넘을 때의 검색 속도는 확인되지 않았다.
+```sh
+pnpm exec for-humanity preview docs
+```
+
+빌드 결과만 제공. 문서 수정 반영은 다시 `build`.
+
+### 인자 생략
+
+명령 생략 = `dev`. 문서 폴더 생략 = 현재 폴더.
+
+```sh
+pnpm exec for-humanity
+pnpm exec for-humanity build
+```

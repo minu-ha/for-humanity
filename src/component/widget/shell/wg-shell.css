@@ -1,5 +1,5 @@
 /*
- * 모든 쪽의 틀 (wg-shell.tsx). <body> 를 두 칸 격자로 놓는다. 사이드바와 본문은 차례대로 칸에 들어간다
+ * 공통 페이지 배치 · 사이드바와 본문의 2열 grid
  */
 .wg_shell__root {
 	display: grid;
@@ -14,7 +14,7 @@
 	font-size: var(--app-font-size-body);
 	line-height: var(--app-line-height-body);
 
-	/* 한국어는 낱말 안에서 줄을 끊지 않는다. 긴 식별자만 예외로 끊는다 */
+	/* 한국어 낱말 단위 줄바꿈 · 긴 식별자만 예외 */
 	word-break: keep-all;
 	overflow-wrap: break-word;
 	text-wrap: pretty;
@@ -24,11 +24,11 @@
 .wg_shell__main {
 	min-width: 0;
 
-	/* 끝 여백은 마지막 절도 읽는 선 (--app-space-anchor) 까지 올라올 만큼 둔다 */
+	/* 마지막 절도 읽는 선까지 이동 가능한 끝 여백 */
 	padding-block: var(--app-space-page-top) calc(100vh - var(--app-space-anchor));
 }
 
-/* 좁은 화면에서는 한 칸으로 쌓는다. 사이드바가 위, 본문이 아래다. 좌우와 위 여백은 token.css 가 같은 조건에서 줄인다 */
+/* 좁은 화면 · 사이드바 → 본문 순서의 1열 */
 @media (width < 1024px) {
 	.wg_shell__root {
 		gap: 0;

@@ -1,5 +1,5 @@
 /**
- * 테마 값. 시스템은 data-theme 을 떼어 운영체제 설정을 따른다
+ * 테마 종류 · system은 data-theme 없이 OS 설정 사용
  */
 export const theme_mode = {
 	system: "system",
@@ -8,11 +8,11 @@ export const theme_mode = {
 } as const;
 
 /**
- * 테마 단추가 도는 차례
+ * 테마 버튼의 순환 순서
  */
 export const theme_order = [theme_mode.system, theme_mode.light, theme_mode.dark] as const;
 
 /**
- * 고른 테마를 기억하는 localStorage 키. 머리의 인라인 스크립트가 읽고 테마 단추가 쓴다
+ * 테마 저장 키 · HTML 머리에서 읽기, 버튼에서 쓰기
  */
 export const theme_storage_key = "fh-theme";

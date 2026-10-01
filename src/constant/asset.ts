@@ -1,39 +1,39 @@
 /*
- * 쪽 (HTML) 밖의 파일이 놓이는 주소. 결과 폴더와 dev 서버가 같은 주소를 쓴다
+ * 정적 빌드와 dev의 공통 자원 URL
  */
 
 /**
- * 자원이 모이는 폴더. 문서 주소와 겹치지 않게 밑줄로 시작한다
+ * 문서 경로와 구분한 자원 폴더
  */
 export const asset_dir = "_fh";
 
 /**
- * 컴포넌트 CSS 를 하나로 묶은 파일. esbuild 가 cli 를 묶을 때 함께 만든다
+ * esbuild의 컴포넌트 CSS 묶음
  */
 export const asset_style_path = `/${asset_dir}/style.css`;
 
 /**
- * 브라우저 스크립트 (테마 단추, 읽는 절, #절 맞추기)
+ * 테마·목차·hash 보정 브라우저 스크립트
  */
 export const asset_client_path = `/${asset_dir}/client.js`;
 
 /**
- * 글꼴 파일이 놓이는 폴더
+ * 자체 호스팅 글꼴 폴더
  */
 export const asset_font_dir = `/${asset_dir}/fonts`;
 
 /**
- * dev 에서 문서가 바뀌면 브라우저에 알리는 SSE 주소
+ * dev 문서 변경 알림 SSE URL
  */
 export const asset_reload_path = `/${asset_dir}/reload`;
 
 /**
- * 탭 아이콘
+ * 탭 아이콘 URL
  */
 export const asset_favicon_path = "/favicon.svg";
 
 /**
- * 확장자별 content-type. dev 서버가 자원을 줄 때 쓴다
+ * dev 자원 응답의 확장자별 content-type
  */
 export const asset_content_types: Record<string, string> = {
 	".css": "text/css; charset=utf-8",
@@ -43,6 +43,6 @@ export const asset_content_types: Record<string, string> = {
 };
 
 /**
- * 표에 없는 확장자의 content-type
+ * 미등록 확장자의 content-type
  */
 export const asset_content_type_default = "application/octet-stream";

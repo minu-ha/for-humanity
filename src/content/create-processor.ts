@@ -22,12 +22,12 @@ import {remarkReport} from "@/content/remark-report";
 import type {SiteConfig} from "@/type/site-config";
 
 /**
- * Markdown 처리기. 차례는 GFM 과 smartypants, 부품 플러그인, HTML 로 바꾼 뒤 코드 색, 머리, 제목 id, 번호, 표 상자다.
- * 플러그인이 넣는 HTML 조각 (알약, 흐름도, 번호) 은 마지막의 rehype-raw 가 요소로 푼다.
- * 코드 색은 token.css 의 --app-code-* 가 정한다. Shiki 는 그 변수 이름만 inline style 로 적는다
+ * Markdown 처리 순서: remark → 코드 강조 → 머리 → 제목 id → 절 번호 → 표
+ * 플러그인 HTML 조각은 마지막 rehype-raw에서 해석
+ * Shiki inline style: token.css의 --app-code-* 참조
  */
-export const createProcessor = (options: {site: SiteConfig; root: string}) =>
-	unified()
+export const createProcessor = (options: {site: SiteConfig; root: string}) => {
+	return unified()
 		.use(remarkParse)
 		.use(remarkGfm)
 		.use(remarkSmartypants)
@@ -47,8 +47,9 @@ export const createProcessor = (options: {site: SiteConfig; root: string}) =>
 		.use(rehypeTables)
 		.use(rehypeRaw)
 		.use(rehypeStringify, {allowDangerousHtml: true});
+};
 
 /**
- * 조립한 처리기
+ * 플러그인 조립을 마친 Markdown 처리기
  */
 export type Processor = ReturnType<typeof createProcessor>;

@@ -12,32 +12,32 @@ import {
 } from "@/constant/asset";
 
 /**
- * dev 서버의 재료
+ * 개발 서버 입력 계약
  */
 export interface DevOptions {
 	/**
-	 * 쪽 앱 (app.tsx). 자원이 아닌 요청은 모두 여기로 넘긴다
+	 * 정적 자원 외 요청을 처리할 페이지 앱
 	 */
 	pages: Hono;
 	/**
-	 * 자원 주소 → 파일 자리. 빌드가 결과 폴더에 복사하는 것과 같은 목록이다
+	 * 자원 URL → 파일 경로 · 정적 빌드와 동일 목록
 	 */
 	files: Map<string, string>;
 	/**
-	 * 문서가 바뀌면 "change" 를 낸다. 열려 있는 쪽이 SSE 로 받아 다시 연다
+	 * 문서 변경 알림 · SSE 새로고침의 change 이벤트
 	 */
 	reload: EventEmitter;
 }
 
 /**
- * dev 서버 앱. 자원 파일과 새로고침 길을 맡고, 나머지 요청은 쪽 앱에 넘긴다.
- * 빌드 결과에서는 자원이 같은 주소에 파일로 있으므로 이 앱은 dev 에만 쓴다
+ * 개발 전용 자원·SSE 라우트 · 나머지 요청은 페이지 앱에 위임
+ * 정적 빌드의 페이지 라우트와 분리
  */
 export const createDevApp = (options: DevOptions) => {
 	const app = new Hono();
 
 	/**
-	 * 주소에 맞는 파일을 읽어 준다
+	 * 등록된 URL의 자원 응답 · 미등록 시 404
 	 */
 	const handleAsset = async (c: Context) => {
 		const file = options.files.get(c.req.path);
@@ -56,6 +56,9 @@ export const createDevApp = (options: DevOptions) => {
 			c,
 			(stream) =>
 				new Promise((done) => {
+					/**
+					 * 문서 변경의 SSE 전송 · 전송 후 연결 종료
+					 */
 					const handleChange = async () => {
 						await stream.writeSSE({data: "change"});
 						done();

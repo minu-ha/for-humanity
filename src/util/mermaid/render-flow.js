@@ -1,11 +1,7 @@
 /*
- * 흐름도 격자 렌더러. beautiful-mermaid 가 만든 문자 격자 (ASCII) 를 SVG 로 그린다. 빌드 때 돈다.
- * 선 문자는 선, 화살촉은 삼각형, 판단 모서리는 ◇, 글자는 고정폭으로 그린다. 색은 CSS 변수라 테마가 바뀌어도 다시 그리지 않는다.
- * 격자 렌더러는 한글을 한 칸으로 세므로 전각 글자마다 폭 0 문자를 덧붙여 두 칸을 예약시킨다.
- *
- * 컨벤션 예외: import 줄과 맨 아래 renderFlow 사이는 agent-conventions 뷰어 → sk-ax-gas-pp blueprint.js → uoo _index.js 로
- * 옮겨 온 코드를 글자 그대로 둔다. 세 곳과 diff 로 맞춰 보려고 고치지 않는다. 그래서 TypeScript 가 아닌 .js 이고,
- * biome.json 의 files.includes 에서 뺐다.
+ * ASCII 격자의 빌드 시 SVG 렌더링 · CSS 변수 테마
+ * 전각 문자의 폭 0 문자 삽입으로 2칸 확보
+ * 공유 blueprint 알고리즘 · Biome 제외 · 실행 로직 변경 시 원본 대조
  */
 import {renderMermaidASCII} from "beautiful-mermaid";
 
@@ -15,17 +11,17 @@ const ASCII_OPT = {paddingX: 3, paddingY: 2, boxBorderPadding: 1, colorMode: "no
 const WIDE = /[ᄀ-ᇿ　-〿㄰-㆏가-힯一-鿿぀-ヿ＀-｠]/;
 const ZW = "​";
 const widenCjk = (src) => src.replace(new RegExp(WIDE.source, "g"), (c) => c + ZW);
-// 선 문자가 칸 가운데에서 어느 변으로 이어지는지. L R U D, r 은 둥근 모서리.
+// 선 문자의 연결 방향 · L R U D · r 둥근 모서리
 const LINES = {"─": "LR", "│": "UD", "┌": "RD", "┐": "LD", "└": "RU", "┘": "LU", "├": "UDR", "┤": "UDL", "┬": "LRD", "┴": "LRU", "┼": "LRUD", "╭": "RDr", "╮": "LDr", "╰": "RUr", "╯": "LUr",
 	"═": "LRb", "║": "UDb", "╔": "RDb", "╗": "LDb", "╚": "RUb", "╝": "LUb", "╟": "UDRb", "╢": "UDLb", "╌": "LRd", "╎": "UDd"};
 const ARROWS = {"►": "R", "◄": "L", "▼": "D", "▲": "U", "▶": "R", "◀": "L"};
-// 상자의 세로 벽과 가로 테두리. 선과 화살촉은 벽 선이 지나는 칸 가운데까지 닿아야 붙어 보인다.
+// 선·화살촉의 접점: 상자 벽 선의 가운데
 const isWall = (chr) => chr === "│" || chr === "◇" || chr === "├" || chr === "┤";
 const isHBorder = (chr) => chr !== undefined && chr !== " " && chr !== ZW && (LINES[chr] !== undefined || chr === "◇");
 
-// 렌더러는 라벨이 있는 가로 구간을 "라벨 + 3칸" 으로 고정해 선 조각이 한 칸씩만 남는다.
-// 1) 어느 줄의 글자도 가르지 않는 열(라벨 뒤, 화살표 앞)에 열을 끼워 구간 길이를 라벨 + 6칸 이상으로 늘리고,
-// 2) 줄마다 라벨을 구간 가운데로 옮겨 양쪽 선을 같게 한다. 줄 길이는 그대로라 세로 정렬이 유지된다.
+// ASCII 라벨 구간의 3칸 여백 보정
+// 1) 글자를 가르지 않는 열 삽입 · 라벨 양옆 최소 6칸 확보
+// 2) 라벨 중앙 정렬 · 줄 길이 유지로 세로선 정렬 보존
 function widenLabelGaps(rows) {
 	const width = Math.max.apply(null, rows.map((r) => r.length));
 	let grid = rows.map((r) => r.padEnd(width));
@@ -44,7 +40,7 @@ function widenLabelGaps(rows) {
 		}
 		return " ";
 	};
-	// 가로 선 위 라벨: 양쏀에 선 조각이 있거나 한쪽이 꺾임 · 화살표에 바로 닿는 글자 묶음
+	// 선 위 라벨 · 양쪽 선 또는 모서리·화살표에 닿은 글자 묶음
 	const runs = (row) => {
 		const out = [];
 		for (const m of row.matchAll(/(─*)((?:[가-힣A-Za-z0-9]​?)+)(─*)/g)) {
@@ -59,7 +55,7 @@ function widenLabelGaps(rows) {
 		return out;
 	};
 	const want = 6;
-	// 1) 열 끼우기 — 오른쏀에서 왼쪽으로 처리해 앞선 자리가 밀리지 않게 한다
+	// 1) 오른쪽부터 열 삽입 · 기존 인덱스 보존
 	const inserts = [];
 	grid.forEach((row) => {
 		for (const run of runs(row)) {
@@ -74,7 +70,7 @@ function widenLabelGaps(rows) {
 		if (col === undefined) continue;
 		grid = grid.map((r) => r.slice(0, col) + filler(r, col).repeat(ins.n) + r.slice(col));
 	}
-	// 2) 라벨을 구간 가운데로
+	// 2) 라벨 중앙 정렬
 	return grid.map((row) => {
 		let out = row;
 		for (const run of runs(row).reverse()) {
@@ -99,15 +95,15 @@ function gridToSvg(ascii) {
 	rows.forEach((row, r) => {
 		const cy = r * ch + ch / 2, y0 = r * ch, y1 = y0 + ch;
 		let run = null;
-		// 가로선 위 라벨(── 예 ──►). 렌더러는 라벨을 한 칸으로 보고 놓으므로 전각 라벨이 한 칸 밀린다.
-		// 선 구간(벽 가운데 ~ 화살촉 끝)의 정확한 가운데에 라벨을 놓고, 선은 라벨 폭만큼 비워 다시 그린다.
+		// 전각 선 라벨의 1칸 오차 보정
+		// 벽부터 화살촉까지 중앙 정렬 · 라벨 폭만큼 선 비움
 		const skip = new Set();
 		for (let c = 0; c < row.length; c++) {
 			if (!isText(row[c]) || skip.has(c)) continue;
 			let e = c;
 			while (e < row.length && (isText(row[e]) || row[e] === ZW || (row[e] === " " && isText(row[e + 1])))) e++;
-			// 상자 테두리 위에 얹힌 라벨(◇───예───◇). 렌더러가 아래 · 위로 나가는 선의 라벨을 테두리 줄에 쓰고 ┬ 를 지운다.
-			// 테두리를 이어 그리고 세로 선을 테두리까지 붙인 뒤, 라벨은 그 세로 선 옆(다음 줄)에 놓는다.
+			// 테두리 라벨로 사라진 분기점 ┬ 복원
+			// 테두리·세로선 연결 · 라벨은 다음 줄의 세로선 옆
 			if (row[c - 1] === "─" && row[e] === "─") {
 				const below = rows[r + 1] || "", above = rows[r - 1] || "";
 				let exit = null;
@@ -133,7 +129,7 @@ function gridToSvg(ascii) {
 			if (!onLine) { c = e - 1; continue; }
 			let L = l;
 			while (L - 1 >= 0 && row[L - 1] === "─") L--;
-			// 출발점 ├ 앞의 빈칸(렌더러의 가로 여백)을 건너 벽 선의 가운데까지가 구간의 시작이다.
+			// 출발점 ├ 앞의 ASCII 여백을 건너 상자 벽까지 연결
 			let segStart = L * cw, drawStart = L * cw;
 			if (row[L] === "├" || row[L - 1] === "├") {
 				const j = row[L] === "├" ? L : L - 1;
@@ -141,12 +137,12 @@ function gridToSvg(ascii) {
 				const junction = (above !== undefined && LINES[above] !== undefined && /[UD]/.test(LINES[above])) ||
 					(below !== undefined && LINES[below] !== undefined && /[UD]/.test(LINES[below]));
 				if (junction) {
-					// ├ 가 상자 벽 자체다. 벽은 본 루프가 그리므로 건너뛰지 않고, 선만 벽 가운데에서 시작한다.
+					// 상자 벽인 ├는 기본 루프에서 유지 · 연결선만 벽 가운데부터 시작
 					segStart = center(j);
 					drawStart = center(j);
 					for (let m = j + 1; m < L; m++) skip.add(m);
 				} else {
-					// 벽과 떨어진 출발점 ├. 앞의 빈칸을 건너 벽 가운데까지 선을 잇고 ├ 는 그리지 않는다.
+					// 벽과 떨어진 ├는 별도 표식 없이 연결선으로 대체
 					let k = j - 1;
 					while (k >= 0 && row[k] === " ") k--;
 					segStart = isWall(row[k]) ? center(k) : center(j);
@@ -177,9 +173,9 @@ function gridToSvg(ascii) {
 			for (let k = L; k <= R; k++) skip.add(k);
 			c = e - 1;
 		}
-		// 영문만 있는 묶음은 칸마다 놓아 격자 느낌을 지키고, 한글이 섞인 묶음은 예약한 칸 가운데에 한 덩어리로 놓아 자간을 살린다.
-		// 상자 안 글자는 좌우 테두리 사이의 정확한 가운데에 한 덩어리로 놓는다. 격자 렌더러는 칸 수로 맞춰 반 칸씩 어긋난다.
-		// 선 위 라벨처럼 테두리가 없으면, 한글이 섞인 묶음은 예약 칸 가운데에, 영문 묶음은 칸마다 놓는다.
+		// 영문은 격자 칸별 배치 · 한글 혼합은 예약 칸 중앙의 글자 묶음
+		// 상자 내부 라벨은 실제 테두리 중앙 · ASCII의 반 칸 오차 보정
+		// 테두리 없는 라벨은 예약 칸 기준 정렬
 		const wall = (chr) => chr === "│" || chr === "◇" || chr === "├" || chr === "┤";
 		const walls = (from, to) => {
 			let l = from - 1, rgt = to;
@@ -187,13 +183,13 @@ function gridToSvg(ascii) {
 			while (rgt < row.length && (row[rgt] === " " || row[rgt] === ZW)) rgt++;
 			return wall(row[l] || "") && wall(row[rgt] || "") ? [l, rgt] : null;
 		};
-		// 상자 안쪽 줄 수와 라벨 줄 수의 홀짝이 다르면 렌더러가 남는 빈 줄을 위에 두어 라벨이 반 줄 처진다. 그만큼 올린다.
+		// 상자 내부와 라벨의 줄 수 홀짝 차이 · 반 줄 처짐 보정
 		const lift = (box) => {
 			const col = run.start;
 			let top = r - 1, bottom = r + 1;
 			while (top >= 0 && !isHBorder((rows[top] || "")[col])) top--;
 			while (bottom < rows.length && !isHBorder((rows[bottom] || "")[col])) bottom++;
-			// 시퀀스도의 생명선 사이 글자처럼 상자가 아닌 자리는 건드리지 않는다. 상자는 테두리 줄의 벽 자리가 모서리다.
+			// 실제 상자 모서리만 보정 · 시퀀스 생명선 제외
 			const corner = (chr) => chr !== undefined && chr !== "─" && chr !== "═" && chr !== "╌" && (LINES[chr] !== undefined || chr === "◇");
 			if (top < 0 || bottom >= rows.length || !corner((rows[top] || "")[box[0]]) || !corner((rows[bottom] || "")[box[0]])) return 0;
 			let labelRows = 0;
@@ -219,15 +215,15 @@ function gridToSvg(ascii) {
 			if (skip.has(c)) { flush(); continue; }
 			if (chr === ZW) { if (run) run.end = c + 1; continue; }
 
-			// 라벨 안의 한 칸 띄어쓰기는 묶음에 넣어 한 줄을 한 덩어리로 놓는다. 빈칸이 이어지면 묶음이 끝난 것이다.
+			// 라벨 내부 단일 공백은 묶음 유지 · 연속 공백은 묶음 종료
 			if (chr === " ") {
 				const next = row[c + 1];
 				const joins = run && next !== undefined && next !== " " && next !== ZW && !LINES[next] && !ARROWS[next] && next !== "◇";
 				if (!joins) { flush(); continue; }
 			}
 
-			// 가로 배치에서 렌더러는 상자 오른쪽에 빈칸 하나를 두고 ├ 로 선을 시작한다. 세로로 이어지는 선이 없으면
-			// 갈래가 아니라 출발점이므로, 빈칸까지 메우는 가로선으로 그린다.
+			// 세로선 없는 ├·┤는 ASCII 가로선의 출발·도착점
+			// 상자와의 여백까지 연결
 			const above = rows[r - 1] ? rows[r - 1][c] : " ", below = rows[r + 1] ? rows[r + 1][c] : " ";
 			const vertical = (v) => v !== undefined && LINES[v] !== undefined && /[UD]/.test(LINES[v]) || v === "◇";
 			if ((chr === "├" || chr === "┤") && !vertical(above) && !vertical(below)) {
@@ -248,7 +244,7 @@ function gridToSvg(ascii) {
 					const ax = ln.indexOf("L") >= 0 ? x0 : x1, by = ln.indexOf("U") >= 0 ? y0 : y1;
 					arcs += "M" + f(ax) + " " + f(cy) + "Q" + f(cx) + " " + f(cy) + " " + f(cx) + " " + f(by) + " ";
 				} else {
-					// 옆 칸이 벽이면 벽 선의 가운데까지 늘려 붙인다. 이중선(b)은 굵게, 점선(d)은 끊어 그린다.
+					// 벽 접점까지 선 연장 · b 이중선, d 점선
 					let seg = "";
 					if (ln.indexOf("L") >= 0) seg += "M" + f(isWall(row[c - 1]) ? x0 - cw / 2 : x0) + " " + f(cy) + "H" + f(cx) + " ";
 					if (ln.indexOf("R") >= 0) seg += "M" + f(cx) + " " + f(cy) + "H" + f(isWall(row[c + 1]) ? x1 + cw / 2 : x1) + " ";
@@ -262,7 +258,7 @@ function gridToSvg(ascii) {
 			const ar = ARROWS[chr];
 			if (ar) {
 				flush();
-				// 화살촉 끝은 다음 칸이 벽이면 벽 선의 가운데에 닿는다.
+				// 화살촉의 벽 접점 보정
 				const w = cw * 0.9, h = ch * 0.42;
 				const tipR = isWall(row[c + 1]) ? x1 + cw / 2 : cx + w / 2, tipL = isWall(row[c - 1]) ? x0 - cw / 2 : cx - w / 2;
 				const tipD = isHBorder(below) ? y1 + ch / 2 : cy + h / 2, tipU = isHBorder(above) ? y0 - ch / 2 : cy - h / 2;
@@ -280,7 +276,7 @@ function gridToSvg(ascii) {
 				continue;
 			}
 
-			// 상태도의 시작점(●)과 클래스도의 상속 표식(△).
+			// 상태도 시작 ● · 클래스 상속 △
 			if (chr === "●") {
 				flush();
 				const rr = cw * 0.45;
@@ -320,6 +316,6 @@ function gridToSvg(ascii) {
 }
 
 /**
- * mermaid 원문 한 장을 격자 SVG 문자열로 바꾼다
+ * Mermaid 원문의 격자 SVG 문자열
  */
 export const renderFlow = (source) => gridToSvg(renderMermaidASCII(widenCjk(source), ASCII_OPT));

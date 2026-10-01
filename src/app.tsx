@@ -1,7 +1,7 @@
 import {Hono} from "hono";
 import {ssgParams} from "hono/ssg";
 import type {ReactElement} from "react";
-import {renderToString} from "react-dom/server";
+import {renderToStaticMarkup} from "react-dom/server";
 import {PgDoc} from "@/page/doc/pg-doc";
 import {PgHome} from "@/page/home/pg-home";
 import type {Doc} from "@/type/doc";
@@ -9,25 +9,34 @@ import type {SiteAssets} from "@/type/site-assets";
 import type {SiteConfig} from "@/type/site-config";
 
 /**
- * 쪽을 그리는 재료
+ * 페이지 앱 입력 계약
  */
 export interface AppOptions {
+	/**
+	 * 검증된 사이트 설정
+	 */
 	site: SiteConfig;
 	/**
-	 * 문서 모음. dev 에서 문서가 바뀌면 cli 가 docs 를 통째로 바꿔 끼운다
+	 * 렌더링 대상 문서 · dev 재처리 시 docs 교체
 	 */
 	store: {docs: Doc[]};
+	/**
+	 * HTML 머리에 포함할 공통 자원
+	 */
 	assets: SiteAssets;
 }
 
 /**
- * React 트리를 HTML 문서 글로. 쪽은 전부 서버에서 그리고 브라우저에는 React 를 보내지 않는다
+ * React 서버 렌더링 · 브라우저 React 번들 없음
  */
-const toHtml = (page: ReactElement) => `<!DOCTYPE html>${renderToString(page)}`;
+const toHtml = (page: ReactElement) => {
+	return `<!DOCTYPE html>${renderToStaticMarkup(page)}`;
+};
 
 /**
- * 쪽 앱. 라우트는 둘이다: 첫 화면 `/` 과 문서 `/:slug/`. 문서 id 에 폴더가 들어갈 수 있어 `{.+}` 로 받는다.
- * 자원과 새로고침 길은 여기 두지 않는다 (dev.ts). 정규식 매개변수와 `*` 라우트가 한 앱에 있으면 Hono 가 Trie 라우터로 물러나 `{.+}` 가 맞지 않는다
+ * 첫 화면 / · 문서 /:slug{.+}/ · 하위 폴더 id 지원
+ * 자원 wildcard와 정규식 매개변수 혼합 시 TrieRouter fallback으로 중첩 경로 불일치
+ * 자원·SSE는 dev.ts의 별도 앱 소유
  */
 export const createApp = (options: AppOptions) => {
 	const app = new Hono();

@@ -1,46 +1,64 @@
 ---
 name: Settings
-label: 설정
-type: document
-group: 사용
+label: 사이트 설정
+group: 작성
 ---
 
-Lantern의 설정 파일 `lantern.toml`을 항목별로 적었다. 명령은 [Commands](commands.md)에 있다.
+문서 폴더의 `for-humanity.config.mjs`. 제목, 소개, 상태 표지 설정.
+설정 파일과 각 항목 모두 선택. 생략한 값은 기본값 적용.
 
 ## 한눈에
 
-| 절 | 무엇을 답하나             |
-|----|---------------------------|
-| 01 | 설정 파일은 어디서 읽나   |
-| 02 | 색과 글꼴은 어떻게 바꾸나 |
-| 03 | 시간대는 어떻게 정하나    |
-
-::part[파일]
-
-## 설정 파일
-
-아래 차례로 찾고, **먼저 찾은 파일 하나만** 읽는다. 여러 파일을 합치지 않는다 (확인됨 2026-09-28).
-
-```mermaid
-flowchart TD
-    a("지금 폴더의 lantern.toml") --> b("홈 폴더의 lantern.toml")
-    b --> c("기본값")
+```js
+export default {
+  title: "for-humanity",
+  description: "사람이 읽는 문서를 위한 Markdown 킷",
+  status: [
+    {phrase: "확인됨", kind: "verified", date: true},
+    {phrase: "확인되지 않았다", kind: "unverified"},
+  ],
+};
 ```
+
+검증은 명령 시작 시 한 번. 개발 중 설정 변경은 서버 재시작 필요.
 
 ::part[항목]
 
-## 색과 글꼴
+## 사이트
 
-| 키       | 기본             | 예         |
-|----------|------------------|------------|
-| `accent` | `#e80030`        | `#1f6feb`  |
-| `muted`  | `#6b7280`        | `#94a3b8`  |
-| `font`   | `JetBrains Mono` | `D2Coding` |
+| Key | Use | Default |
+| --- | --- | --- |
+| `title` | 사이드바 이름 · 탭 제목 | `Documents` |
+| `description` | 첫 화면 소개 | 생략 |
 
-### 어두운 화면
+## 상태 표지
 
-`theme = "auto"`면 시스템 설정을 따른다. `"light"`, `"dark"`로 고정할 수도 있다.
+| Key | Value | Use |
+| --- | --- | --- |
+| `phrase` | 비어 있지 않은 상태 문구 | 본문에서 찾을 글 |
+| `kind` | `verified` / `unverified` | 초록 / amber |
+| `date` | 선택 boolean | 뒤의 `YYYY-MM-DD` 날짜 포함 여부 |
 
-## 시간대
+- 기본 문구: `확인됨`, `확인되지 않았다`
+- `status` 지정 시 기본 목록 전체 교체
+- `status: []` = 상태 표지 없음
+- 괄호로 감싼 문구 → 괄호 없이 표지 표시
+- 제목, 링크, 코드 안 문구 → 원문 유지
 
-`timezone = "Asia/Seoul"`처럼 적는다. 비우면 시스템 시간대를 쓴다. 여름 시간이 있는 곳에서의 동작은 확인되지 않았다.
+### 표시 예시
+
+| Source | Result |
+| --- | --- |
+| `확인됨 2026-10-01` | 확인됨 2026-10-01 |
+| `(확인되지 않았다)` | (확인되지 않았다) |
+
+::part[표현]
+
+## 테마와 글꼴
+
+테마는 읽는 사람의 선택. 시스템 → 밝게 → 어둡게 순환, 브라우저에 저장.
+
+- 본문: Pretendard Variable
+- 코드·절 번호·라벨·흐름도: JetBrains Mono Variable
+- 글꼴 파일: 빌드 결과 포함 · CDN 요청 없음
+- 색과 간격: `src/style/token.css` · [Design](design.md)

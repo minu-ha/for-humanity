@@ -2,7 +2,7 @@ import {readFileSync} from "node:fs";
 import {basename, dirname, join} from "node:path";
 
 /**
- * 글꼴 CSS 를 결과 폴더용으로 고친다. @font-face 블록만 남기고, url 을 자원 주소로 바꾸며 그 파일의 자리를 모은다
+ * 글꼴 CSS의 @font-face 추출 · 자원 URL 치환과 원본 파일 수집
  */
 export const toFontCss = (options: {css: string; fontDir: string}) => {
 	const files = new Map<string, string>();

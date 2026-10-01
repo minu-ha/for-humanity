@@ -2,23 +2,23 @@ import type {DocOutline} from "@/component/widget/shell/_type/doc-outline";
 import type {DocData} from "@/type/doc-data";
 
 /**
- * 그린 문서 한 장. read-docs 가 문서 폴더의 Markdown 마다 하나씩 만든다
+ * Markdown 파일 하나의 렌더링 결과
  */
 export interface Doc {
 	/**
-	 * 주소의 조각. 폴더를 뺀 파일 이름을 소문자로 (commands.md → commands)
+	 * 문서 URL id · 확장자 제외 소문자 경로 · 하위 폴더 포함
 	 */
 	id: string;
 	/**
-	 * 검사를 마친 머리말
+	 * 검증된 머리말
 	 */
 	data: DocData;
 	/**
-	 * 본문 HTML. 머리 (눈썹 · 제목 · 첫 글) 까지 들어 있다
+	 * 문서 머리와 본문을 포함한 HTML
 	 */
 	html: string;
 	/**
-	 * 사이드바 목차의 재료
+	 * 사이드바 목차 입력
 	 */
 	outline: DocOutline;
 }

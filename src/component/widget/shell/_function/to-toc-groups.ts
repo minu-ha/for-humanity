@@ -4,9 +4,8 @@ import type {DocOutline} from "@/component/widget/shell/_type/doc-outline";
 import type {TocGroup, TocSection} from "@/component/widget/shell/_type/toc-group";
 
 /**
- * 목차 묶음. 절 (h2) 마다 그 밑의 소제목 (h3) 을 모으고, 가름이 달린 절에서 묶음을 끊는다.
- * 첫 절보다 앞에 온 소제목은 들 절이 없어 목차에 넣지 않는다.
- * 부르는 곳은 _wg-shell-nav.tsx 하나다. 사이드바 파일이 길어 도메인 계산만 여기로 뺐고, 브라우저에서 도는 생명주기는 컴포넌트에 둔다
+ * h2별 h3 수집 · 가름 시작 절에서 목차 묶음 분리
+ * 첫 h2 앞의 h3은 목차 제외
  */
 export const toTocGroups = (outline: DocOutline): TocGroup[] => {
 	const entries = outline.headings

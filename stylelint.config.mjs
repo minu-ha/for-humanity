@@ -1,53 +1,56 @@
 /*
- * CSS 컨벤션 가운데 기계로 볼 수 있는 것을 검사한다. 의미 판단 (역할 이름, 소유자, 포커스 대비) 은 리뷰에 남긴다.
- * 포맷은 Biome 이 맡고, CSS 린트는 이 파일이 맡는다 (biome.json 에서 CSS 린터를 껐다)
+ * CSS 컨벤션의 자동 검사 · 포맷은 Biome
+ * 의미·역할·접근성 판단은 수동 리뷰
  */
 
 /**
- * 우리 클래스만 문법을 강제한다. 우리 접두사로 시작하지 않는 클래스는 남의 것이라 검사 대상이 아니다
+ * 소유 클래스의 명명 계약 · 외부 접두사 제외
  */
-const ownClassPattern = (scope) =>
-	[
+const ownClassPattern = (scope) => {
+	return [
 		"^(?:",
-		// 우리 접두사로 시작하지 않는 클래스는 통과시킨다
+		// 외부 클래스 제외
 		`(?!${scope}_).*`,
 		"|",
-		// wg_scopeSlug__element 또는 wg_scopeSlug__element--modifier 만 통과시킨다
+		// 소유 클래스의 scope_slug__element--modifier 문법
 		`${scope}_[a-z][a-zA-Z0-9]*__[a-z][a-zA-Z0-9]*(?:--[a-z][a-zA-Z0-9]*)?`,
 		")$",
 	].join("");
+};
 
 /**
- * 우리가 마크업을 쓰는 자리에서 금지되는 형태
+ * 직접 작성한 마크업의 금지 선택자
  */
 const ownMarkupPatterns = [
-	// 상태 pseudo-class 를 최상위 선택자로 다시 여는 것
+	// 최상위 상태 선택자 금지
 	/^\.[\w-]+:(hover|focus|focus-visible|focus-within|active|enabled|disabled|checked|visited)/,
-	// 중첩 안에서 요소 선택자로 우리 마크업을 잡는 것. Markdown 이 만든 태그처럼 우리가 쓰지 않는 마크업은 stylelint-disable 주석으로 연다
+	// 소유 마크업의 요소 선택자 금지 · 생성 마크업은 이유를 적은 예외
 	/^&\s*[>+~]?\s*[a-z]/,
 ];
 
-const disallowed = (foreignScopes) => [[...foreignScopes, ...ownMarkupPatterns], {splitList: true}];
+const disallowed = (foreignScopes) => {
+	return [[...foreignScopes, ...ownMarkupPatterns], {splitList: true}];
+};
 
 export default {
 	extends: ["stylelint-config-standard"],
-	// 글꼴 패키지에서 그대로 가져온 CSS 는 우리 것이 아니라 검사하지 않는다
+	// 외부 글꼴 CSS 제외
 	ignoreFiles: ["src/asset/**/*.css"],
 	rules: {
-		// 최상위 @media 안의 클래스가 깊이 0 이 되게 한다. 브레이크포인트 안에서 상태를 한 겹 더 쓸 수 있다
+		// @media 내부 클래스 깊이 0 · 상태 중첩 1단계 허용
 		"max-nesting-depth": [1, {ignoreAtRules: ["media", "supports", "container"]}],
-		// @keyframes 이름은 전역이라 소유자를 붙인다. 하이픈은 클래스 --수정자 표기와 섞이니 쓰지 않는다
+		// 전역 keyframes 이름에 소유자 명시 · 수정자 구분자와 혼동 방지
 		"keyframes-name-pattern": "^(pg|wg|ui)_[a-z][a-zA-Z0-9]*__[a-z][a-zA-Z0-9]*$",
-		// 쉼표 목록에 든 선택자를 아래에서 단독으로 다시 여는 것까지 잡는다
+		// 쉼표 목록 이후의 단독 중복 선언 포함
 		"no-duplicate-selectors": [true, {disallowInList: true}],
-		// 움직임 줄이기 전역 처리 외에는 쓰지 않는다
+		// !important: 전역 움직임 줄이기만 허용
 		"declaration-no-important": true,
-		// 지역 변수 선언을 막는다. var() 소비는 걸리지 않는다
+		// 지역 CSS 변수 선언 금지 · var() 소비 허용
 		"property-disallowed-list": ["/^--/"],
-		// 우리 마크업의 상태는 수정자로 표현한다
+		// 소유 마크업의 상태는 수정자 클래스
 		"selector-attribute-name-disallowed-list": [/^aria-/, /^data-(pg|wg|ui)-/],
 		"selector-max-id": 0,
-		// 부정 조건은 기본 블록으로 뒤집는다
+		// 부정 선택자 대신 기본 블록
 		"selector-pseudo-class-disallowed-list": ["not"],
 	},
 	overrides: [
@@ -73,23 +76,23 @@ export default {
 			},
 		},
 		{
-			// 전역 스타일시트는 우리 클래스 문법 대상이 아니다
+			// 전역 스타일은 소유 클래스 문법 제외
 			files: ["src/style/**/*.css", "src/*.css"],
 			rules: {
 				"selector-class-pattern": null,
 				"keyframes-name-pattern": null,
 				"property-disallowed-list": null,
-				// 움직임 줄이기 전역 처리는 여기서만 한다
+				// 움직임 줄이기의 전역 !important 예외
 				"declaration-no-important": null,
 			},
 		},
 		{
-			// 전역 토큰 파일만 이름을 강제한다
+			// 전역 토큰의 --app-* 문법
 			files: ["src/style/token.css"],
 			rules: {
 				"selector-class-pattern": null,
 				"property-disallowed-list": null,
-				// var() 사용까지 검사하므로 외부 변수를 소비하는 파일에는 쓰지 않는다
+				// var() 소비까지 검사 · 외부 변수 소비 파일 제외
 				"custom-property-pattern": "^app-[a-z0-9-]+$",
 			},
 		},

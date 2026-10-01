@@ -6,8 +6,8 @@ import type {VFile} from "vfile";
 import type {DocHeading} from "@/type/doc-heading";
 
 /**
- * 제목 id 와 목차 재료. 제목 (h1 ~ h6) 에 글로 만든 id 를 매기고 문서 순서대로 모은다.
- * 번호를 넣는 rehype-sections 보다 앞에 돌아 id 와 목차 글에 번호가 섞이지 않는다. 글이 같은 제목은 뒤에 -1, -2 가 붙는다
+ * 제목 id와 목차 수집 · 같은 제목은 -1, -2 접미사
+ * 절 번호 삽입 전 실행 · id와 목차 텍스트의 번호 혼입 방지
  */
 export const rehypeHeadingIds = () => (tree: Root, file: VFile) => {
 	const slugger = new Slugger();

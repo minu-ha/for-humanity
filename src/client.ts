@@ -1,6 +1,6 @@
 /*
- * 브라우저 스크립트. 테마 단추, 목차의 읽는 절 표시, #절 주소로 들어왔을 때 자리 맞추기.
- * 서버가 그린 요소를 data-* 로 잡는다. esbuild 가 dist/client.js 로 묶고 wg-shell.tsx 가 모든 쪽에 싣는다
+ * 브라우저 동작 · 테마, 읽는 절, hash 위치 보정
+ * 서버 HTML의 data-* 연결 · React hydration 없음
  */
 
 import {reading_line_slack_px} from "@/component/widget/shell/_constant/reading-line";
@@ -11,14 +11,15 @@ import {findHashTarget} from "@/util/dom/find-hash-target";
 const themeButton = document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
 
 /**
- * 지금 테마. 기억한 테마는 그리기 전에 wg-shell.tsx 머리가 data-theme 으로 붙였다
+ * HTML 머리에서 적용한 테마 · 미지정 시 시스템
  */
-const readThemeMode = () =>
-	theme_order.find((mode) => mode === document.documentElement.getAttribute("data-theme")) ?? theme_mode.system;
+const readThemeMode = () => {
+	return theme_order.find((mode) => mode === document.documentElement.getAttribute("data-theme")) ?? theme_mode.system;
+};
 
 if (themeButton) {
 	/**
-	 * 테마 단추. 누를 때마다 시스템 → 밝게 → 어둡게 차례로 바꾸고 고른 것을 기억한다
+	 * 테마 순환과 저장 · 시스템 → 밝게 → 어둡게
 	 */
 	const handleThemeClick = () => {
 		const next = theme_order[(theme_order.indexOf(readThemeMode()) + 1) % theme_order.length];
@@ -34,7 +35,7 @@ if (themeButton) {
 		try {
 			localStorage.setItem(theme_storage_key, next);
 		} catch {
-			// 저장이 막혀도 이번 방문에는 적용된 채로 둔다
+			// 저장 실패 시 현재 방문의 테마 유지
 		}
 	};
 
@@ -42,7 +43,7 @@ if (themeButton) {
 	themeButton.addEventListener("click", handleThemeClick);
 }
 
-// 목차의 절과 소제목, 그 링크가 가리키는 제목. 읽는 절의 소제목만 펼친다
+// 목차 링크와 실제 제목 연결
 const tocSections = [...document.querySelectorAll<HTMLAnchorElement>("[data-toc-link]")].flatMap((link) => {
 	const heading = findHashTarget(link.hash);
 	const item = link.parentElement;
@@ -68,11 +69,11 @@ const firstSection = tocSections.at(0);
 
 if (firstSection) {
 	/**
-	 * 읽는 선에 걸린 절과 소제목을 켠다. 읽는 선은 제목이 서는 높이 (--app-space-anchor) 라 목차로 옮긴 곳이 곧 켜진다.
-	 * 스크롤 이벤트는 브라우저가 그림마다 한 번만 보내므로 따로 줄이지 않는다
+	 * 읽는 선 기준 절·소제목 표시
+	 * 기준: 제목의 scroll-margin-top + reading_line_slack_px
 	 */
 	const markActive = () => {
-		// scroll-margin-top 은 vh 를 px 로 푼 값으로 읽힌다
+		// scroll-margin-top 계산값: CSS px
 		const line = Number.parseFloat(getComputedStyle(firstSection.heading).scrollMarginTop) + reading_line_slack_px;
 		const current =
 			tocSections.findLast((section) => section.heading.getBoundingClientRect().top <= line) ?? firstSection;
@@ -101,9 +102,8 @@ for (const type of ["wheel", "touchmove", "keydown", "mousedown"]) {
 }
 
 /**
- * 주소의 #절로 들어오면 글꼴이 늦게 와 높이가 바뀐 뒤 한 번 더 맞춘다. 그새 사용자가 스크롤을 시작했으면 건너뛴다.
- * 쪽을 여는 동안은 머리의 인라인 스크립트가 부드러운 스크롤을 꺼 둔다. 켜 두면 브라우저가 처음 옮기는 움직임이
- * 글꼴이 오기 전 자리로 이어져, 여기서 맞춘 자리를 덮는다. 맞춘 뒤에 다시 켠다
+ * 글꼴 로드 후 hash 위치 보정 · 사용자 입력 시 자동 이동 취소
+ * 초기 smooth scroll과 보정의 충돌 방지 · 보정 후 CSS 동작 복원
  */
 const settleHashScroll = async () => {
 	await document.fonts.ready;
@@ -115,7 +115,7 @@ const settleHashScroll = async () => {
 	document.documentElement.style.removeProperty("scroll-behavior");
 };
 
-// 글꼴 파일은 쪽의 load 무렵에야 요청이 끝나므로 load 뒤에 fonts.ready 를 기다린다
+// 글꼴 요청 완료 시점 보장 · load 후 fonts.ready
 if (document.readyState === "complete") {
 	settleHashScroll();
 } else {

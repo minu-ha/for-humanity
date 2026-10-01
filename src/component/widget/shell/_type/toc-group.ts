@@ -1,43 +1,43 @@
 import type {DocHeading} from "@/type/doc-heading";
 
 /**
- * 목차의 소제목 한 줄
+ * 목차 소제목 항목
  */
 export interface TocSub {
 	/**
-	 * 제목. slug 가 링크, text 가 글이다
+	 * 제목 id와 텍스트
 	 */
 	heading: DocHeading;
 	/**
-	 * 제목 앞과 같은 번호 (01.A)
+	 * 본문과 같은 번호 · 01.A
 	 */
 	number?: string;
 }
 
 /**
- * 목차의 절 한 줄과 그 밑의 소제목
+ * 목차 절과 소제목 목록
  */
 export interface TocSection extends TocSub {
 	/**
-	 * 이 절에서 시작하는 가름의 이름
+	 * 이 절에서 시작하는 가름 이름
 	 */
 	part?: string;
 	/**
-	 * 읽는 절일 때만 펼치는 소제목
+	 * 현재 절에서 펼칠 소제목
 	 */
 	subs: TocSub[];
 }
 
 /**
- * 가름 하나에 든 절들. 목차의 왼쪽 선이 이 묶음마다 끊긴다. 첫 묶음은 가름 이름이 없을 수 있다
+ * 가름별 목차 묶음 · 첫 묶음 이름 생략 가능
  */
 export interface TocGroup {
 	/**
-	 * 묶음 위에 쓰는 가름 이름
+	 * 묶음 위의 가름 이름
 	 */
 	part?: string;
 	/**
-	 * 묶음에 든 절
+	 * 묶음의 절 목록
 	 */
 	sections: TocSection[];
 }

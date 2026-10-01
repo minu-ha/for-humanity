@@ -1,5 +1,5 @@
 /**
- * 번호를 받는 제목의 깊이. 절은 h2, 소제목은 h3 이다
+ * 번호 대상 제목 깊이 · h2 절, h3 소제목
  */
 export const section_heading_depth = {
 	section: 2,
@@ -7,11 +7,11 @@ export const section_heading_depth = {
 } as const;
 
 /**
- * 절 번호의 자릿수. 00 부터 센다
+ * 절 번호 자릿수 · 00부터 시작
  */
 export const section_number_width = 2;
 
 /**
- * 소제목 번호 (01.A) 의 글자. 절 하나에 소제목은 이 글자 수까지 둔다
+ * 소제목 접미사 · 절당 최대 26개
  */
 export const section_sub_letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

@@ -2,7 +2,7 @@ import type {Root} from "hast";
 import {SKIP, visit} from "unist-util-visit";
 
 /**
- * 표 상자. 넓은 표는 상자 안에서 가로로 민다
+ * 넓은 표의 내부 가로 스크롤 래퍼
  */
 export const rehypeTables = () => (tree: Root) => {
 	visit(tree, "element", (node, index, parent) => {

@@ -4,8 +4,8 @@ import type {VFile} from "vfile";
 import {section_heading_depth} from "@/component/widget/prose/_constant/section";
 
 /**
- * 문서 머리. 눈썹 줄 (사이트 · 묶음 · 파일), 머리말 name 으로 만든 h1, 첫 절 앞의 글을 header 하나로 묶는다.
- * Markdown 이 없는 쪽 (첫 화면) 은 wg-prose.tsx 가 같은 모양을 head 프롭으로 그린다
+ * 사이트·묶음·파일 라벨, name 제목, 첫 절 앞 본문의 공통 머리
+ * Markdown 없는 첫 화면은 WgProse의 head 계약 사용
  */
 export const rehypeHead = (options: {title: string}) => (tree: Root, file: VFile) => {
 	const frontmatter = file.data.fh?.frontmatter;

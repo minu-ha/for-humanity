@@ -7,12 +7,12 @@ import {copy_warn_unknown_status} from "@/constant/copy";
 import type {SiteConfig} from "@/type/site-config";
 
 /**
- * 상태 표지. 설정에 적은 문구 ("확인됨 2026-09-30", "확인되지 않았다") 를 알약으로 바꾼다.
- * 괄호로 감싼 문구는 괄호를 떼고 알약이 된다. 링크와 제목 안은 그대로 둔다.
- * 남은 글 가운데 괄호 안이 날짜로 끝나는 것은 문구의 오타일 수 있어 파일에 경고를 남긴다. 경고는 remark-report 가 모은다
+ * 설정 문구의 상태 표지 변환 · 괄호 제거 · 제목·링크 제외
+ * 미등록 날짜 문구는 파일 경고 · remark-report에서 출력
  */
 export const remarkStatus = (options: {status: SiteConfig["status"]}) => {
-	const phrases = options.status
+	const statuses = options.status.toSorted((a, b) => b.phrase.length - a.phrase.length);
+	const phrases = statuses
 		.map((item) => [escapeRegExp(item.phrase), ...(item.date ? [`(?: ${status_date_pattern})?`] : [])].join(""))
 		.join("|");
 	const pattern = new RegExp(String.raw`\((${phrases})\)|(${phrases})`, "g");
@@ -25,9 +25,9 @@ export const remarkStatus = (options: {status: SiteConfig["status"]}) => {
 				pattern,
 				(_match: string, inParens: string | undefined, bare: string | undefined) => {
 					const text = inParens ?? bare;
-					const item = options.status.find((status) => text?.startsWith(status.phrase));
+					const item = statuses.find((status) => text?.startsWith(status.phrase));
 
-					// false 를 돌려주면 찾은 글을 그대로 둔다
+					// findAndReplace의 false: 원문 유지
 					if (text === undefined || item === undefined) {
 						return false;
 					}
@@ -46,7 +46,7 @@ export const remarkStatus = (options: {status: SiteConfig["status"]}) => {
 			[
 				status_candidate_pattern,
 				(match: string, info: RegExpMatchObject) => {
-					// 자리는 위치가 남은 가장 가까운 조상으로 든다. 앞에서 알약으로 갈린 글 노드에는 위치가 없다
+					// 치환된 텍스트에 position 부재 · 위치가 남은 가까운 조상 기준
 					file.message(
 						`${copy_warn_unknown_status}: ${match}`,
 						info.stack.findLast((node) => node.position !== undefined),
