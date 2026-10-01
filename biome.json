@@ -1,248 +1,249 @@
 {
-	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-	"vcs": {
-		"enabled": true,
-		"clientKind": "git",
-		"useIgnoreFile": true
-	},
-	"files": {
-		"ignoreUnknown": true,
-		"includes": ["**", "!src/util/mermaid/render-flow.js"]
-	},
-	"formatter": {
-		"enabled": true,
-		"indentStyle": "tab",
-		"lineWidth": 120,
-		"bracketSpacing": false
-	},
-	"javascript": {
-		"formatter": {
-			"quoteStyle": "double",
-			"semicolons": "always"
-		}
-	},
-	"css": {
-		"linter": {
-			"enabled": false
-		}
-	},
-	"plugins": ["./no-literal-fallback.grit"],
-	"linter": {
-		"enabled": true,
-		"domains": {
-			"react": "recommended"
-		},
-		"rules": {
-			"preset": "recommended",
-			"complexity": {
-				"useMaxParams": {
-					"level": "error",
-					"options": {
-						"max": 3
-					}
-				}
-			},
-			"correctness": {
-				"noUnusedFunctionParameters": "error",
-				"noNestedComponentDefinitions": "error"
-			},
-			"suspicious": {
-				"noExplicitAny": "error"
-			},
-			"security": {
-				"noDangerouslySetInnerHtml": "off"
-			},
-			"performance": {
-				"noNamespaceImport": "error",
-				"noBarrelFile": "error",
-				"noReExportAll": "error"
-			},
-			"style": {
-				"noDefaultExport": "error",
-				"noEnum": "error",
-				"noMagicNumbers": "error",
-				"noNestedTernary": "error",
-				"useAsConstAssertion": "error",
-				"noNonNullAssertion": "error",
-				"noParameterAssign": "error",
-				"useConst": "error",
-				"useImportType": "error",
-				"useFilenamingConvention": {
-					"level": "error",
-					"options": {
-						"filenameCases": ["kebab-case"]
-					}
-				},
-				"noRestrictedImports": {
-					"level": "error",
-					"options": {
-						"patterns": [
-							{
-								"group": ["../**", "./**", "!./*.css"],
-								"message": "가져오기는 절대경로로 씁니다. 심볼 없이 파일만 불러오는 줄만 같은 폴더를 ./ 로 씁니다."
-							}
-						]
-					}
-				},
-				"useNamingConvention": {
-					"level": "error",
-					"options": {
-						"strictCase": false,
-						"conventions": [
-							{
-								"selector": {
-									"kind": "typeLike"
-								},
-								"formats": ["PascalCase"]
-							},
-							{
-								"selector": {
-									"kind": "const",
-									"scope": "global"
-								},
-								"formats": ["camelCase", "PascalCase", "snake_case"]
-							},
-							{
-								"selector": {
-									"kind": "objectLiteralProperty"
-								},
-								"match": "__html|(.+)",
-								"formats": ["camelCase", "PascalCase", "snake_case"]
-							},
-							{
-								"selector": {
-									"kind": "typeProperty"
-								},
-								"formats": ["camelCase"]
-							},
-							{
-								"selector": {
-									"kind": "variable"
-								},
-								"formats": ["camelCase", "PascalCase"]
-							}
-						]
-					}
-				}
-			}
-		}
-	},
-	"overrides": [
-		{
-			"includes": ["**/*.test.ts"],
-			"linter": {
-				"rules": {
-					"style": {
-						"noMagicNumbers": "off"
-					}
-				}
-			}
-		},
-		{
-			"includes": ["**/*.config.ts", "**/*.config.js", "**/*.config.mjs"],
-			"linter": {
-				"rules": {
-					"style": {
-						"noDefaultExport": "off"
-					}
-				}
-			}
-		},
-		{
-			"includes": ["src/component/ui/**/*.ts", "src/component/ui/**/*.tsx"],
-			"linter": {
-				"rules": {
-					"style": {
-						"noRestrictedImports": {
-							"level": "error",
-							"options": {
-								"patterns": [
-									{
-										"group": ["../**", "./**", "!./*.css"],
-										"message": "가져오기는 절대경로로 씁니다. 심볼 없이 파일만 불러오는 줄만 같은 폴더를 ./ 로 씁니다."
-									},
-									{
-										"group": ["@/component/widget/**", "@/page/**"],
-										"message": "`ui`는 `widget`과 `page`를 가져오지 않습니다."
-									}
-								]
-							}
-						}
-					}
-				}
-			}
-		},
-		{
-			"includes": ["src/component/widget/**/*.ts", "src/component/widget/**/*.tsx"],
-			"linter": {
-				"rules": {
-					"style": {
-						"noRestrictedImports": {
-							"level": "error",
-							"options": {
-								"patterns": [
-									{
-										"group": ["../**", "./**", "!./*.css"],
-										"message": "가져오기는 절대경로로 씁니다. 심볼 없이 파일만 불러오는 줄만 같은 폴더를 ./ 로 씁니다."
-									},
-									{
-										"group": ["@/page/**"],
-										"message": "`widget`은 `page`를 가져오지 않습니다."
-									}
-								]
-							}
-						}
-					}
-				}
-			}
-		},
-		{
-			"includes": ["src/page/home/**/*.ts", "src/page/home/**/*.tsx"],
-			"linter": {
-				"rules": {
-					"style": {
-						"noRestrictedImports": {
-							"level": "error",
-							"options": {
-								"patterns": [
-									{
-										"group": ["../**", "./**", "!./*.css"],
-										"message": "가져오기는 절대경로로 씁니다. 심볼 없이 파일만 불러오는 줄만 같은 폴더를 ./ 로 씁니다."
-									},
-									{
-										"group": ["@/page/**", "!@/page/home/**"],
-										"message": "다른 라우트의 파일은 가져오지 않습니다."
-									}
-								]
-							}
-						}
-					}
-				}
-			}
-		},
-		{
-			"includes": ["src/page/doc/**/*.ts", "src/page/doc/**/*.tsx"],
-			"linter": {
-				"rules": {
-					"style": {
-						"noRestrictedImports": {
-							"level": "error",
-							"options": {
-								"patterns": [
-									{
-										"group": ["../**", "./**", "!./*.css"],
-										"message": "가져오기는 절대경로로 씁니다. 심볼 없이 파일만 불러오는 줄만 같은 폴더를 ./ 로 씁니다."
-									},
-									{
-										"group": ["@/page/**", "!@/page/doc/**"],
-										"message": "다른 라우트의 파일은 가져오지 않습니다."
-									}
-								]
-							}
-						}
-					}
-				}
-			}
-		}
-	]
+    "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+    "vcs": {
+        "enabled": true,
+        "clientKind": "git",
+        "useIgnoreFile": true
+    },
+    "files": {
+        "ignoreUnknown": true,
+        "includes": ["**", "!src/util/mermaid/render-flow.js"]
+    },
+    "formatter": {
+        "enabled": true,
+        "indentStyle": "space",
+        "indentWidth": 4,
+        "lineWidth": 120,
+        "bracketSpacing": false
+    },
+    "javascript": {
+        "formatter": {
+            "quoteStyle": "double",
+            "semicolons": "always"
+        }
+    },
+    "css": {
+        "linter": {
+            "enabled": false
+        }
+    },
+    "plugins": ["./no-literal-fallback.grit"],
+    "linter": {
+        "enabled": true,
+        "domains": {
+            "react": "recommended"
+        },
+        "rules": {
+            "preset": "recommended",
+            "complexity": {
+                "useMaxParams": {
+                    "level": "error",
+                    "options": {
+                        "max": 3
+                    }
+                }
+            },
+            "correctness": {
+                "noUnusedFunctionParameters": "error",
+                "noNestedComponentDefinitions": "error"
+            },
+            "suspicious": {
+                "noExplicitAny": "error"
+            },
+            "security": {
+                "noDangerouslySetInnerHtml": "off"
+            },
+            "performance": {
+                "noNamespaceImport": "error",
+                "noBarrelFile": "error",
+                "noReExportAll": "error"
+            },
+            "style": {
+                "noDefaultExport": "error",
+                "noEnum": "error",
+                "noMagicNumbers": "error",
+                "noNestedTernary": "error",
+                "useAsConstAssertion": "error",
+                "noNonNullAssertion": "error",
+                "noParameterAssign": "error",
+                "useConst": "error",
+                "useImportType": "error",
+                "useFilenamingConvention": {
+                    "level": "error",
+                    "options": {
+                        "filenameCases": ["kebab-case"]
+                    }
+                },
+                "noRestrictedImports": {
+                    "level": "error",
+                    "options": {
+                        "patterns": [
+                            {
+                                "group": ["../**", "./**", "!./*.css"],
+                                "message": "Use absolute imports. Reserve ./ for side-effect CSS imports from the same directory."
+                            }
+                        ]
+                    }
+                },
+                "useNamingConvention": {
+                    "level": "error",
+                    "options": {
+                        "strictCase": false,
+                        "conventions": [
+                            {
+                                "selector": {
+                                    "kind": "typeLike"
+                                },
+                                "formats": ["PascalCase"]
+                            },
+                            {
+                                "selector": {
+                                    "kind": "const",
+                                    "scope": "global"
+                                },
+                                "formats": ["camelCase", "PascalCase", "snake_case"]
+                            },
+                            {
+                                "selector": {
+                                    "kind": "objectLiteralProperty"
+                                },
+                                "match": "__html|(.+)",
+                                "formats": ["camelCase", "PascalCase", "snake_case"]
+                            },
+                            {
+                                "selector": {
+                                    "kind": "typeProperty"
+                                },
+                                "formats": ["camelCase"]
+                            },
+                            {
+                                "selector": {
+                                    "kind": "variable"
+                                },
+                                "formats": ["camelCase", "PascalCase"]
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "overrides": [
+        {
+            "includes": ["**/*.test.ts"],
+            "linter": {
+                "rules": {
+                    "style": {
+                        "noMagicNumbers": "off"
+                    }
+                }
+            }
+        },
+        {
+            "includes": ["**/*.config.ts", "**/*.config.js", "**/*.config.mjs"],
+            "linter": {
+                "rules": {
+                    "style": {
+                        "noDefaultExport": "off"
+                    }
+                }
+            }
+        },
+        {
+            "includes": ["src/component/ui/**/*.ts", "src/component/ui/**/*.tsx"],
+            "linter": {
+                "rules": {
+                    "style": {
+                        "noRestrictedImports": {
+                            "level": "error",
+                            "options": {
+                                "patterns": [
+                                    {
+                                        "group": ["../**", "./**", "!./*.css"],
+                                        "message": "Use absolute imports. Reserve ./ for side-effect CSS imports from the same directory."
+                                    },
+                                    {
+                                        "group": ["@/component/widget/**", "@/page/**"],
+                                        "message": "UI components must not import widgets or pages."
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "includes": ["src/component/widget/**/*.ts", "src/component/widget/**/*.tsx"],
+            "linter": {
+                "rules": {
+                    "style": {
+                        "noRestrictedImports": {
+                            "level": "error",
+                            "options": {
+                                "patterns": [
+                                    {
+                                        "group": ["../**", "./**", "!./*.css"],
+                                        "message": "Use absolute imports. Reserve ./ for side-effect CSS imports from the same directory."
+                                    },
+                                    {
+                                        "group": ["@/page/**"],
+                                        "message": "Widgets must not import pages."
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "includes": ["src/page/home/**/*.ts", "src/page/home/**/*.tsx"],
+            "linter": {
+                "rules": {
+                    "style": {
+                        "noRestrictedImports": {
+                            "level": "error",
+                            "options": {
+                                "patterns": [
+                                    {
+                                        "group": ["../**", "./**", "!./*.css"],
+                                        "message": "Use absolute imports. Reserve ./ for side-effect CSS imports from the same directory."
+                                    },
+                                    {
+                                        "group": ["@/page/**", "!@/page/home/**"],
+                                        "message": "Do not import files from another route."
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "includes": ["src/page/doc/**/*.ts", "src/page/doc/**/*.tsx"],
+            "linter": {
+                "rules": {
+                    "style": {
+                        "noRestrictedImports": {
+                            "level": "error",
+                            "options": {
+                                "patterns": [
+                                    {
+                                        "group": ["../**", "./**", "!./*.css"],
+                                        "message": "Use absolute imports. Reserve ./ for side-effect CSS imports from the same directory."
+                                    },
+                                    {
+                                        "group": ["@/page/**", "!@/page/doc/**"],
+                                        "message": "Do not import files from another route."
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ]
 }

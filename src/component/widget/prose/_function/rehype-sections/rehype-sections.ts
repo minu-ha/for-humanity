@@ -11,26 +11,29 @@ import type {DocSection} from "@/component/widget/prose/_type/doc-section";
  * file.data.fh.sections는 headings의 h2·h3 순서와 일치
  */
 export const rehypeSections = () => (tree: Root, file: VFile) => {
-	if (file.data.fh === undefined) {
-		return;
-	}
+    if (file.data.fh === undefined) {
+        return;
+    }
 
-	const headings = toSectionHeadings(tree);
-	const starts = headings.flatMap((heading, index) =>
-		heading.tagName === `h${section_heading_depth.section}` ? [index] : [],
-	);
-	const sections = headings.map(
-		(heading, index): DocSection => ({
-			number: toSectionNumber(starts, index),
-			part: typeof heading.properties.dataPart === "string" ? heading.properties.dataPart : undefined,
-		}),
-	);
+    const headings = toSectionHeadings(tree);
+    const starts = headings.flatMap((heading, index) =>
+        heading.tagName === `h${section_heading_depth.section}` ? [index] : [],
+    );
+    const sections = headings.map(
+        (heading, index): DocSection => ({
+            number: toSectionNumber(starts, index),
+            part: typeof heading.properties.dataPart === "string" ? heading.properties.dataPart : undefined,
+        }),
+    );
 
-	for (const [index, heading] of headings.entries()) {
-		if (sections[index].number !== undefined) {
-			heading.children.unshift({type: "raw", value: `<span class="wg_prose__num">${sections[index].number}</span>`});
-		}
-	}
+    for (const [index, heading] of headings.entries()) {
+        if (sections[index].number !== undefined) {
+            heading.children.unshift({
+                type: "raw",
+                value: `<span class="wg_prose__num">${sections[index].number}</span>`,
+            });
+        }
+    }
 
-	file.data.fh.sections = sections;
+    file.data.fh.sections = sections;
 };

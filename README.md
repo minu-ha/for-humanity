@@ -18,8 +18,8 @@
 <br>
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset=".github/readme/commands-dark.png">
-  <img src=".github/readme/commands-light.png" width="100%" alt="for-humanity 문서 화면. 사이드바, 절 번호, 표와 흐름도">
+    <source media="(prefers-color-scheme: dark)" srcset=".github/readme/commands-dark.png">
+    <img src=".github/readme/commands-light.png" width="100%" alt="for-humanity 문서 화면. 사이드바, 절 번호, 표와 흐름도">
 </picture>
 
 </div>

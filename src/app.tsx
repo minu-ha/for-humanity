@@ -12,25 +12,25 @@ import type {SiteConfig} from "@/type/site-config";
  * 페이지 앱 입력 계약
  */
 export interface AppOptions {
-	/**
-	 * 검증된 사이트 설정
-	 */
-	site: SiteConfig;
-	/**
-	 * 렌더링 대상 문서 · dev 재처리 시 docs 교체
-	 */
-	store: {docs: Doc[]};
-	/**
-	 * HTML 머리에 포함할 공통 자원
-	 */
-	assets: SiteAssets;
+    /**
+     * 검증된 사이트 설정
+     */
+    site: SiteConfig;
+    /**
+     * 렌더링 대상 문서 · dev 재처리 시 docs 교체
+     */
+    store: {docs: Doc[]};
+    /**
+     * HTML 머리에 포함할 공통 자원
+     */
+    assets: SiteAssets;
 }
 
 /**
  * React 서버 렌더링 · 브라우저 React 번들 없음
  */
 const toHtml = (page: ReactElement) => {
-	return `<!DOCTYPE html>${renderToStaticMarkup(page)}`;
+    return `<!DOCTYPE html>${renderToStaticMarkup(page)}`;
 };
 
 /**
@@ -39,20 +39,24 @@ const toHtml = (page: ReactElement) => {
  * 자원·SSE는 dev.ts의 별도 앱 소유
  */
 export const createApp = (options: AppOptions) => {
-	const app = new Hono();
+    const app = new Hono();
 
-	app.get("/", (c) => c.html(toHtml(<PgHome site={options.site} docs={options.store.docs} assets={options.assets} />)));
-	app.get(
-		"/:slug{.+}/",
-		ssgParams(() => options.store.docs.map((doc) => ({slug: doc.id}))),
-		(c) => {
-			const doc = options.store.docs.find((entry) => entry.id === c.req.param("slug"));
+    app.get("/", (c) =>
+        c.html(toHtml(<PgHome site={options.site} docs={options.store.docs} assets={options.assets} />)),
+    );
+    app.get(
+        "/:slug{.+}/",
+        ssgParams(() => options.store.docs.map((doc) => ({slug: doc.id}))),
+        (c) => {
+            const doc = options.store.docs.find((entry) => entry.id === c.req.param("slug"));
 
-			return doc === undefined
-				? c.notFound()
-				: c.html(toHtml(<PgDoc site={options.site} docs={options.store.docs} assets={options.assets} doc={doc} />));
-		},
-	);
+            return doc === undefined
+                ? c.notFound()
+                : c.html(
+                      toHtml(<PgDoc site={options.site} docs={options.store.docs} assets={options.assets} doc={doc} />),
+                  );
+        },
+    );
 
-	return app;
+    return app;
 };

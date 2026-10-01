@@ -2,36 +2,36 @@
  * 공통 페이지 배치 · 사이드바와 본문의 2열 grid
  */
 .wg_shell__root {
-	display: grid;
-	max-width: var(--app-size-page);
-	margin: 0 auto;
-	padding: 0 var(--app-space-gutter);
-	gap: var(--app-space-column);
-	grid-template-columns: var(--app-size-sidebar) minmax(0, 1fr);
-	background: var(--app-color-ground);
-	color: var(--app-color-text);
-	font-family: var(--app-font-sans);
-	font-size: var(--app-font-size-body);
-	line-height: var(--app-line-height-body);
+    display: grid;
+    max-width: var(--app-size-page);
+    margin: 0 auto;
+    padding: 0 var(--app-space-gutter);
+    gap: var(--app-space-column);
+    grid-template-columns: var(--app-size-sidebar) minmax(0, 1fr);
+    background: var(--app-color-ground);
+    color: var(--app-color-text);
+    font-family: var(--app-font-sans);
+    font-size: var(--app-font-size-body);
+    line-height: var(--app-line-height-body);
 
-	/* 한국어 낱말 단위 줄바꿈 · 긴 식별자만 예외 */
-	word-break: keep-all;
-	overflow-wrap: break-word;
-	text-wrap: pretty;
-	-webkit-font-smoothing: antialiased;
+    /* 한국어 낱말 단위 줄바꿈 · 긴 식별자만 예외 */
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    text-wrap: pretty;
+    -webkit-font-smoothing: antialiased;
 }
 
 .wg_shell__main {
-	min-width: 0;
+    min-width: 0;
 
-	/* 마지막 절도 읽는 선까지 이동 가능한 끝 여백 */
-	padding-block: var(--app-space-page-top) calc(100vh - var(--app-space-anchor));
+    /* 마지막 절도 읽는 선까지 이동 가능한 끝 여백 */
+    padding-block: var(--app-space-page-top) calc(100vh - var(--app-space-anchor));
 }
 
 /* 좁은 화면 · 사이드바 → 본문 순서의 1열 */
 @media (width < 1024px) {
-	.wg_shell__root {
-		gap: 0;
-		grid-template-columns: minmax(0, 1fr);
-	}
+    .wg_shell__root {
+        gap: 0;
+        grid-template-columns: minmax(0, 1fr);
+    }
 }

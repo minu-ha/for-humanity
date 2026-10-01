@@ -41,9 +41,9 @@ export const copy_overview_mark = "·";
  * 테마 버튼 문구 · 시스템 → 밝게 → 어둡게
  */
 export const copy_theme_label = {
-	system: "테마 · 시스템",
-	light: "테마 · 밝게",
-	dark: "테마 · 어둡게",
+    system: "테마 · 시스템",
+    light: "테마 · 밝게",
+    dark: "테마 · 어둡게",
 } as const;
 
 /**

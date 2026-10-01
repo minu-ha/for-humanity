@@ -5,14 +5,14 @@ import {section_number_width, section_sub_letters} from "@/component/widget/pros
  * 첫 h2 앞의 h3은 번호 없음
  */
 export const toSectionNumber = (starts: number[], index: number): string | undefined => {
-	const section = starts.findLastIndex((start) => start <= index);
+    const section = starts.findLastIndex((start) => start <= index);
 
-	if (section === -1) {
-		return;
-	}
+    if (section === -1) {
+        return;
+    }
 
-	const number = String(section).padStart(section_number_width, "0");
-	const sub = index - starts[section];
+    const number = String(section).padStart(section_number_width, "0");
+    const sub = index - starts[section];
 
-	return sub === 0 ? number : `${number}.${section_sub_letters[sub - 1]}`;
+    return sub === 0 ? number : `${number}.${section_sub_letters[sub - 1]}`;
 };

@@ -3,24 +3,24 @@
  */
 
 * {
-	box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 /* 절 이동의 smooth scroll · 초기 위치 보정 중 일시 중지 */
 :root {
-	scroll-behavior: smooth;
+    scroll-behavior: smooth;
 }
 
 /* 움직임 줄이기 · 컴포넌트보다 우선하는 전역 !important 예외 */
 @media (prefers-reduced-motion: reduce) {
-	*,
-	*::before,
-	*::after {
-		animation-duration: 0.01ms !important;
-		animation-delay: 0s !important;
-		animation-iteration-count: 1 !important;
-		transition-duration: 0.01ms !important;
-		transition-delay: 0s !important;
-		scroll-behavior: auto !important;
-	}
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-delay: 0s !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        transition-delay: 0s !important;
+        scroll-behavior: auto !important;
+    }
 }

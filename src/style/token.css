@@ -5,133 +5,133 @@
  */
 
 :root {
-	/* 시스템 테마 · 명시 선택은 아래 data-theme 블록 */
-	color-scheme: light dark;
+    /* 시스템 테마 · 명시 선택은 아래 data-theme 블록 */
+    color-scheme: light dark;
 
-	/* 바탕 · ground 페이지, surface 상자, code 코드 */
-	--app-color-ground: light-dark(#f7f8fa, #13171d);
-	--app-color-surface: light-dark(#fff, #191e25);
-	--app-color-code: light-dark(#f2f4f7, #10141a);
+    /* 바탕 · ground 페이지, surface 상자, code 코드 */
+    --app-color-ground: light-dark(#f7f8fa, #13171d);
+    --app-color-surface: light-dark(#fff, #191e25);
+    --app-color-code: light-dark(#f2f4f7, #10141a);
 
-	/* 글 · text 본문, strong 강조, muted 라벨 */
-	--app-color-text: light-dark(#414a56, #c2cad6);
-	--app-color-text-strong: light-dark(#1b2027, #eef1f6);
-	--app-color-text-muted: light-dark(#646e7b, #8892a1);
+    /* 글 · text 본문, strong 강조, muted 라벨 */
+    --app-color-text: light-dark(#414a56, #c2cad6);
+    --app-color-text-strong: light-dark(#1b2027, #eef1f6);
+    --app-color-text-muted: light-dark(#646e7b, #8892a1);
 
-	/* 선 · border 상자·목록, soft 표 구분 */
-	--app-color-border: light-dark(#dfe3e9, #2b323d);
-	--app-color-border-soft: light-dark(#eceff3, #232932);
+    /* 선 · border 상자·목록, soft 표 구분 */
+    --app-color-border: light-dark(#dfe3e9, #2b323d);
+    --app-color-border-soft: light-dark(#eceff3, #232932);
 
-	/* 강조 · 링크·번호·현재 절·포커스 · soft 강조 바탕 */
-	--app-color-accent: light-dark(#2e3f5e, #93a9d4);
-	--app-color-accent-soft: light-dark(#eef1f7, #1d2634);
+    /* 강조 · 링크·번호·현재 절·포커스 · soft 강조 바탕 */
+    --app-color-accent: light-dark(#2e3f5e, #93a9d4);
+    --app-color-accent-soft: light-dark(#eef1f7, #1d2634);
 
-	/* 상태 표지 · verified 초록, unverified amber */
-	--app-color-verified: light-dark(#157e44, #5cc183);
-	--app-color-verified-soft: light-dark(#e9f4ed, #17281e);
-	--app-color-unverified: light-dark(#9a6400, #d8a54a);
-	--app-color-unverified-soft: light-dark(#fdf4e3, #2a2317);
+    /* 상태 표지 · verified 초록, unverified amber */
+    --app-color-verified: light-dark(#157e44, #5cc183);
+    --app-color-verified-soft: light-dark(#e9f4ed, #17281e);
+    --app-color-unverified: light-dark(#9a6400, #d8a54a);
+    --app-color-unverified-soft: light-dark(#fdf4e3, #2a2317);
 
-	/*
-	 * 내장 글꼴 · CLI의 --app-font-face-* 연결
-	 * 본문 Pretendard · 코드·라벨·흐름도 JetBrains Mono · 한글 fallback
-	 * 영문 폭 0.6em = 흐름도 12px 격자의 7.2px
-	 */
-	--app-font-sans: var(--app-font-face-sans);
-	--app-font-mono: var(--app-font-face-mono), var(--app-font-face-sans);
+    /*
+     * 내장 글꼴 · CLI의 --app-font-face-* 연결
+     * 본문 Pretendard · 코드·라벨·흐름도 JetBrains Mono · 한글 fallback
+     * 영문 폭 0.6em = 흐름도 12px 격자의 7.2px
+     */
+    --app-font-sans: var(--app-font-face-sans);
+    --app-font-mono: var(--app-font-face-mono), var(--app-font-face-sans);
 
-	/* 글자 크기 · 역할별 9단계 */
-	--app-font-size-label: 10.5px;
-	--app-font-size-mark: 11px;
-	--app-font-size-detail: 12.5px;
-	--app-font-size-dense: 13.5px;
-	--app-font-size-body: 15px;
-	--app-font-size-lead: 16.5px;
-	--app-font-size-part: 19px;
-	--app-font-size-section: 23px;
-	--app-font-size-title: clamp(30px, 3.4vw, 42px);
+    /* 글자 크기 · 역할별 9단계 */
+    --app-font-size-label: 10.5px;
+    --app-font-size-mark: 11px;
+    --app-font-size-detail: 12.5px;
+    --app-font-size-dense: 13.5px;
+    --app-font-size-body: 15px;
+    --app-font-size-lead: 16.5px;
+    --app-font-size-part: 19px;
+    --app-font-size-section: 23px;
+    --app-font-size-title: clamp(30px, 3.4vw, 42px);
 
-	/* 굵기 · 본문 기본 400 */
-	--app-font-weight-mark: 500;
-	--app-font-weight-strong: 600;
-	--app-font-weight-title: 700;
+    /* 굵기 · 본문 기본 400 */
+    --app-font-weight-mark: 500;
+    --app-font-weight-strong: 600;
+    --app-font-weight-title: 700;
 
-	/* 행간 · 제목부터 본문 순 */
-	--app-line-height-title: 1.14;
-	--app-line-height-heading: 1.35;
-	--app-line-height-tight: 1.45;
-	--app-line-height-code: 1.7;
-	--app-line-height-body: 1.75;
+    /* 행간 · 제목부터 본문 순 */
+    --app-line-height-title: 1.14;
+    --app-line-height-heading: 1.35;
+    --app-line-height-tight: 1.45;
+    --app-line-height-code: 1.7;
+    --app-line-height-body: 1.75;
 
-	/* 자간 · 모노 라벨 확대, 큰 제목 축소 */
-	--app-letter-spacing-label: 0.08em;
-	--app-letter-spacing-brand: 0.14em;
-	--app-letter-spacing-heading: -0.01em;
-	--app-letter-spacing-title: -0.02em;
+    /* 자간 · 모노 라벨 확대, 큰 제목 축소 */
+    --app-letter-spacing-label: 0.08em;
+    --app-letter-spacing-brand: 0.14em;
+    --app-letter-spacing-heading: -0.01em;
+    --app-letter-spacing-title: -0.02em;
 
-	/* 공통 간격 · 부품 내부 보정은 지역 값 */
-	--app-space-inline: 8px;
-	--app-space-stack: 12px;
-	--app-space-block: 16px;
-	--app-space-section: 56px;
+    /* 공통 간격 · 부품 내부 보정은 지역 값 */
+    --app-space-inline: 8px;
+    --app-space-stack: 12px;
+    --app-space-block: 16px;
+    --app-space-section: 56px;
 
-	/* 페이지 틀 · 좁은 화면 값은 아래 @media */
-	--app-space-page-top: 44px;
-	--app-space-gutter: 32px;
-	--app-space-column: 56px;
-	--app-size-sidebar: 264px;
-	--app-size-page: 1920px;
+    /* 페이지 틀 · 좁은 화면 값은 아래 @media */
+    --app-space-page-top: 44px;
+    --app-space-gutter: 32px;
+    --app-space-column: 56px;
+    --app-size-sidebar: 264px;
+    --app-size-page: 1920px;
 
-	/* hash 제목 위치와 목차 읽는 선의 공통 기준 */
-	--app-space-anchor: 40vh;
+    /* hash 제목 위치와 목차 읽는 선의 공통 기준 */
+    --app-space-anchor: 40vh;
 
-	/* 모서리 · 역할별 5단계 */
-	--app-radius-pill: 999px;
-	--app-radius-card: 8px;
-	--app-radius-box: 6px;
-	--app-radius-inline: 3px;
-	--app-radius-mark: 2px;
+    /* 모서리 · 역할별 5단계 */
+    --app-radius-pill: 999px;
+    --app-radius-card: 8px;
+    --app-radius-box: 6px;
+    --app-radius-inline: 3px;
+    --app-radius-mark: 2px;
 
-	/* 키보드 포커스 표시 */
-	--app-outline-focus: 2px solid var(--app-color-accent);
-	--app-outline-focus-offset: 2px;
+    /* 키보드 포커스 표시 */
+    --app-outline-focus: 2px solid var(--app-color-accent);
+    --app-outline-focus-offset: 2px;
 
-	/*
-	 * Shiki CSS 변수 · 기존 역할색 재사용
-	 * 키워드 strong · 함수 accent
-	 */
-	--app-code-foreground: var(--app-color-text);
-	--app-code-background: var(--app-color-code);
-	--app-code-token-keyword: var(--app-color-text-strong);
-	--app-code-token-function: var(--app-color-accent);
-	--app-code-token-string: var(--app-color-verified);
-	--app-code-token-string-expression: var(--app-color-verified);
-	--app-code-token-constant: var(--app-color-unverified);
-	--app-code-token-parameter: var(--app-color-text);
-	--app-code-token-comment: var(--app-color-text-muted);
-	--app-code-token-punctuation: var(--app-color-text-muted);
-	--app-code-token-link: var(--app-color-accent);
+    /*
+     * Shiki CSS 변수 · 기존 역할색 재사용
+     * 키워드 strong · 함수 accent
+     */
+    --app-code-foreground: var(--app-color-text);
+    --app-code-background: var(--app-color-code);
+    --app-code-token-keyword: var(--app-color-text-strong);
+    --app-code-token-function: var(--app-color-accent);
+    --app-code-token-string: var(--app-color-verified);
+    --app-code-token-string-expression: var(--app-color-verified);
+    --app-code-token-constant: var(--app-color-unverified);
+    --app-code-token-parameter: var(--app-color-text);
+    --app-code-token-comment: var(--app-color-text-muted);
+    --app-code-token-punctuation: var(--app-color-text-muted);
+    --app-code-token-link: var(--app-color-accent);
 }
 
 :root[data-theme="light"] {
-	color-scheme: light;
+    color-scheme: light;
 }
 
 :root[data-theme="dark"] {
-	color-scheme: dark;
+    color-scheme: dark;
 }
 
 /* 폭 조건 · shell·nav의 breakpoint와 일치 */
 @media (width < 1024px) {
-	:root {
-		--app-space-page-top: 28px;
-		--app-space-gutter: 20px;
-	}
+    :root {
+        --app-space-page-top: 28px;
+        --app-space-gutter: 20px;
+    }
 }
 
 @media (width < 640px) {
-	:root {
-		--app-space-page-top: 20px;
-		--app-space-gutter: 16px;
-	}
+    :root {
+        --app-space-page-top: 20px;
+        --app-space-gutter: 16px;
+    }
 }

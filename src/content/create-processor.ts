@@ -27,26 +27,26 @@ import type {SiteConfig} from "@/type/site-config";
  * Shiki inline style: token.css의 --app-code-* 참조
  */
 export const createProcessor = (options: {site: SiteConfig; root: string}) => {
-	return unified()
-		.use(remarkParse)
-		.use(remarkGfm)
-		.use(remarkSmartypants)
-		.use(remarkDirective)
-		.use(remarkParts)
-		.use(remarkFlow)
-		.use(remarkStatus, {status: options.site.status})
-		.use(remarkSwatch)
-		.use(remarkLinks, {root: options.root})
-		.use(remarkUnknownDirectives)
-		.use(remarkReport, {root: options.root})
-		.use(remarkRehype, {allowDangerousHtml: true})
-		.use(rehypeShiki, {theme: createCssVariablesTheme({name: "for-humanity", variablePrefix: "--app-code-"})})
-		.use(rehypeHead, {title: options.site.title})
-		.use(rehypeHeadingIds)
-		.use(rehypeSections)
-		.use(rehypeTables)
-		.use(rehypeRaw)
-		.use(rehypeStringify, {allowDangerousHtml: true});
+    return unified()
+        .use(remarkParse)
+        .use(remarkGfm)
+        .use(remarkSmartypants)
+        .use(remarkDirective)
+        .use(remarkParts)
+        .use(remarkFlow)
+        .use(remarkStatus, {status: options.site.status})
+        .use(remarkSwatch)
+        .use(remarkLinks, {root: options.root})
+        .use(remarkUnknownDirectives)
+        .use(remarkReport, {root: options.root})
+        .use(remarkRehype, {allowDangerousHtml: true})
+        .use(rehypeShiki, {theme: createCssVariablesTheme({name: "for-humanity", variablePrefix: "--app-code-"})})
+        .use(rehypeHead, {title: options.site.title})
+        .use(rehypeHeadingIds)
+        .use(rehypeSections)
+        .use(rehypeTables)
+        .use(rehypeRaw)
+        .use(rehypeStringify, {allowDangerousHtml: true});
 };
 
 /**

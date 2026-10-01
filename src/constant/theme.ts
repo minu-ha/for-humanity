@@ -2,9 +2,9 @@
  * 테마 종류 · system은 data-theme 없이 OS 설정 사용
  */
 export const theme_mode = {
-	system: "system",
-	light: "light",
-	dark: "dark",
+    system: "system",
+    light: "light",
+    dark: "dark",
 } as const;
 
 /**

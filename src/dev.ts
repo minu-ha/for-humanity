@@ -4,29 +4,29 @@ import {extname} from "node:path";
 import {type Context, Hono} from "hono";
 import {streamSSE} from "hono/streaming";
 import {
-	asset_content_type_default,
-	asset_content_types,
-	asset_dir,
-	asset_favicon_path,
-	asset_reload_path,
+    asset_content_type_default,
+    asset_content_types,
+    asset_dir,
+    asset_favicon_path,
+    asset_reload_path,
 } from "@/constant/asset";
 
 /**
  * 개발 서버 입력 계약
  */
 export interface DevOptions {
-	/**
-	 * 정적 자원 외 요청을 처리할 페이지 앱
-	 */
-	pages: Hono;
-	/**
-	 * 자원 URL → 파일 경로 · 정적 빌드와 동일 목록
-	 */
-	files: Map<string, string>;
-	/**
-	 * 문서 변경 알림 · SSE 새로고침의 change 이벤트
-	 */
-	reload: EventEmitter;
+    /**
+     * 정적 자원 외 요청을 처리할 페이지 앱
+     */
+    pages: Hono;
+    /**
+     * 자원 URL → 파일 경로 · 정적 빌드와 동일 목록
+     */
+    files: Map<string, string>;
+    /**
+     * 문서 변경 알림 · SSE 새로고침의 change 이벤트
+     */
+    reload: EventEmitter;
 }
 
 /**
@@ -34,47 +34,47 @@ export interface DevOptions {
  * 정적 빌드의 페이지 라우트와 분리
  */
 export const createDevApp = (options: DevOptions) => {
-	const app = new Hono();
+    const app = new Hono();
 
-	/**
-	 * 등록된 URL의 자원 응답 · 미등록 시 404
-	 */
-	const handleAsset = async (c: Context) => {
-		const file = options.files.get(c.req.path);
+    /**
+     * 등록된 URL의 자원 응답 · 미등록 시 404
+     */
+    const handleAsset = async (c: Context) => {
+        const file = options.files.get(c.req.path);
 
-		if (file === undefined) {
-			return c.notFound();
-		}
+        if (file === undefined) {
+            return c.notFound();
+        }
 
-		c.header("content-type", asset_content_types[extname(file)] ?? asset_content_type_default);
+        c.header("content-type", asset_content_types[extname(file)] ?? asset_content_type_default);
 
-		return c.body(await readFile(file));
-	};
+        return c.body(await readFile(file));
+    };
 
-	app.get(asset_reload_path, (c) =>
-		streamSSE(
-			c,
-			(stream) =>
-				new Promise((done) => {
-					/**
-					 * 문서 변경의 SSE 전송 · 전송 후 연결 종료
-					 */
-					const handleChange = async () => {
-						await stream.writeSSE({data: "change"});
-						done();
-					};
+    app.get(asset_reload_path, (c) =>
+        streamSSE(
+            c,
+            (stream) =>
+                new Promise((done) => {
+                    /**
+                     * 문서 변경의 SSE 전송 · 전송 후 연결 종료
+                     */
+                    const handleChange = async () => {
+                        await stream.writeSSE({data: "change"});
+                        done();
+                    };
 
-					options.reload.once("change", handleChange);
-					stream.onAbort(() => {
-						options.reload.off("change", handleChange);
-						done();
-					});
-				}),
-		),
-	);
-	app.get(`/${asset_dir}/*`, handleAsset);
-	app.get(asset_favicon_path, handleAsset);
-	app.all("/*", (c) => options.pages.fetch(c.req.raw, c.env));
+                    options.reload.once("change", handleChange);
+                    stream.onAbort(() => {
+                        options.reload.off("change", handleChange);
+                        done();
+                    });
+                }),
+        ),
+    );
+    app.get(`/${asset_dir}/*`, handleAsset);
+    app.get(asset_favicon_path, handleAsset);
+    app.all("/*", (c) => options.pages.fetch(c.req.raw, c.env));
 
-	return app;
+    return app;
 };

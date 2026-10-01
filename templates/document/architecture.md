@@ -16,12 +16,12 @@ flowchart LR
     c --> d("Hono<br>dev 또는 SSG")
 ```
 
-| Entry | Responsibility | Runtime |
-| --- | --- | --- |
-| `cli.ts` | 인자 · 설정 · 문서 · 글꼴 · 빌드·서버 시작 | Node.js |
-| `app.tsx` | 첫 화면과 문서 라우트 · React → HTML | Node.js |
-| `dev.ts` | 자원 · SSE 새로고침 · 페이지 앱 위임 | Node.js · dev |
-| `client.ts` | 테마 · 읽는 절 · 글꼴 로드 후 hash 보정 | 브라우저 |
+| Entry       | Responsibility                             | Runtime       |
+|-------------|--------------------------------------------|---------------|
+| `cli.ts`    | 인자 · 설정 · 문서 · 글꼴 · 빌드·서버 시작 | Node.js       |
+| `app.tsx`   | 첫 화면과 문서 라우트 · React → HTML       | Node.js       |
+| `dev.ts`    | 자원 · SSE 새로고침 · 페이지 앱 위임       | Node.js · dev |
+| `client.ts` | 테마 · 읽는 절 · 글꼴 로드 후 hash 보정    | 브라우저      |
 
 ::part[엔진]
 
@@ -48,12 +48,12 @@ Hono 정규식 매개변수와 wildcard 라우트 혼합 시 Router 제약도 �
 
 ## Markdown 처리
 
-| Stage | Work |
-| --- | --- |
-| 읽기 | 파일 탐색 · YAML 머리말 · Zod 검증 |
+| Stage  | Work                                                        |
+|--------|-------------------------------------------------------------|
+| 읽기   | 파일 탐색 · YAML 머리말 · Zod 검증                          |
 | remark | GFM · 문장부호 · 가름 · 흐름도 · 상태 · 색 칩 · 링크 · 경고 |
-| rehype | 코드 강조 · 문서 머리 · 제목 id · 절 번호 · 표 상자 |
-| 출력 | raw HTML 해석 · HTML 문자열 |
+| rehype | 코드 강조 · 문서 머리 · 제목 id · 절 번호 · 표 상자         |
+| 출력   | raw HTML 해석 · HTML 문자열                                 |
 
 제목 id 생성은 절 번호 삽입보다 먼저. 링크와 목차 텍스트의 번호 혼입 방지.
 중간 계약은 `file.data.fh`. 제목과 절 정보는 문서 순서 유지.
@@ -62,15 +62,15 @@ Hono 정규식 매개변수와 wildcard 라우트 혼합 시 Router 제약도 �
 
 ## 변경 위치
 
-| Concern | Owner |
-| --- | --- |
-| 첫 화면 · 문서 페이지 | `src/page` |
-| HTML 틀 · 사이드바 | `src/component/widget/shell` |
+| Concern                       | Owner                        |
+|-------------------------------|------------------------------|
+| 첫 화면 · 문서 페이지         | `src/page`                   |
+| HTML 틀 · 사이드바            | `src/component/widget/shell` |
 | 본문 · remark·rehype 플러그인 | `src/component/widget/prose` |
-| 처리기 · 문서 읽기 | `src/content` |
-| 상수 · 문구 · 스키마 | `src/constant` · `src/type` |
-| 색 · 글꼴 · 간격 | `src/style/token.css` |
-| 격자 렌더러 · 글꼴 변환 | `src/util` |
+| 처리기 · 문서 읽기            | `src/content`                |
+| 상수 · 문구 · 스키마          | `src/constant` · `src/type`  |
+| 색 · 글꼴 · 간격              | `src/style/token.css`        |
+| 격자 렌더러 · 글꼴 변환       | `src/util`                   |
 
 ## 패키지 출력
 

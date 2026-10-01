@@ -26,63 +26,63 @@ const reloadScript = `new EventSource(${JSON.stringify(asset_reload_path)}).onme
  * 공통 HTML 틀의 입력 · 사이드바와 본문
  */
 export interface WgShellProps {
-	/**
-	 * 사이트 이름 · 탭과 사이드바
-	 */
-	site: SiteConfig;
-	/**
-	 * 사이드바 전체 문서 목록
-	 */
-	docs: Doc[];
-	/**
-	 * HTML 머리의 글꼴·dev 스크립트
-	 */
-	assets: SiteAssets;
-	/**
-	 * 탭 제목의 문서 이름 · 첫 화면 생략
-	 */
-	title?: string;
-	/**
-	 * 현재 문서 id · 첫 화면 생략
-	 */
-	current?: string;
-	/**
-	 * 현재 문서 목차 · 첫 화면 생략
-	 */
-	outline?: DocOutline;
-	/**
-	 * 현재 페이지 본문
-	 */
-	children: ReactNode;
+    /**
+     * 사이트 이름 · 탭과 사이드바
+     */
+    site: SiteConfig;
+    /**
+     * 사이드바 전체 문서 목록
+     */
+    docs: Doc[];
+    /**
+     * HTML 머리의 글꼴·dev 스크립트
+     */
+    assets: SiteAssets;
+    /**
+     * 탭 제목의 문서 이름 · 첫 화면 생략
+     */
+    title?: string;
+    /**
+     * 현재 문서 id · 첫 화면 생략
+     */
+    current?: string;
+    /**
+     * 현재 문서 목차 · 첫 화면 생략
+     */
+    outline?: DocOutline;
+    /**
+     * 현재 페이지 본문
+     */
+    children: ReactNode;
 }
 
 export const WgShell = (props: WgShellProps) => {
-	return (
-		<html lang="ko">
-			{/**
-			 * 공통 자원과 첫 페인트 전 테마
-			 */}
-			<head>
-				<meta charSet="utf-8" />
-				<meta name="viewport" content="width=device-width, initial-scale=1" />
-				<title>{props.title === undefined ? props.site.title : `${props.title} · ${props.site.title}`}</title>
-				<link rel="icon" href={asset_favicon_path} type="image/svg+xml" />
-				<style dangerouslySetInnerHTML={{__html: props.assets.fontCss}} />
-				{props.assets.preload.map((href) => (
-					<link key={href} rel="preload" href={href} as="font" type="font/woff2" crossOrigin="" />
-				))}
-				<script dangerouslySetInnerHTML={{__html: themeScript}} />
-				<link rel="stylesheet" href={asset_style_path} />
-				{props.assets.reload && <script dangerouslySetInnerHTML={{__html: reloadScript}} />}
-			</head>
-			{/**
-			 * 문서 이동과 본문 · 브라우저 동작 연결
-			 */}
-			<body className={clsx("wg_shell__root")}>
-				<WgShellNav site={props.site} docs={props.docs} current={props.current} outline={props.outline} />
-				<main className={clsx("wg_shell__main")}>{props.children}</main>
-				<script type="module" src={asset_client_path} />
-			</body>
-		</html>
-	);
+    return (
+        <html lang="ko">
+            {/**
+             * 공통 자원과 첫 페인트 전 테마
+             */}
+            <head>
+                <meta charSet="utf-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <title>{props.title === undefined ? props.site.title : `${props.title} · ${props.site.title}`}</title>
+                <link rel="icon" href={asset_favicon_path} type="image/svg+xml" />
+                <style dangerouslySetInnerHTML={{__html: props.assets.fontCss}} />
+                {props.assets.preload.map((href) => (
+                    <link key={href} rel="preload" href={href} as="font" type="font/woff2" crossOrigin="" />
+                ))}
+                <script dangerouslySetInnerHTML={{__html: themeScript}} />
+                <link rel="stylesheet" href={asset_style_path} />
+                {props.assets.reload && <script dangerouslySetInnerHTML={{__html: reloadScript}} />}
+            </head>
+            {/**
+             * 문서 이동과 본문 · 브라우저 동작 연결
+             */}
+            <body className={clsx("wg_shell__root")}>
+                <WgShellNav site={props.site} docs={props.docs} current={props.current} outline={props.outline} />
+                <main className={clsx("wg_shell__main")}>{props.children}</main>
+                <script type="module" src={asset_client_path} />
+            </body>
+        </html>
+    );
 };

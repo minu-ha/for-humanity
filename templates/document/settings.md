@@ -11,12 +11,12 @@ group: 작성
 
 ```js
 export default {
-  title: "for-humanity",
-  description: "사람이 읽는 문서를 위한 Markdown 킷",
-  status: [
-    {phrase: "확인됨", kind: "verified", date: true},
-    {phrase: "확인되지 않았다", kind: "unverified"},
-  ],
+    title: "for-humanity",
+    description: "사람이 읽는 문서를 위한 Markdown 킷",
+    status: [
+        {phrase: "확인됨", kind: "verified", date: true},
+        {phrase: "확인되지 않았다", kind: "unverified"},
+    ],
 };
 ```
 
@@ -26,18 +26,18 @@ export default {
 
 ## 사이트
 
-| Key | Use | Default |
-| --- | --- | --- |
-| `title` | 사이드바 이름 · 탭 제목 | `Documents` |
-| `description` | 첫 화면 소개 | 생략 |
+| Key           | Use                     | Default     |
+|---------------|-------------------------|-------------|
+| `title`       | 사이드바 이름 · 탭 제목 | `Documents` |
+| `description` | 첫 화면 소개            | 생략        |
 
 ## 상태 표지
 
-| Key | Value | Use |
-| --- | --- | --- |
-| `phrase` | 비어 있지 않은 상태 문구 | 본문에서 찾을 글 |
-| `kind` | `verified` / `unverified` | 초록 / amber |
-| `date` | 선택 boolean | 뒤의 `YYYY-MM-DD` 날짜 포함 여부 |
+| Key      | Value                     | Use                              |
+|----------|---------------------------|----------------------------------|
+| `phrase` | 비어 있지 않은 상태 문구  | 본문에서 찾을 글                 |
+| `kind`   | `verified` / `unverified` | 초록 / amber                     |
+| `date`   | 선택 boolean              | 뒤의 `YYYY-MM-DD` 날짜 포함 여부 |
 
 - 기본 문구: `확인됨`, `확인되지 않았다`
 - `status` 지정 시 기본 목록 전체 교체
@@ -47,8 +47,8 @@ export default {
 
 ### 표시 예시
 
-| Source | Result |
-| --- | --- |
+| Source              | Result            |
+|---------------------|-------------------|
 | `확인됨 2026-10-01` | 확인됨 2026-10-01 |
 | `(확인되지 않았다)` | (확인되지 않았다) |
 

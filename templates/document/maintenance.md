@@ -15,18 +15,19 @@ pnpm build
 git diff --check
 ```
 
-| Command | Scope |
-| --- | --- |
-| `pnpm lint` | Biome · Stylelint |
-| `pnpm typecheck` | TypeScript |
-| `pnpm build:kit` | 서버·브라우저 번들 |
-| `pnpm build` | 킷 번들 · 프로젝트 문서 사이트 |
-| `pnpm lint:fix` | 자동 린트·포맷 수정 |
+| Command          | Scope                          |
+|------------------|--------------------------------|
+| `pnpm lint`      | Biome · Stylelint              |
+| `pnpm typecheck` | TypeScript                     |
+| `pnpm build:kit` | 서버·브라우저 번들             |
+| `pnpm build`     | 킷 번들 · 프로젝트 문서 사이트 |
+| `pnpm lint:fix`  | 자동 린트·포맷 수정            |
 
 ::part[코드]
 
 ## 컨벤션
 
+- 들여쓰기: 공백 4칸 · Biome와 EditorConfig
 - 파일: kebab-case · 컴포넌트: `Pg`, `Wg`, `Ui` 레이어 접두사
 - import: `@/` · 같은 폴더 CSS 부수효과 import만 `./`
 - 소유자 전용 파일: `_` · `_function`, `_type`, `_constant` 역할 폴더

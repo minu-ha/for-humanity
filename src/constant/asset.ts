@@ -36,10 +36,10 @@ export const asset_favicon_path = "/favicon.svg";
  * dev 자원 응답의 확장자별 content-type
  */
 export const asset_content_types: Record<string, string> = {
-	".css": "text/css; charset=utf-8",
-	".js": "text/javascript; charset=utf-8",
-	".woff2": "font/woff2",
-	".svg": "image/svg+xml",
+    ".css": "text/css; charset=utf-8",
+    ".js": "text/javascript; charset=utf-8",
+    ".woff2": "font/woff2",
+    ".svg": "image/svg+xml",
 };
 
 /**

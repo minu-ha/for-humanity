@@ -11,51 +11,51 @@ import type {SiteConfig} from "@/type/site-config";
  * 미등록 날짜 문구는 파일 경고 · remark-report에서 출력
  */
 export const remarkStatus = (options: {status: SiteConfig["status"]}) => {
-	const statuses = options.status.toSorted((a, b) => b.phrase.length - a.phrase.length);
-	const phrases = statuses
-		.map((item) => [escapeRegExp(item.phrase), ...(item.date ? [`(?: ${status_date_pattern})?`] : [])].join(""))
-		.join("|");
-	const pattern = new RegExp(String.raw`\((${phrases})\)|(${phrases})`, "g");
-	const ignore = ["link", "linkReference", "heading"];
+    const statuses = options.status.toSorted((a, b) => b.phrase.length - a.phrase.length);
+    const phrases = statuses
+        .map((item) => [escapeRegExp(item.phrase), ...(item.date ? [`(?: ${status_date_pattern})?`] : [])].join(""))
+        .join("|");
+    const pattern = new RegExp(String.raw`\((${phrases})\)|(${phrases})`, "g");
+    const ignore = ["link", "linkReference", "heading"];
 
-	return (tree: Root, file: VFile) => {
-		findAndReplace(
-			tree,
-			[
-				pattern,
-				(_match: string, inParens: string | undefined, bare: string | undefined) => {
-					const text = inParens ?? bare;
-					const item = statuses.find((status) => text?.startsWith(status.phrase));
+    return (tree: Root, file: VFile) => {
+        findAndReplace(
+            tree,
+            [
+                pattern,
+                (_match: string, inParens: string | undefined, bare: string | undefined) => {
+                    const text = inParens ?? bare;
+                    const item = statuses.find((status) => text?.startsWith(status.phrase));
 
-					// findAndReplace의 false: 원문 유지
-					if (text === undefined || item === undefined) {
-						return false;
-					}
+                    // findAndReplace의 false: 원문 유지
+                    if (text === undefined || item === undefined) {
+                        return false;
+                    }
 
-					return {
-						type: "html",
-						value: `<span class="wg_prose__pill wg_prose__pill--${item.kind}">${escapeHtml(text)}</span>`,
-					};
-				},
-			],
-			{ignore},
-		);
+                    return {
+                        type: "html",
+                        value: `<span class="wg_prose__pill wg_prose__pill--${item.kind}">${escapeHtml(text)}</span>`,
+                    };
+                },
+            ],
+            {ignore},
+        );
 
-		findAndReplace(
-			tree,
-			[
-				status_candidate_pattern,
-				(match: string, info: RegExpMatchObject) => {
-					// 치환된 텍스트에 position 부재 · 위치가 남은 가까운 조상 기준
-					file.message(
-						`${copy_warn_unknown_status}: ${match}`,
-						info.stack.findLast((node) => node.position !== undefined),
-					);
+        findAndReplace(
+            tree,
+            [
+                status_candidate_pattern,
+                (match: string, info: RegExpMatchObject) => {
+                    // 치환된 텍스트에 position 부재 · 위치가 남은 가까운 조상 기준
+                    file.message(
+                        `${copy_warn_unknown_status}: ${match}`,
+                        info.stack.findLast((node) => node.position !== undefined),
+                    );
 
-					return false;
-				},
-			],
-			{ignore},
-		);
-	};
+                    return false;
+                },
+            ],
+            {ignore},
+        );
+    };
 };

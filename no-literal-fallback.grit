@@ -1,16 +1,16 @@
 language js
 
 or {
-	`$left ?? $right`,
-	`$left || $right`
+    `$left ?? $right`,
+    `$left || $right`
 } where {
-	$right <: or {
-		string(),
-		number(),
-		`true`,
-		`false`,
-		`[]`,
-		`{}`
-	},
-	register_diagnostic(span=$right, message="??, || 오른쪽에 리터럴을 두지 않습니다. 선언된 이름을 참조합니다")
+    $right <: or {
+        string(),
+        number(),
+        `true`,
+        `false`,
+        `[]`,
+        `{}`
+    },
+    register_diagnostic(span=$right, message="Do not use literals on the right side of ?? or ||. Reference a named value instead.")
 }

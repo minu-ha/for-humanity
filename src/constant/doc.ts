@@ -3,6 +3,6 @@
  * blueprint 전용 표현 미구현
  */
 export const doc_type = {
-	document: "document",
-	blueprint: "blueprint",
+    document: "document",
+    blueprint: "blueprint",
 } as const;

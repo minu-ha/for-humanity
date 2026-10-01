@@ -5,22 +5,22 @@ import {doc_type} from "@/constant/doc";
  * 문서 머리말 스키마 · 검증 실패 시 빌드 중단
  */
 export const docDataSchema = z.object({
-	/**
-	 * 영어 이름 · 제목·목록·카드 · 첫 글자 표지는 문서 간 고유
-	 */
-	name: z.string().trim().min(1),
-	/**
-	 * 한글 이름 · 카드 설명과 사이드바 툴팁
-	 */
-	label: z.string(),
-	/**
-	 * 문서 종류 · blueprint 전용 표현 미구현
-	 */
-	type: z.enum(doc_type).default(doc_type.document),
-	/**
-	 * 첫 화면 카드와 문서 머리의 묶음
-	 */
-	group: z.string(),
+    /**
+     * 영어 이름 · 제목·목록·카드 · 첫 글자 표지는 문서 간 고유
+     */
+    name: z.string().trim().min(1),
+    /**
+     * 한글 이름 · 카드 설명과 사이드바 툴팁
+     */
+    label: z.string(),
+    /**
+     * 문서 종류 · blueprint 전용 표현 미구현
+     */
+    type: z.enum(doc_type).default(doc_type.document),
+    /**
+     * 첫 화면 카드와 문서 머리의 묶음
+     */
+    group: z.string(),
 });
 
 /**
