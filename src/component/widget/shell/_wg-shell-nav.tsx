@@ -2,6 +2,7 @@ import clsx from "clsx";
 import {Fragment} from "react";
 import {toTocGroups} from "@/component/widget/shell/_function/to-toc-groups";
 import type {DocOutline} from "@/component/widget/shell/_type/doc-outline";
+import {asset_favicon_path} from "@/constant/asset";
 import {copy_nav_aria_label, copy_nav_docs_label, copy_nav_toc_label, copy_overview_label, copy_overview_mark, copy_overview_name, copy_theme_label} from "@/constant/copy";
 import {locale_doc_name} from "@/constant/locale";
 import {theme_mode} from "@/constant/theme";
@@ -39,6 +40,7 @@ export const WgShellNav = (props: WgShellNavProps) => {
     return (
         <nav className={clsx("wg_shellNav__root")} aria-label={copy_nav_aria_label}>
             <a className={clsx("wg_shellNav__brand")} href="/">
+                <img className={clsx("wg_shellNav__brandIcon")} src={asset_favicon_path} width="32" height="32" alt="" />
                 {props.site.title}
             </a>
             <div className={clsx("wg_shellNav__label")}>{copy_nav_docs_label}</div>

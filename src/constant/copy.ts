@@ -5,7 +5,7 @@
 /**
  * 사이트 제목의 기본값 · 사이드바와 탭
  */
-export const copy_site_title_default = "Documents";
+export const copy_site_title_default = "for humanity";
 
 /**
  * 사이드바의 접근 가능한 이름

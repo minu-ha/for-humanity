@@ -35,7 +35,7 @@ pnpm install
 pnpm dev
 ```
 
-접속: `http://localhost:4321/`. 기본 문서: 이 폴더의 for-humanity 문서.
+접속: `http://localhost:4321/`. 기본 문서: 이 폴더의 for humanity 문서.
 
 ```sh
 pnpm build
@@ -47,7 +47,7 @@ pnpm preview
 현재 npm 공개 전. 저장소에서 만든 패키지를 문서 프로젝트에 설치.
 
 ```sh
-# for-humanity 저장소
+# for humanity 저장소
 pnpm pack
 
 # 문서 프로젝트

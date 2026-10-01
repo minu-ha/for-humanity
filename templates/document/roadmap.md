@@ -77,6 +77,7 @@ group: Development
 현재 명령은 `dev`, `build`, `preview`. `init`은 아직 미구현.
 
 - [ ] 대상 폴더 지정과 생성할 파일 목록 확정
+- [ ] 사이트 이름 입력 · 미지정 시 `for humanity`와 기본 favicon
 - [ ] 설정·일반 문서·blueprint의 최소 샘플 준비
 - [ ] 기존 파일과 충돌할 때의 처리 기준 구현
 - [ ] 생성 직후 `dev`, `build`, `preview` 실행 확인

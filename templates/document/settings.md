@@ -11,7 +11,7 @@ group: Writing
 
 ```js
 export default {
-    title: "for-humanity",
+    title: "for humanity",
     description: "사람이 읽는 문서를 위한 Markdown 문서 도구",
     status: [
         {phrase: "확인됨", kind: "verified", date: true},
@@ -26,10 +26,14 @@ export default {
 
 ## Site
 
-| Key           | Use                     | Default     |
-| ------------- | ----------------------- | ----------- |
-| `title`       | 사이드바 이름 · 탭 제목 | `Documents` |
-| `description` | 첫 화면 소개            | 생략        |
+| Key           | Use                     | Default        |
+| ------------- | ----------------------- | -------------- |
+| `title`       | 사이드바 이름 · 탭 제목 | `for humanity` |
+| `description` | 첫 화면 소개            | 생략           |
+
+설정을 생략하면 기본 이름 `for humanity`와 픽셀 얼굴 아이콘.
+`title`을 지정하면 탭·사이드바·문서 머리에 같은 사이트 이름 적용.
+아이콘은 탭의 favicon과 같은 파일, 사이드바에서는 32px 크기.
 
 ## Status badges
 

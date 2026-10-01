@@ -16,6 +16,7 @@ meepin·Pinboard의 텍스트 중심 구성. 흰 바탕, 진회색 글, 파란 �
 - 페이지 폭과 사이드바 배치는 기존 기준 유지
 - 색의 선택: 역할별 토큰 · System·Light·Dark
 - favicon: 16×16 픽셀 얼굴 · 검은 점 눈·작은 미소 · 투명 배경 · 두 가지 색
+- Brand: 기본 이름 `for humanity` · 사이드바의 32px favicon · 이름은 `title` 설정
 
 ::part[Tokens]
 

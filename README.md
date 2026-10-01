@@ -1,49 +1,89 @@
 <div align="center">
 
-<img src="src/asset/favicon.svg" width="72" height="72" alt="for-humanity">
+<img src="src/asset/favicon.svg" width="96" height="96" alt="for humanity pixel face">
 
-# for-humanity
+# for humanity
 
-**사람이 읽는 문서를 위한 Markdown 문서 도구**
+**Documents, for humans.**
 
-문서 폴더 하나. 사이드바, 자동 번호, 흐름도까지.
+Write Markdown. Keep the context. Share a static site.
 
-[![MIT](https://img.shields.io/badge/license-MIT-2e3f5e)](LICENSE)
-![Node 22+](https://img.shields.io/badge/node-22%2B-2e3f5e)
-![Hono · React](https://img.shields.io/badge/Hono-%C2%B7%20React-2e3f5e)
-![Prototype](https://img.shields.io/badge/status-prototype-9a6400)
+[![MIT](https://img.shields.io/badge/license-MIT-1111aa?style=flat-square)](LICENSE)
+![Node 22+](https://img.shields.io/badge/node-22%2B-444444?style=flat-square)
+![Hono + React](https://img.shields.io/badge/Hono-%2B%20React-444444?style=flat-square)
+![Prototype](https://img.shields.io/badge/status-prototype-9a6400?style=flat-square)
 
-[Getting started](templates/document/commands.md) · [Writing](templates/document/writing.md) · [Settings](templates/document/settings.md) · [Contributing](templates/document/maintenance.md)
+[Quick start](#quick-start) · [Writing](templates/document/writing.md) · [Parts](templates/document/parts.md) · [Roadmap](templates/document/roadmap.md) · [Korean](language/README.ko.md)
 
 <br>
 
 <picture>
-    <source media="(prefers-color-scheme: dark)" srcset=".github/readme/commands-dark.png">
-    <img src=".github/readme/commands-light.png" width="100%" alt="for-humanity 문서 화면. 사이드바, 자동 번호, 표와 흐름도">
+    <source media="(prefers-color-scheme: dark)" srcset=".github/readme/blueprint-dark.png">
+    <img src=".github/readme/blueprint-light.png" width="100%" alt="A document with a sidebar, numbered sections, a note and a flowchart">
 </picture>
 
 </div>
 
+## A little structure. Room to read.
+
+- **Find your place.** A sidebar, grouped contents, numbered sections and the current reading position.
+- **Keep the detail.** Notes for context, native disclosures for implementation details, and links that open folded sections.
+- **Show the connections.** Tables, highlighted code, Mermaid flowcharts, status badges and color swatches.
+- **Share the result.** Static HTML, self-hosted fonts and a small browser script. No React hydration.
+- **Read your way.** System, Light and Dark themes, keyboard navigation and a layout for narrow screens.
+
 ## Quick start
 
+Node.js 22 or later and pnpm. Run the project from source:
+
 ```sh
+git clone https://github.com/minu-ha/for-humanity.git
+cd for-humanity
 pnpm install
 pnpm dev
 ```
 
-[localhost:4321](http://localhost:4321)에서 프로젝트 문서 열기.
+Open [localhost:4321](http://localhost:4321) to read the included documents and examples.
 
-## Features
+```sh
+pnpm build      # Generate templates/document/dist
+pnpm preview    # Preview the static site
+```
 
-- **Navigation** — 문서 목록, part별 TOC, 자동 section 번호, 현재 위치 표시
-- **Markdown** — 코드 강조, 흐름도, status badge, swatch
-- **Static output** — 정적 HTML, 작은 브라우저 스크립트, 자체 호스팅 폰트
-- **Themes** — System, Light, Dark
+The package is a prototype. `init` and the first npm release are planned; see the [Roadmap](templates/document/roadmap.md).
+
+## Make it yours
+
+A document folder is enough to get started. Without a site configuration, the sidebar shows the pixel face and **for humanity**.
+Set your own name in `for-humanity.config.mjs`:
+
+```js
+export default {
+    title: "Project notes",
+    description: "Decisions, working notes and the details behind them.",
+};
+```
+
+See [Commands](templates/document/commands.md) for using another document folder, and [Settings](templates/document/settings.md) for configuration.
+
+## Write with context
+
+```markdown
+:::note[Scope]
+What this document covers and what still needs a decision.
+:::
+
+:::details[Implementation]
+The contract, code or reasoning behind the visible result.
+:::
+```
+
+[Parts](templates/document/parts.md) pairs source examples with their rendered results. The [Blueprint sample](templates/document/blueprint.md) brings together a screen flow, decisions, open questions and API contracts.
 
 ## Documentation
 
-사용법과 프로젝트 문서: [templates/document](templates/document).
+[Writing](templates/document/writing.md) · [Parts](templates/document/parts.md) · [Settings](templates/document/settings.md) · [Architecture](templates/document/architecture.md) · [Contributing](templates/document/maintenance.md)
 
 ## License
 
-[MIT](LICENSE) © 2026 하민우
+[MIT](LICENSE) © 2026 [minu-ha](https://github.com/minu-ha)
