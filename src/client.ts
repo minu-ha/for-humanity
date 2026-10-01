@@ -7,6 +7,7 @@ import {reading_line_slack_px} from "@/component/widget/shell/_constant/reading-
 import {setThemeButton} from "@/component/widget/shell/_function/set-theme-button";
 import {theme_mode, theme_order, theme_storage_key} from "@/constant/theme";
 import {findHashTarget} from "@/util/dom/find-hash-target";
+import {revealHashTarget} from "@/util/dom/reveal-hash-target";
 
 const themeButton = document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
 
@@ -43,6 +44,30 @@ if (themeButton) {
     themeButton.addEventListener("click", handleThemeClick);
 }
 
+const hashTarget = revealHashTarget(location.hash);
+
+/**
+ * 같은 hash를 다시 눌러도 접힌 대상 공개 · 기본 링크 이동 유지
+ */
+const handleHashClick: EventListener = (event) => {
+    if (event.currentTarget instanceof HTMLAnchorElement) {
+        revealHashTarget(event.currentTarget.hash);
+    }
+};
+
+/**
+ * hash 변경의 숨은 대상 공개와 위치 보정
+ */
+const handleHashChange = () => {
+    revealHashTarget(location.hash)?.scrollIntoView();
+};
+
+for (const link of document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')) {
+    link.addEventListener("click", handleHashClick);
+}
+
+addEventListener("hashchange", handleHashChange);
+
 // 목차 링크와 실제 제목 연결
 const tocSections = [...document.querySelectorAll<HTMLAnchorElement>("[data-toc-link]")].flatMap((link) => {
     const heading = findHashTarget(link.hash);
@@ -75,8 +100,8 @@ if (firstSection) {
     const markActive = () => {
         // scroll-margin-top 계산값: CSS px
         const line = Number.parseFloat(getComputedStyle(firstSection.heading).scrollMarginTop) + reading_line_slack_px;
-        const current = tocSections.findLast((section) => section.heading.getBoundingClientRect().top <= line) ?? firstSection;
-        const sub = current.subs.findLast((item) => item.heading.getBoundingClientRect().top <= line);
+        const current = tocSections.findLast((section) => section.heading.getClientRects().length > 0 && section.heading.getBoundingClientRect().top <= line) ?? firstSection;
+        const sub = current.subs.findLast((item) => item.heading.getClientRects().length > 0 && item.heading.getBoundingClientRect().top <= line);
 
         for (const section of tocSections) {
             section.link.classList.toggle("wg_shellNav__link--active", section === current);
@@ -90,10 +115,10 @@ if (firstSection) {
 
     addEventListener("scroll", markActive, {passive: true});
     addEventListener("resize", markActive);
+    addEventListener("toggle", markActive, true);
     markActive();
 }
 
-const hashTarget = findHashTarget(location.hash);
 const userScroll = new AbortController();
 
 for (const type of ["wheel", "touchmove", "keydown", "mousedown"]) {

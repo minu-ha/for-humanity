@@ -11,6 +11,7 @@ import {unified} from "unified";
 import {rehypeHead} from "@/component/widget/prose/_function/rehype-head";
 import {rehypeSections} from "@/component/widget/prose/_function/rehype-sections/rehype-sections";
 import {rehypeTables} from "@/component/widget/prose/_function/rehype-tables";
+import {remarkBlocks} from "@/component/widget/prose/_function/remark-blocks";
 import {remarkFlow} from "@/component/widget/prose/_function/remark-flow";
 import {remarkLinks} from "@/component/widget/prose/_function/remark-links";
 import {remarkParts} from "@/component/widget/prose/_function/remark-parts";
@@ -32,6 +33,7 @@ export const createProcessor = (options: {site: SiteConfig; root: string}) => {
         .use(remarkGfm)
         .use(remarkSmartypants)
         .use(remarkDirective)
+        .use(remarkBlocks)
         .use(remarkParts)
         .use(remarkFlow)
         .use(remarkStatus, {status: options.site.status})

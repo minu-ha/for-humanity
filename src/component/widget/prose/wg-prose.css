@@ -305,3 +305,51 @@
         margin: 0 auto;
     }
 }
+
+/* 보충 설명 · 본문과 분리되는 제목·왼쪽 선 */
+.wg_prose__note {
+    margin: var(--app-space-block) 0;
+    padding-left: var(--app-space-block);
+    border-left: 2px solid var(--app-color-border);
+
+    & > :last-child {
+        margin-bottom: 0;
+    }
+}
+
+.wg_prose__noteTitle {
+    display: block;
+    margin-bottom: var(--app-space-inline);
+    color: var(--app-color-text-strong);
+    font-weight: var(--app-font-weight-strong);
+}
+
+/* 구현 상세 · 펼침 상태와 marker는 native Details 소유 */
+.wg_prose__details {
+    margin: var(--app-space-block) 0;
+    padding-bottom: var(--app-space-stack);
+    border-top: 1px dotted var(--app-color-border);
+    border-bottom: 1px dotted var(--app-color-border);
+
+    & > :last-child {
+        margin-bottom: 0;
+    }
+}
+
+.wg_prose__detailsSummary {
+    padding: var(--app-space-inline) 0;
+    color: var(--app-color-link);
+    font-weight: var(--app-font-weight-strong);
+    cursor: pointer;
+
+    &:hover {
+        color: var(--app-color-link-hover);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+    }
+
+    &:focus-visible {
+        outline: var(--app-outline-focus);
+        outline-offset: var(--app-outline-focus-offset);
+    }
+}

@@ -23,6 +23,7 @@ import {createProcessor} from "@/content/create-processor";
 import {readDocs} from "@/content/read-docs";
 import {createDevApp} from "@/dev";
 import {siteConfigSchema} from "@/type/site-config";
+import {toErrorMessage} from "@/util/error/to-error-message";
 import {toFontCss} from "@/util/font/to-font-css";
 
 const commands = ["dev", "build", "preview"];
@@ -125,7 +126,7 @@ const main = async () => {
             store.docs = docs;
             reload.emit("change");
         } catch (error) {
-            console.error(`${copy_error_prefix}: ${error instanceof Error ? error.message : String(error)}`);
+            console.error(`${copy_error_prefix}: ${toErrorMessage(error)}`);
         }
     };
 
@@ -135,6 +136,6 @@ const main = async () => {
 try {
     await main();
 } catch (error) {
-    console.error(`${copy_error_prefix}: ${error instanceof Error ? error.message : String(error)}`);
+    console.error(`${copy_error_prefix}: ${toErrorMessage(error)}`);
     process.exit(1);
 }

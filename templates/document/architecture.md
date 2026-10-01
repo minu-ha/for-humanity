@@ -21,7 +21,7 @@ flowchart LR
 | `cli.ts`    | 인자 · 설정 · 문서 · 폰트 · 빌드·서버 시작   | Node.js       |
 | `app.tsx`   | 첫 화면과 문서 라우트 · React → HTML         | Node.js       |
 | `dev.ts`    | 자원 · SSE 새로고침 · 페이지 앱 위임         | Node.js · dev |
-| `client.ts` | 테마 · 현재 section · 폰트 로드 후 hash 보정 | Browser       |
+| `client.ts` | 테마 · 읽는 section · 접힌 hash 공개·위치 보정 | Browser       |
 
 ::part[Engine]
 
@@ -51,12 +51,14 @@ Hono 정규식 매개변수와 wildcard 라우트 혼합 시 Router 제약도 �
 | Stage  | Work                                                                 |
 | ------ | -------------------------------------------------------------------- |
 | Read   | 파일 탐색 · YAML frontmatter · Zod 검증                              |
-| remark | GFM · 문장부호 · part · 흐름도 · status badge · swatch · 링크 · 경고 |
+| remark | GFM · 문장부호 · Note·Details · part · 흐름도 · status badge · swatch · 링크 · 경고 |
 | rehype | 코드 강조 · 문서 header · 제목 id · section 번호 · 표 상자           |
 | Output | raw HTML 해석 · HTML 문자열                                          |
 
 제목 id 생성은 section 번호 삽입보다 먼저. 링크와 TOC 텍스트의 번호 혼입 방지.
 중간 계약은 `file.data.fh`. 제목과 section 정보는 문서 순서 유지.
+Note·Details의 검증은 Markdown 부품 변환 전. 제목은 native label, 본문은 기존 처리 흐름.
+접힌 본문의 `###`도 같은 제목 id·번호·TOC. 부품의 작성 계약은 [Parts](parts.md).
 
 ::part[Ownership]
 

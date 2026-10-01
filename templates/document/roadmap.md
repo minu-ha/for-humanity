@@ -5,15 +5,16 @@ group: Development
 ---
 
 사람이 읽는 문서를 Markdown으로 작성하고 정적 사이트로 공유하는 문서 도구.
-현재는 prototype. 다음 작업은 부품과 작성 문법을 실제 샘플에서 정하는 것.
+현재는 prototype. Note·Details 작성 문법과 기존 실시간 목록 blueprint의 축약 샘플 지원.
+다음 작업은 blueprint의 전용 정보 구조와 표현.
 
 ## Overview
 
 | Order | Stage                                     | Status  | Result                                |
 |-------|-------------------------------------------|---------|---------------------------------------|
 | 1     | [Foundation](#foundation)                 | Done    | 기존 샘플의 표현과 사용성             |
-| 2     | [Parts and syntax](#parts-and-syntax)     | Next    | 필요한 부품과 Markdown 작성 계약      |
-| 3     | [Blueprint](#blueprint)                   | Planned | 화면·결정·질문을 담는 설계 문서       |
+| 2     | [Parts and syntax](#parts-and-syntax)     | Done    | 필요한 부품과 Markdown 작성 계약      |
+| 3     | [Blueprint](#blueprint)                   | Next    | 화면·결정·질문을 담는 설계 문서       |
 | 4     | [Init](#init)                             | Planned | 새 문서 프로젝트의 시작 명령          |
 | 5     | [Release](#release)                       | Planned | 설치 가능한 npm 패키지                |
 | 6     | [Search](#search)                         | Planned | 문서·section 탐색                     |
@@ -39,22 +40,22 @@ group: Development
 
 완료 기준: `dev`, `build`, `preview`에 같은 표현이 반영되고 문서 전체에서 링크·목차·테마가 동작.
 
-::part[Next]
-
 ## Parts and syntax
 
-먼저 실제 설계 문서 한 장 작성. 그 문서에서 반복되는 표현을 기준으로 부품 선정.
-후보는 Note, Details, Decision, Question, API reference. 필요한 후보만 구현.
+샘플: [Blueprint](blueprint.md) · 기존 실시간 목록 설계의 핵심 흐름·결정·질문·API.
+선정: [Note·Details](parts.md). Decision·Question·API reference는 section·표·링크.
 
-- [ ] 본문·표·흐름도로 표현되는 부분과 새 부품이 필요한 부분 확인
-- [ ] 부품별 목적·입력·허용 중첩·기본값 정의
-- [ ] Markdown 작성 예와 렌더링 결과를 나란히 정리
-- [ ] 지원하지 않는 입력과 잘못된 문법의 오류 기준 정의
-- [ ] 선택한 부품의 HTML·CSS·접근성 구현
-- [ ] [Writing](writing.md)에 실제 지원 문법과 예시 반영
+- [x] 본문·표·흐름도로 표현되는 부분과 새 부품이 필요한 부분 확인
+- [x] 부품별 목적·입력·허용 중첩·기본값 정의
+- [x] Markdown 작성 예와 렌더링 결과를 나란히 정리
+- [x] 지원하지 않는 입력과 잘못된 문법의 오류 기준 정의
+- [x] 선택한 부품의 HTML·CSS·접근성 구현
+- [x] [Writing](writing.md)에 실제 지원 문법과 예시 반영
 
 산출물: 실제 샘플 문서, 부품 목록, 작성 문법, 렌더링 결과.
 완료 기준: 작성자가 소스를 보지 않고 예시만으로 같은 결과를 만들 수 있고, 두 테마·좁은 화면에서 내용이 읽힘.
+
+::part[Next]
 
 ## Blueprint
 

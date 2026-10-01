@@ -5,6 +5,7 @@ group: Writing
 ---
 
 문서 한 장 = Markdown 파일 하나. frontmatter, section, part, 본문 기능의 작성 기준.
+부품의 계약과 소스·결과 예시는 [Parts](parts.md), 설계 문서 샘플은 [Blueprint](blueprint.md).
 
 ## Overview
 
@@ -95,6 +96,33 @@ flowchart LR
 상태 문구는 [Settings](settings.md#status-badges)에서 변경.
 원시 HTML은 그대로 반영되는 작성 형식. 외부 콘텐츠의 실행·격리 환경은 제공하지 않음.
 
+## Block components
+
+```markdown
+:::note[Scope]
+보충 설명과 제약.
+:::
+
+:::details[Implementation]
+### Response contract
+
+필요할 때 펼쳐 보는 구현 상세.
+:::
+```
+
+- Note: 항상 표시되는 보충 설명 · 제목·본문 필수 · 속성 없음
+- Details: 기본 접힘 · 제목·본문 필수 · `{open}`으로 기본 펼침
+- 속성의 값 표기·중복 `open`, 주석·빈 코드·빈 목록만 있는 본문은 오류
+- 제목: 일반 텍스트 · 링크·강조·인라인 코드 미지원
+- 본문: 일반 Markdown · `###` 이하 제목과 Note·Details 중첩
+- 문서 구획: `##`와 `::part`는 부품 밖
+- 닫는 fence: 필수 · 중첩하거나 코드에 `:::`가 있으면 바깥 fence를 더 길게 작성
+- 부품 내부 제목: TOC·번호·hash 지원 · hash 이동 시 상위 Details 공개
+- 미지원 형태·속성·빈 입력: 빌드 오류 · [Errors](parts.md#errors)
+
+Decision·Question·API reference는 section·표·링크로 작성.
+전용 부품의 필요성은 실제 샘플을 기준으로 판단.
+
 ## Writing conventions
 
 - 한 줄 한 사실
@@ -127,3 +155,5 @@ flowchart LR
 | TOC          | 현재 문서의 section·subsection 목록      |
 | Status badge | 설정의 상태 문구를 강조하는 표지         |
 | Swatch       | 인라인 색 값 앞에 표시하는 색 견본       |
+| Note         | 본문과 구분되는 보충 설명               |
+| Details      | 제목을 눌러 펼치는 구현 상세             |

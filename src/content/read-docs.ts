@@ -48,7 +48,8 @@ export const readDocs = async (options: {root: string; processor: Processor}): P
             // 플러그인의 제목·절 정보 공유
             const fh: DocFileData = {frontmatter: parsed.data, headings: [], sections: []};
             const file = new VFile({
-                value: frontmatter === null ? source : source.slice(frontmatter[0].length),
+                // 머리말은 공백 처리 · 원본의 줄·열·offset 유지
+                value: frontmatter === null ? source : frontmatter[0].replace(/[^\r\n]/g, " ") + source.slice(frontmatter[0].length),
                 path: join(options.root, path),
                 data: {fh},
             });

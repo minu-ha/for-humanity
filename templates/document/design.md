@@ -15,7 +15,7 @@ meepin·Pinboard의 텍스트 중심 구성. 흰 바탕, 진회색 글, 파란 �
 - 면의 구분: 가는 선 · 직각 모서리 · 그림자·그라데이션 없음
 - 페이지 폭과 사이드바 배치는 기존 기준 유지
 - 색의 선택: 역할별 토큰 · System·Light·Dark
-- favicon: 16×16 픽셀 사람 · 계단형 테두리 · 세 가지 색
+- favicon: 16×16 픽셀 얼굴 · 검은 점 눈·작은 미소 · 투명 배경 · 두 가지 색
 
 ::part[Tokens]
 
@@ -125,6 +125,8 @@ Shiki는 기존 역할색 참조: 키워드 strong, 함수 accent, 문자열 ver
 - Theme: System 모니터 · Light 해 · Dark 달 · 현재 모드의 tooltip·접근 가능한 이름
 - focus-visible: 모든 상호작용 요소에 공통 outline
 - 현재 문서·section: accent 선 · strong 글
+- Note: 보충 설명의 제목·왼쪽 선 · 기본 본문 토큰
+- Details: native marker·파란 제목·얇은 점선 · 접힌 본문의 hash 이동 시 공개
 - 도메인 상태: `--active`, `--open` 수정자
 - DOM 상태: 기본 클래스 안의 pseudo-class
 - 움직임 감소: 전역 `prefers-reduced-motion`

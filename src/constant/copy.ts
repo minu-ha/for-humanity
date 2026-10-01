@@ -92,6 +92,11 @@ export const copy_error_flow = "흐름도를 그리지 못했다";
 export const copy_error_unknown_directive = "모르는 부품이다";
 
 /**
+ * 부품의 작성 계약 오류 · 이름과 수정 기준 추가
+ */
+export const copy_error_directive_syntax = "부품 문법이 올바르지 않다";
+
+/**
  * 없는 Markdown 링크 경고 · 빌드 계속
  */
 export const copy_warn_broken_link = "없는 문서로 건 링크다";

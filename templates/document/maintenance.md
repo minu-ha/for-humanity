@@ -60,6 +60,8 @@ Biome 제외 이유: 기존 렌더링 알고리즘과 diff 대조.
 - 가로 넘침 · 끊긴 문서·section 링크 · 처리되지 않은 흐름도 · 콘솔 오류
 - 테마 변경과 저장 · TOC의 현재 section·subsection
 - 한국어 hash · 폰트 로드 후 위치 · 키보드 포커스
+- Note·Details: 기본 접힘·`{open}`·중첩 · Enter·Space · 숨은 제목의 hash 공개
+- 부품 문법 오류: 제목·본문·닫힘·속성 · 파일·줄 표시
 - JavaScript 비활성 상태의 본문·TOC
 - dev: 추가·수정·삭제 · 잘못된 문서 후 정상 복구
 
@@ -78,4 +80,4 @@ pnpm pack
 ## Roadmap
 
 진행 순서, 단계별 산출물과 완료 기준은 [Roadmap](roadmap.md).
-다음 작업은 실제 샘플을 기준으로 부품과 작성 문법 정의.
+다음 작업은 [Blueprint](blueprint.md) 샘플을 기준으로 blueprint의 전용 정보 구조와 표현 정의.
