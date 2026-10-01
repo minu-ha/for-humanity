@@ -17,15 +17,7 @@ import {createApp} from "@/app";
 import {asset_client_path, asset_favicon_path, asset_font_dir, asset_style_path} from "@/constant/asset";
 import {cli_config_file_name, cli_default_command, cli_default_docs_dir, cli_dev_port} from "@/constant/cli";
 import {copy_error_config, copy_error_prefix, copy_error_unknown_command} from "@/constant/copy";
-import {
-    font_css_variable_mono,
-    font_css_variable_sans,
-    font_mono_css,
-    font_mono_family,
-    font_sans_css,
-    font_sans_fallbacks,
-    font_sans_family,
-} from "@/constant/font";
+import {font_css_variable_mono, font_css_variable_sans, font_mono_css, font_mono_family, font_sans_css, font_sans_fallbacks, font_sans_family} from "@/constant/font";
 import {site_config_absent} from "@/constant/site";
 import {createProcessor} from "@/content/create-processor";
 import {readDocs} from "@/content/read-docs";
@@ -60,14 +52,10 @@ const main = async () => {
     }
 
     const configFile = join(docsRoot, cli_config_file_name);
-    const parsedConfig = siteConfigSchema.safeParse(
-        existsSync(configFile) ? (await import(pathToFileURL(configFile).href)).default : site_config_absent,
-    );
+    const parsedConfig = siteConfigSchema.safeParse(existsSync(configFile) ? (await import(pathToFileURL(configFile).href)).default : site_config_absent);
 
     if (!parsedConfig.success) {
-        throw new Error(
-            `${copy_error_config}: ${parsedConfig.error.issues.map((issue) => `${issue.path.join(".")} ${issue.message}`).join(", ")}`,
-        );
+        throw new Error(`${copy_error_config}: ${parsedConfig.error.issues.map((issue) => `${issue.path.join(".")} ${issue.message}`).join(", ")}`);
     }
 
     const siteConfig = parsedConfig.data;
@@ -117,9 +105,7 @@ const main = async () => {
     const reload = new EventEmitter();
     let generation = 0;
 
-    serve({fetch: createDevApp({pages: app, files, reload}).fetch, port: cli_dev_port}, (info) =>
-        console.log(`http://localhost:${info.port}/`),
-    );
+    serve({fetch: createDevApp({pages: app, files, reload}).fetch, port: cli_dev_port}, (info) => console.log(`http://localhost:${info.port}/`));
 
     /**
      * Markdown 변경 시 전체 재처리와 새로고침

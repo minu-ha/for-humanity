@@ -14,9 +14,7 @@ const themeButton = document.querySelector<HTMLButtonElement>("[data-theme-toggl
  * HTML 머리에서 적용한 테마 · 미지정 시 시스템
  */
 const readThemeMode = () => {
-    return (
-        theme_order.find((mode) => mode === document.documentElement.getAttribute("data-theme")) ?? theme_mode.system
-    );
+    return theme_order.find((mode) => mode === document.documentElement.getAttribute("data-theme")) ?? theme_mode.system;
 };
 
 if (themeButton) {
@@ -77,8 +75,7 @@ if (firstSection) {
     const markActive = () => {
         // scroll-margin-top 계산값: CSS px
         const line = Number.parseFloat(getComputedStyle(firstSection.heading).scrollMarginTop) + reading_line_slack_px;
-        const current =
-            tocSections.findLast((section) => section.heading.getBoundingClientRect().top <= line) ?? firstSection;
+        const current = tocSections.findLast((section) => section.heading.getBoundingClientRect().top <= line) ?? firstSection;
         const sub = current.subs.findLast((item) => item.heading.getBoundingClientRect().top <= line);
 
         for (const section of tocSections) {

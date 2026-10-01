@@ -9,9 +9,7 @@ import type {TocGroup, TocSection} from "@/component/widget/shell/_type/toc-grou
  */
 export const toTocGroups = (outline: DocOutline): TocGroup[] => {
     const entries = outline.headings
-        .filter(
-            (heading) => heading.depth === section_heading_depth.section || heading.depth === section_heading_depth.sub,
-        )
+        .filter((heading) => heading.depth === section_heading_depth.section || heading.depth === section_heading_depth.sub)
         .map((heading, index) => ({heading, section: outline.sections[index]}));
     const sections = entries.flatMap((entry, index): TocSection[] =>
         entry.heading.depth === section_heading_depth.section
@@ -20,10 +18,10 @@ export const toTocGroups = (outline: DocOutline): TocGroup[] => {
                       heading: entry.heading,
                       number: entry.section.number,
                       part: entry.section.part,
-                      subs: takeWhile(
-                          entries.slice(index + 1),
-                          (sub) => sub.heading.depth !== section_heading_depth.section,
-                      ).map((sub) => ({heading: sub.heading, number: sub.section.number})),
+                      subs: takeWhile(entries.slice(index + 1), (sub) => sub.heading.depth !== section_heading_depth.section).map((sub) => ({
+                          heading: sub.heading,
+                          number: sub.section.number,
+                      })),
                   },
               ]
             : [],

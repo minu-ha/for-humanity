@@ -13,9 +13,7 @@ http://scripts.sil.org/OFL
     font-display: swap;
     font-weight: 45 920;
     src: url(./woff2-dynamic-subset/PretendardVariable.subset.0.woff2) format("woff2-variations");
-    unicode-range:
-        U+f9ca-fa0b, U+ff03-ff05, U+ff07, U+ff0a-ff0b, U+ff0d-ff19, U+ff1b, U+ff1d, U+ff20-ff5b, U+ff5d, U+ffe0-ffe3,
-        U+ffe5-ffe6;
+    unicode-range: U+f9ca-fa0b, U+ff03-ff05, U+ff07, U+ff0a-ff0b, U+ff0d-ff19, U+ff1b, U+ff1d, U+ff20-ff5b, U+ff5d, U+ffe0-ffe3, U+ffe5-ffe6;
 }
 
 /* [1] */
@@ -37,7 +35,8 @@ http://scripts.sil.org/OFL
     font-weight: 45 920;
     src: url(./woff2-dynamic-subset/PretendardVariable.subset.2.woff2) format("woff2-variations");
     unicode-range:
-        U+d679-d68b, U+d68e-d69e, U+d6a0, U+d6a2-d6a7, U+d6a9-d6c3, U+d6c6-d6c7, U+d6c9-d6cb, U+d6cd-d6d3, U+d6d5-d6d6, U+d6d8-d6e3, U+d6e5-d6e7, U+d6e9-d6fb, U+d6fd-d717, U+d719-d71f, U+d721-d722;
+        U+d679-d68b, U+d68e-d69e, U+d6a0, U+d6a2-d6a7, U+d6a9-d6c3, U+d6c6-d6c7, U+d6c9-d6cb, U+d6cd-d6d3, U+d6d5-d6d6, U+d6d8-d6e3, U+d6e5-d6e7, U+d6e9-d6fb, U+d6fd-d717,
+        U+d719-d71f, U+d721-d722;
 }
 
 /* [3] */
@@ -69,8 +68,7 @@ http://scripts.sil.org/OFL
     font-display: swap;
     font-weight: 45 920;
     src: url(./woff2-dynamic-subset/PretendardVariable.subset.5.woff2) format("woff2-variations");
-    unicode-range:
-        U+d464-d477, U+d47a-d47b, U+d47d-d47f, U+d481-d487, U+d489-d48a, U+d48c, U+d48e-d4e7, U+d4e9-d503, U+d505-d506;
+    unicode-range: U+d464-d477, U+d47a-d47b, U+d47d-d47f, U+d481-d487, U+d489-d48a, U+d48c, U+d48e-d4e7, U+d4e9-d503, U+d505-d506;
 }
 
 /* [6] */
@@ -80,9 +78,7 @@ http://scripts.sil.org/OFL
     font-display: swap;
     font-weight: 45 920;
     src: url(./woff2-dynamic-subset/PretendardVariable.subset.6.woff2) format("woff2-variations");
-    unicode-range:
-        U+d3bf-d3c7, U+d3ca-d3cf, U+d3d1-d3eb, U+d3ee-d3ef, U+d3f1-d3f3, U+d3f5-d3fb, U+d3fd-d400, U+d402-d45b,
-        U+d45d-d463;
+    unicode-range: U+d3bf-d3c7, U+d3ca-d3cf, U+d3d1-d3eb, U+d3ee-d3ef, U+d3f1-d3f3, U+d3f5-d3fb, U+d3fd-d400, U+d402-d45b, U+d45d-d463;
 }
 
 /* [7] */
@@ -103,9 +99,7 @@ http://scripts.sil.org/OFL
     font-display: swap;
     font-weight: 45 920;
     src: url(./woff2-dynamic-subset/PretendardVariable.subset.8.woff2) format("woff2-variations");
-    unicode-range:
-        U+d257-d27f, U+d281-d29b, U+d29d-d29f, U+d2a1-d2ab, U+d2ad-d2b7, U+d2ba-d2bb, U+d2bd-d2bf, U+d2c1-d2c7,
-        U+d2c9-d2ef, U+d2f2-d2f3, U+d2f5-d2f7, U+d2f9-d2fe;
+    unicode-range: U+d257-d27f, U+d281-d29b, U+d29d-d29f, U+d2a1-d2ab, U+d2ad-d2b7, U+d2ba-d2bb, U+d2bd-d2bf, U+d2c1-d2c7, U+d2c9-d2ef, U+d2f2-d2f3, U+d2f5-d2f7, U+d2f9-d2fe;
 }
 
 /* [9] */
@@ -126,7 +120,8 @@ http://scripts.sil.org/OFL
     font-weight: 45 920;
     src: url(./woff2-dynamic-subset/PretendardVariable.subset.10.woff2) format("woff2-variations");
     unicode-range:
-        U+d105-d12f, U+d132-d133, U+d135-d137, U+d139-d13f, U+d141-d142, U+d144, U+d146-d14b, U+d14e-d14f, U+d151-d153, U+d155-d15b, U+d15e-d187, U+d189-d19f, U+d1a2-d1a3, U+d1a5-d1a7, U+d1a9-d1af, U+d1b2-d1b3;
+        U+d105-d12f, U+d132-d133, U+d135-d137, U+d139-d13f, U+d141-d142, U+d144, U+d146-d14b, U+d14e-d14f, U+d151-d153, U+d155-d15b, U+d15e-d187, U+d189-d19f, U+d1a2-d1a3,
+        U+d1a5-d1a7, U+d1a9-d1af, U+d1b2-d1b3;
 }
 
 /* [11] */
@@ -212,8 +207,7 @@ http://scripts.sil.org/OFL
     font-display: swap;
     font-weight: 45 920;
     src: url(./woff2-dynamic-subset/PretendardVariable.subset.18.woff2) format("woff2-variations");
-    unicode-range:
-        U+cb91-cbd3, U+cbd5-cbe3, U+cbe5-cc0b, U+cc0e-cc0f, U+cc11-cc13, U+cc15-cc1b, U+cc1d-cc20, U+cc23-cc27, U+cc2a-cc2b, U+cc2d, U+cc2f, U+cc31-cc37, U+cc3a, U+cc3c;
+    unicode-range: U+cb91-cbd3, U+cbd5-cbe3, U+cbe5-cc0b, U+cc0e-cc0f, U+cc11-cc13, U+cc15-cc1b, U+cc1d-cc20, U+cc23-cc27, U+cc2a-cc2b, U+cc2d, U+cc2f, U+cc31-cc37, U+cc3a, U+cc3c;
 }
 
 /* [19] */
@@ -234,7 +228,8 @@ http://scripts.sil.org/OFL
     font-weight: 45 920;
     src: url(./woff2-dynamic-subset/PretendardVariable.subset.20.woff2) format("woff2-variations");
     unicode-range:
-        U+ca4a-ca4b, U+ca4e-ca4f, U+ca51-ca53, U+ca55-ca5b, U+ca5d-ca60, U+ca62-ca83, U+ca85-cabb, U+cabe-cabf, U+cac1-cac3, U+cac5-cacb, U+cacd-cad0, U+cad2, U+cad4-cad8, U+cada-caf3;
+        U+ca4a-ca4b, U+ca4e-ca4f, U+ca51-ca53, U+ca55-ca5b, U+ca5d-ca60, U+ca62-ca83, U+ca85-cabb, U+cabe-cabf, U+cac1-cac3, U+cac5-cacb, U+cacd-cad0, U+cad2, U+cad4-cad8,
+        U+cada-caf3;
 }
 
 /* [21] */
@@ -256,7 +251,8 @@ http://scripts.sil.org/OFL
     font-weight: 45 920;
     src: url(./woff2-dynamic-subset/PretendardVariable.subset.22.woff2) format("woff2-variations");
     unicode-range:
-        U+c8e9-c8f4, U+c8f6-c8fb, U+c8fe-c8ff, U+c901-c903, U+c905-c90b, U+c90e-c910, U+c912-c917, U+c919-c92b, U+c92d-c94f, U+c951-c953, U+c955-c96b, U+c96d-c973, U+c975-c987, U+c98a-c98b, U+c98d-c98f, U+c991-c995;
+        U+c8e9-c8f4, U+c8f6-c8fb, U+c8fe-c8ff, U+c901-c903, U+c905-c90b, U+c90e-c910, U+c912-c917, U+c919-c92b, U+c92d-c94f, U+c951-c953, U+c955-c96b, U+c96d-c973, U+c975-c987,
+        U+c98a-c98b, U+c98d-c98f, U+c991-c995;
 }
 
 /* [23] */
@@ -266,9 +262,7 @@ http://scripts.sil.org/OFL
     font-display: swap;
     font-weight: 45 920;
     src: url(./woff2-dynamic-subset/PretendardVariable.subset.23.woff2) format("woff2-variations");
-    unicode-range:
-        U+c841-c84b, U+c84d-c86f, U+c872-c873, U+c875-c877, U+c879-c87f, U+c882-c884, U+c887-c88a, U+c88d-c8c3,
-        U+c8c5-c8df, U+c8e1-c8e8;
+    unicode-range: U+c841-c84b, U+c84d-c86f, U+c872-c873, U+c875-c877, U+c879-c87f, U+c882-c884, U+c887-c88a, U+c88d-c8c3, U+c8c5-c8df, U+c8e1-c8e8;
 }
 
 /* [24] */
@@ -332,8 +326,7 @@ http://scripts.sil.org/OFL
     font-display: swap;
     font-weight: 45 920;
     src: url(./woff2-dynamic-subset/PretendardVariable.subset.29.woff2) format("woff2-variations");
-    unicode-range:
-        U+c3d0-c3d7, U+c3da-c3db, U+c3dd-c3de, U+c3e1-c3ec, U+c3ee-c3f3, U+c3f5-c42b, U+c42d-c463, U+c466-c474;
+    unicode-range: U+c3d0-c3d7, U+c3da-c3db, U+c3dd-c3de, U+c3e1-c3ec, U+c3ee-c3f3, U+c3f5-c42b, U+c42d-c463, U+c466-c474;
 }
 
 /* [30] */
@@ -343,8 +336,7 @@ http://scripts.sil.org/OFL
     font-display: swap;
     font-weight: 45 920;
     src: url(./woff2-dynamic-subset/PretendardVariable.subset.30.woff2) format("woff2-variations");
-    unicode-range:
-        U+c32b-c367, U+c36a-c36b, U+c36d-c36f, U+c371-c377, U+c37a-c37b, U+c37e-c383, U+c385-c387, U+c389-c3cf;
+    unicode-range: U+c32b-c367, U+c36a-c36b, U+c36d-c36f, U+c371-c377, U+c37a-c37b, U+c37e-c383, U+c385-c387, U+c389-c3cf;
 }
 
 /* [31] */
@@ -366,7 +358,8 @@ http://scripts.sil.org/OFL
     font-weight: 45 920;
     src: url(./woff2-dynamic-subset/PretendardVariable.subset.32.woff2) format("woff2-variations");
     unicode-range:
-        U+c1bc-c1c3, U+c1c5-c1df, U+c1e1-c1fb, U+c1fd-c203, U+c205-c20c, U+c20e, U+c210-c217, U+c21a-c21b, U+c21d-c21e, U+c221-c227, U+c229-c22a, U+c22c, U+c22e, U+c230, U+c233-c24f, U+c251-c257, U+c259-c269;
+        U+c1bc-c1c3, U+c1c5-c1df, U+c1e1-c1fb, U+c1fd-c203, U+c205-c20c, U+c20e, U+c210-c217, U+c21a-c21b, U+c21d-c21e, U+c221-c227, U+c229-c22a, U+c22c, U+c22e, U+c230,
+        U+c233-c24f, U+c251-c257, U+c259-c269;
 }
 
 /* [33] */
@@ -419,7 +412,8 @@ http://scripts.sil.org/OFL
     font-weight: 45 920;
     src: url(./woff2-dynamic-subset/PretendardVariable.subset.37.woff2) format("woff2-variations");
     unicode-range:
-        U+be56, U+be58, U+be5c-be5f, U+be62-be63, U+be65-be67, U+be69-be74, U+be76-be7b, U+be7e-be7f, U+be81-be8e, U+be90, U+be92-bea7, U+bea9-becf, U+bed2-bed3, U+bed5-bed6, U+bed9-bee3, U+bee6-bf06;
+        U+be56, U+be58, U+be5c-be5f, U+be62-be63, U+be65-be67, U+be69-be74, U+be76-be7b, U+be7e-be7f, U+be81-be8e, U+be90, U+be92-bea7, U+bea9-becf, U+bed2-bed3, U+bed5-bed6,
+        U+bed9-bee3, U+bee6-bf06;
 }
 
 /* [38] */
@@ -429,9 +423,7 @@ http://scripts.sil.org/OFL
     font-display: swap;
     font-weight: 45 920;
     src: url(./woff2-dynamic-subset/PretendardVariable.subset.38.woff2) format("woff2-variations");
-    unicode-range:
-        U+bdb0-bdd3, U+bdd5-bdef, U+bdf1-be0b, U+be0d-be0f, U+be11-be13, U+be15-be43, U+be46-be47, U+be49-be4b,
-        U+be4d-be53;
+    unicode-range: U+bdb0-bdd3, U+bdd5-bdef, U+bdf1-be0b, U+be0d-be0f, U+be11-be13, U+be15-be43, U+be46-be47, U+be49-be4b, U+be4d-be53;
 }
 
 /* [39] */
@@ -442,7 +434,8 @@ http://scripts.sil.org/OFL
     font-weight: 45 920;
     src: url(./woff2-dynamic-subset/PretendardVariable.subset.39.woff2) format("woff2-variations");
     unicode-range:
-        U+bd03, U+bd06, U+bd08, U+bd0a-bd0f, U+bd11-bd22, U+bd25-bd47, U+bd49-bd58, U+bd5a-bd7f, U+bd82-bd83, U+bd85-bd87, U+bd8a-bd8f, U+bd91-bd92, U+bd94, U+bd96-bd98, U+bd9a-bdaf;
+        U+bd03, U+bd06, U+bd08, U+bd0a-bd0f, U+bd11-bd22, U+bd25-bd47, U+bd49-bd58, U+bd5a-bd7f, U+bd82-bd83, U+bd85-bd87, U+bd8a-bd8f, U+bd91-bd92, U+bd94, U+bd96-bd98,
+        U+bd9a-bdaf;
 }
 
 /* [40] */
@@ -474,8 +467,7 @@ http://scripts.sil.org/OFL
     font-display: swap;
     font-weight: 45 920;
     src: url(./woff2-dynamic-subset/PretendardVariable.subset.42.woff2) format("woff2-variations");
-    unicode-range:
-        U+bae6-bafb, U+bafd-bb17, U+bb19-bb33, U+bb37, U+bb39-bb3a, U+bb3d-bb43, U+bb45-bb46, U+bb48, U+bb4a-bb4f, U+bb51-bb53, U+bb55-bb57, U+bb59-bb62, U+bb64-bb8f;
+    unicode-range: U+bae6-bafb, U+bafd-bb17, U+bb19-bb33, U+bb37, U+bb39-bb3a, U+bb3d-bb43, U+bb45-bb46, U+bb48, U+bb4a-bb4f, U+bb51-bb53, U+bb55-bb57, U+bb59-bb62, U+bb64-bb8f;
 }
 
 /* [43] */
@@ -508,7 +500,8 @@ http://scripts.sil.org/OFL
     font-weight: 45 920;
     src: url(./woff2-dynamic-subset/PretendardVariable.subset.45.woff2) format("woff2-variations");
     unicode-range:
-        U+b8bf-b8cb, U+b8cd-b8e0, U+b8e2-b8e7, U+b8ea-b8eb, U+b8ed-b8ef, U+b8f1-b8f7, U+b8fa, U+b8fc, U+b8fe-b903, U+b905-b917, U+b919-b91f, U+b921-b93b, U+b93d-b957, U+b95a-b95b, U+b95d-b95f, U+b961-b967, U+b969-b96c;
+        U+b8bf-b8cb, U+b8cd-b8e0, U+b8e2-b8e7, U+b8ea-b8eb, U+b8ed-b8ef, U+b8f1-b8f7, U+b8fa, U+b8fc, U+b8fe-b903, U+b905-b917, U+b919-b91f, U+b921-b93b, U+b93d-b957, U+b95a-b95b,
+        U+b95d-b95f, U+b961-b967, U+b969-b96c;
 }
 
 /* [46] */
@@ -519,7 +512,8 @@ http://scripts.sil.org/OFL
     font-weight: 45 920;
     src: url(./woff2-dynamic-subset/PretendardVariable.subset.46.woff2) format("woff2-variations");
     unicode-range:
-        U+b80d-b80f, U+b811-b817, U+b81a, U+b81c-b823, U+b826-b827, U+b829-b82b, U+b82d-b833, U+b836, U+b83a-b83f, U+b841-b85b, U+b85e-b85f, U+b861-b863, U+b865-b86b, U+b86e, U+b870, U+b872-b8af, U+b8b1-b8be;
+        U+b80d-b80f, U+b811-b817, U+b81a, U+b81c-b823, U+b826-b827, U+b829-b82b, U+b82d-b833, U+b836, U+b83a-b83f, U+b841-b85b, U+b85e-b85f, U+b861-b863, U+b865-b86b, U+b86e,
+        U+b870, U+b872-b8af, U+b8b1-b8be;
 }
 
 /* [47] */
@@ -540,9 +534,7 @@ http://scripts.sil.org/OFL
     font-display: swap;
     font-weight: 45 920;
     src: url(./woff2-dynamic-subset/PretendardVariable.subset.48.woff2) format("woff2-variations");
-    unicode-range:
-        U+b6a7-b6aa, U+b6ac-b6b0, U+b6b2-b6ef, U+b6f1-b727, U+b72a-b72b, U+b72d-b72e, U+b731-b737, U+b739-b73a,
-        U+b73c-b743, U+b745-b74c;
+    unicode-range: U+b6a7-b6aa, U+b6ac-b6b0, U+b6b2-b6ef, U+b6f1-b727, U+b72a-b72b, U+b72d-b72e, U+b731-b737, U+b739-b73a, U+b73c-b743, U+b745-b74c;
 }
 
 /* [49] */
@@ -584,7 +576,8 @@ http://scripts.sil.org/OFL
     font-weight: 45 920;
     src: url(./woff2-dynamic-subset/PretendardVariable.subset.52.woff2) format("woff2-variations");
     unicode-range:
-        U+b3f8-b3fb, U+b3fd-b40f, U+b411-b417, U+b419-b41b, U+b41d-b41f, U+b421-b427, U+b42a-b42b, U+b42d-b44f, U+b452-b453, U+b455-b457, U+b459-b45f, U+b462-b464, U+b466-b46b, U+b46d-b47f, U+b481-b4a3;
+        U+b3f8-b3fb, U+b3fd-b40f, U+b411-b417, U+b419-b41b, U+b41d-b41f, U+b421-b427, U+b42a-b42b, U+b42d-b44f, U+b452-b453, U+b455-b457, U+b459-b45f, U+b462-b464, U+b466-b46b,
+        U+b46d-b47f, U+b481-b4a3;
 }
 
 /* [53] */
@@ -616,9 +609,7 @@ http://scripts.sil.org/OFL
     font-display: swap;
     font-weight: 45 920;
     src: url(./woff2-dynamic-subset/PretendardVariable.subset.55.woff2) format("woff2-variations");
-    unicode-range:
-        U+b1d6-b1e7, U+b1e9-b1fc, U+b1fe-b203, U+b206-b207, U+b209-b20b, U+b20d-b213, U+b216-b21f, U+b221-b257,
-        U+b259-b273, U+b275-b27b;
+    unicode-range: U+b1d6-b1e7, U+b1e9-b1fc, U+b1fe-b203, U+b206-b207, U+b209-b20b, U+b20d-b213, U+b216-b21f, U+b221-b257, U+b259-b273, U+b275-b27b;
 }
 
 /* [56] */
@@ -661,9 +652,7 @@ http://scripts.sil.org/OFL
     font-display: swap;
     font-weight: 45 920;
     src: url(./woff2-dynamic-subset/PretendardVariable.subset.59.woff2) format("woff2-variations");
-    unicode-range:
-        U+af03-af07, U+af09-af2b, U+af2e-af33, U+af35-af3b, U+af3e-af40, U+af44-af47, U+af4a-af5c, U+af5e-af63,
-        U+af65-af7f, U+af81-afab;
+    unicode-range: U+af03-af07, U+af09-af2b, U+af2e-af33, U+af35-af3b, U+af3e-af40, U+af44-af47, U+af4a-af5c, U+af5e-af63, U+af65-af7f, U+af81-afab;
 }
 
 /* [60] */
@@ -674,7 +663,8 @@ http://scripts.sil.org/OFL
     font-weight: 45 920;
     src: url(./woff2-dynamic-subset/PretendardVariable.subset.60.woff2) format("woff2-variations");
     unicode-range:
-        U+ae56-ae5b, U+ae5e-ae60, U+ae62-ae64, U+ae66-ae67, U+ae69-ae6b, U+ae6d-ae83, U+ae85-aebb, U+aebf, U+aec1-aec3, U+aec5-aecb, U+aece, U+aed0, U+aed2-aed7, U+aed9-aef3, U+aef5-af02;
+        U+ae56-ae5b, U+ae5e-ae60, U+ae62-ae64, U+ae66-ae67, U+ae69-ae6b, U+ae6d-ae83, U+ae85-aebb, U+aebf, U+aec1-aec3, U+aec5-aecb, U+aece, U+aed0, U+aed2-aed7, U+aed9-aef3,
+        U+aef5-af02;
 }
 
 /* [61] */
@@ -772,9 +762,7 @@ http://scripts.sil.org/OFL
     font-display: swap;
     font-weight: 45 920;
     src: url(./woff2-dynamic-subset/PretendardVariable.subset.69.woff2) format("woff2-variations");
-    unicode-range:
-        U+2479-2487, U+249c-24d1, U+24d3-24d7, U+24d9-24e9, U+24eb-24f4, U+2500-2501, U+2503, U+250c-2513, U+2515-2516,
-        U+2518-2540;
+    unicode-range: U+2479-2487, U+249c-24d1, U+24d3-24d7, U+24d9-24e9, U+24eb-24f4, U+2500-2501, U+2503, U+250c-2513, U+2515-2516, U+2518-2540;
 }
 
 /* [70] */

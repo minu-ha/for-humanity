@@ -28,11 +28,7 @@ export interface PgHomeProps {
 }
 
 export const PgHome = (props: PgHomeProps) => {
-    const docs = props.docs.toSorted(
-        (a, b) =>
-            a.data.group.localeCompare(b.data.group, locale_doc_group) ||
-            a.data.name.localeCompare(b.data.name, locale_doc_name),
-    );
+    const docs = props.docs.toSorted((a, b) => a.data.group.localeCompare(b.data.group, locale_doc_group) || a.data.name.localeCompare(b.data.name, locale_doc_name));
 
     return (
         <WgShell site={props.site} docs={props.docs} assets={props.assets}>

@@ -12,9 +12,7 @@ export const remarkParts = () => (tree: Root) => {
             continue;
         }
 
-        const section = tree.children
-            .slice(index + 1)
-            .find((next) => next.type === "heading" && next.depth === section_heading_depth.section);
+        const section = tree.children.slice(index + 1).find((next) => next.type === "heading" && next.depth === section_heading_depth.section);
 
         node.data = {hName: "div", hProperties: {className: ["wg_prose__part"]}};
 

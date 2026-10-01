@@ -12,9 +12,7 @@ import type {SiteConfig} from "@/type/site-config";
  */
 export const remarkStatus = (options: {status: SiteConfig["status"]}) => {
     const statuses = options.status.toSorted((a, b) => b.phrase.length - a.phrase.length);
-    const phrases = statuses
-        .map((item) => [escapeRegExp(item.phrase), ...(item.date ? [`(?: ${status_date_pattern})?`] : [])].join(""))
-        .join("|");
+    const phrases = statuses.map((item) => [escapeRegExp(item.phrase), ...(item.date ? [`(?: ${status_date_pattern})?`] : [])].join("")).join("|");
     const pattern = new RegExp(String.raw`\((${phrases})\)|(${phrases})`, "g");
     const ignore = ["link", "linkReference", "heading"];
 

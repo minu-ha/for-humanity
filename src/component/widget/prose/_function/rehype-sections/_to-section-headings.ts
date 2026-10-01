@@ -11,10 +11,7 @@ export const toSectionHeadings = (node: Root | Element): Element[] => {
             return [];
         }
 
-        if (
-            child.tagName === `h${section_heading_depth.section}` ||
-            child.tagName === `h${section_heading_depth.sub}`
-        ) {
+        if (child.tagName === `h${section_heading_depth.section}` || child.tagName === `h${section_heading_depth.sub}`) {
             return [child];
         }
 

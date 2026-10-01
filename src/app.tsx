@@ -41,20 +41,14 @@ const toHtml = (page: ReactElement) => {
 export const createApp = (options: AppOptions) => {
     const app = new Hono();
 
-    app.get("/", (c) =>
-        c.html(toHtml(<PgHome site={options.site} docs={options.store.docs} assets={options.assets} />)),
-    );
+    app.get("/", (c) => c.html(toHtml(<PgHome site={options.site} docs={options.store.docs} assets={options.assets} />)));
     app.get(
         "/:slug{.+}/",
         ssgParams(() => options.store.docs.map((doc) => ({slug: doc.id}))),
         (c) => {
             const doc = options.store.docs.find((entry) => entry.id === c.req.param("slug"));
 
-            return doc === undefined
-                ? c.notFound()
-                : c.html(
-                      toHtml(<PgDoc site={options.site} docs={options.store.docs} assets={options.assets} doc={doc} />),
-                  );
+            return doc === undefined ? c.notFound() : c.html(toHtml(<PgDoc site={options.site} docs={options.store.docs} assets={options.assets} doc={doc} />));
         },
     );
 

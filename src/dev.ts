@@ -3,13 +3,7 @@ import {readFile} from "node:fs/promises";
 import {extname} from "node:path";
 import {type Context, Hono} from "hono";
 import {streamSSE} from "hono/streaming";
-import {
-    asset_content_type_default,
-    asset_content_types,
-    asset_dir,
-    asset_favicon_path,
-    asset_reload_path,
-} from "@/constant/asset";
+import {asset_content_type_default, asset_content_types, asset_dir, asset_favicon_path, asset_reload_path} from "@/constant/asset";
 
 /**
  * 개발 서버 입력 계약

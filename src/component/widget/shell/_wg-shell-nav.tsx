@@ -2,15 +2,7 @@ import clsx from "clsx";
 import {Fragment} from "react";
 import {toTocGroups} from "@/component/widget/shell/_function/to-toc-groups";
 import type {DocOutline} from "@/component/widget/shell/_type/doc-outline";
-import {
-    copy_nav_aria_label,
-    copy_nav_docs_label,
-    copy_nav_toc_label,
-    copy_overview_label,
-    copy_overview_mark,
-    copy_overview_name,
-    copy_theme_label,
-} from "@/constant/copy";
+import {copy_nav_aria_label, copy_nav_docs_label, copy_nav_toc_label, copy_overview_label, copy_overview_mark, copy_overview_name, copy_theme_label} from "@/constant/copy";
 import {locale_doc_name} from "@/constant/locale";
 import type {Doc} from "@/type/doc";
 import type {SiteConfig} from "@/type/site-config";
@@ -96,11 +88,7 @@ export const WgShellNav = (props: WgShellNavProps) => {
                             <ul className={clsx("wg_shellNav__list")}>
                                 {group.sections.map((section) => (
                                     <li key={section.heading.slug}>
-                                        <a
-                                            className={clsx("wg_shellNav__link")}
-                                            href={`#${section.heading.slug}`}
-                                            data-toc-link=""
-                                        >
+                                        <a className={clsx("wg_shellNav__link")} href={`#${section.heading.slug}`} data-toc-link="">
                                             <span className={clsx("wg_shellNav__mark")}>{section.number}</span>
                                             {section.heading.text}
                                         </a>
@@ -108,14 +96,8 @@ export const WgShellNav = (props: WgShellNavProps) => {
                                             <ul className={clsx("wg_shellNav__sub")} data-toc-sub="">
                                                 {section.subs.map((sub) => (
                                                     <li key={sub.heading.slug}>
-                                                        <a
-                                                            className={clsx("wg_shellNav__subLink")}
-                                                            href={`#${sub.heading.slug}`}
-                                                            data-toc-sub-link=""
-                                                        >
-                                                            <span className={clsx("wg_shellNav__mark")}>
-                                                                {sub.number}
-                                                            </span>
+                                                        <a className={clsx("wg_shellNav__subLink")} href={`#${sub.heading.slug}`} data-toc-sub-link="">
+                                                            <span className={clsx("wg_shellNav__mark")}>{sub.number}</span>
                                                             {sub.heading.text}
                                                         </a>
                                                     </li>

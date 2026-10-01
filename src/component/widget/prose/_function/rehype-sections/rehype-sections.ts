@@ -16,9 +16,7 @@ export const rehypeSections = () => (tree: Root, file: VFile) => {
     }
 
     const headings = toSectionHeadings(tree);
-    const starts = headings.flatMap((heading, index) =>
-        heading.tagName === `h${section_heading_depth.section}` ? [index] : [],
-    );
+    const starts = headings.flatMap((heading, index) => (heading.tagName === `h${section_heading_depth.section}` ? [index] : []));
     const sections = headings.map(
         (heading, index): DocSection => ({
             number: toSectionNumber(starts, index),

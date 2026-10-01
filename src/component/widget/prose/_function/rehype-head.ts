@@ -14,9 +14,7 @@ export const rehypeHead = (options: {title: string}) => (tree: Root, file: VFile
         return;
     }
 
-    const firstSection = tree.children.findIndex(
-        (node) => node.type === "element" && node.tagName === `h${section_heading_depth.section}`,
-    );
+    const firstSection = tree.children.findIndex((node) => node.type === "element" && node.tagName === `h${section_heading_depth.section}`);
     const leadEnd = firstSection === -1 ? tree.children.length : firstSection;
 
     tree.children = [
