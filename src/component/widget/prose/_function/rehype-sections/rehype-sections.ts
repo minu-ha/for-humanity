@@ -1,19 +1,17 @@
 import type {Root} from "hast";
 import type {VFile} from "vfile";
-import {section_frontmatter_key, section_heading_depth} from "@/component/widget/prose/_constant/section";
+import {section_heading_depth} from "@/component/widget/prose/_constant/section";
 import {toSectionHeadings} from "@/component/widget/prose/_function/rehype-sections/_to-section-headings";
 import {toSectionNumber} from "@/component/widget/prose/_function/rehype-sections/_to-section-number";
 import type {DocSection} from "@/component/widget/prose/_type/doc-section";
 
 /**
  * 절 번호와 목차 차례. 절 (h2) 은 00 · 01, 소제목 (h3) 은 01.A 꼴이다.
- * 번호는 raw 노드로 넣는다. 뒤에 도는 Astro 의 heading id 와 목차 글자는 raw 노드를 건너뛰어 번호가 섞이지 않는다.
- * 목차가 쓸 번호와 가름은 머리말에 제목 차례대로 적는다. Astro 가 목차 제목을 모으는 차례 (문서 순서의 모든 제목) 와 같다
+ * 제목 id 와 목차 글자는 앞에서 rehype-heading-ids 가 매겼으므로 여기서 넣는 번호가 섞이지 않는다.
+ * 목차가 쓸 번호와 가름은 file.data.fh 에 제목 차례대로 적는다. rehype-heading-ids 가 모은 제목 (문서 순서) 가운데 h2 · h3 과 차례가 같다
  */
 export const rehypeSections = () => (tree: Root, file: VFile) => {
-	const frontmatter = file.data.astro?.frontmatter;
-
-	if (frontmatter === undefined) {
+	if (file.data.fh === undefined) {
 		return;
 	}
 
@@ -34,5 +32,5 @@ export const rehypeSections = () => (tree: Root, file: VFile) => {
 		}
 	}
 
-	frontmatter[section_frontmatter_key] = sections;
+	file.data.fh.sections = sections;
 };

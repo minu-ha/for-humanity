@@ -52,9 +52,19 @@ export const copy_theme_label = {
 export const copy_error_prefix = "for-humanity";
 
 /**
- * 명령 이름이 dev, build, preview, sync 가 아닐 때
+ * 명령 이름이 dev, build, preview 가 아닐 때
  */
 export const copy_error_unknown_command = "모르는 명령이다";
+
+/**
+ * 설정 파일 (for-humanity.config.mjs) 의 값이 틀렸을 때. 뒤에 어느 항목이 틀렸는지를 붙인다
+ */
+export const copy_error_config = "설정이 틀렸다";
+
+/**
+ * 문서 머리말이 빠졌거나 틀렸을 때. 뒤에 파일과 어느 항목이 틀렸는지를 붙인다
+ */
+export const copy_error_frontmatter = "머리말이 틀렸다";
 
 /**
  * 두 문서 이름의 첫 글자가 같아 사이드바 표지가 겹칠 때
@@ -95,3 +105,18 @@ export const copy_toolbar_name = "문서 검사";
  * 문서 검사에 걸린 것이 없을 때
  */
 export const copy_toolbar_empty = "걸린 것이 없다";
+
+/**
+ * 쪽지 섬의 제목
+ */
+export const copy_note_title = "쪽지";
+
+/**
+ * 쪽지 섬의 글
+ */
+export const copy_note_body = "이 쪽지는 React 섬이다. 서버가 그린 단추를 브라우저의 React 가 이어받아 연다.";
+
+/**
+ * 쪽지 섬의 닫기 단추
+ */
+export const copy_note_close = "닫기";

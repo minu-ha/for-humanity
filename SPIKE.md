@@ -208,4 +208,49 @@ await browser.close();
 
 ## 결과
 
-(시험판을 마치면 여기에 적는다)
+2026-10-01, `spike/hono-react` 브랜치. 합격 기준 여섯을 모두 통과했다. 기준은 main `77cffd7` 의 빌드 (`/tmp/fh-astro-dist`) 다.
+
+| 확인 | 결과 |
+|---|---|
+| 1. 픽셀 | 4쪽 × 3 캡처 12장 모두 `identical`. 다시 찍을 필요 없었다 |
+| 2. 동작 | `#search` 제목 400px. 테마 light → dark → system 순환, 새로고침 뒤 light 유지. 읽는 절 05. JS 없이 흐름도 2 |
+| 3. 오류 | 모르는 명령, 틀린 설정, 머리말 누락, 첫 글자 겹침, `::nope`, 그리지 못한 흐름도 모두 exit 1. 문구는 `copy.ts` 의 것 |
+| 4. 설치 | pnpm: node_modules 297MB, 설치 6초, 빌드 7초. npm: 311MB, 설치 20초, 빌드 4초. 둘 다 `build` 와 `dev` 가 된다. 기준 Astro 는 브리프의 약 200MB |
+| 5. 섬 | `::note[쪽지 보기]` 가 서버에서 단추로 그려지고 브라우저에서 hydrate 되어 Radix Dialog 가 열리고 닫힌다. 콘솔 경고 없음. `island.js` 264KB (React DOM + Radix) |
+| 6. 검사 | `pnpm check` 통과. Biome · Stylelint · `tsc --noEmit` (astro-check 없이) |
+
+그 밖의 수치: 꾸러미 151KB. 결과 폴더 3.6MB (기준 3.5MB), 글꼴 93 파일. dev 는 켜고 4초쯤 뒤에 받는다.
+
+### 짠 것
+
+- `src/cli.ts` — dev · build · preview. 글꼴 패키지 CSS 를 읽어 `@font-face` 를 만들고 (`util/font/to-font-css.ts`), 문서를 그리고, `toSSG` 로 쓰거나 서버를 띄운다
+- `src/app.tsx` — 쪽 앱. `/` 와 `/:slug{.+}/` 둘, `@hono/react-renderer`
+- `src/dev.ts` — dev 서버 앱. 자원 파일과 SSE 새로고침을 맡고 나머지는 쪽 앱에 넘긴다
+- `src/content/` — `read-docs` (readdir + yaml + zod), `create-processor` (unified 조립), `rehype-heading-ids` (github-slugger), `remark-islands`, `render-islands`
+- TSX 다섯: `wg-shell`, `_wg-shell-nav`, `wg-prose`, `pg-home`, `pg-doc`. `class:list` 는 `clsx`
+- `src/client.ts` — 테마 단추, 읽는 절, #절 맞추기를 그대로 옮겼다. `src/island.tsx` — `hydrateRoot`
+- 섬: `component/widget/island/` (감싸개 `WgIslandRoot`, 고르는 `WgIsland`), `component/widget/note/` (Radix Dialog)
+- esbuild 둘: `cli.ts` 를 node 로 묶으면 컴포넌트가 import 한 CSS 가 `dist/cli.css` 로 함께 나온다. `client.ts` 와 `island.tsx` 는 브라우저로 묶는다
+
+### 걸린 것
+
+- **Hono 라우터.** `/:slug{.+}/` 와 `*` 또는 정적 라우트 (`/favicon.svg`) 가 한 앱에 있으면 RegExpRouter 가 `UnsupportedPath` 를 던져 SmartRouter 가 TrieRouter 로 물러나고, 거기서는 `{.+}` 가 맞지 않아 문서 쪽이 404 가 된다. 자원 라우트를 `dev.ts` 의 다른 앱으로 빼고 쪽 앱에 넘기는 식으로 풀었다. 빌드의 `toSSG` 는 쪽 앱만 본다
+- **섬 프롭.** base64 로 넘기면 브라우저의 `atob` 가 한글을 깨뜨린다. `encodeURIComponent` 로 바꿨다
+- **Astro 의 AstroInlineConfig 타입** 같은 우회는 없었다. 글꼴은 패키지 CSS 를 직접 읽으니 unifont 의 상대 경로 버그도 안 탄다
+
+### Astro 와 다르게 둔 것
+
+- 플러그인이 `file.data.astro.frontmatter` 대신 `file.data.fh` 를 읽고 쓴다 (`type/vfile-data.d.ts`). 번호와 가름은 머리말 `fhSections` 가 아니라 `file.data.fh.sections` 로 나른다
+- 제목 id 는 번호를 넣기 전에 매긴다. Astro 의 raw 노드 건너뛰기 요령이 없어졌다
+- favicon 은 data URI 대신 `/favicon.svg` 파일이다
+- Astro 가 만들던 폭 맞춘 대체 글꼴 (`… fallback: Arial`) 은 없다. 글꼴이 온 뒤의 픽셀은 같고, 오기 전 라틴 글자의 폭만 조금 다를 수 있다
+- 토큰에 층 넷 (`--app-z-index-*`) 과 덮개 색 (`--app-color-scrim`) 을 더했다. 섬의 Dialog 가 쓴다. 합치면 DESIGN.md 의 "층은 없다" 를 고친다
+- Biome 에서 `security/noDangerouslySetInnerHtml` 을 끄고 `__html` 키를 허용했다. 그린 HTML 과 머리의 스크립트 · 스타일을 넣는 데 쓴다
+
+### 합격 뒤 할 일에 보탤 것
+
+- `pretendard` 패키지가 97MB 라 설치가 기준보다 100MB 쯤 크다. 가변 dynamic subset 만 든 작은 패키지로 바꾸거나 Astro 처럼 빌드 때 받는 쪽을 고른다
+- 쪽지 섬은 Radix 를 직접 쓴다. 옮길 때 `Ui*` 래퍼 (convention-react R03) 로 감싼다
+- esbuild 가 `dist/island.css` 도 내놓는데 `dist/cli.css` 에 같은 내용이 있어 쓰지 않는다. 묶는 설정에서 뺀다
+- `src/toolbar/app.ts` 는 아직 `astro/toolbar` 를 import 한다. `remark-report` 는 터미널에 경고를 적는 채로 그대로 쓴다
+- 경고의 줄 번호는 Astro 때와 같이 머리말을 뺀 본문 기준이다. 원문 줄로 맞추려면 머리말 줄 수를 더한다

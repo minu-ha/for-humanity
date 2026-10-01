@@ -27,6 +27,9 @@
 	--app-color-accent: light-dark(#2e3f5e, #93a9d4);
 	--app-color-accent-soft: light-dark(#eef1f7, #1d2634);
 
+	/* 색 — 덮개. 쪽지 섬이 열리면 쪽을 가린다 */
+	--app-color-scrim: light-dark(rgb(27 32 39 / 40%), rgb(0 0 0 / 60%));
+
 	/* 색 — 상태. 알약에만 쓴다. 글색은 soft 바탕 위에서 4.5:1 이상이다 */
 	--app-color-verified: light-dark(#157e44, #5cc183);
 	--app-color-verified-soft: light-dark(#e9f4ed, #17281e);
@@ -92,6 +95,12 @@
 	--app-radius-box: 6px;
 	--app-radius-inline: 3px;
 	--app-radius-mark: 2px;
+
+	/* 층. 겹치는 요소는 쪽지 섬의 덮개 하나지만 네 층을 한 번에 둔다. 사용처에서 숫자를 쓰지 않는다 */
+	--app-z-index-base: 0;
+	--app-z-index-sticky: 100;
+	--app-z-index-overlay: 200;
+	--app-z-index-popper: 300;
 
 	/* 키보드로 옮겨 온 자리 */
 	--app-outline-focus: 2px solid var(--app-color-accent);

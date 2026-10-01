@@ -52,6 +52,9 @@
 			"suspicious": {
 				"noExplicitAny": "error"
 			},
+			"security": {
+				"noDangerouslySetInnerHtml": "off"
+			},
 			"performance": {
 				"noNamespaceImport": "error",
 				"noBarrelFile": "error",
@@ -106,6 +109,7 @@
 								"selector": {
 									"kind": "objectLiteralProperty"
 								},
+								"match": "__html|(.+)",
 								"formats": ["camelCase", "PascalCase", "snake_case"]
 							},
 							{

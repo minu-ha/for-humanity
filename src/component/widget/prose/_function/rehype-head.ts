@@ -5,10 +5,10 @@ import {section_heading_depth} from "@/component/widget/prose/_constant/section"
 
 /**
  * 문서 머리. 눈썹 줄 (사이트 · 묶음 · 파일), 머리말 name 으로 만든 h1, 첫 절 앞의 글을 header 하나로 묶는다.
- * Markdown 이 없는 쪽 (첫 화면) 은 wg-prose.astro 가 같은 모양을 head 프롭으로 그린다
+ * Markdown 이 없는 쪽 (첫 화면) 은 wg-prose.tsx 가 같은 모양을 head 프롭으로 그린다
  */
 export const rehypeHead = (options: {title: string}) => (tree: Root, file: VFile) => {
-	const frontmatter = file.data.astro?.frontmatter;
+	const frontmatter = file.data.fh?.frontmatter;
 
 	if (frontmatter === undefined) {
 		return;

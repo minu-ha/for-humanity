@@ -1,13 +1,13 @@
-import type {MarkdownHeading} from "astro";
+import type {DocHeading} from "@/type/doc-heading";
 
 /**
  * 목차의 소제목 한 줄
  */
 export interface TocSub {
 	/**
-	 * Astro 가 모은 제목. slug 가 링크, text 가 글이다
+	 * 제목. slug 가 링크, text 가 글이다
 	 */
-	heading: MarkdownHeading;
+	heading: DocHeading;
 	/**
 	 * 제목 앞과 같은 번호 (01.A)
 	 */
