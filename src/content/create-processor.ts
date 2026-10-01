@@ -2,6 +2,7 @@ import rehypeShiki from "@shikijs/rehype";
 import rehypeRaw from "rehype-raw";
 import rehypeStringify from "rehype-stringify";
 import remarkDirective from "remark-directive";
+import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
@@ -30,6 +31,7 @@ import type {SiteConfig} from "@/type/site-config";
 export const createProcessor = (options: {site: SiteConfig; root: string}) => {
     return unified()
         .use(remarkParse)
+        .use(remarkFrontmatter, ["yaml"])
         .use(remarkGfm)
         .use(remarkSmartypants)
         .use(remarkDirective)
@@ -43,7 +45,7 @@ export const createProcessor = (options: {site: SiteConfig; root: string}) => {
         .use(remarkReport, {root: options.root})
         .use(remarkRehype, {allowDangerousHtml: true})
         .use(rehypeShiki, {theme: createCssVariablesTheme({name: "for-humanity", variablePrefix: "--app-code-"})})
-        .use(rehypeHead, {title: options.site.title})
+        .use(rehypeHead)
         .use(rehypeHeadingIds)
         .use(rehypeSections)
         .use(rehypeTables)

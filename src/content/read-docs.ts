@@ -15,12 +15,12 @@ import type {DocFileData} from "@/type/doc-file-data";
  */
 export const readDocs = async (options: {root: string; processor: Processor}): Promise<Doc[]> => {
     const paths = (await readdir(options.root, {recursive: true})).filter(
-        (path) => /\.mdx?$/.test(path) && path !== "README.md" && !path.split(sep).includes("node_modules") && !path.startsWith(`dist${sep}`),
+        (path) => /\.mdx?$/i.test(path) && path.toLowerCase() !== "readme.md" && !path.split(sep).includes("node_modules") && !path.startsWith(`dist${sep}`),
     );
     const docs = await Promise.all(
         paths.map(async (path): Promise<Doc> => {
             const id = path
-                .replace(/\.mdx?$/, "")
+                .replace(/\.mdx?$/i, "")
                 .split(sep)
                 .join("/")
                 .toLowerCase();
@@ -38,8 +38,11 @@ export const readDocs = async (options: {root: string; processor: Processor}): P
             }
 
             const source = await readFile(join(options.root, path), "utf8");
-            const frontmatter = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?/.exec(source);
-            const parsed = docDataSchema.safeParse(frontmatter === null ? {} : parseYaml(frontmatter[1]));
+            // remark가 제외하는 UTF-8 BOM을 원문에서도 제거 · 지시문의 offset 기준 일치
+            const file = new VFile({value: source.replace(/^\uFEFF/, ""), path: join(options.root, path)});
+            const tree = options.processor.parse(file);
+            const frontmatter = tree.children[0];
+            const parsed = docDataSchema.safeParse(frontmatter?.type === "yaml" ? parseYaml(frontmatter.value) : {});
 
             if (!parsed.success) {
                 throw new Error(`${copy_error_frontmatter}: ${path}: ${parsed.error.issues.map((issue) => `${issue.path.join(".")} ${issue.message}`).join(", ")}`);
@@ -47,19 +50,16 @@ export const readDocs = async (options: {root: string; processor: Processor}): P
 
             // 플러그인의 제목·절 정보 공유
             const fh: DocFileData = {frontmatter: parsed.data, headings: [], sections: []};
-            const file = new VFile({
-                // 머리말은 공백 처리 · 원본의 줄·열·offset 유지
-                value: frontmatter === null ? source : frontmatter[0].replace(/[^\r\n]/g, " ") + source.slice(frontmatter[0].length),
-                path: join(options.root, path),
-                data: {fh},
-            });
+            file.data.fh = fh;
 
-            await options.processor.process(file);
+            // YAML 노드만 제외 · 본문 위치와 오류의 원본 줄·열·offset 유지
+            tree.children = tree.children.filter((node) => node.type !== "yaml");
+            const rendered = await options.processor.run(tree, file);
 
             return {
                 id,
                 data: parsed.data,
-                html: String(file),
+                html: options.processor.stringify(rendered, file),
                 outline: {headings: fh.headings, sections: fh.sections},
             };
         }),

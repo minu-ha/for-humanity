@@ -11,13 +11,9 @@ export interface WgProseProps {
      */
     html?: string;
     /**
-     * Markdown 없는 첫 화면 머리
+     * README가 없을 때의 안내 머리
      */
     head?: {
-        /**
-         * 제목 위 라벨 목록
-         */
-        eyebrow: string[];
         /**
          * 문서 h1 제목
          */
@@ -38,11 +34,6 @@ export const WgProse = (props: WgProseProps) => {
         <article className={clsx("wg_prose__root")}>
             {props.head !== undefined && (
                 <header className={clsx("wg_prose__head")}>
-                    <div className={clsx("wg_prose__eyebrow")}>
-                        {props.head.eyebrow.map((text) => (
-                            <span key={text}>{text}</span>
-                        ))}
-                    </div>
                     <h1>{props.head.title}</h1>
                     {props.head.lead !== undefined && <p>{props.head.lead}</p>}
                 </header>

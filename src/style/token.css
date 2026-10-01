@@ -18,6 +18,9 @@
     --app-color-text-strong: light-dark(#222, #eee);
     --app-color-text-muted: light-dark(#666, #aaa);
 
+    /* 장식 아이콘 · 링크 이름보다 옅은 색 */
+    --app-color-icon: light-dark(#999, #888);
+
     /* 선 · border 상자·목록, soft 표 구분 */
     --app-color-border: light-dark(#aaa, #555);
     --app-color-border-soft: light-dark(#ddd, #333);
@@ -50,11 +53,11 @@
     --app-font-size-mark: 12px;
     --app-font-size-detail: 12.5px;
     --app-font-size-dense: 13.5px;
-    --app-font-size-body: 15px;
-    --app-font-size-lead: 15px;
+    --app-font-size-body: 13.5px;
+    --app-font-size-lead: 13.5px;
     --app-font-size-part: 15px;
-    --app-font-size-section: 19px;
-    --app-font-size-title: clamp(24px, 2.4vw, 28px);
+    --app-font-size-section: 17px;
+    --app-font-size-title: 22px;
 
     /* 굵기 · 본문 기본 400 */
     --app-font-weight-mark: 400;

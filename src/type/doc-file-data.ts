@@ -7,9 +7,9 @@ import type {DocHeading} from "@/type/doc-heading";
  */
 export interface DocFileData {
     /**
-     * 검증된 머리말
+     * 일반 문서의 검증된 머리말 · README 홈은 생략
      */
-    frontmatter: DocData;
+    frontmatter?: DocData;
     /**
      * 번호 삽입 전 제목 · 문서 순서
      */

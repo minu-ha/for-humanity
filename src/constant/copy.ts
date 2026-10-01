@@ -13,9 +13,9 @@ export const copy_site_title_default = "for humanity";
 export const copy_nav_aria_label = "Document navigation";
 
 /**
- * 문서 목록 라벨
+ * README가 없는 홈의 안내
  */
-export const copy_nav_docs_label = "Documents";
+export const copy_home_missing = "문서 폴더에 README.md를 추가하면 이곳에 홈 화면으로 표시됩니다.";
 
 /**
  * 현재 문서 목차 라벨
@@ -23,14 +23,9 @@ export const copy_nav_docs_label = "Documents";
 export const copy_nav_toc_label = "Contents";
 
 /**
- * 첫 화면 영어 이름 · 목록·제목·머리 라벨
+ * 대소문자만 다른 README 중복 오류
  */
-export const copy_overview_name = "Overview";
-
-/**
- * 첫 화면 툴팁 · 목록 이름과 동일
- */
-export const copy_overview_label = copy_overview_name;
+export const copy_error_home_clash = "홈 README가 겹친다";
 
 /**
  * 테마 버튼의 접근 가능한 이름·툴팁 · System → Light → Dark

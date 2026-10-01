@@ -6,11 +6,11 @@ import {doc_order_default, doc_type} from "@/constant/doc";
  */
 export const docDataSchema = z.object({
     /**
-     * 문서 이름 · 제목·목록·카드 · 같은 첫 글자 허용
+     * 문서 이름 · 제목·목록 · 같은 첫 글자 허용
      */
     name: z.string().trim().min(1),
     /**
-     * 짧은 문서 설명 · 카드와 사이드바 툴팁
+     * 짧은 문서 설명 · 사이드바 툴팁
      */
     label: z.string(),
     /**
@@ -18,7 +18,7 @@ export const docDataSchema = z.object({
      */
     type: z.enum(doc_type).default(doc_type.document),
     /**
-     * 사이드바·첫 화면 카드·문서 머리의 묶음
+     * 사이드바의 문서 묶음
      */
     group: z.string().trim().min(1),
     /**

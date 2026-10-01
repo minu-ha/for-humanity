@@ -47,7 +47,7 @@ export interface WgShellProps {
      */
     current?: string;
     /**
-     * 현재 문서 목차 · 첫 화면 생략
+     * 현재 문서 또는 README 홈의 목차
      */
     outline?: DocOutline;
     /**
@@ -65,6 +65,7 @@ export const WgShell = (props: WgShellProps) => {
             <head>
                 <meta charSet="utf-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
+                {props.site.description !== undefined && <meta name="description" content={props.site.description} />}
                 <title>{props.title === undefined ? props.site.title : `${props.title} · ${props.site.title}`}</title>
                 <link rel="icon" href={asset_favicon_path} type="image/svg+xml" />
                 <style dangerouslySetInnerHTML={{__html: props.assets.fontCss}} />

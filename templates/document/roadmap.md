@@ -33,7 +33,7 @@ order: 40
 표현은 [Design](design.md), 작성 기준은 [Writing](writing.md), 검증은 [Maintenance](maintenance.md#browser-checks).
 
 - [x] 흰 바탕·진회색 본문·파란 링크·얇은 점선
-- [x] 사이트 폭·사이드바 구조와 15px 본문 유지
+- [x] 사이트 폭 유지 · 본문·사이드바 링크 13.5px 통일
 - [x] 작은 탭에서도 읽히는 favicon
 - [x] System·Light·Dark 아이콘과 접근 가능한 테마 버튼
 - [x] 공통 간격 토큰 재사용과 정적 폰트 선언

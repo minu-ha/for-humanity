@@ -13,7 +13,7 @@ export const siteConfigSchema = z.object({
      */
     title: z.string().default(copy_site_title_default),
     /**
-     * 첫 화면 소개 · 선택
+     * HTML 설명 메타데이터 · 선택
      */
     description: z.string().optional(),
     /**

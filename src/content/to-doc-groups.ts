@@ -3,7 +3,7 @@ import type {Doc} from "@/type/doc";
 import type {SiteConfig} from "@/type/site-config";
 
 /**
- * 사이드바와 첫 화면의 같은 읽는 순서 · 설정 밖 묶음은 뒤에서 이름순
+ * 사이드바의 읽는 순서 · 설정 밖 묶음은 뒤에서 이름순
  * 같은 문서 이름·순서도 파일 id로 구분해 탐색 순서를 고정
  */
 export const toDocGroups = (options: {docs: readonly Doc[]; navigation: SiteConfig["navigation"]}) => {

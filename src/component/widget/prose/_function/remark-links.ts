@@ -25,7 +25,9 @@ export const remarkLinks = (options: {root: string}) => (tree: Root, file: VFile
                 file.message(`${copy_warn_broken_link}: ${node.url}`, node);
             }
 
-            node.url = `/${posix.join(here, match[1]).toLowerCase()}/${match[3]}`;
+            const target = posix.join(here, `${match[1]}${match[2]}`).toLowerCase();
+
+            node.url = target === "readme.md" ? `/${match[3]}` : `/${posix.join(here, match[1]).toLowerCase()}/${match[3]}`;
         }
     });
 };

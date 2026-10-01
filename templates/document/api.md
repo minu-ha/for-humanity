@@ -52,7 +52,7 @@ pnpm exec for-humanity preview docs
 | Field         | Type                               | Default                   |
 | ------------- | ---------------------------------- | ------------------------- |
 | `title`       | string                             | `for humanity`            |
-| `description` | string                             | 소개 생략                 |
+| `description` | string · HTML 설명 메타데이터        | 생략                      |
 | `navigation`  | 중복 없는 비어 있지 않은 string 배열 | 묶음 이름순              |
 | `status`      | 상태 문구 객체 배열                | 기본 상태 문구            |
 
@@ -62,6 +62,9 @@ pnpm exec for-humanity preview docs
 설정 검증은 시작 시 수행. 변경한 설정을 반영하려면 서버 재시작.
 
 ## Frontmatter
+
+일반 문서에 적용. 루트 `README.md`는 frontmatter 없이 홈(`/`)으로 렌더링.
+파일 이름의 대소문자는 구분하지 않으며, 없으면 README 작성 안내 표시.
 
 ```yaml
 name: API

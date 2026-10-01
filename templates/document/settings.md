@@ -31,17 +31,17 @@ export default {
 | Key           | Use                     | Default        |
 | ------------- | ----------------------- | -------------- |
 | `title`       | 사이드바 이름 · 탭 제목 | `for humanity` |
-| `description` | 첫 화면 소개            | 생략           |
+| `description` | HTML 설명 메타데이터     | 생략           |
 
 설정을 생략하면 기본 이름 `for humanity`.
-`title`을 지정하면 탭·사이드바·문서 머리에 같은 사이트 이름 적용.
+`title`을 지정하면 탭·사이드바에 같은 사이트 이름 적용. 홈의 제목과 소개는 `README.md`에서 작성.
 픽셀 얼굴은 탭의 favicon과 데스크톱 커서 옆 장식에 같은 파일 사용.
 사이드바의 브랜드 영역에는 이름, 문서 목록에는 얼굴의 아웃라인 표지 표시.
 
 ## Navigation
 
 `navigation`은 frontmatter의 `group` 이름을 읽는 순서대로 나열한 배열.
-사이드바와 Overview 카드에 같은 순서 적용.
+사이드바의 묶음 순서에 적용. 홈은 `README.md`에 작성한 내용으로 표시.
 
 ```js
 export default {

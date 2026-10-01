@@ -50,6 +50,7 @@ Cloudflare Pages can host the site on a `pages.dev` address without a custom dom
 ## Make it yours
 
 A document folder is enough to get started. Without a site configuration, the sidebar shows **for humanity**. The pixel face appears in the browser tab and follows the mouse on desktop.
+The folder's `README.md` becomes the home page at `/`, with no frontmatter required. Click the site name to return home. Edit [this site's README](templates/document/README.md) to change its home page.
 Set your own name in `for-humanity.config.mjs`:
 
 ```js
@@ -61,7 +62,7 @@ export default {
 ```
 
 See [Commands](templates/document/commands.md) for using another document folder, and [Settings](templates/document/settings.md) for configuration.
-Each Markdown file chooses a `group` and optional `order`. Pages stay independent; groups do not need parent documents or nested folders. Document names may share the same first letter.
+Each document other than the root README chooses a `group` and optional `order`. Pages stay independent; groups do not need parent documents or nested folders. Document names may share the same first letter.
 
 ## Write with context
 

@@ -29,24 +29,45 @@ order: 10
 ### Requirements
 ```
 
-문서 폴더에는 Markdown과 선택 설정 파일. 루트 `README.md`, `node_modules`, `dist`는 문서 대상에서 제외.
+문서 폴더에는 Markdown과 선택 설정 파일. 루트 `README.md`는 홈(`/`)으로 표시하고 문서 목록에서는 제외.
+`node_modules`, `dist`는 읽지 않음.
 하위 폴더도 지원. `.mdx`는 Markdown으로 처리 · JSX 실행 미지원.
 
 ::part[Structure]
+
+## Home page
+
+문서 폴더의 `README.md`가 기본 홈. 파일 이름의 대소문자는 구분하지 않음.
+frontmatter 없이 `#` 제목부터 일반 Markdown으로 작성. 제목·목차·코드 강조는 문서와 같은 처리 과정.
+README가 없으면 추가 안내를 표시. 사이드바의 사이트 이름을 누르면 홈으로 이동.
+
+```markdown
+# My library
+
+라이브러리 소개.
+
+## Getting started
+
+[설치 안내](commands.md)
+```
+
+하위 폴더의 README는 일반 문서로 처리하며 frontmatter 필수.
+홈 템플릿을 선택하는 별도 설정은 아직 없음.
 
 ## Frontmatter
 
 | Key     | Use                               | Required                   |
 | ------- | --------------------------------- | -------------------------- |
-| `name`  | 제목 · 목록 · 카드                 | 필수 · 비어 있지 않은 이름 |
-| `label` | 짧은 문서 설명 · 카드 · 목록 툴팁 | 필수                       |
-| `group` | 사이드바 묶음 · 카드 · header     | 필수 · 비어 있지 않은 이름 |
+| `name`  | 제목 · 문서 목록                  | 필수 · 비어 있지 않은 이름 |
+| `label` | 짧은 문서 설명 · 목록 툴팁        | 필수                       |
+| `group` | 사이드바 묶음                     | 필수 · 비어 있지 않은 이름 |
 | `order` | 묶음 안의 읽는 순서               | 선택 · 0 이상의 정수       |
 | `type`  | `document` / `blueprint`          | 기본 `document`            |
 
 같은 첫 글자로 시작하는 이름도 허용. `API`와 `Architecture`는 각각 별도 문서.
 `blueprint` 전용 표현은 아직 미구현.
 파일 경로는 확장자를 뺀 소문자 id로 사용. `.md`와 `.mdx`, 대소문자만 다른 경로의 id 중복 금지.
+YAML 영역은 `remark-frontmatter`, 값은 `yaml`, 필드 검증은 Zod로 처리.
 빈 경로와 예약 문자 `#`, `?`, `%`, `*`, `:`, `\`는 사용 불가. 첫 경로 `/_fh/`는 패키지 자원 전용.
 `.`·`..`·`index.html` 경로 조각, 제어문자, 첫 경로 `/favicon.svg/`는 정적 출력과 충돌하므로 사용 불가.
 
@@ -81,9 +102,11 @@ order: 10
 ```markdown
 [Settings](settings.md)
 [Status badges](settings.md#status-badges)
+[Home](README.md)
 ```
 
 상대 Markdown 링크 → 사이트 문서 URL. GitHub에서도 같은 파일로 이동.
+루트 README 링크는 `/`로 변환. 하위 문서의 `../README.md#start`도 `/#start`로 변환.
 외부 URL, 절대 URL, 같은 문서의 hash는 원문 유지.
 
 ::part[Content]

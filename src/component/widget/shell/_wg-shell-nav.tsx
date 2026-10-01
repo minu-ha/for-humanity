@@ -3,7 +3,7 @@ import {Fragment} from "react";
 import {doc_icon_path} from "@/component/widget/shell/_constant/doc-icon";
 import {toTocGroups} from "@/component/widget/shell/_function/to-toc-groups";
 import type {DocOutline} from "@/component/widget/shell/_type/doc-outline";
-import {copy_nav_aria_label, copy_nav_docs_label, copy_nav_toc_label, copy_overview_label, copy_overview_name, copy_theme_label} from "@/constant/copy";
+import {copy_nav_aria_label, copy_nav_toc_label, copy_theme_label} from "@/constant/copy";
 import {theme_mode} from "@/constant/theme";
 import {toDocGroups} from "@/content/to-doc-groups";
 import type {Doc} from "@/type/doc";
@@ -28,7 +28,7 @@ export interface WgShellNavProps {
      */
     current?: string;
     /**
-     * 현재 문서 목차 · 첫 화면 생략
+     * 현재 문서 또는 README 홈의 목차
      */
     outline?: DocOutline;
 }
@@ -39,31 +39,13 @@ export const WgShellNav = (props: WgShellNavProps) => {
 
     return (
         <nav className={clsx("wg_shellNav__root")} aria-label={copy_nav_aria_label}>
-            <a className={clsx("wg_shellNav__brand")} href="/">
+            <a className={clsx("wg_shellNav__brand")} href="/" aria-current={props.current === undefined ? "page" : undefined}>
                 {props.site.title}
             </a>
-            <div className={clsx("wg_shellNav__label")}>{copy_nav_docs_label}</div>
             {/**
-             * 문서 이동 · 첫 화면과 독자 목적별 묶음 · 모든 문서 이름을 항상 공개
+             * 문서 이동 · 독자 목적별 묶음 · 홈 이동은 사이트 이름 소유
              */}
             <div className={clsx("wg_shellNav__docs")}>
-                <ul className={clsx("wg_shellNav__list")}>
-                    <li>
-                        <a
-                            className={clsx("wg_shellNav__link", {
-                                "wg_shellNav__link--active": props.current === undefined,
-                            })}
-                            href="/"
-                            title={copy_overview_label}
-                            aria-current={props.current === undefined ? "page" : undefined}
-                        >
-                            <svg className={clsx("wg_shellNav__docIcon")} viewBox="2 2 12 12" fill="currentColor" shapeRendering="crispEdges" aria-hidden="true" focusable="false">
-                                <path d={doc_icon_path} fillRule="evenodd" />
-                            </svg>
-                            {copy_overview_name}
-                        </a>
-                    </li>
-                </ul>
                 {/**
                  * 묶음 이름과 독립 문서 · 기본 얼굴 표지는 장식이고 이름이 링크의 접근 가능한 이름
                  */}
@@ -86,7 +68,7 @@ export const WgShellNav = (props: WgShellNavProps) => {
                                     >
                                         <svg
                                             className={clsx("wg_shellNav__docIcon")}
-                                            viewBox="2 2 12 12"
+                                            viewBox="0 0 16 16"
                                             fill="currentColor"
                                             shapeRendering="crispEdges"
                                             aria-hidden="true"

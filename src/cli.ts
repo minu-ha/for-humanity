@@ -21,6 +21,7 @@ import {font_cache_control, font_mono_css, font_sans_css, font_sans_preload_file
 import {site_config_absent} from "@/constant/site";
 import {createProcessor} from "@/content/create-processor";
 import {readDocs} from "@/content/read-docs";
+import {readHome} from "@/content/read-home";
 import {createDevApp} from "@/dev";
 import {siteConfigSchema} from "@/type/site-config";
 import {toErrorMessage} from "@/util/error/to-error-message";
@@ -88,7 +89,8 @@ const main = async () => {
         ...mono.files,
     ]);
     const processor = createProcessor({site: siteConfig, root: docsRoot});
-    const store = {docs: await readDocs({root: docsRoot, processor})};
+    const [docs, home] = await Promise.all([readDocs({root: docsRoot, processor}), readHome({root: docsRoot, processor})]);
+    const store = {docs, home};
     const app = createApp({
         site: siteConfig,
         store,
@@ -125,14 +127,14 @@ const main = async () => {
      * 재처리 실패 시 직전 정상 문서 유지
      */
     const handleDocsChange = async (_event: string, filename: string | null) => {
-        if (filename !== null && !/\.mdx?$/.test(filename)) {
+        if (filename !== null && !/\.mdx?$/i.test(filename)) {
             return;
         }
 
         const currentGeneration = ++generation;
 
         try {
-            const docs = await readDocs({root: docsRoot, processor});
+            const [docs, home] = await Promise.all([readDocs({root: docsRoot, processor}), readHome({root: docsRoot, processor})]);
 
             // 최신 변경의 처리 결과만 반영
             if (currentGeneration !== generation) {
@@ -140,6 +142,7 @@ const main = async () => {
             }
 
             store.docs = docs;
+            store.home = home;
             reload.emit("change");
         } catch (error) {
             console.error(`${copy_error_prefix}: ${toErrorMessage(error)}`);

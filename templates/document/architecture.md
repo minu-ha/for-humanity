@@ -30,6 +30,7 @@ flowchart LR
 ## Routing and rendering
 
 페이지 앱의 라우트: `/`, `/:slug{.+}/`. 문서 id에는 하위 폴더 포함.
+`/`는 문서 폴더의 `README.md`. 일반 문서 목록과 별도로 읽고, 개발 중 함께 갱신.
 
 - React: `renderToStaticMarkup`으로 HTML 문서 생성
 - build: Hono `ssgParams`와 `toSSG`로 같은 라우트 출력
@@ -52,15 +53,22 @@ Hono 정규식 매개변수와 wildcard 라우트 혼합 시 Router 제약도 �
 
 | Stage  | Work                                                                 |
 | ------ | -------------------------------------------------------------------- |
-| Read   | 파일 탐색 · YAML frontmatter · Zod 검증                              |
+| Read   | 파일 탐색 · remark-frontmatter의 YAML 노드 · yaml 값 해석 · Zod 검증 |
 | remark | GFM · 문장부호 · Note·Details · part · 흐름도 · status badge · swatch · 링크 · 경고 |
 | rehype | 코드 강조 · 문서 header · 제목 id · section 번호 · 표 상자           |
 | Output | raw HTML 해석 · HTML 문자열                                          |
 
 제목 id 생성은 section 번호 삽입보다 먼저. 링크와 TOC 텍스트의 번호 혼입 방지.
 중간 계약은 `file.data.fh`. 제목과 section 정보는 문서 순서 유지.
+frontmatter는 정규식으로 잘라내지 않고 AST 노드로 읽음. 본문 노드의 원본 줄·열은 유지.
 Note·Details의 검증은 Markdown 부품 변환 전. 제목은 native label, 본문은 기존 처리 흐름.
 접힌 본문의 `###`도 같은 제목 id·번호·TOC. 부품의 작성 계약은 [Parts](parts.md).
+
+remark는 Markdown을 AST로 다루는 플러그인 체계. 현재의 부품 변환·검증과 rehype 연결에 사용.
+markdown-it도 확장 가능한 렌더러이며 VitePress에서 사용. 한쪽이 항상 더 좋은 것은 아니고, 이 프로젝트는 기존 AST 변환을 유지.
+gray-matter는 frontmatter를 분리·해석하는 다른 선택지. 여기서는 `remark-frontmatter`와 기존 `yaml`을 조합.
+
+참조: [remark](https://github.com/remarkjs/remark), [remark-frontmatter](https://github.com/remarkjs/remark-frontmatter), [gray-matter](https://github.com/jonschlinkert/gray-matter), [VitePress Markdown](https://vitepress.dev/ko/guide/markdown).
 
 ::part[Ownership]
 

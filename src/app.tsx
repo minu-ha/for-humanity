@@ -5,6 +5,7 @@ import {renderToStaticMarkup} from "react-dom/server";
 import {PgDoc} from "@/page/doc/pg-doc";
 import {PgHome} from "@/page/home/pg-home";
 import type {Doc} from "@/type/doc";
+import type {DocContent} from "@/type/doc-content";
 import type {SiteAssets} from "@/type/site-assets";
 import type {SiteConfig} from "@/type/site-config";
 
@@ -17,9 +18,9 @@ export interface AppOptions {
      */
     site: SiteConfig;
     /**
-     * 렌더링 대상 문서 · dev 재처리 시 docs 교체
+     * 렌더링 대상 홈과 문서 · dev 재처리 시 함께 교체
      */
-    store: {docs: Doc[]};
+    store: {docs: Doc[]; home?: DocContent};
     /**
      * HTML 머리에 포함할 공통 자원
      */
@@ -41,7 +42,7 @@ const toHtml = (page: ReactElement) => {
 export const createApp = (options: AppOptions) => {
     const app = new Hono();
 
-    app.get("/", (c) => c.html(toHtml(<PgHome site={options.site} docs={options.store.docs} assets={options.assets} />)));
+    app.get("/", (c) => c.html(toHtml(<PgHome site={options.site} docs={options.store.docs} assets={options.assets} home={options.store.home} />)));
     app.get(
         "/:slug{.+}/",
         ssgParams(() => options.store.docs.map((doc) => ({slug: doc.id}))),

@@ -50,6 +50,8 @@ Cloudflare Pages는 도메인 구매 없이 `pages.dev` 주소로 배포 가능.
 ## Make it yours
 
 문서 폴더로 시작. 사이트 설정을 생략하면 사이드바에 **for humanity**. 픽셀 얼굴은 탭 아이콘과 데스크톱 마우스 옆의 장식으로 표시.
+문서 폴더의 `README.md`는 홈(`/`)으로 표시하며 frontmatter 불필요. 사이트 이름을 누르면 홈으로 이동.
+이 사이트의 홈 내용은 [문서 폴더 README](../templates/document/README.md)에서 수정.
 `for-humanity.config.mjs`의 `title`로 자신의 사이트 이름 지정.
 
 ```js
@@ -61,7 +63,7 @@ export default {
 ```
 
 다른 문서 폴더의 실행은 [Commands](../templates/document/commands.md), 설정은 [Settings](../templates/document/settings.md).
-문서마다 `group`과 선택 `order`로 묶음·읽는 순서 지정. 하위 폴더나 부모 문서 없이 각 페이지는 독립적으로 유지.
+루트 README를 제외한 문서마다 `group`과 선택 `order`로 묶음·읽는 순서 지정. 하위 폴더나 부모 문서 없이 각 페이지는 독립적으로 유지.
 같은 첫 글자로 시작하는 문서도 허용.
 
 ## Write with context

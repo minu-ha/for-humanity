@@ -13,14 +13,14 @@ order: 20
 
 - 본문: 한국어 산세리프 · 넉넉한 행간 · 낱말 단위 줄바꿈
 - 라벨: 작은 산세리프 · 코드·번호·흐름도는 모노
-- Header: 첫 화면과 문서의 공통 라벨·제목·얇은 점선
+- Header: README 홈과 문서의 제목·소개·얇은 점선 · 사이트 이름과 h1의 위쪽 정렬
 - 면의 구분: 가는 선 · 직각 모서리 · 그림자·그라데이션 없음
 - 페이지 폭과 사이드바 배치는 기존 기준 유지
 - 색의 선택: 역할별 토큰 · System·Light·Dark
 - favicon: 여백을 줄인 픽셀 얼굴 · 검은 점 눈·작은 미소 · 투명 배경 · 두 가지 색
 - Brand: 기본 이름 `for humanity` · 사이드바는 텍스트 · 이름은 `title` 설정
 - 커서 장식: 24px 픽셀 얼굴 · 기본 커서에서 16px 간격 · 클릭·드래그·문서 이동에서도 표시 유지
-- 문서 탐색: 목적별 묶음 · 읽는 순서 · 모든 문서 표시 · 기본 아웃라인 얼굴 표지
+- 문서 탐색: 목적별 묶음 · 읽는 순서 · 모든 문서 표시 · 16px 격자에 맞춘 옅은 아웃라인 얼굴 표지
 
 ::part[Tokens]
 
@@ -53,7 +53,8 @@ order: 20
 | `code`                    | 코드 상자                              |
 | `text`                    | 본문                                   |
 | `text-strong`             | 제목·굵은 글·현재 section              |
-| `text-muted`              | 라벨·번호·카드 설명                    |
+| `text-muted`              | 라벨·번호                    |
+| `icon`                    | 장식 문서 아이콘 · 라벨보다 옅은 색     |
 | `border` / `border-soft`  | 상자·목록·점선 / 표 구분선             |
 | `accent` / `accent-soft`  | 번호·현재 section·코드 / 행 hover 바탕 |
 | `link`                    | 본문·탐색 링크·포커스                  |
@@ -72,19 +73,19 @@ Pretendard 본문·라벨, JetBrains Mono 코드·번호·흐름도. 내장 파�
 
 | Size      | Use                                                 |
 |-----------|-----------------------------------------------------|
-| `label`   | 목록 라벨 · TOC 묶음 · 카드 묶음 · 문서 header 라벨 |
-| `mark`    | TOC 번호 · 문서 이름 첫 글자                        |
+| `label`   | TOC 라벨 · 문서·TOC 묶음 |
+| `mark`    | TOC 번호                        |
 | `detail`  | subsection 링크 · 코드 블록 · status badge          |
-| `dense`   | TOC · 표 · h5 · 카드 설명                           |
-| `body`    | 본문 · h4 · 카드 제목 · 사이트 이름                 |
+| `dense`   | TOC · 표 · h5                           |
+| `body`    | 본문 · h4                 |
 | `lead`    | 소개 · h3                                           |
 | `part`    | part                                                |
 | `section` | h2                                                  |
-| `title`   | h1 · 화면 폭에 따른 크기                            |
+| `title`   | h1 · 사이드바 사이트 이름                            |
 
 본문 기본 굵기 `400`. 번호 `mark`, 제목·강조 `strong`, h1 `title`.
 코드 합자 비활성: `>=`, `!=` 원문 구분.
-본문은 `15px`, h1은 `24–28px`. 라벨의 대문자 변환과 자간 확대 없음.
+본문과 사이드바 문서 링크는 `13.5px`, h1과 사이트 이름은 `22px`, h2는 `17px`. 라벨의 대문자 변환과 자간 확대 없음.
 Shiki는 기존 역할색 참조: 키워드 strong, 함수 accent, 문자열 verified, 숫자 unverified, 주석 muted, 링크 link.
 
 글꼴 이름과 fallback은 `token.css`에 정적 선언. CLI는 내장 `@font-face`와 내용 지문이 붙은 자원 URL 생성.
@@ -101,17 +102,18 @@ Shiki는 기존 역할색 참조: 키워드 strong, 함수 accent, 문자열 ver
 | `inline`                         | 한 줄 안의 라벨·이름         |
 | `stack`                          | 문단·목록 흐름               |
 | `block`                          | 코드·표·흐름도·인용          |
-| `group`                          | 제목·목차 묶음·첫 화면 목록  |
+| `group`                          | 제목·본문 묶음  |
 | `section`                        | section 사이                 |
 | `page-top` · `gutter` · `column` | 페이지 위·좌우·열 간격       |
 | `anchor`                         | hash 제목 위치 · TOC 읽는 선 |
 
 공통 리듬: `inline` 8px · `stack` 12px · `block` 16px · `group` 24px · `section` 40px.
 같은 역할의 간격은 `margin`, `padding`, `gap`에서 공통 토큰 재사용.
+사이드바는 묶음 간격 12px, 라벨 아래 4px, 행 위·아래 3px로 촘촘하게 배치. 홈 이동은 사이트 이름 하나로 제공.
 
-한 소유자에만 필요한 간격·보정은 지역 값. 예: 목차 들여쓰기 14px·26px, 목록 행의 위·아래 5px.
+한 소유자에만 필요한 간격·보정은 지역 값. 예: 목차 들여쓰기 12px·32px, 목록 행의 위·아래 3px.
 같은 숫자여도 아이콘 크기·글자 크기·페이지 폭은 간격과 별도 역할.
-모서리 토큰의 기본값은 `0`. 표·흐름도·첫 화면 목록은 바깥 상자 없이 표현.
+모서리 토큰의 기본값은 `0`. 표·흐름도는 바깥 상자 없이 표현.
 겹침 요소 추가 시 `z-index` 역할 토큰 먼저 정의. 커서 장식은 `--app-z-index-popper` 층.
 
 ## Responsive layout
@@ -123,7 +125,7 @@ Shiki는 기존 역할색 참조: 키워드 strong, 함수 accent, 문자열 ver
 | `640px` 미만  | 위·좌우 여백 축소                                       |
 
 폭 기준의 CSS 변수 사용 불가. `token.css`, `wg-shell.css`, `_wg-shell-nav.css` 값 일치 필요.
-카드 열은 intrinsic sizing 우선. 새 breakpoint는 배치 변경에 한정.
+새 breakpoint는 배치 변경에 한정.
 
 ## Interaction
 
