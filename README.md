@@ -8,7 +8,7 @@ Markdown 폴더 하나를 사이드바, 절 번호, 흐름도가 있는 정적 �
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-2e3f5e)](LICENSE)
 ![Node 22+](https://img.shields.io/badge/node-22%2B-2e3f5e)
-![Astro 7](https://img.shields.io/badge/engine-Astro%207-2e3f5e)
+![Hono · React](https://img.shields.io/badge/engine-Hono%20%C2%B7%20React-2e3f5e)
 ![Biome](https://img.shields.io/badge/lint-Biome%20%C2%B7%20Stylelint-2e3f5e)
 ![Prototype](https://img.shields.io/badge/status-prototype-9a6400)
 
@@ -40,7 +40,7 @@ for-humanity는 같은 Markdown을 사람이 읽기 좋은 모양으로 보여 �
 | **코드 강조**              | Shiki가 색을 칠하고, 색은 토큰이 정한다. 새 색 없이 강조 · 상태 · 흐림 색을 다시 쓴다        |
 | **테마**                   | 시스템 · 밝게 · 어둡게. JS가 꺼져 있어도 다 보인다                                           |
 | **글꼴 · 미리 받기**       | 글꼴은 빌드가 결과에 넣어 읽는 사람은 CDN에 닿지 않는다. 링크에 올리면 다음 쪽을 미리 받는다 |
-| **dev 검사**               | dev toolbar의 문서 검사가 없는 문서로 건 링크와 설정에 없는 알약 문구를 모아 보인다          |
+| **빌드 경고**              | 없는 문서로 건 링크와 설정에 없는 알약 문구를 `파일:줄`로 터미널에 적는다. 빌드는 멈추지 않는다 |
 | **빌드 검사**              | 머리말이 틀리거나, 모르는 부품을 쓰거나, 두 문서 이름의 첫 글자가 겹치면 빌드가 멈춘다       |
 
 ## 해 보기
@@ -125,37 +125,40 @@ export default {
 
 ## 짜임
 
-엔진은 [Astro](https://astro.build)이고, 명령 뒤에 숨어 있어 쓰는 사람은 Astro를 몰라도 된다.
-UI 프레임워크 없이 Astro 컴포넌트, CSS, 작은 브라우저 스크립트로만 짰다. 그래서 JS 없이도 다 보인다.
+엔진은 [Hono](https://hono.dev)와 React다. 서버가 React로 쪽을 그려 정적 HTML로 쓰고, 브라우저에는 작은 스크립트 하나만 간다. 그래서 JS 없이도 다 보인다.
+UI 프레임워크는 쓰지 않는다. 부품은 필요할 때 만든다.
 모양의 규칙은 [DESIGN.md](DESIGN.md)에, 값은 `src/style/token.css` 한 곳에 있다.
-글꼴은 처음 빌드할 때 한 번 CDN에서 받아 문서 폴더의 `node_modules/.for-humanity`에 남긴다.
+글꼴 (Pretendard, JetBrains Mono) 파일은 `src/asset/font`에 들어 있어 빌드가 결과에 넣는다. 네트워크가 필요 없다.
 
 ```text
 src/
-├── cli.ts                 명령. 설정을 읽고 쪽 · 플러그인 · 설정을 이어 Astro 를 돌린다
-├── content.config.ts      문서 모음과 머리말 검사
+├── cli.ts                 명령. 설정을 읽고 문서를 그려 Hono 앱에 싣는다. build 는 toSSG, dev 는 node-server
+├── app.tsx                쪽 앱. / 와 /:slug/ 둘
+├── dev.ts                 dev 서버. 자원 파일과 SSE 새로고침
+├── client.ts              브라우저 스크립트. 테마 단추, 읽는 절 표시, #절 맞추기
+├── content/               문서 읽기 (머리말 · zod), Markdown 처리기 조립, 제목 id, 경고
 ├── page/
 │   ├── home/              첫 화면
 │   └── doc/               문서 한 장
 ├── component/widget/
-│   ├── shell/             틀, 사이드바, 테마 단추, 읽는 절 표시
+│   ├── shell/             틀, 사이드바
 │   └── prose/             본문의 모양과 부품을 그리는 remark · rehype 플러그인
 ├── constant/ · type/      상수, 문구, 설정 스키마
 ├── style/                 토큰과 바탕
-├── toolbar/               dev toolbar 의 문서 검사 앱
-└── util/                  흐름도 렌더러, DOM 도우미
+├── asset/                 아이콘, 글꼴
+└── util/                  흐름도 렌더러, DOM · 글꼴 도우미
 templates/document/        가상의 예시 문서
 ```
 
 이름과 자리는 몇 가지 규칙을 따른다.
 
-- 파일은 kebab-case로 짓고, 컴포넌트에는 레이어 접두사를 붙인다 (`pg-home.astro`, `wg-shell.astro`)
+- 파일은 kebab-case로 짓고, 컴포넌트에는 레이어 접두사를 붙인다 (`pg-home.tsx`, `wg-shell.tsx`)
 - 클래스는 `범위_식별자__요소--수정자` 꼴이다 (`wg_prose__pill--verified`)
 - 색 · 글자 크기 · 간격 · 모서리는 `token.css`의 `--app-*` 토큰만 쓴다. 테마는 `light-dark()`가 토큰 안에서 가르고, 컴포넌트에는 테마 분기가 없다
 - 가져오기는 `@/`로 쓴다. 자기만 쓰는 파일은 `_`로 시작하고, 함수 · 타입 · 상수는 `_function` · `_type` · `_constant`에 둔다
-- 브라우저 스크립트는 그 요소를 그리는 컴포넌트의 `<script>`에 두고, 스크립트가 잡는 요소에는 클래스 대신 `data-*`를 단다
-- 기계로 볼 수 있는 규칙은 Biome (TS · Astro · JSON) 과 Stylelint (CSS) 가 본다. `??` 오른쪽의 리터럴은 `no-literal-fallback.grit`이 잡는다
-- 타입은 `astro-check`가 `.astro`까지 함께 본다. `tsc`는 `.astro`를 읽지 못한다
+- 브라우저 스크립트는 `src/client.ts` 하나에 모으고, 스크립트가 잡는 요소에는 클래스 대신 `data-*`를 단다
+- 기계로 볼 수 있는 규칙은 Biome (TS · TSX · JSON) 과 Stylelint (CSS) 가 본다. `??` 오른쪽의 리터럴은 `no-literal-fallback.grit`이 잡는다
+- 타입은 `tsc`가 본다 (TypeScript 7)
 - `src/util/mermaid/render-flow.js`의 격자 렌더러는 다른 저장소와 diff로 맞춰 보려고 글자 그대로 둔다. 그래서 Biome 검사에서 뺐다
 
 ## 개발
@@ -163,12 +166,10 @@ templates/document/        가상의 예시 문서
 ```sh
 pnpm lint         # Biome (린트, 포맷, import 차례) 과 Stylelint
 pnpm lint:fix     # 고칠 수 있는 것은 고친다
-pnpm typecheck    # 문서 모음의 타입을 만든 뒤 astro-check 로 .astro 와 .ts 를 본다
+pnpm typecheck    # tsc 로 .ts 와 .tsx 를 본다
 pnpm check        # lint 와 typecheck 를 한 번에
-pnpm build:cli    # src/cli.ts 를 dist/cli.js 로 묶는다 (esbuild)
+pnpm build:kit    # src/cli.ts 를 dist/cli.js 와 dist/cli.css 로, src/client.ts 를 dist/client.js 로 묶는다 (esbuild)
 ```
-
-`.mcp.json`에 [Astro 문서 MCP 서버](https://docs.astro.build/en/guides/build-with-ai/)를 걸어 두었다. Claude Code 같은 에이전트가 이 저장소를 열면 Astro 문서를 바로 찾아본다.
 
 ## 다음 차례
 

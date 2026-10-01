@@ -31,6 +31,8 @@ const disallowed = (foreignScopes) => [[...foreignScopes, ...ownMarkupPatterns],
 
 export default {
 	extends: ["stylelint-config-standard"],
+	// 글꼴 패키지에서 그대로 가져온 CSS 는 우리 것이 아니라 검사하지 않는다
+	ignoreFiles: ["src/asset/**/*.css"],
 	rules: {
 		// 최상위 @media 안의 클래스가 깊이 0 이 되게 한다. 브레이크포인트 안에서 상태를 한 겹 더 쓸 수 있다
 		"max-nesting-depth": [1, {ignoreAtRules: ["media", "supports", "container"]}],

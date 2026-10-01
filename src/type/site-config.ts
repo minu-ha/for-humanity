@@ -1,4 +1,4 @@
-import {z} from "astro/zod";
+import {z} from "zod";
 import {copy_site_title_default} from "@/constant/copy";
 import {status_default_phrases, status_kind} from "@/constant/status";
 

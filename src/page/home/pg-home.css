@@ -1,5 +1,5 @@
 /*
- * 첫 화면 (pg-home.astro). 머리 밑에 문서 카드를 깐다
+ * 첫 화면 (pg-home.tsx). 머리 밑에 문서 카드를 깐다
  */
 .pg_home__cards {
 	display: grid;

@@ -4,7 +4,6 @@ import {VFile} from "vfile";
 import {parse as parseYaml} from "yaml";
 import {copy_error_frontmatter, copy_error_mark_clash} from "@/constant/copy";
 import type {Processor} from "@/content/create-processor";
-import {renderIslands} from "@/content/render-islands";
 import type {Doc} from "@/type/doc";
 import {docDataSchema} from "@/type/doc-data";
 import type {DocFileData} from "@/type/doc-file-data";
@@ -50,7 +49,7 @@ export const readDocs = async (options: {root: string; processor: Processor}): P
 					.join("/")
 					.toLowerCase(),
 				data: parsed.data,
-				html: renderIslands(String(file)),
+				html: String(file),
 				outline: {headings: fh.headings, sections: fh.sections},
 			};
 		}),

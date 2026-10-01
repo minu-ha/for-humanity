@@ -25,7 +25,7 @@ export const PgHome = (props: PgHomeProps) => {
 	);
 
 	return (
-		<WgShell site={props.site} docs={props.docs} assets={props.assets} island={false}>
+		<WgShell site={props.site} docs={props.docs} assets={props.assets}>
 			<WgProse
 				head={{
 					eyebrow: [props.site.title, copy_overview_name],

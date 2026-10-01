@@ -1,5 +1,5 @@
 /*
- * 사이드바 (_wg-shell-nav.astro). 문서 목록과 목차가 같은 목록 모양을 쓴다
+ * 사이드바 (_wg-shell-nav.tsx). 문서 목록과 목차가 같은 목록 모양을 쓴다
  */
 .wg_shellNav__root {
 	/* 뷰포트에 붙는다. 조상인 <body> 와 <html> 에는 overflow 가 없다 */

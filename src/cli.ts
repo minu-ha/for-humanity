@@ -8,7 +8,7 @@
 
 import {EventEmitter} from "node:events";
 import {existsSync, watch} from "node:fs";
-import {copyFile, mkdir, writeFile} from "node:fs/promises";
+import {copyFile, mkdir, rm, writeFile} from "node:fs/promises";
 import {dirname, join, relative, resolve} from "node:path";
 import {fileURLToPath, pathToFileURL} from "node:url";
 import {serve} from "@hono/node-server";
@@ -16,13 +16,7 @@ import {serveStatic} from "@hono/node-server/serve-static";
 import {Hono} from "hono";
 import {toSSG} from "hono/ssg";
 import {createApp} from "@/app";
-import {
-	asset_client_path,
-	asset_favicon_path,
-	asset_font_dir,
-	asset_island_path,
-	asset_style_path,
-} from "@/constant/asset";
+import {asset_client_path, asset_favicon_path, asset_font_dir, asset_style_path} from "@/constant/asset";
 import {cli_config_file_name, cli_default_command, cli_default_docs_dir, cli_dev_port} from "@/constant/cli";
 import {copy_error_config, copy_error_prefix, copy_error_unknown_command} from "@/constant/copy";
 import {
@@ -30,7 +24,6 @@ import {
 	font_css_variable_sans,
 	font_mono_css,
 	font_mono_family,
-	font_mono_subset,
 	font_sans_css,
 	font_sans_fallbacks,
 	font_sans_family,
@@ -80,8 +73,8 @@ const main = async () => {
 
 	const siteConfig = parsedConfig.data;
 	// 본문 글꼴은 글자 조각 92개, 코드 글꼴은 라틴 한 파일이다. 변수 두 개는 token.css 가 받아 --app-font-* 를 만든다
-	const sans = toFontCss({css: font_sans_css, fontDir: asset_font_dir});
-	const mono = toFontCss({css: font_mono_css, keep: font_mono_subset, fontDir: asset_font_dir});
+	const sans = toFontCss({css: join(kitRoot, font_sans_css), fontDir: asset_font_dir});
+	const mono = toFontCss({css: join(kitRoot, font_mono_css), fontDir: asset_font_dir});
 	const fontCss = [
 		sans.css,
 		mono.css,
@@ -90,7 +83,6 @@ const main = async () => {
 	const files = new Map([
 		[asset_style_path, join(kitRoot, "dist/cli.css")],
 		[asset_client_path, join(kitRoot, "dist/client.js")],
-		[asset_island_path, join(kitRoot, "dist/island.js")],
 		[asset_favicon_path, join(kitRoot, "src/asset/favicon.svg")],
 		...sans.files,
 		...mono.files,
@@ -104,6 +96,9 @@ const main = async () => {
 	});
 
 	if (command === "build") {
+		// 지운 문서의 쪽이나 이름이 바뀐 자원이 남지 않게 결과 폴더를 비우고 쓴다
+		await rm(outDir, {recursive: true, force: true});
+
 		const result = await toSSG(app, {writeFile, mkdir}, {dir: outDir});
 
 		if (!result.success) {

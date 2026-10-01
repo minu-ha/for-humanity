@@ -1,4 +1,3 @@
-import {island_attribute_name} from "@/component/widget/island/_constant/island";
 import {WgProse} from "@/component/widget/prose/wg-prose";
 import {WgShell} from "@/component/widget/shell/wg-shell";
 import type {Doc} from "@/type/doc";
@@ -27,7 +26,6 @@ export const PgDoc = (props: PgDocProps) => {
 			title={props.doc.data.name}
 			current={props.doc.id}
 			outline={props.doc.outline}
-			island={props.doc.html.includes(island_attribute_name)}
 		>
 			<WgProse html={props.doc.html} />
 		</WgShell>

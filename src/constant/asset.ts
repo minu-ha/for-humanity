@@ -18,11 +18,6 @@ export const asset_style_path = `/${asset_dir}/style.css`;
 export const asset_client_path = `/${asset_dir}/client.js`;
 
 /**
- * React 섬을 이어받는 스크립트. 섬이 있는 쪽만 싣는다
- */
-export const asset_island_path = `/${asset_dir}/island.js`;
-
-/**
  * 글꼴 파일이 놓이는 폴더
  */
 export const asset_font_dir = `/${asset_dir}/fonts`;

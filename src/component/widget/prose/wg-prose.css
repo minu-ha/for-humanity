@@ -1,5 +1,5 @@
 /*
- * 문서 본문 (wg-prose.astro). Markdown 이 만든 태그와 빌드 때 붙은 부품의 모양이다.
+ * 문서 본문 (wg-prose.tsx). Markdown 이 만든 태그와 빌드 때 붙은 부품의 모양이다.
  * 본문은 태그만 쓰므로 태그는 이 뿌리 블록 안에서만 잡는다
  */
 .wg_prose__root {
@@ -204,7 +204,7 @@
 	/* stylelint-enable selector-disallowed-list */
 }
 
-/* 문서 머리 — 눈썹 줄, 제목, 첫 절 앞의 글. 문서는 rehype-head 가, 첫 화면은 wg-prose.astro 가 그린다 */
+/* 문서 머리 — 눈썹 줄, 제목, 첫 절 앞의 글. 문서는 rehype-head 가, 첫 화면은 wg-prose.tsx 가 그린다 */
 .wg_prose__head {
 	margin-bottom: 8px;
 	padding-bottom: 28px;

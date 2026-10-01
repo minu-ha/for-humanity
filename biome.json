@@ -26,9 +26,6 @@
 			"enabled": false
 		}
 	},
-	"html": {
-		"experimentalFullSupportEnabled": true
-	},
 	"plugins": ["./no-literal-fallback.grit"],
 	"linter": {
 		"enabled": true,
@@ -152,7 +149,7 @@
 			}
 		},
 		{
-			"includes": ["src/component/ui/**/*.ts", "src/component/ui/**/*.astro"],
+			"includes": ["src/component/ui/**/*.ts", "src/component/ui/**/*.tsx"],
 			"linter": {
 				"rules": {
 					"style": {
@@ -176,7 +173,7 @@
 			}
 		},
 		{
-			"includes": ["src/component/widget/**/*.ts", "src/component/widget/**/*.astro"],
+			"includes": ["src/component/widget/**/*.ts", "src/component/widget/**/*.tsx"],
 			"linter": {
 				"rules": {
 					"style": {
@@ -200,7 +197,7 @@
 			}
 		},
 		{
-			"includes": ["src/page/home/**/*.ts", "src/page/home/**/*.astro"],
+			"includes": ["src/page/home/**/*.ts", "src/page/home/**/*.tsx"],
 			"linter": {
 				"rules": {
 					"style": {
@@ -224,7 +221,7 @@
 			}
 		},
 		{
-			"includes": ["src/page/doc/**/*.ts", "src/page/doc/**/*.astro"],
+			"includes": ["src/page/doc/**/*.ts", "src/page/doc/**/*.tsx"],
 			"linter": {
 				"rules": {
 					"style": {

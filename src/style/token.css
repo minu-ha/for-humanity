@@ -27,9 +27,6 @@
 	--app-color-accent: light-dark(#2e3f5e, #93a9d4);
 	--app-color-accent-soft: light-dark(#eef1f7, #1d2634);
 
-	/* 색 — 덮개. 쪽지 섬이 열리면 쪽을 가린다 */
-	--app-color-scrim: light-dark(rgb(27 32 39 / 40%), rgb(0 0 0 / 60%));
-
 	/* 색 — 상태. 알약에만 쓴다. 글색은 soft 바탕 위에서 4.5:1 이상이다 */
 	--app-color-verified: light-dark(#157e44, #5cc183);
 	--app-color-verified-soft: light-dark(#e9f4ed, #17281e);
@@ -37,7 +34,7 @@
 	--app-color-unverified-soft: light-dark(#fdf4e3, #2a2317);
 
 	/*
-	 * 글꼴. 파일과 @font-face 는 cli.ts 의 fonts 설정이 만들고, wg-shell.astro 머리의 <Font> 가 --app-font-face-* 에 이름을 넣는다.
+	 * 글꼴. 파일은 src/asset/font 에 있고, cli.ts 가 @font-face 와 --app-font-face-* 변수를 만들어 wg-shell.tsx 가 머리에 넣는다.
 	 * 본문은 Pretendard, 표지 · 코드 · 흐름도는 JetBrains Mono. JetBrains Mono 의 영문 폭 0.6em 이 흐름도 격자 칸 (12px 에 7.2px) 과 같다.
 	 * 코드 글꼴에 없는 한글은 본문 글꼴로 떨어진다
 	 */
@@ -96,18 +93,12 @@
 	--app-radius-inline: 3px;
 	--app-radius-mark: 2px;
 
-	/* 층. 겹치는 요소는 쪽지 섬의 덮개 하나지만 네 층을 한 번에 둔다. 사용처에서 숫자를 쓰지 않는다 */
-	--app-z-index-base: 0;
-	--app-z-index-sticky: 100;
-	--app-z-index-overlay: 200;
-	--app-z-index-popper: 300;
-
 	/* 키보드로 옮겨 온 자리 */
 	--app-outline-focus: 2px solid var(--app-color-accent);
 	--app-outline-focus-offset: 2px;
 
 	/*
-	 * 코드 강조. Shiki 가 이 이름으로 색을 칠한다 (cli.ts 의 shikiConfig). 새 색을 만들지 않고 위의 역할 색을 다시 쓴다.
+	 * 코드 강조. Shiki 가 이 이름으로 색을 칠한다 (content/create-processor.ts). 새 색을 만들지 않고 위의 역할 색을 다시 쓴다.
 	 * 밝은 테마에서 accent 는 text 와 가까워 키워드는 strong 으로, 함수 이름은 accent 로 둔다
 	 */
 	--app-code-foreground: var(--app-color-text);

@@ -1,13 +1,13 @@
 /*
  * 모든 쪽의 바탕. 상자 크기 계산, 부드러운 스크롤, 움직임 줄이기를 전역에서 한 번 정한다.
- * 글꼴 파일은 cli.ts 의 fonts 설정이 빌드 때 받아 넣고 wg-shell.astro 머리의 <Font> 가 @font-face 를 적는다
+ * 글꼴은 src/asset/font 의 파일을 cli.ts 가 결과에 넣고 wg-shell.tsx 가 머리에 @font-face 를 적는다
  */
 
 * {
 	box-sizing: border-box;
 }
 
-/* 목차 · 본문 링크로 절을 옮길 때 부드럽게 간다. 쪽을 여는 동안은 wg-shell.astro 머리가 잠시 끈다 */
+/* 목차 · 본문 링크로 절을 옮길 때 부드럽게 간다. 쪽을 여는 동안은 wg-shell.tsx 머리가 잠시 끈다 */
 :root {
 	scroll-behavior: smooth;
 }

@@ -1,13 +1,7 @@
 import type {ReactNode} from "react";
 import type {DocOutline} from "@/component/widget/shell/_type/doc-outline";
 import {WgShellNav} from "@/component/widget/shell/_wg-shell-nav";
-import {
-	asset_client_path,
-	asset_favicon_path,
-	asset_island_path,
-	asset_reload_path,
-	asset_style_path,
-} from "@/constant/asset";
+import {asset_client_path, asset_favicon_path, asset_reload_path, asset_style_path} from "@/constant/asset";
 import {theme_mode, theme_storage_key} from "@/constant/theme";
 import type {Doc} from "@/type/doc";
 import type {SiteAssets} from "@/type/site-assets";
@@ -55,10 +49,6 @@ export interface WgShellProps {
 	 * 사이드바 목차의 재료. 첫 화면은 없다
 	 */
 	outline?: DocOutline;
-	/**
-	 * 본문에 React 섬이 있는가. 있으면 섬을 이어받는 스크립트를 싣는다
-	 */
-	island: boolean;
 	children: ReactNode;
 }
 
@@ -82,7 +72,6 @@ export const WgShell = (props: WgShellProps) => {
 				<WgShellNav site={props.site} docs={props.docs} current={props.current} outline={props.outline} />
 				<main className="wg_shell__main">{props.children}</main>
 				<script type="module" src={asset_client_path} />
-				{props.island && <script type="module" src={asset_island_path} />}
 			</body>
 		</html>
 	);

@@ -14,11 +14,6 @@ export const cli_default_docs_dir = ".";
 export const cli_config_file_name = "for-humanity.config.mjs";
 
 /**
- * 명령이 앱에 설정을 넘기는 가상 모듈. Astro 시절의 것이라 시험판이 합격하면 지운다
- */
-export const cli_config_module_id = "virtual:for-humanity/config";
-
-/**
- * dev 서버의 포트. Astro 의 기본값과 같다
+ * dev 서버의 포트
  */
 export const cli_dev_port = 4321;

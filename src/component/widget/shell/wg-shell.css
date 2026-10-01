@@ -1,5 +1,5 @@
 /*
- * 모든 쪽의 틀 (wg-shell.astro). <body> 를 두 칸 격자로 놓는다. 사이드바와 본문은 차례대로 칸에 들어간다
+ * 모든 쪽의 틀 (wg-shell.tsx). <body> 를 두 칸 격자로 놓는다. 사이드바와 본문은 차례대로 칸에 들어간다
  */
 .wg_shell__root {
 	display: grid;

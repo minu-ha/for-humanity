@@ -72,11 +72,6 @@ export const copy_error_frontmatter = "머리말이 틀렸다";
 export const copy_error_mark_clash = "문서 이름의 첫 글자가 겹친다";
 
 /**
- * Markdown 을 그리지 못한 문서가 있을 때. 까닭은 그 앞에 Astro 가 파일과 줄을 들어 먼저 적는다
- */
-export const copy_error_render = "그리지 못한 문서가 있다";
-
-/**
  * ```mermaid 원문을 흐름도로 그리지 못했을 때
  */
 export const copy_error_flow = "흐름도를 그리지 못했다";
@@ -87,7 +82,7 @@ export const copy_error_flow = "흐름도를 그리지 못했다";
 export const copy_error_unknown_directive = "모르는 부품이다";
 
 /**
- * 다른 문서의 .md 로 건 링크인데 그 파일이 없을 때. 빌드는 이어 가고 dev toolbar 의 문서 검사에 모인다
+ * 다른 문서의 .md 로 건 링크인데 그 파일이 없을 때. 빌드는 이어 가고 터미널에 적는다
  */
 export const copy_warn_broken_link = "없는 문서로 건 링크다";
 
@@ -95,28 +90,3 @@ export const copy_warn_broken_link = "없는 문서로 건 링크다";
  * 괄호 안이 날짜로 끝나 알약 문구 같은데 설정에 없는 글을 만났을 때. 대개 문구의 오타다
  */
 export const copy_warn_unknown_status = "설정에 없는 알약 문구다";
-
-/**
- * dev toolbar 에 보이는 문서 검사 앱의 이름
- */
-export const copy_toolbar_name = "문서 검사";
-
-/**
- * 문서 검사에 걸린 것이 없을 때
- */
-export const copy_toolbar_empty = "걸린 것이 없다";
-
-/**
- * 쪽지 섬의 제목
- */
-export const copy_note_title = "쪽지";
-
-/**
- * 쪽지 섬의 글
- */
-export const copy_note_body = "이 쪽지는 React 섬이다. 서버가 그린 단추를 브라우저의 React 가 이어받아 연다.";
-
-/**
- * 쪽지 섬의 닫기 단추
- */
-export const copy_note_close = "닫기";
