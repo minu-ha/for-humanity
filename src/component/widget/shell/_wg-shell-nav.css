@@ -65,6 +65,11 @@
     line-height: var(--app-line-height-tight);
     text-decoration: none;
 
+    /* 방문색보다 현재 문서와 hover 우선 */
+    &:where(:visited) {
+        color: var(--app-color-link-visited);
+    }
+
     &:hover {
         border-left-color: var(--app-color-border);
         color: var(--app-color-link-hover);

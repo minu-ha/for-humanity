@@ -62,7 +62,7 @@ order: 20
 | `border-layout`          | 문서 탐색·본문·TOC 사이의 열 경계       |
 | `accent` / `accent-soft`  | 번호·현재 section·코드 / 행 hover 바탕 |
 | `link`                    | 본문·탐색 링크·포커스                  |
-| `link-visited`            | 방문한 본문 링크                       |
+| `link-visited`            | 방문한 본문·문서 탐색 링크              |
 | `link-hover`              | 링크 hover                             |
 | `verified` / `unverified` | 확인 / 미확인 status badge             |
 
@@ -146,7 +146,7 @@ TOC가 없는 페이지는 별도 목차 열 없이 문서 탐색과 본문만 �
 ## Interaction
 
 - hover: 문서·본문 링크색 변경과 밑줄 · TOC는 strong 글과 밑줄
-- visited: 본문 링크만 방문색 · 탐색 링크는 현재 문서·section 기준
+- visited: 본문·문서 탐색 링크는 보라색 · 현재 문서는 strong · TOC는 중립색
 - Theme: System 모니터 · Light 해 · Dark 달 · 현재 모드의 tooltip·접근 가능한 이름
 - focus-visible: 모든 상호작용 요소에 공통 outline
 - 현재 문서·section: accent 선 · strong 글
