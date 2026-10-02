@@ -60,8 +60,9 @@
     }
 
     &:focus-visible {
-        outline: var(--app-outline-focus);
-        outline-offset: var(--app-outline-focus-offset);
+        /* 브랜드도 hover와 같은 밑줄로 키보드 위치 표시 */
+        outline: none;
+        text-decoration: underline;
     }
 }
 
