@@ -5,7 +5,7 @@ import {copy_nav_toc_label} from "@/constant/copy";
 import "./_wg-shell-toc.css";
 
 /**
- * 현재 문서의 독립 목차 · client.ts에서 읽는 위치 표시
+ * 문서 탐색 아래의 현재 문서 목차 · client.ts에서 읽는 위치 표시
  */
 export interface WgShellTocProps {
     /**
@@ -29,7 +29,7 @@ export const WgShellToc = (props: WgShellTocProps) => {
                      */}
                     <ul className={clsx("wg_shellToc__list")}>
                         {group.sections.map((section) => (
-                            <li key={section.heading.slug}>
+                            <li className={clsx("wg_shellToc__item")} key={section.heading.slug}>
                                 <a className={clsx("wg_shellToc__link")} href={`#${section.heading.slug}`} data-toc-link="">
                                     <span className={clsx("wg_shellToc__mark")}>{section.number}</span>
                                     {section.heading.text}
@@ -40,7 +40,7 @@ export const WgShellToc = (props: WgShellTocProps) => {
                                 {section.subs.length > 0 && (
                                     <ul className={clsx("wg_shellToc__sub")}>
                                         {section.subs.map((sub) => (
-                                            <li key={sub.heading.slug}>
+                                            <li className={clsx("wg_shellToc__subItem")} key={sub.heading.slug}>
                                                 <a className={clsx("wg_shellToc__subLink")} href={`#${sub.heading.slug}`} data-toc-sub-link="">
                                                     <span className={clsx("wg_shellToc__mark")}>{sub.number}</span>
                                                     {sub.heading.text}

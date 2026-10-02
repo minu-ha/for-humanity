@@ -1,20 +1,12 @@
 /*
- * 현재 문서 목차 · 절과 소제목 전체 표시
+ * 문서 탐색 아래 목차 · 번호와 소제목을 유지하는 중립색 트리
  */
 .wg_shellToc__root {
-    grid-area: toc;
-
-    /* 뷰포트 sticky · 화면 높이의 열 경계 · 본문과 별도로 긴 목차 스크롤 */
-    position: sticky;
-    top: 0;
-    align-self: start;
-    min-width: 0;
-    min-height: 100vh;
-    max-height: 100vh;
-    overflow-y: auto;
-    padding-block: var(--app-size-brand) var(--app-space-page-top);
-    padding-inline-start: var(--app-space-sidebar);
-    border-left: 1px solid var(--app-color-border-layout);
+    margin-top: var(--app-space-group);
+    padding-top: var(--app-space-group);
+    border-top: 1px solid var(--app-color-border-soft);
+    font-size: var(--app-font-size-dense);
+    line-height: var(--app-line-height-tight);
 }
 
 .wg_shellToc__label {
@@ -32,17 +24,36 @@
 }
 
 .wg_shellToc__list {
-    display: flex;
-    flex-direction: column;
-    margin: 0;
+    margin: 0 0 0 var(--app-space-tree-inset);
     padding: 0;
-    gap: 2px;
     list-style: none;
 }
 
+.wg_shellToc__item {
+    /* 세로 줄기는 항목 전체 기준 · 중간 항목의 소제목 옆에서도 연결 */
+    position: relative;
+
+    &::before {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        border-left: 1px solid var(--app-color-border-soft);
+        content: "";
+        pointer-events: none;
+    }
+
+    &:last-child::before {
+        bottom: auto;
+        height: calc(0.5lh + var(--app-space-tree-row));
+    }
+}
+
 .wg_shellToc__link {
+    /* 가로 가지는 링크 첫 줄 기준 · 번호와 제목의 시작선 유지 */
+    position: relative;
     display: grid;
-    padding: 3px 0;
+    padding: var(--app-space-tree-row) 0 var(--app-space-tree-row) calc(var(--app-space-tree-indent) + var(--app-space-inline));
     gap: var(--app-space-inline);
     grid-template-columns: max-content minmax(0, 1fr);
     color: var(--app-color-text-muted);
@@ -50,22 +61,44 @@
     line-height: var(--app-line-height-tight);
     text-decoration: none;
 
-    &:hover {
+    &::before {
+        position: absolute;
+        top: calc(0.5lh + var(--app-space-tree-row));
+        left: 0;
+        width: var(--app-space-tree-indent);
+        border-top: 1px solid var(--app-color-border-soft);
+        content: "";
+        pointer-events: none;
+    }
+
+    &:where(:hover) {
         color: var(--app-color-text-strong);
         text-decoration: underline;
     }
 
-    &:focus-visible {
-        /* 박스 대신 hover와 같은 진한 글·밑줄로 키보드 위치 표시 */
+    &:where(:hover)::before {
+        border-top-color: currentcolor;
+    }
+
+    /* 박스 대신 hover와 같은 진한 글·밑줄·가지선으로 키보드 위치 표시 */
+    &:where(:focus-visible) {
         outline: none;
         color: var(--app-color-text-strong);
         text-decoration: underline;
+    }
+
+    &:where(:focus-visible)::before {
+        border-top-color: currentcolor;
     }
 }
 
 .wg_shellToc__link--active {
     color: var(--app-color-text-strong);
     font-weight: var(--app-font-weight-active);
+
+    &::before {
+        border-top-color: currentcolor;
+    }
 }
 
 .wg_shellToc__mark {
@@ -79,14 +112,36 @@
 }
 
 .wg_shellToc__sub {
-    margin: 1px 0 6px;
+    margin: var(--app-space-tree-row) 0 4px var(--app-space-tree-indent);
     padding: 0;
     list-style: none;
 }
 
+.wg_shellToc__subItem {
+    /* 하위 줄기는 소제목 항목 기준 · 마지막 소제목 첫 줄에서 종료 */
+    position: relative;
+
+    &::before {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        border-left: 1px solid var(--app-color-border-soft);
+        content: "";
+        pointer-events: none;
+    }
+
+    &:last-child::before {
+        bottom: auto;
+        height: calc(0.5lh + var(--app-space-tree-row));
+    }
+}
+
 .wg_shellToc__subLink {
+    /* 하위 가지도 링크 첫 줄 기준 · 줄바꿈된 제목 옆으로 선이 늘어나지 않음 */
+    position: relative;
     display: grid;
-    padding: 3px 0 3px 20px;
+    padding: var(--app-space-tree-row) 0 var(--app-space-tree-row) calc(var(--app-space-tree-indent) + var(--app-space-inline));
     gap: var(--app-space-inline);
     grid-template-columns: max-content minmax(0, 1fr);
     color: var(--app-color-text-muted);
@@ -94,35 +149,42 @@
     line-height: var(--app-line-height-tight);
     text-decoration: none;
 
-    &:hover {
+    &::before {
+        position: absolute;
+        top: calc(0.5lh + var(--app-space-tree-row));
+        left: 0;
+        width: var(--app-space-tree-indent);
+        border-top: 1px solid var(--app-color-border-soft);
+        content: "";
+        pointer-events: none;
+    }
+
+    &:where(:hover) {
         color: var(--app-color-text-strong);
         text-decoration: underline;
     }
 
-    &:focus-visible {
-        /* 하위 목차도 상위 목차와 같은 포커스 표현 */
+    &:where(:hover)::before {
+        border-top-color: currentcolor;
+    }
+
+    /* 상위 목차와 같은 키보드 표현 */
+    &:where(:focus-visible) {
         outline: none;
         color: var(--app-color-text-strong);
         text-decoration: underline;
+    }
+
+    &:where(:focus-visible)::before {
+        border-top-color: currentcolor;
     }
 }
 
 .wg_shellToc__subLink--active {
     color: var(--app-color-text-strong);
     font-weight: var(--app-font-weight-active);
-}
 
-/* 좁은 데스크톱부터 문서 탐색 아래 목차 · 공유 스크롤은 공통 페이지 소유 */
-@media (width < 1440px) {
-    .wg_shellToc__root {
-        position: static;
-        min-height: 0;
-        max-height: none;
-        overflow-y: visible;
-        margin-top: var(--app-space-group);
-        padding-block: var(--app-space-group) 0;
-        padding-inline-start: 0;
-        border-top: 1px solid var(--app-color-border-soft);
-        border-left: 0;
+    &::before {
+        border-top-color: currentcolor;
     }
 }

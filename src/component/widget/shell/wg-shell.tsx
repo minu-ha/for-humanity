@@ -76,9 +76,9 @@ export const WgShell = (props: WgShellProps) => {
             {/**
              * 문서 탐색·현재 목차·본문 · 브라우저 동작 연결
              */}
-            <body className={clsx("wg_shell__root", {"wg_shell__root--outlined": tocGroups.length > 0})}>
+            <body className={clsx("wg_shell__root")}>
                 {/**
-                 * 사이트 이름과 문서 탐색 · 좁은 데스크톱의 목차 공유 스크롤
+                 * 모든 데스크톱에서 사이트 이름·문서 탐색·목차의 공유 스크롤
                  */}
                 <div className={clsx("wg_shell__sidebar")}>
                     <a className={clsx("wg_shell__brand")} href="/" aria-current={props.current === undefined ? "page" : undefined}>

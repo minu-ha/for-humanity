@@ -1,7 +1,7 @@
 /*
  * 공통 토큰의 단일 출처 · --app-종류-쓰임
  * 사용 기준: templates/document/design.md · 테마 분기는 color-scheme에 한정
- * 폭 기준 1440px·1024px·640px · shell·nav·toc 배치와 일치
+ * 폭 기준 1024px·640px · 공유 사이드바와 본문 배치
  */
 
 :root {
@@ -91,15 +91,20 @@
     --app-space-group: 20px;
     --app-space-section: 32px;
 
+    /* 탐색 트리 · 항목 위아래 여백·묶음 안쪽 여백·가지와 중첩 들여쓰기 */
+    --app-space-tree-row: 2px;
+    --app-space-tree-inset: 4px;
+    --app-space-tree-indent: 12px;
+
     /* 페이지 틀 · 좁은 화면 값은 아래 @media */
     --app-space-page-top: 28px;
     --app-space-gutter: 28px;
     --app-space-column: 32px;
     --app-space-sidebar: 12px;
+    --app-space-sidebar-gap: 16px;
     --app-size-sidebar: 200px;
-    --app-size-toc: 200px;
     --app-size-main: 900px;
-    --app-size-page: calc(var(--app-size-sidebar) + var(--app-size-main) + var(--app-space-gutter) * 2);
+    --app-size-page: calc(var(--app-size-sidebar) + var(--app-space-sidebar-gap) + var(--app-size-main) + var(--app-space-gutter) * 2);
     --app-size-brand: calc(var(--app-font-size-title) * var(--app-line-height-title) + var(--app-space-page-top) + var(--app-space-group));
 
     /* 화면 위쪽 제목 여백 · hash 도착점과 목차 읽는 선의 공통 기준 */
@@ -137,7 +142,7 @@
     --app-code-token-link: var(--app-color-link);
 }
 
-/* 폭 조건 · shell·nav의 breakpoint와 일치 */
+/* 폭 조건 · shell의 breakpoint와 일치 */
 @media (width < 1024px) {
     :root {
         --app-space-page-top: 24px;

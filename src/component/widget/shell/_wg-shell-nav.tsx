@@ -43,7 +43,7 @@ export const WgShellNav = (props: WgShellNavProps) => {
                          */}
                         <ul className={clsx("wg_shellNav__list")}>
                             {group.docs.map((doc) => (
-                                <li key={doc.id}>
+                                <li className={clsx("wg_shellNav__item")} key={doc.id}>
                                     <a
                                         className={clsx("wg_shellNav__link", {
                                             "wg_shellNav__link--active": doc.id === props.current,

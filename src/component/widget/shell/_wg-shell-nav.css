@@ -1,107 +1,93 @@
 /*
- * 읽는 순서의 문서 목록
+ * 읽는 순서의 문서 목록 · 중립색 1px 트리
  */
 .wg_shellNav__root {
-    grid-area: nav;
-
-    /* 뷰포트 sticky · 사이트 이름 아래 목록 스크롤 · html·body에 overflow 미지정 */
-    position: sticky;
-    top: var(--app-size-brand);
-    align-self: start;
-    min-height: calc(100vh - var(--app-size-brand));
-    max-height: calc(100vh - var(--app-size-brand));
-    overflow-y: auto;
-    padding-block: 0 var(--app-space-block);
-    padding-inline-end: var(--app-space-sidebar);
-    border-right: 1px solid var(--app-color-border-layout);
-    scroll-padding-block: var(--app-space-inline) var(--app-space-block);
+    font-size: var(--app-font-size-dense);
+    line-height: var(--app-line-height-tight);
 }
 
-/* 문서 묶음의 공통 간격 */
 .wg_shellNav__docs {
     display: flex;
     flex-direction: column;
     gap: var(--app-space-stack);
 }
 
-/* 공통 목록 · 행 사이를 띄워 각 링크의 왼선을 구분 */
 .wg_shellNav__list {
-    display: flex;
-    flex-direction: column;
-    margin: 0;
+    margin: 0 0 0 var(--app-space-tree-inset);
     padding: 0;
-    gap: 2px;
     list-style: none;
 }
 
+.wg_shellNav__item {
+    /* 세로 줄기는 각 항목 기준 · 마지막 항목의 첫 줄 가운데에서 종료 */
+    position: relative;
+
+    &::before {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        border-left: 1px solid var(--app-color-border-soft);
+        content: "";
+        pointer-events: none;
+    }
+
+    &:last-child::before {
+        bottom: auto;
+        height: calc(0.5lh + var(--app-space-tree-row));
+    }
+}
+
 .wg_shellNav__link {
+    /* 가로 가지는 링크 첫 줄 기준 · 여러 줄 제목에서도 연결 위치 유지 */
+    position: relative;
     display: block;
-    padding: 3px 0 3px 12px;
-    border-left: 2px solid var(--app-color-border-soft);
-    color: var(--app-color-link);
+    padding: var(--app-space-tree-row) 0 var(--app-space-tree-row) calc(var(--app-space-tree-indent) + var(--app-space-inline));
+    color: var(--app-color-text);
     font-size: var(--app-font-size-dense);
     line-height: var(--app-line-height-tight);
     text-decoration: none;
 
-    /* 현재 문서의 글·레일 색 우선 */
-    &:where(:visited) {
-        color: var(--app-color-link-visited);
+    &::before {
+        position: absolute;
+        top: calc(0.5lh + var(--app-space-tree-row));
+        left: 0;
+        width: var(--app-space-tree-indent);
+        border-top: 1px solid var(--app-color-border-soft);
+        content: "";
+        pointer-events: none;
     }
 
     &:where(:hover) {
-        border-left-color: currentcolor;
         text-decoration: underline;
     }
 
-    /* 탐색 링크는 요청한 hover 표현으로 키보드 위치도 표시 */
+    &:where(:hover)::before {
+        border-top-color: currentcolor;
+    }
+
+    /* hover와 같은 밑줄·가지선으로 키보드 위치 표시 */
     &:where(:focus-visible) {
-        border-left-color: currentcolor;
         outline: none;
         text-decoration: underline;
     }
+
+    &:where(:focus-visible)::before {
+        border-top-color: currentcolor;
+    }
 }
 
-/* 현재 문서 */
 .wg_shellNav__link--active {
-    border-left-color: var(--app-color-text-strong);
     color: var(--app-color-text-strong);
     font-weight: var(--app-font-weight-active);
+
+    &::before {
+        border-top-color: currentcolor;
+    }
 }
 
-/* 문서 묶음 이름 */
 .wg_shellNav__group {
     margin: 0 0 4px;
     color: var(--app-color-text-muted);
     font-size: var(--app-font-size-label);
-}
-
-/* 좁은 데스크톱의 공유 스크롤은 공통 페이지 소유 */
-@media (width < 1440px) {
-    .wg_shellNav__root {
-        position: static;
-        min-height: 0;
-        max-height: none;
-        overflow-y: visible;
-        padding-block: 0;
-        padding-inline-end: 0;
-        border-right: 0;
-    }
-}
-
-/* 좁은 화면 · 본문 위 텍스트 링크 목록 */
-@media (width < 1024px) {
-    .wg_shellNav__list {
-        flex-flow: row wrap;
-        gap: 4px var(--app-space-stack);
-    }
-
-    .wg_shellNav__link {
-        padding: 3px 0;
-        border: 0;
-    }
-
-    .wg_shellNav__link--active {
-        text-decoration: underline;
-        text-underline-offset: 3px;
-    }
 }
