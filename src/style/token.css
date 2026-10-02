@@ -12,6 +12,7 @@
     --app-color-ground: light-dark(#fff, #181818);
     --app-color-surface: light-dark(#fff, #181818);
     --app-color-code: light-dark(#f1f1eb, #22221f);
+    --app-color-backdrop: light-dark(rgb(0 0 0 / 30%), rgb(0 0 0 / 55%));
 
     /* 글 · text 본문, strong 강조, muted 라벨 */
     --app-color-text: light-dark(#333, #d5d5d5);
@@ -104,6 +105,9 @@
     --app-size-main: 900px;
     --app-size-page: calc(var(--app-size-main) + (var(--app-size-sidebar) + var(--app-space-sidebar-gap) + var(--app-space-gutter)) * 2);
     --app-size-brand: calc(var(--app-font-size-title) * var(--app-line-height-title) + var(--app-space-page-top) + var(--app-space-group));
+    --app-size-mobile-header: 56px;
+    --app-size-menu-button: 44px;
+    --app-size-drawer: 320px;
 
     /* 화면 위쪽 제목 여백 · hash 도착점과 목차 읽는 선의 공통 기준 */
     --app-space-anchor: 80px;
@@ -145,6 +149,8 @@
     :root {
         --app-space-page-top: 24px;
         --app-space-gutter: 20px;
+        --app-space-tree-row: 7px;
+        --app-space-anchor: calc(var(--app-size-mobile-header) + var(--app-space-block));
     }
 }
 
@@ -152,6 +158,5 @@
     :root {
         --app-space-page-top: 20px;
         --app-space-gutter: 16px;
-        --app-space-anchor: 48px;
     }
 }

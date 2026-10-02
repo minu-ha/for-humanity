@@ -5,6 +5,7 @@ import type {DocOutline} from "@/component/widget/shell/_type/doc-outline";
 import {WgShellNav} from "@/component/widget/shell/_wg-shell-nav";
 import {WgShellToc} from "@/component/widget/shell/_wg-shell-toc";
 import {asset_client_path, asset_favicon_path, asset_reload_path, asset_style_path} from "@/constant/asset";
+import {copy_nav_close, copy_nav_open, copy_nav_title} from "@/constant/copy";
 import type {Doc} from "@/type/doc";
 import type {SiteAssets} from "@/type/site-assets";
 import type {SiteConfig} from "@/type/site-config";
@@ -78,16 +79,66 @@ export const WgShell = (props: WgShellProps) => {
              */}
             <body className={clsx("wg_shell__root")}>
                 {/**
-                 * 모든 데스크톱에서 사이트 이름·문서 탐색·목차의 공유 스크롤
+                 * 데스크톱의 공유 사이드바 · 모바일에서는 브랜드와 메뉴 버튼
                  */}
                 <div className={clsx("wg_shell__sidebar")}>
-                    <a className={clsx("wg_shell__brand")} href="/" aria-current={props.current === undefined ? "page" : undefined}>
-                        {props.site.title}
-                    </a>
-                    <WgShellNav site={props.site} docs={props.docs} current={props.current} />
-                    {tocGroups.length > 0 && <WgShellToc groups={tocGroups} />}
+                    {/**
+                     * 브랜드와 모바일 메뉴 진입 · 버튼은 동작 연결 후 표시
+                     */}
+                    <div className={clsx("wg_shell__brandRow")}>
+                        {/**
+                         * 어느 문서에서도 README 홈으로 이동
+                         */}
+                        <a className={clsx("wg_shell__brand")} href="/" aria-current={props.current === undefined ? "page" : undefined}>
+                            {props.site.title}
+                        </a>
+                        {/**
+                         * 접힌 모바일 탐색의 진입점과 열림 상태 전달
+                         */}
+                        <button
+                            className={clsx("wg_shell__menuToggle")}
+                            type="button"
+                            aria-label={copy_nav_open}
+                            aria-controls="fh-navigation-drawer"
+                            aria-expanded="false"
+                            data-navigation-open=""
+                        >
+                            <svg className={clsx("wg_shell__menuIcon")} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                <path d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
+                    </div>
+                    {/**
+                     * 같은 탐색 DOM을 모바일 대화상자로 이동 · 스크립트 없이도 기본 목록 제공
+                     */}
+                    <div className={clsx("wg_shell__navigation")} data-navigation="">
+                        <WgShellNav site={props.site} docs={props.docs} current={props.current} />
+                        {tocGroups.length > 0 && <WgShellToc groups={tocGroups} />}
+                    </div>
                 </div>
                 <main className={clsx("wg_shell__main")}>{props.children}</main>
+                {/**
+                 * 브라우저의 모달 포커스·Escape 처리 · 목록은 한 번만 렌더링
+                 */}
+                <dialog className={clsx("wg_shell__drawer")} id="fh-navigation-drawer" aria-labelledby="fh-navigation-title" data-navigation-drawer="">
+                    <div className={clsx("wg_shell__drawerHeader")}>
+                        {/**
+                         * 대화상자의 접근 가능한 이름
+                         */}
+                        <h2 className={clsx("wg_shell__drawerTitle")} id="fh-navigation-title">
+                            {copy_nav_title}
+                        </h2>
+                        {/**
+                         * 목록을 스크롤해도 보이는 닫기 동작
+                         */}
+                        <button className={clsx("wg_shell__drawerClose")} type="button" aria-label={copy_nav_close} data-navigation-close="">
+                            <svg className={clsx("wg_shell__menuIcon")} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                <path d="m6 6 12 12M18 6 6 18" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div className={clsx("wg_shell__drawerContent")} data-navigation-content="" />
+                </dialog>
                 <img className={clsx("wg_shell__cursorFace")} src={asset_favicon_path} width="24" height="24" alt="" aria-hidden="true" draggable={false} data-cursor-face="" />
                 <script type="module" src={asset_client_path} />
             </body>

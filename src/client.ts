@@ -1,13 +1,16 @@
 /*
- * 브라우저 동작 · 커서 장식, 테마, 읽는 절, hash 위치 보정
+ * 브라우저 동작 · 모바일 탐색, 커서 장식, 읽는 절, hash 위치 보정
  * 서버 HTML의 data-* 연결 · React hydration 없음
  */
 
 import {heading_highlight_hold_ms} from "@/component/widget/prose/_constant/heading-highlight";
 import {cursor_face_offset_px, cursor_face_storage_key} from "@/component/widget/shell/_constant/cursor-face";
 import {reading_line_slack_px} from "@/component/widget/shell/_constant/reading-line";
+import {bindMobileNavigation} from "@/component/widget/shell/_function/bind-mobile-navigation";
 import {findHashTarget} from "@/util/dom/find-hash-target";
 import {revealHashTarget} from "@/util/dom/reveal-hash-target";
+
+bindMobileNavigation();
 
 const cursorFace = document.querySelector<HTMLImageElement>("[data-cursor-face]");
 

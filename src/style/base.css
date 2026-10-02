@@ -9,6 +9,7 @@
 /* 페이지 바탕과 절 이동 · 초기 hash 보정 중 smooth scroll 일시 중지 */
 :root {
     background: var(--app-color-ground);
+    scrollbar-gutter: stable;
     scroll-behavior: smooth;
 }
 

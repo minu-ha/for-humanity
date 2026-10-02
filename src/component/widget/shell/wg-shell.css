@@ -20,8 +20,12 @@
     -webkit-font-smoothing: antialiased;
 }
 
-.wg_shell__brand {
-    display: block;
+.wg_shell__root--drawerOpen {
+    overflow: hidden;
+}
+
+.wg_shell__brandRow {
+    display: flex;
 
     /* 공유 사이드바의 스크롤 기준 · 목록과 목차 위에서 이름 고정 */
     position: sticky;
@@ -32,6 +36,14 @@
     height: var(--app-size-brand);
     padding-block: var(--app-space-page-top) var(--app-space-group);
     background: var(--app-color-ground);
+    gap: var(--app-space-inline);
+    align-items: start;
+}
+
+.wg_shell__brand {
+    display: block;
+    flex: 1;
+    min-width: 0;
     overflow: hidden;
     color: var(--app-color-text-strong);
     font-family: var(--app-font-brand);
@@ -54,6 +66,43 @@
     }
 }
 
+.wg_shell__menuIcon {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentcolor;
+    stroke-linecap: round;
+    stroke-width: 1.5;
+}
+
+.wg_shell__menuToggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: var(--app-size-menu-button);
+    height: var(--app-size-menu-button);
+    padding: 0;
+    border: 0;
+    border-radius: var(--app-radius-box);
+    background: transparent;
+    color: var(--app-color-text-strong);
+    cursor: pointer;
+
+    &:hover {
+        background: var(--app-color-accent-soft);
+    }
+
+    &:focus-visible {
+        outline: var(--app-outline-focus);
+        outline-offset: var(--app-outline-focus-offset);
+    }
+}
+
+.wg_shell__menuToggle--visible {
+    display: flex;
+}
+
 .wg_shell__sidebar {
     grid-area: nav;
 
@@ -69,6 +118,10 @@
     scroll-padding-block: var(--app-size-brand) var(--app-space-block);
 }
 
+.wg_shell__navigation {
+    min-width: 0;
+}
+
 .wg_shell__main {
     grid-area: main;
     min-width: 0;
@@ -78,6 +131,76 @@
     /* 문서 목록의 시작선 · 마지막 절도 읽는 선까지 이동 가능한 끝 여백 */
     padding-block: var(--app-size-brand) calc(100vh - var(--app-space-anchor));
     padding-inline: var(--app-space-column);
+}
+
+.wg_shell__drawer {
+    /* 네이티브 모달의 top layer · 뷰포트 왼쪽에 고정 */
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: min(var(--app-size-drawer), calc(100% - var(--app-space-gutter) * 2));
+    max-width: none;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    padding: 0 var(--app-space-gutter) var(--app-space-group);
+    border: 0;
+    border-right: 1px solid var(--app-color-border-layout);
+    background: var(--app-color-ground);
+    color: var(--app-color-text);
+    overscroll-behavior: contain;
+    scroll-padding-block: var(--app-size-mobile-header) var(--app-space-group);
+
+    &::backdrop {
+        background: var(--app-color-backdrop);
+    }
+}
+
+.wg_shell__drawerHeader {
+    /* 스크롤하는 drawer 안에서 닫기 버튼 유지 */
+    position: sticky;
+    top: 0;
+    z-index: var(--app-z-index-sticky);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--app-space-inline);
+    min-height: var(--app-size-mobile-header);
+    margin-bottom: var(--app-space-block);
+    background: var(--app-color-ground);
+}
+
+.wg_shell__drawerTitle {
+    margin: 0;
+    font-size: var(--app-font-size-part);
+    font-weight: var(--app-font-weight-strong);
+}
+
+.wg_shell__drawerClose {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: var(--app-size-menu-button);
+    height: var(--app-size-menu-button);
+    padding: 0;
+    border: 0;
+    border-radius: var(--app-radius-box);
+    background: transparent;
+    color: var(--app-color-text-strong);
+    cursor: pointer;
+
+    &:hover {
+        background: var(--app-color-accent-soft);
+    }
+
+    &:focus-visible {
+        outline: var(--app-outline-focus);
+        outline-offset: var(--app-outline-focus-offset);
+    }
+}
+
+.wg_shell__drawerContent {
+    min-width: 0;
 }
 
 .wg_shell__cursorFace {
@@ -96,7 +219,7 @@
     visibility: visible;
 }
 
-/* 좁은 화면 · 문서 탐색 → 목차 → 본문 순서의 1열 */
+/* 좁은 화면 · 상단 브랜드와 메뉴 버튼 · 탐색 목록은 네이티브 모달 */
 @media (width < 1024px) {
     .wg_shell__root {
         max-width: calc(var(--app-size-main) + var(--app-space-gutter) * 2);
@@ -115,8 +238,19 @@
         border-bottom: 1px solid var(--app-color-border-layout);
     }
 
-    .wg_shell__brand {
+    .wg_shell__sidebar--navigationReady {
+        /* 본문을 스크롤해도 메뉴 진입 유지 · 스크립트 없는 긴 목록에는 적용하지 않음 */
+        position: sticky;
+        top: 0;
+        z-index: var(--app-z-index-sticky);
+        background: var(--app-color-ground);
+    }
+
+    .wg_shell__brandRow {
         position: static;
+        height: var(--app-size-mobile-header);
+        padding-block: 0;
+        align-items: center;
     }
 
     .wg_shell__main {

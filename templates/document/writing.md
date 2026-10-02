@@ -105,6 +105,7 @@ YAML 영역은 `remark-frontmatter`, 값은 `yaml`, 필드 검증은 Zod로 처�
 
 ```markdown
 [Settings](settings.md)
+[Settings with query](settings.md?view=compact#navigation)
 [Status badges](settings.md#status-badges)
 [Home](README.md)
 ```

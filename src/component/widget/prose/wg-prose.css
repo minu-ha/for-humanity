@@ -12,6 +12,9 @@
         line-height: var(--app-line-height-title);
         letter-spacing: var(--app-letter-spacing-title);
         text-wrap: balance;
+
+        /* 문서 탐색 라벨과 같은 글자 위쪽 기준 · 글꼴 크기별 내부 여백 제거 */
+        text-box: trim-start cap alphabetic;
     }
 
     & p {

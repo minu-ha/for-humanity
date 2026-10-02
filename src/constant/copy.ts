@@ -13,6 +13,21 @@ export const copy_site_title_default = "for humanity";
 export const copy_nav_aria_label = "Document navigation";
 
 /**
+ * 모바일 문서 탐색 열기 버튼
+ */
+export const copy_nav_open = "Open navigation";
+
+/**
+ * 모바일 문서 탐색 닫기 버튼
+ */
+export const copy_nav_close = "Close navigation";
+
+/**
+ * 모바일 문서 탐색 대화상자 제목
+ */
+export const copy_nav_title = "Navigation";
+
+/**
  * README가 없는 홈의 안내
  */
 export const copy_home_missing = "문서 폴더에 README.md를 추가하면 이곳에 홈 화면으로 표시됩니다.";

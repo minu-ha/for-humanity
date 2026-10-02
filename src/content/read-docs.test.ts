@@ -157,6 +157,47 @@ test("a missing README provides a creation hint without generated overview cards
     assert.doesNotMatch(html, /pg_home__card|>Overview<|>Documents</);
 });
 
+test("relative Markdown links preserve query strings and fragments", async (t) => {
+    const root = await mkdtemp(join(tmpdir(), "for-humanity-links-"));
+    const site = siteConfigSchema.parse({});
+
+    t.after(() => rm(root, {recursive: true, force: true}));
+    await mkdir(join(root, "guide"));
+    await Promise.all([
+        writeFile(join(root, "README.md"), "# Home\n\n## Start\n"),
+        writeFile(join(root, "api.mdx"), "---\nname: API\nlabel: API\ngroup: Guide\n---\n\n## Details\n"),
+        writeFile(
+            join(root, "guide/setup.md"),
+            [
+                "---\nname: Setup\nlabel: Setup\ngroup: Guide\n---",
+                "[API](../api.mdx?mode=compact&lang=ko#details)",
+                "[Query only](../api.mdx?mode=compact)",
+                "[Home](../README.md?lang=ko#start)",
+                "[Reference][api]\n\n[api]: ../api.mdx?mode=reference#details",
+                "[Fragment](../api.mdx#details?literal=yes)",
+                "[External](https://example.com/api.md?mode=compact#details)",
+                "[Absolute](/api.md?mode=compact#details)",
+                "[Asset](diagram.svg?version=2#label)",
+                "[Local](#details?literal=yes)",
+            ].join("\n\n"),
+        ),
+    ]);
+
+    const docs = await readDocs({root, processor: createProcessor({site, root})});
+    const setup = docs.find((doc) => doc.id === "guide/setup");
+
+    assert.ok(setup);
+    assert.match(setup.html, /href="\/api\/\?mode=compact&#x26;lang=ko#details"/);
+    assert.match(setup.html, /href="\/api\/\?mode=compact"/);
+    assert.match(setup.html, /href="\/\?lang=ko#start"/);
+    assert.match(setup.html, /href="\/api\/\?mode=reference#details"/);
+    assert.match(setup.html, /href="\/api\/#details\?literal=yes"/);
+    assert.match(setup.html, /href="https:\/\/example\.com\/api\.md\?mode=compact#details"/);
+    assert.match(setup.html, /href="\/api\.md\?mode=compact#details"/);
+    assert.match(setup.html, /href="diagram\.svg\?version=2#label"/);
+    assert.match(setup.html, /href="#details\?literal=yes"/);
+});
+
 test("headings and contents preserve authored text without automatic numbering", async (t) => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-headings-"));
     const site = siteConfigSchema.parse({});

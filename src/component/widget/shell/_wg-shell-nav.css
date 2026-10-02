@@ -130,4 +130,5 @@
     margin: 0 0 4px;
     color: var(--app-color-text-muted);
     font-size: var(--app-font-size-label);
+    text-box: trim-start cap alphabetic;
 }

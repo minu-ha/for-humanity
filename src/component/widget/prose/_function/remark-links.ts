@@ -6,7 +6,7 @@ import type {VFile} from "vfile";
 import {copy_warn_broken_link} from "@/constant/copy";
 
 /**
- * 상대 Markdown 링크 → 사이트 URL · settings.md#시간대 → /settings/#시간대
+ * 상대 Markdown 링크 → 사이트 URL · query·hash 원문 유지
  * 외부·절대 URL과 같은 페이지 hash 유지 · 없는 파일은 터미널 경고
  */
 export const remarkLinks = (options: {root: string}) => (tree: Root, file: VFile) => {
@@ -17,8 +17,8 @@ export const remarkLinks = (options: {root: string}) => (tree: Root, file: VFile
             return;
         }
 
-        // 셋째 capture: 선택 hash · 없으면 빈 문자열
-        const match = /^(?![a-z]+:|\/|#)([^#?]+)(\.mdx?)(#.*|)$/i.exec(node.url);
+        // 셋째 capture: query·hash 접미사 · 파일 확인과 경로 정규화에서 제외
+        const match = /^(?![a-z]+:|\/|#)([^#?]+)(\.mdx?)([?#].*|)$/i.exec(node.url);
 
         if (match) {
             if (!existsSync(resolve(dirname(file.path), `${match[1]}${match[2]}`))) {
