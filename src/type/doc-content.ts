@@ -9,7 +9,7 @@ export interface DocContent {
      */
     html: string;
     /**
-     * 사이드바 목차 입력
+     * 현재 문서의 독립 목차 입력
      */
     outline: DocOutline;
 }

@@ -1,14 +1,19 @@
 /*
- * 문서 목록과 가름별 목차의 공통 표현
+ * 문서 목록과 사이트 도구
  */
 .wg_shellNav__root {
-    /* 뷰포트 sticky · html·body에 overflow 미지정 */
+    grid-area: nav;
+
+    /* 뷰포트 sticky · 화면 높이의 열 경계 · html·body에 overflow 미지정 */
     position: sticky;
     top: 0;
     align-self: start;
+    min-height: 100vh;
     max-height: 100vh;
     overflow-y: auto;
     padding-block: var(--app-space-page-top);
+    padding-inline-end: var(--app-space-sidebar);
+    border-right: 1px solid var(--app-color-border-layout);
 }
 
 .wg_shellNav__brand {
@@ -31,16 +36,7 @@
     }
 }
 
-/* 목차 라벨 */
-.wg_shellNav__label {
-    margin: var(--app-space-block) 0 var(--app-space-inline);
-    color: var(--app-color-text-muted);
-    font-size: var(--app-font-size-label);
-    font-weight: var(--app-font-weight-mark);
-    letter-spacing: var(--app-letter-spacing-label);
-}
-
-/* 문서 목록과 목차 사이 구분선 */
+/* 문서 목록과 사이트 도구 사이 구분선 */
 .wg_shellNav__docs {
     display: flex;
     flex-direction: column;
@@ -48,17 +44,6 @@
     padding-bottom: var(--app-space-block);
     gap: var(--app-space-stack);
     border-bottom: 1px solid var(--app-color-border-soft);
-}
-
-.wg_shellNav__docIcon {
-    flex: none;
-    width: 16px;
-    height: 16px;
-    color: var(--app-color-icon);
-}
-
-.wg_shellNav__docIcon--active {
-    color: var(--app-color-text-strong);
 }
 
 /* 공통 목록 · 행 사이를 띄워 각 링크의 왼선을 구분 */
@@ -72,10 +57,8 @@
 }
 
 .wg_shellNav__link {
-    display: flex;
-    align-items: center;
+    display: block;
     padding: 3px 0 3px 12px;
-    gap: var(--app-space-inline);
     border-left: 2px solid var(--app-color-border-soft);
     color: var(--app-color-link);
     font-size: var(--app-font-size-dense);
@@ -88,90 +71,24 @@
         text-decoration: underline;
     }
 
-    &:hover .wg_shellNav__docIcon {
-        color: var(--app-color-link-hover);
-    }
-
-    &:focus-visible .wg_shellNav__docIcon {
-        color: var(--app-color-link-hover);
-    }
-
-    &:active .wg_shellNav__docIcon {
-        color: var(--app-color-text-strong);
-    }
-
     &:focus-visible {
         outline: var(--app-outline-focus);
         outline-offset: var(--app-outline-focus-offset);
     }
 }
 
-/* 현재 문서·읽는 절 */
+/* 현재 문서 */
 .wg_shellNav__link--active {
     border-left-color: var(--app-color-text-strong);
     color: var(--app-color-text-strong);
     font-weight: var(--app-font-weight-mark);
 }
 
-/* 목차의 절 번호 · 최소 2ch */
-.wg_shellNav__mark {
-    flex: none;
-    min-width: 2ch;
-    color: var(--app-color-text-muted);
-    font-family: var(--app-font-mono);
-    font-size: var(--app-font-size-mark);
-    font-weight: 400;
-}
-
-/* 본문 가름과 같은 목차 묶음 이름 */
+/* 문서 묶음 이름 */
 .wg_shellNav__group {
     margin: 0 0 4px;
     color: var(--app-color-text-muted);
     font-size: var(--app-font-size-label);
-
-    /* 이전 목록 뒤의 묶음 간격 */
-    .wg_shellNav__list + & {
-        margin-top: var(--app-space-stack);
-    }
-}
-
-/* 현재 절의 소제목 */
-.wg_shellNav__sub {
-    display: none;
-    margin: 1px 0 6px;
-    padding: 0;
-    list-style: none;
-}
-
-.wg_shellNav__sub--open {
-    display: block;
-}
-
-.wg_shellNav__subLink {
-    display: flex;
-    align-items: center;
-    padding: 3px 0 3px 32px;
-    gap: var(--app-space-inline);
-    border-left: 2px solid var(--app-color-border-soft);
-    color: var(--app-color-link);
-    font-size: var(--app-font-size-detail);
-    line-height: var(--app-line-height-tight);
-    text-decoration: none;
-
-    &:hover {
-        color: var(--app-color-link-hover);
-        text-decoration: underline;
-    }
-
-    &:focus-visible {
-        outline: var(--app-outline-focus);
-        outline-offset: var(--app-outline-focus-offset);
-    }
-}
-
-.wg_shellNav__subLink--active {
-    border-left-color: var(--app-color-border);
-    color: var(--app-color-text-strong);
 }
 
 .wg_shellNav__actions {
@@ -237,8 +154,11 @@
 @media (width < 1024px) {
     .wg_shellNav__root {
         position: static;
+        min-height: 0;
         max-height: none;
         padding-block: var(--app-space-page-top) 0;
+        padding-inline-end: 0;
+        border-right: 0;
     }
 
     .wg_shellNav__list {
@@ -254,16 +174,5 @@
     .wg_shellNav__link--active {
         text-decoration: underline;
         text-underline-offset: 3px;
-    }
-
-    .wg_shellNav__group {
-        .wg_shellNav__list + & {
-            margin-top: 14px;
-        }
-    }
-
-    /* 좁은 화면 목차의 소제목 숨김 */
-    .wg_shellNav__sub--open {
-        display: none;
     }
 }

@@ -1,7 +1,7 @@
 /*
  * 공통 토큰의 단일 출처 · --app-종류-쓰임
  * 사용 기준: templates/document/design.md · 테마 분기는 color-scheme에 한정
- * 폭 기준 1024px·640px는 shell·nav와 일치
+ * 폭 기준 1440px·1024px·640px · shell·nav·toc 배치와 일치
  */
 
 :root {
@@ -18,9 +18,6 @@
     --app-color-text-strong: light-dark(#222, #eee);
     --app-color-text-muted: light-dark(#666, #aaa);
 
-    /* 장식 아이콘 · 링크 이름보다 옅은 색 */
-    --app-color-icon: light-dark(#999, #888);
-
     /* 앵커로 도착한 제목 · 형광펜 바탕과 테마별 읽기 대비 */
     --app-color-anchor-highlight: light-dark(#f4f58a, #666322);
 
@@ -28,9 +25,10 @@
     --app-motion-duration-highlight-fade: 600ms;
     --app-motion-easing-out: ease-out;
 
-    /* 선 · border 상자·목록, soft 표 구분 */
+    /* 선 · border 상자·목록, soft 표 구분, layout 열 경계 */
     --app-color-border: light-dark(#aaa, #555);
     --app-color-border-soft: light-dark(#ddd, #333);
+    --app-color-border-layout: light-dark(#eee, #2b2b2b);
 
     /* 강조 · 번호·현재 절·코드 · soft 행 hover 바탕 */
     --app-color-accent: light-dark(#555, #b5b5b5);
@@ -94,12 +92,14 @@
     /* 페이지 틀 · 좁은 화면 값은 아래 @media */
     --app-space-page-top: 32px;
     --app-space-gutter: 32px;
-    --app-space-column: 56px;
-    --app-size-sidebar: 264px;
+    --app-space-column: 48px;
+    --app-space-sidebar: 16px;
+    --app-size-sidebar: 224px;
+    --app-size-toc: 224px;
     --app-size-page: 1920px;
 
-    /* hash 제목 위치와 목차 읽는 선의 공통 기준 */
-    --app-space-anchor: 40vh;
+    /* 화면 위쪽 제목 여백 · hash 도착점과 목차 읽는 선의 공통 기준 */
+    --app-space-anchor: 80px;
 
     /* 모서리 · 직각 기본값 */
     --app-radius-pill: 0;
@@ -152,5 +152,6 @@
     :root {
         --app-space-page-top: 20px;
         --app-space-gutter: 16px;
+        --app-space-anchor: 48px;
     }
 }

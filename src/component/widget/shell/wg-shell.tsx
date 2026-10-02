@@ -1,7 +1,9 @@
 import clsx from "clsx";
 import type {ReactNode} from "react";
+import {toTocGroups} from "@/component/widget/shell/_function/to-toc-groups";
 import type {DocOutline} from "@/component/widget/shell/_type/doc-outline";
 import {WgShellNav} from "@/component/widget/shell/_wg-shell-nav";
+import {WgShellToc} from "@/component/widget/shell/_wg-shell-toc";
 import {asset_client_path, asset_favicon_path, asset_reload_path, asset_style_path} from "@/constant/asset";
 import {theme_mode, theme_storage_key} from "@/constant/theme";
 import type {Doc} from "@/type/doc";
@@ -23,7 +25,7 @@ const themeScript = `(function(){document.documentElement.style.scrollBehavior="
 const reloadScript = `new EventSource(${JSON.stringify(asset_reload_path)}).onmessage=function(){location.reload()}`;
 
 /**
- * 공통 HTML 틀의 입력 · 사이드바와 본문
+ * 공통 HTML 틀의 입력 · 문서 탐색·현재 목차·본문
  */
 export interface WgShellProps {
     /**
@@ -57,6 +59,8 @@ export interface WgShellProps {
 }
 
 export const WgShell = (props: WgShellProps) => {
+    const tocGroups = props.outline === undefined ? [] : toTocGroups(props.outline);
+
     return (
         <html lang="ko">
             {/**
@@ -77,10 +81,11 @@ export const WgShell = (props: WgShellProps) => {
                 {props.assets.reload && <script dangerouslySetInnerHTML={{__html: reloadScript}} />}
             </head>
             {/**
-             * 문서 이동과 본문 · 브라우저 동작 연결
+             * 문서 탐색·현재 목차·본문 · 브라우저 동작 연결
              */}
-            <body className={clsx("wg_shell__root")}>
-                <WgShellNav site={props.site} docs={props.docs} current={props.current} outline={props.outline} />
+            <body className={clsx("wg_shell__root", {"wg_shell__root--outlined": tocGroups.length > 0})}>
+                <WgShellNav site={props.site} docs={props.docs} current={props.current} />
+                {tocGroups.length > 0 && <WgShellToc groups={tocGroups} />}
                 <main className={clsx("wg_shell__main")}>{props.children}</main>
                 <img className={clsx("wg_shell__cursorFace")} src={asset_favicon_path} width="24" height="24" alt="" aria-hidden="true" draggable={false} data-cursor-face="" />
                 <script type="module" src={asset_client_path} />

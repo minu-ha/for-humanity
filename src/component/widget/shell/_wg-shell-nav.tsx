@@ -1,9 +1,5 @@
 import clsx from "clsx";
-import {Fragment} from "react";
-import {doc_icon_path} from "@/component/widget/shell/_constant/doc-icon";
-import {toTocGroups} from "@/component/widget/shell/_function/to-toc-groups";
-import type {DocOutline} from "@/component/widget/shell/_type/doc-outline";
-import {copy_nav_aria_label, copy_nav_toc_label, copy_repository_github, copy_repository_gitlab, copy_theme_label} from "@/constant/copy";
+import {copy_nav_aria_label, copy_repository_github, copy_repository_gitlab, copy_theme_label} from "@/constant/copy";
 import {site_repository_provider} from "@/constant/site";
 import {theme_mode} from "@/constant/theme";
 import {toDocGroups} from "@/content/to-doc-groups";
@@ -12,7 +8,7 @@ import type {SiteConfig} from "@/type/site-config";
 import "./_wg-shell-nav.css";
 
 /**
- * 서버 사이드바 입력 · 읽는 순서의 문서 묶음과 가름별 목차
+ * 서버 사이드바 입력 · 읽는 순서의 문서 묶음과 사이트 도구
  * 브라우저 동작은 client.ts 소유 · data-* 연결
  */
 export interface WgShellNavProps {
@@ -28,15 +24,10 @@ export interface WgShellNavProps {
      * 현재 문서 id · 첫 화면 생략
      */
     current?: string;
-    /**
-     * 현재 문서 또는 README 홈의 목차
-     */
-    outline?: DocOutline;
 }
 
 export const WgShellNav = (props: WgShellNavProps) => {
     const docGroups = toDocGroups({docs: props.docs, navigation: props.site.navigation});
-    const tocGroups = props.outline === undefined ? [] : toTocGroups(props.outline);
     const repositoryLabel = props.site.repository && (props.site.repository.provider === site_repository_provider.github ? copy_repository_github : copy_repository_gitlab);
 
     return (
@@ -49,13 +40,13 @@ export const WgShellNav = (props: WgShellNavProps) => {
              */}
             <div className={clsx("wg_shellNav__docs")}>
                 {/**
-                 * 묶음 이름과 독립 문서 · 기본 얼굴 표지는 장식이고 이름이 링크의 접근 가능한 이름
+                 * 묶음 이름과 독립 문서 · 제목이 링크의 접근 가능한 이름
                  */}
                 {docGroups.map((group) => (
                     <section className={clsx("wg_shellNav__docGroup")} key={group.name} aria-label={group.name}>
                         <div className={clsx("wg_shellNav__group")}>{group.name}</div>
                         {/**
-                         * 문서의 URL·현재 페이지 표시는 첫 글자와 무관하게 유지
+                         * 문서의 URL과 현재 페이지 표시
                          */}
                         <ul className={clsx("wg_shellNav__list")}>
                             {group.docs.map((doc) => (
@@ -68,16 +59,6 @@ export const WgShellNav = (props: WgShellNavProps) => {
                                         title={doc.data.label}
                                         aria-current={doc.id === props.current ? "page" : undefined}
                                     >
-                                        <svg
-                                            className={clsx("wg_shellNav__docIcon", {"wg_shellNav__docIcon--active": doc.id === props.current})}
-                                            viewBox="0 0 16 16"
-                                            fill="currentColor"
-                                            shapeRendering="crispEdges"
-                                            aria-hidden="true"
-                                            focusable="false"
-                                        >
-                                            <path d={doc_icon_path} fillRule="evenodd" />
-                                        </svg>
                                         {doc.data.name}
                                     </a>
                                 </li>
@@ -86,41 +67,6 @@ export const WgShellNav = (props: WgShellNavProps) => {
                     </section>
                 ))}
             </div>
-            {/**
-             * 가름별 목차 · 현재 절 소제목은 client.ts에서 펼침
-             */}
-            {tocGroups.length > 0 && (
-                <Fragment>
-                    <div className={clsx("wg_shellNav__label")}>{copy_nav_toc_label}</div>
-                    {tocGroups.map((group) => (
-                        <Fragment key={group.sections[0].heading.slug}>
-                            {group.part !== undefined && <div className={clsx("wg_shellNav__group")}>{group.part}</div>}
-                            <ul className={clsx("wg_shellNav__list")}>
-                                {group.sections.map((section) => (
-                                    <li key={section.heading.slug}>
-                                        <a className={clsx("wg_shellNav__link")} href={`#${section.heading.slug}`} data-toc-link="">
-                                            <span className={clsx("wg_shellNav__mark")}>{section.number}</span>
-                                            {section.heading.text}
-                                        </a>
-                                        {section.subs.length > 0 && (
-                                            <ul className={clsx("wg_shellNav__sub")} data-toc-sub="">
-                                                {section.subs.map((sub) => (
-                                                    <li key={sub.heading.slug}>
-                                                        <a className={clsx("wg_shellNav__subLink")} href={`#${sub.heading.slug}`} data-toc-sub-link="">
-                                                            <span className={clsx("wg_shellNav__mark")}>{sub.number}</span>
-                                                            {sub.heading.text}
-                                                        </a>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        )}
-                                    </li>
-                                ))}
-                            </ul>
-                        </Fragment>
-                    ))}
-                </Fragment>
-            )}
             {/**
              * 문서 탐색 뒤의 사이트 도구 · 테마와 선택 저장소 링크
              */}

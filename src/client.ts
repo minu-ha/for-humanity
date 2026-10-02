@@ -281,7 +281,6 @@ const tocSections = [...document.querySelectorAll<HTMLAnchorElement>("[data-toc-
         {
             heading,
             link,
-            list: item.querySelector("[data-toc-sub]"),
             subs: [...item.querySelectorAll<HTMLAnchorElement>("[data-toc-sub-link]")].flatMap((sub) => {
                 const subHeading = findHashTarget(sub.hash);
 
@@ -300,15 +299,15 @@ if (firstSection) {
     const markActive = () => {
         // scroll-margin-top 계산값: CSS px
         const line = Number.parseFloat(getComputedStyle(firstSection.heading).scrollMarginTop) + reading_line_slack_px;
-        const current = tocSections.findLast((section) => section.heading.getClientRects().length > 0 && section.heading.getBoundingClientRect().top <= line) ?? firstSection;
-        const sub = current.subs.findLast((item) => item.heading.getClientRects().length > 0 && item.heading.getBoundingClientRect().top <= line);
+        // 접힌 Details 안 제목은 좌표가 남아도 현재 위치에서 제외
+        const current = tocSections.findLast((section) => section.heading.checkVisibility() && section.heading.getBoundingClientRect().top <= line) ?? firstSection;
+        const sub = current.subs.findLast((item) => item.heading.checkVisibility() && item.heading.getBoundingClientRect().top <= line);
 
         for (const section of tocSections) {
-            section.link.classList.toggle("wg_shellNav__link--active", section === current);
-            section.list?.classList.toggle("wg_shellNav__sub--open", section === current);
+            section.link.classList.toggle("wg_shellToc__link--active", section === current);
 
             for (const item of section.subs) {
-                item.link.classList.toggle("wg_shellNav__subLink--active", item === sub);
+                item.link.classList.toggle("wg_shellToc__subLink--active", item === sub);
             }
         }
     };

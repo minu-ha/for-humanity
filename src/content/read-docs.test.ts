@@ -40,7 +40,7 @@ test("normalized document URL collisions still fail", async (t) => {
     await assert.rejects(readDocs({root, processor: createProcessor({site, root})}), /문서 id가 겹친다: guide/);
 });
 
-test("navigation shows every document group in reading order with default icons", async (t) => {
+test("navigation shows every document group in reading order without document icons", async (t) => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-docs-"));
     const site = siteConfigSchema.parse({navigation: ["Getting started", "Guide"]});
 
@@ -60,7 +60,7 @@ test("navigation shows every document group in reading order with default icons"
         ["Getting started", "Guide"],
     );
     assert.doesNotMatch(html, /<details\b/);
-    assert.equal([...html.matchAll(/<svg\b[^>]*class="wg_shellNav__docIcon\b/g)].length, docs.length);
+    assert.doesNotMatch(html, /wg_shellNav__docIcon/);
     assert.equal([...html.matchAll(/href="\/"/g)].length, 1);
     assert.doesNotMatch(html, />Documents<|>Overview</);
     assert.ok(html.indexOf('href="/writing/"') < html.indexOf('href="/parts/"'));

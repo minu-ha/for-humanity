@@ -15,12 +15,14 @@ order: 20
 - 라벨: 작은 산세리프 · 코드·번호·흐름도는 모노
 - Header: README 홈과 문서의 제목·소개·얇은 점선 · 사이트 이름과 h1의 위쪽 정렬
 - 면의 구분: 가는 선 · 직각 모서리 · 그림자·그라데이션 없음
-- 페이지 폭과 사이드바 배치는 기존 기준 유지
+- 페이지 최대 폭 1920px · 문서 탐색·본문·TOC의 3열 배치
+- 열 경계: 옅은 1px 세로선 · 경계에서 본문까지 양쪽 48px
 - 색의 선택: 역할별 토큰 · System·Light·Dark
 - favicon: 여백을 줄인 픽셀 얼굴 · 검은 점 눈·작은 미소 · 투명 배경 · 두 가지 색
 - Brand: 기본 이름 `for humanity` · 사이드바는 텍스트 · 이름은 `title` 설정
 - 커서 장식: 24px 픽셀 얼굴 · 기본 커서에서 16px 간격 · 클릭·드래그·문서 이동에서도 표시 유지
-- 문서 탐색: 목적별 묶음 · 읽는 순서 · 모든 문서 표시 · 16px 격자에 맞춘 옅은 아웃라인 얼굴 표지
+- 문서 탐색: 목적별 묶음 · 읽는 순서 · 아이콘 없는 텍스트 링크
+- TOC: 본문 오른쪽 독립 영역 · 중립색 · 모든 section·subsection 표시
 - 홈 소개: README의 얼굴·슬로건·배지·바로가기 · 가운데 정렬
 
 ::part[Tokens]
@@ -40,7 +42,7 @@ order: 20
 | `line-height`    | `title` · `heading` · `tight` · `code` · `body`                                        |
 | `letter-spacing` | `label` · `brand` · `heading` · `title`                                                |
 | `space`          | `inline` · `stack` · `block` · `group` · `section` · 페이지 틀                         |
-| `size`           | `sidebar` · `page`                                                                     |
+| `size`           | `sidebar` · `toc` · `page`                                                             |
 | `radius`         | `pill` · `card` · `box` · `inline` · `mark`                                            |
 | `outline`        | `focus` · `focus-offset`                                                               |
 | `code`           | Shiki의 `foreground` · `background` · `token-*`                                        |
@@ -55,9 +57,9 @@ order: 20
 | `text`                    | 본문                                   |
 | `text-strong`             | 제목·굵은 글·현재 section              |
 | `text-muted`              | 라벨·번호                    |
-| `icon`                    | 장식 문서 아이콘 · 라벨보다 옅은 색     |
 | `anchor-highlight`        | 앵커로 도착한 제목의 형광펜 바탕       |
 | `border` / `border-soft`  | 상자·목록·점선 / 표 구분선             |
+| `border-layout`          | 문서 탐색·본문·TOC 사이의 열 경계       |
 | `accent` / `accent-soft`  | 번호·현재 section·코드 / 행 hover 바탕 |
 | `link`                    | 본문·탐색 링크·포커스                  |
 | `link-visited`            | 방문한 본문 링크                       |
@@ -106,12 +108,19 @@ Shiki는 기존 역할색 참조: 키워드 strong, 함수 accent, 문자열 ver
 | `block`                          | 코드·표·흐름도·인용          |
 | `group`                          | 제목·본문 묶음  |
 | `section`                        | section 사이                 |
-| `page-top` · `gutter` · `column` | 페이지 위·좌우·열 간격       |
+| `page-top` · `gutter`             | 페이지 위·좌우 여백          |
+| `column`                         | 본문 좌우 패딩 · 상단 TOC 정렬 |
+| `sidebar`                        | 문서 탐색·TOC의 경계 쪽 여백  |
 | `anchor`                         | hash 제목 위치 · TOC 읽는 선 |
 
 공통 리듬: `inline` 8px · `stack` 12px · `block` 16px · `group` 24px · `section` 40px.
 같은 역할의 간격은 `margin`, `padding`, `gap`에서 공통 토큰 재사용.
 사이드바는 묶음 간격 12px, 라벨 아래 4px, 행 위·아래 3px로 촘촘하게 배치. 홈 이동은 사이트 이름 하나로 제공.
+본문의 `column` 패딩은 양쪽 48px. grid gap 없이 열 경계에 붙이고, 읽는 여백은 본문 소유.
+문서 탐색·TOC의 `sidebar` 여백은 경계 쪽에만 16px. 반대쪽은 별도 패딩 없이 제목 폭 확보.
+문서 탐색과 오른쪽 TOC는 각각 224px 고정 폭. 제목이 길면 줄바꿈, 페이지별 제목 길이에 따른 컬럼 이동 없음.
+앵커 도착점은 화면 상단에서 80px, `640px` 미만에서는 48px. 제목 위 여백을 남기고 아래 본문을 바로 읽는 기준.
+TOC의 현재 위치와 마지막 절의 끝 여백도 같은 `anchor` 토큰 사용.
 
 한 소유자에만 필요한 간격·보정은 지역 값. 예: 목차 들여쓰기 12px·32px, 목록 행의 위·아래 3px.
 같은 숫자여도 아이콘 크기·글자 크기·페이지 폭은 간격과 별도 역할.
@@ -120,28 +129,34 @@ Shiki는 기존 역할색 참조: 키워드 strong, 함수 accent, 문자열 ver
 
 ## Responsive layout
 
-| Width         | Layout                                                  |
-|---------------|---------------------------------------------------------|
-| `1024px` 이상 | 사이드바와 본문 2열                                     |
-| `1024px` 미만 | 사이드바 → 본문 1열 · 텍스트 링크 TOC · subsection 숨김 |
-| `640px` 미만  | 위·좌우 여백 축소                                       |
+| Width                  | Layout                                                     |
+|------------------------|------------------------------------------------------------|
+| `1440px` 이상          | 문서 탐색 224px · 본문 가변 폭 · TOC 224px의 3열             |
+| `1024px` 이상·`1440px` 미만 | 문서 탐색은 왼쪽 · TOC는 본문 위                              |
+| `1024px` 미만          | 문서 탐색 → TOC → 본문 순서의 1열                            |
+| `640px` 미만           | 위·좌우 여백 축소                                           |
 
-폭 기준의 CSS 변수 사용 불가. `token.css`, `wg-shell.css`, `_wg-shell-nav.css` 값 일치 필요.
+TOC가 없는 페이지는 별도 목차 열 없이 문서 탐색과 본문만 배치.
+두 탐색 영역은 넓은 화면에서 각각 sticky·스크롤. 옅은 1px 열 경계는 화면 높이만큼 유지.
+본문 위 TOC는 본문 내용의 시작선에 정렬. `1024px` 미만에서는 본문 패딩과 열 경계 쪽 여백 해제.
+본문 위로 이동한 탐색 영역은 세로 경계 해제. TOC의 소제목은 모든 폭에서 전체 표시.
+폭 기준의 CSS 변수 사용 불가. `wg-shell.css`, `_wg-shell-nav.css`, `_wg-shell-toc.css`, `token.css`의 적용 구간 일치 필요.
 새 breakpoint는 배치 변경에 한정.
 
 ## Interaction
 
-- hover: 링크색 변경과 밑줄
+- hover: 문서·본문 링크색 변경과 밑줄 · TOC는 strong 글과 밑줄
 - visited: 본문 링크만 방문색 · 탐색 링크는 현재 문서·section 기준
 - Theme: System 모니터 · Light 해 · Dark 달 · 현재 모드의 tooltip·접근 가능한 이름
 - focus-visible: 모든 상호작용 요소에 공통 outline
 - 현재 문서·section: accent 선 · strong 글
-- 문서 아이콘: 기본은 옅은 색 · 선택은 strong · hover·키보드 포커스는 링크 강조색
+- TOC: 중립색 글 · 제목 클릭으로 문서 안에서 이동 · 현재 절과 소제목은 strong 글·왼쪽 선
+- 접힌 Details의 소제목: TOC에는 표시 · 현재 위치에서 제외 · 제목 클릭 시 본문 공개
 - 하단 도구: 테마 버튼 · 선택한 GitHub/GitLab 저장소 링크
 - 앵커 제목: 3초 강조 후 600ms 해제 · 여러 줄의 글자 배경만 칠하고 배치 유지
 - Note: 보충 설명의 제목·왼쪽 선 · 기본 본문 토큰
 - Details: native marker·파란 제목·얇은 점선 · 접힌 본문의 hash 이동 시 공개
-- 도메인 상태: `--active`, `--open` 수정자
+- 도메인 상태: 현재 위치 `--active` · 목차가 있는 페이지 `--outlined`
 - DOM 상태: 기본 클래스 안의 pseudo-class
 - 움직임 감소: 전역 `prefers-reduced-motion`
 - 커서 장식: 클릭·텍스트 선택을 가리지 않음 · 화면 이탈 시 숨김 · 터치와 움직임 감소 설정에서 비활성

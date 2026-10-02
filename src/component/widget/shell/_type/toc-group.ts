@@ -23,7 +23,7 @@ export interface TocSection extends TocSub {
      */
     part?: string;
     /**
-     * 현재 절에서 펼칠 소제목
+     * 해당 절의 소제목 · 현재 위치와 무관하게 전체 표시
      */
     subs: TocSub[];
 }
