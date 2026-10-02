@@ -30,7 +30,7 @@
     --app-color-border-soft: light-dark(#ddd, #333);
     --app-color-border-layout: light-dark(#eee, #2b2b2b);
 
-    /* 강조 · 번호·현재 절·코드 · soft 행 hover 바탕 */
+    /* 강조 · 현재 절·코드 · soft 행 hover 바탕 */
     --app-color-accent: light-dark(#555, #b5b5b5);
     --app-color-accent-soft: light-dark(#f5f5f2, #222);
 
@@ -47,7 +47,7 @@
 
     /*
      * 내장 글꼴 · CLI는 @font-face와 자원 URL 생성
-     * 본문·라벨 Pretendard · 코드·번호·흐름도 JetBrains Mono · 사이트 이름 Architects Daughter
+     * 본문·라벨 Pretendard · 코드·흐름도 JetBrains Mono · 사이트 이름 Architects Daughter
      * 영문 폭 0.6em = 흐름도 12px 격자의 7.2px
      */
     --app-font-sans: "Pretendard Variable", system-ui, "Apple SD Gothic Neo", sans-serif;
@@ -56,7 +56,6 @@
 
     /* 글자 크기 · 12px 기본과 역할별 제목 크기 */
     --app-font-size-label: 12px;
-    --app-font-size-mark: 12px;
     --app-font-size-detail: 12px;
     --app-font-size-dense: 12px;
     --app-font-size-body: 12px;
@@ -100,11 +99,10 @@
     --app-space-page-top: 28px;
     --app-space-gutter: 28px;
     --app-space-column: 32px;
-    --app-space-sidebar: 12px;
-    --app-space-sidebar-gap: 16px;
+    --app-space-sidebar-gap: 32px;
     --app-size-sidebar: 200px;
     --app-size-main: 900px;
-    --app-size-page: calc(var(--app-size-sidebar) + var(--app-space-sidebar-gap) + var(--app-size-main) + var(--app-space-gutter) * 2);
+    --app-size-page: calc(var(--app-size-main) + (var(--app-size-sidebar) + var(--app-space-sidebar-gap) + var(--app-space-gutter)) * 2);
     --app-size-brand: calc(var(--app-font-size-title) * var(--app-line-height-title) + var(--app-space-page-top) + var(--app-space-group));
 
     /* 화면 위쪽 제목 여백 · hash 도착점과 목차 읽는 선의 공통 기준 */

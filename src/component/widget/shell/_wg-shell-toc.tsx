@@ -19,7 +19,7 @@ export const WgShellToc = (props: WgShellTocProps) => {
         <nav className={clsx("wg_shellToc__root")} aria-label={copy_nav_toc_label}>
             <div className={clsx("wg_shellToc__label")}>{copy_nav_toc_label}</div>
             {/**
-             * 가름별 제목 이동 · 절과 소제목의 번호는 본문과 동일
+             * 가름별 제목 이동 · 작성한 제목을 본문과 동일하게 표시
              */}
             {props.groups.map((group) => (
                 <Fragment key={group.sections[0].heading.slug}>
@@ -31,7 +31,6 @@ export const WgShellToc = (props: WgShellTocProps) => {
                         {group.sections.map((section) => (
                             <li className={clsx("wg_shellToc__item")} key={section.heading.slug}>
                                 <a className={clsx("wg_shellToc__link")} href={`#${section.heading.slug}`} data-toc-link="">
-                                    <span className={clsx("wg_shellToc__mark")}>{section.number}</span>
                                     {section.heading.text}
                                 </a>
                                 {/**
@@ -42,7 +41,6 @@ export const WgShellToc = (props: WgShellTocProps) => {
                                         {section.subs.map((sub) => (
                                             <li className={clsx("wg_shellToc__subItem")} key={sub.heading.slug}>
                                                 <a className={clsx("wg_shellToc__subLink")} href={`#${sub.heading.slug}`} data-toc-sub-link="">
-                                                    <span className={clsx("wg_shellToc__mark")}>{sub.number}</span>
                                                     {sub.heading.text}
                                                 </a>
                                             </li>

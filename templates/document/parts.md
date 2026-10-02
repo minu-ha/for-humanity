@@ -127,7 +127,7 @@ GET /api/shelves
 ## Titles and links
 
 제목은 비어 있지 않은 일반 텍스트. 제목의 링크·강조·인라인 코드는 사용 불가.
-본문은 일반 Markdown. 부품 안의 `###`도 번호·TOC·hash 대상.
+본문은 일반 Markdown. 부품 안의 `###`도 TOC·hash 대상.
 
 [Response contract](#response-contract)로 이동하면 해당 Details가 펼쳐짐.
 상위 Details가 여러 개면 함께 펼침. 같은 링크를 다시 눌러도 접힌 대상 공개.

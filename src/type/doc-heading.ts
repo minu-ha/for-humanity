@@ -11,7 +11,7 @@ export interface DocHeading {
      */
     slug: string;
     /**
-     * 번호 삽입 전 제목 텍스트
+     * 작성한 제목 텍스트
      */
     text: string;
 }

@@ -244,10 +244,13 @@ const tocSections = [...document.querySelectorAll<HTMLAnchorElement>("[data-toc-
         {
             heading,
             link,
+            item,
+            list: item.parentElement,
             subs: [...item.querySelectorAll<HTMLAnchorElement>("[data-toc-sub-link]")].flatMap((sub) => {
                 const subHeading = findHashTarget(sub.hash);
+                const subItem = sub.parentElement;
 
-                return subHeading ? [{heading: subHeading, link: sub}] : [];
+                return subHeading && subItem ? [{heading: subHeading, link: sub, item: subItem}] : [];
             }),
         },
     ];
@@ -265,12 +268,18 @@ if (firstSection) {
         // 접힌 Details 안 제목은 좌표가 남아도 현재 위치에서 제외
         const current = tocSections.findLast((section) => section.heading.checkVisibility() && section.heading.getBoundingClientRect().top <= line) ?? firstSection;
         const sub = current.subs.findLast((item) => item.heading.checkVisibility() && item.heading.getBoundingClientRect().top <= line);
+        const currentIndex = tocSections.indexOf(current);
+        const currentSubIndex = sub === undefined ? -1 : current.subs.indexOf(sub);
 
-        for (const section of tocSections) {
+        for (const [index, section] of tocSections.entries()) {
             section.link.classList.toggle("wg_shellToc__link--active", section === current);
+            section.item.classList.toggle("wg_shellToc__item--trail", section.list === current.list && index < currentIndex);
+            section.item.classList.toggle("wg_shellToc__item--current", section === current);
 
-            for (const item of section.subs) {
+            for (const [subIndex, item] of section.subs.entries()) {
                 item.link.classList.toggle("wg_shellToc__subLink--active", item === sub);
+                item.item.classList.toggle("wg_shellToc__subItem--trail", section === current && subIndex < currentSubIndex);
+                item.item.classList.toggle("wg_shellToc__subItem--current", item === sub);
             }
         }
     };

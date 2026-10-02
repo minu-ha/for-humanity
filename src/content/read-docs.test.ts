@@ -156,3 +156,27 @@ test("a missing README provides a creation hint without generated overview cards
     assert.match(html, /문서 폴더에 README\.md를 추가/);
     assert.doesNotMatch(html, /pg_home__card|>Overview<|>Documents</);
 });
+
+test("headings and contents preserve authored text without automatic numbering", async (t) => {
+    const root = await mkdtemp(join(tmpdir(), "for-humanity-headings-"));
+    const site = siteConfigSchema.parse({});
+
+    t.after(() => rm(root, {recursive: true, force: true}));
+    await writeFile(
+        join(root, "guide.md"),
+        "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n### Before the first section\n\n::part[Setup]\n\n## Overview\n\n### 01. Keep this number\n\n:::details[More]\n### Nested heading\n\nBody.\n:::\n\n## Overview\n",
+    );
+
+    const docs = await readDocs({root, processor: createProcessor({site, root})});
+    const app = createApp({site, store: {docs}, assets: {fontCss: "", preload: [], reload: false}});
+    const html = await (await app.request("/guide/")).text();
+
+    assert.match(html, /<h2[^>]*id="overview"[^>]*><span class="wg_prose__headingText">Overview<\/span><\/h2>/);
+    assert.match(html, /<h3[^>]*id="01-keep-this-number"[^>]*><span class="wg_prose__headingText">01\. Keep this number<\/span><\/h3>/);
+    assert.match(html, /href="#overview"[^>]*>Overview<\/a>/);
+    assert.match(html, /href="#01-keep-this-number"[^>]*>01\. Keep this number<\/a>/);
+    assert.match(html, /href="#nested-heading"[^>]*>Nested heading<\/a>/);
+    assert.match(html, /href="#overview-1"[^>]*>Overview<\/a>/);
+    assert.match(html, /wg_shellToc__group">Setup<\/div>/);
+    assert.doesNotMatch(html, /wg_prose__num|wg_shellToc__mark/);
+});

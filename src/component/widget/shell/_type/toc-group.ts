@@ -8,10 +8,6 @@ export interface TocSub {
      * 제목 id와 텍스트
      */
     heading: DocHeading;
-    /**
-     * 본문과 같은 번호 · 01.A
-     */
-    number?: string;
 }
 
 /**

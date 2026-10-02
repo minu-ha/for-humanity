@@ -1,5 +1,5 @@
 /*
- * 문서 탐색 아래 목차 · 번호와 소제목을 유지하는 중립색 트리
+ * 문서 탐색 아래 목차 · 작성한 제목과 계층을 유지하는 중립색 트리
  */
 .wg_shellToc__root {
     margin-top: var(--app-space-group);
@@ -30,6 +30,9 @@
 }
 
 .wg_shellToc__item {
+    /* 하위 목록의 margin을 포함해 다음 항목까지 줄기 연결 */
+    display: flow-root;
+
     /* 세로 줄기는 항목 전체 기준 · 중간 항목의 소제목 옆에서도 연결 */
     position: relative;
 
@@ -43,19 +46,36 @@
         pointer-events: none;
     }
 
-    &:last-child::before {
+    &:where(:last-child)::before {
         bottom: auto;
         height: calc(0.5lh + var(--app-space-tree-row));
     }
 }
 
+.wg_shellToc__item--trail {
+    &::before {
+        border-left-color: var(--app-color-text-strong);
+    }
+}
+
+.wg_shellToc__item--current {
+    /* 현재 항목의 첫 줄까지 강조 · 그 아래 줄기는 기본색 유지 */
+    &::after {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: calc(0.5lh + var(--app-space-tree-row));
+        border-left: 1px solid var(--app-color-text-strong);
+        content: "";
+        pointer-events: none;
+    }
+}
+
 .wg_shellToc__link {
-    /* 가로 가지는 링크 첫 줄 기준 · 번호와 제목의 시작선 유지 */
+    /* 가로 가지는 링크 첫 줄 기준 · 여러 줄 제목에서도 연결 위치 유지 */
     position: relative;
-    display: grid;
+    display: block;
     padding: var(--app-space-tree-row) 0 var(--app-space-tree-row) calc(var(--app-space-tree-indent) + var(--app-space-inline));
-    gap: var(--app-space-inline);
-    grid-template-columns: max-content minmax(0, 1fr);
     color: var(--app-color-text-muted);
     font-size: var(--app-font-size-dense);
     line-height: var(--app-line-height-tight);
@@ -101,16 +121,6 @@
     }
 }
 
-.wg_shellToc__mark {
-    color: inherit;
-    font-family: var(--app-font-mono);
-    font-size: var(--app-font-size-mark);
-    font-weight: inherit;
-
-    /* 제목 첫 줄과 같은 높이 */
-    line-height: 1lh;
-}
-
 .wg_shellToc__sub {
     margin: var(--app-space-tree-row) 0 4px var(--app-space-tree-indent);
     padding: 0;
@@ -131,19 +141,36 @@
         pointer-events: none;
     }
 
-    &:last-child::before {
+    &:where(:last-child)::before {
         bottom: auto;
         height: calc(0.5lh + var(--app-space-tree-row));
+    }
+}
+
+.wg_shellToc__subItem--trail {
+    &::before {
+        border-left-color: var(--app-color-text-strong);
+    }
+}
+
+.wg_shellToc__subItem--current {
+    /* 현재 항목의 첫 줄까지 강조 · 그 아래 줄기는 기본색 유지 */
+    &::after {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: calc(0.5lh + var(--app-space-tree-row));
+        border-left: 1px solid var(--app-color-text-strong);
+        content: "";
+        pointer-events: none;
     }
 }
 
 .wg_shellToc__subLink {
     /* 하위 가지도 링크 첫 줄 기준 · 줄바꿈된 제목 옆으로 선이 늘어나지 않음 */
     position: relative;
-    display: grid;
+    display: block;
     padding: var(--app-space-tree-row) 0 var(--app-space-tree-row) calc(var(--app-space-tree-indent) + var(--app-space-inline));
-    gap: var(--app-space-inline);
-    grid-template-columns: max-content minmax(0, 1fr);
     color: var(--app-color-text-muted);
     font-size: var(--app-font-size-detail);
     line-height: var(--app-line-height-tight);

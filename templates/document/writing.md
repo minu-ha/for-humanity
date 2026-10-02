@@ -88,16 +88,18 @@ YAML 영역은 `remark-frontmatter`, 값은 `yaml`, 필드 검증은 Zod로 처�
 묶음 순서는 [Settings](settings.md#navigation)의 `navigation`. 묶음 안은 작은 `order` 먼저.
 `order`를 생략한 문서는 순서를 지정한 문서 뒤에서 제목순, 제목도 같으면 파일 id순.
 파일 이름에 번호나 알파벳을 붙여 순서를 맞출 필요 없음.
-모든 문서 묶음은 항상 표시. 각 문서의 기본 표지는 파비콘 얼굴의 아웃라인.
+모든 문서 묶음은 항상 표시. 문서는 이름과 1px 트리 선으로 표시.
 `Contents`는 현재 문서 안의 절만 표시.
 
 ## Sections and parts
 
-- `##` → section 번호 `00`, `01`, `02`
-- `###` → subsection 번호 `01.A`, `01.B` · section당 최대 26개
+- `##` → section · Contents의 상위 항목
+- `###` → subsection · 해당 section 아래 중첩 항목
 - 첫 section 앞의 글 → 문서 header
 - `::part[Setup]` → 여러 section을 묶는 part · TOC 그룹
 - 제목 id → GitHub 방식 · 같은 제목은 `-1`, `-2` 접미사
+
+제목과 Contents에는 자동 번호를 붙이지 않음. 번호가 필요하면 `## 01. Setup`처럼 제목에 직접 작성.
 
 ### Links
 
@@ -167,7 +169,7 @@ flowchart LR
 - 본문: 일반 Markdown · `###` 이하 제목과 Note·Details 중첩
 - 문서 구획: `##`와 `::part`는 부품 밖
 - 닫는 fence: 필수 · 중첩하거나 코드에 `:::`가 있으면 바깥 fence를 더 길게 작성
-- 부품 내부 제목: TOC·번호·hash 지원 · hash 이동 시 상위 Details 공개
+- 부품 내부 제목: TOC·hash 지원 · hash 이동 시 상위 Details 공개
 - 미지원 형태·속성·빈 입력: 빌드 오류 · [Errors](parts.md#errors)
 
 Decision·Question·API reference는 section·표·링크로 작성.
@@ -199,7 +201,7 @@ Decision·Question·API reference는 section·표·링크로 작성.
 | ------------ | ---------------------------------------- |
 | Overview     | 문서의 범위와 핵심을 모은 첫 section     |
 | Frontmatter  | 파일 맨 앞의 YAML 메타데이터             |
-| Section      | `##` 제목과 자동 번호가 붙는 본문 단위   |
+| Section      | `##` 제목으로 시작하는 본문 단위   |
 | Subsection   | `###` 제목 · section 안의 하위 단위      |
 | Part         | `::part[...]`로 여러 section을 묶는 그룹 |
 | TOC          | 현재 문서의 section·subsection 목록      |

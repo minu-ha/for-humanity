@@ -35,30 +35,40 @@ export const WgShellNav = (props: WgShellNavProps) => {
                 {/**
                  * 묶음 이름과 독립 문서 · 제목이 링크의 접근 가능한 이름
                  */}
-                {docGroups.map((group) => (
-                    <section className={clsx("wg_shellNav__docGroup")} key={group.name} aria-label={group.name}>
-                        <div className={clsx("wg_shellNav__group")}>{group.name}</div>
-                        {/**
-                         * 문서의 URL과 현재 페이지 표시
-                         */}
-                        <ul className={clsx("wg_shellNav__list")}>
-                            {group.docs.map((doc) => (
-                                <li className={clsx("wg_shellNav__item")} key={doc.id}>
-                                    <a
-                                        className={clsx("wg_shellNav__link", {
-                                            "wg_shellNav__link--active": doc.id === props.current,
+                {docGroups.map((group) => {
+                    const currentIndex = group.docs.findIndex((doc) => doc.id === props.current);
+
+                    return (
+                        <section className={clsx("wg_shellNav__docGroup")} key={group.name} aria-label={group.name}>
+                            <div className={clsx("wg_shellNav__group")}>{group.name}</div>
+                            {/**
+                             * 현재 문서와 묶음 시작부터 이어지는 세로 경로 표시
+                             */}
+                            <ul className={clsx("wg_shellNav__list")}>
+                                {group.docs.map((doc, index) => (
+                                    <li
+                                        className={clsx("wg_shellNav__item", {
+                                            "wg_shellNav__item--trail": index < currentIndex,
+                                            "wg_shellNav__item--current": index === currentIndex,
                                         })}
-                                        href={`/${doc.id}/`}
-                                        title={doc.data.label}
-                                        aria-current={doc.id === props.current ? "page" : undefined}
+                                        key={doc.id}
                                     >
-                                        {doc.data.name}
-                                    </a>
-                                </li>
-                            ))}
-                        </ul>
-                    </section>
-                ))}
+                                        <a
+                                            className={clsx("wg_shellNav__link", {
+                                                "wg_shellNav__link--active": index === currentIndex,
+                                            })}
+                                            href={`/${doc.id}/`}
+                                            title={doc.data.label}
+                                            aria-current={index === currentIndex ? "page" : undefined}
+                                        >
+                                            {doc.data.name}
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </section>
+                    );
+                })}
             </div>
         </nav>
     );

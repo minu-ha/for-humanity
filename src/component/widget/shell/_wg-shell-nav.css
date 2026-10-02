@@ -32,9 +32,28 @@
         pointer-events: none;
     }
 
-    &:last-child::before {
+    &:where(:last-child)::before {
         bottom: auto;
         height: calc(0.5lh + var(--app-space-tree-row));
+    }
+}
+
+.wg_shellNav__item--trail {
+    &::before {
+        border-left-color: var(--app-color-text-strong);
+    }
+}
+
+.wg_shellNav__item--current {
+    /* 현재 항목의 첫 줄까지 강조 · 그 아래 줄기는 기본색 유지 */
+    &::after {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: calc(0.5lh + var(--app-space-tree-row));
+        border-left: 1px solid var(--app-color-text-strong);
+        content: "";
+        pointer-events: none;
     }
 }
 

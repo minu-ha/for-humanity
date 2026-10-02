@@ -19,7 +19,7 @@ Markdown으로 작성하고, 맥락을 남기고, 정적 사이트로 공유.
 
 ## A little structure. Room to read.
 
-- **Navigation** — 목적별 문서 묶음·읽는 순서·part별 TOC·자동 section 번호·현재 읽는 위치
+- **Navigation** — 목적별 문서 묶음·읽는 순서·part별 트리 TOC·현재 읽는 위치
 - **Context** — 보충 설명은 Note, 구현 상세는 Details. 접힌 section도 링크로 바로 이동
 - **Content** — 표·코드 강조·Mermaid·status badge·color swatch
 - **Static output** — 정적 HTML·자체 호스팅 폰트·작은 브라우저 스크립트. React hydration 없음

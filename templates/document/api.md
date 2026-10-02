@@ -93,7 +93,7 @@ type: document
 
 | Syntax                 | Result                       |
 | ---------------------- | ---------------------------- |
-| `##` · `###`           | 절·소절 번호와 Contents      |
+| `##` · `###`           | 절·소제목과 Contents      |
 | `::part[Title]`         | 본문과 Contents의 절 묶음    |
 | `:::note[Title]`        | 보충 설명                    |
 | `:::details[Title]`     | 접힌 구현 상세               |

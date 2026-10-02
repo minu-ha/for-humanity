@@ -1,5 +1,5 @@
 /*
- * 문서 탐색·목차의 공유 사이드바와 본문의 grid
+ * 본문 중심의 대칭 grid · 문서 탐색·목차는 왼쪽 열
  */
 .wg_shell__root {
     display: grid;
@@ -7,7 +7,7 @@
     margin: 0 auto;
     padding: 0 var(--app-space-gutter);
     column-gap: var(--app-space-sidebar-gap);
-    grid-template: "nav main" 1fr / var(--app-size-sidebar) minmax(0, 1fr);
+    grid-template: "nav main ." 1fr / var(--app-size-sidebar) minmax(0, 1fr) var(--app-size-sidebar);
     background: var(--app-color-ground);
     color: var(--app-color-text);
     font-family: var(--app-font-sans);
@@ -66,9 +66,6 @@
     min-height: 100vh;
     max-height: 100vh;
     overflow-y: auto;
-    padding-block: 0 var(--app-space-block);
-    padding-inline-end: var(--app-space-sidebar);
-    border-right: 1px solid var(--app-color-border-layout);
     scroll-padding-block: var(--app-size-brand) var(--app-space-block);
 }
 
@@ -76,6 +73,7 @@
     grid-area: main;
     min-width: 0;
     max-width: var(--app-size-main);
+    border-inline: 1px solid var(--app-color-border-layout);
 
     /* 문서 목록의 시작선 · 마지막 절도 읽는 선까지 이동 가능한 끝 여백 */
     padding-block: var(--app-size-brand) calc(100vh - var(--app-space-anchor));
@@ -113,9 +111,7 @@
         min-height: 0;
         max-height: none;
         overflow-y: visible;
-        padding-block: 0 var(--app-space-block);
-        padding-inline-end: 0;
-        border-right: 0;
+        margin-block-end: var(--app-space-block);
         border-bottom: 1px solid var(--app-color-border-layout);
     }
 
@@ -126,5 +122,6 @@
     .wg_shell__main {
         padding-block-start: var(--app-space-page-top);
         padding-inline: 0;
+        border-inline: 0;
     }
 }

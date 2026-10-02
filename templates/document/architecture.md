@@ -55,14 +55,14 @@ Hono 정규식 매개변수와 wildcard 라우트 혼합 시 Router 제약도 �
 | ------ | -------------------------------------------------------------------- |
 | Read   | 파일 탐색 · remark-frontmatter의 YAML 노드 · yaml 값 해석 · Zod 검증 |
 | remark | GFM · 문장부호 · Note·Details · part · 흐름도 · status badge · swatch · 링크 · 경고 |
-| rehype | 코드 강조 · 문서 header · 제목 id · section 번호 · 표 상자           |
+| rehype | 코드 강조 · 문서 header · 제목 id · 가름 수집 · 표 상자           |
 | Output | raw HTML 해석 · HTML 문자열                                          |
 
-제목 id 생성은 section 번호 삽입보다 먼저. 링크와 TOC 텍스트의 번호 혼입 방지.
+제목 원문에서 id와 TOC 텍스트를 수집하고 가름별로 묶음. 제목 번호는 자동 생성하지 않음.
 중간 계약은 `file.data.fh`. 제목과 section 정보는 문서 순서 유지.
 frontmatter는 정규식으로 잘라내지 않고 AST 노드로 읽음. 본문 노드의 원본 줄·열은 유지.
 Note·Details의 검증은 Markdown 부품 변환 전. 제목은 native label, 본문은 기존 처리 흐름.
-접힌 본문의 `###`도 같은 제목 id·번호·TOC. 부품의 작성 계약은 [Parts](parts.md).
+접힌 본문의 `###`도 같은 제목 id·TOC. 부품의 작성 계약은 [Parts](parts.md).
 
 remark는 Markdown을 AST로 다루는 플러그인 체계. 현재의 부품 변환·검증과 rehype 연결에 사용.
 markdown-it도 확장 가능한 렌더러이며 VitePress에서 사용. 한쪽이 항상 더 좋은 것은 아니고, 이 프로젝트는 기존 AST 변환을 유지.

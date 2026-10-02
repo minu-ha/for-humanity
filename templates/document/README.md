@@ -21,7 +21,7 @@ Write Markdown. Keep the context. Share a static site.
 
 ## A little structure. Room to read.
 
-- **Find your place.** Pages grouped by purpose, a reading order, numbered contents and the current reading position.
+- **Find your place.** Pages grouped by purpose, a reading order, a tree of contents and the current reading position.
 - **Keep the detail.** Notes for context, native disclosures for implementation details, and links that open folded sections.
 - **Show the connections.** Tables, highlighted code, Mermaid flowcharts, status badges and color swatches.
 - **Share the result.** Static HTML, self-hosted fonts and a small browser script. No React hydration.

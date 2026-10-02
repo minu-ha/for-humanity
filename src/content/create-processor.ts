@@ -24,7 +24,7 @@ import {remarkReport} from "@/content/remark-report";
 import type {SiteConfig} from "@/type/site-config";
 
 /**
- * Markdown 처리 순서: remark → 코드 강조 → 머리 → 제목 id → 절 번호 → 표
+ * Markdown 처리 순서: remark → 코드 강조 → 머리 → 제목 id → 가름 수집 → 표
  * 플러그인 HTML 조각은 마지막 rehype-raw에서 해석
  * Shiki inline style: token.css의 --app-code-* 참조
  */
