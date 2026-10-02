@@ -51,7 +51,7 @@
 
     /* 가름 아래 절의 중복 구분선 제거 */
     & .wg_prose__part + h2 {
-        margin-top: 18px;
+        margin-top: var(--app-space-block);
         padding-top: 0;
         border-top: 0;
     }
@@ -73,7 +73,7 @@
     }
 
     & h5 {
-        margin: 18px 0 6px;
+        margin: var(--app-space-block) 0 6px;
         color: var(--app-color-text-muted);
         font-size: var(--app-font-size-dense);
         font-weight: var(--app-font-weight-strong);
@@ -116,15 +116,15 @@
     }
 
     & li {
-        margin-bottom: 5px;
+        margin-bottom: 4px;
     }
 
     & li > ul {
-        margin: 5px 0 0;
+        margin: 4px 0 0;
     }
 
     & li > ol {
-        margin: 5px 0 0;
+        margin: 4px 0 0;
     }
 
     /* JetBrains Mono 합자 비활성 · >=, != 원문 구분 */
@@ -134,7 +134,7 @@
         background: var(--app-color-code);
         color: var(--app-color-text-strong);
         font-family: var(--app-font-mono);
-        font-size: 0.87em;
+        font-size: 1em;
         font-variant-ligatures: none;
     }
 
@@ -204,7 +204,7 @@
     }
 
     & hr {
-        margin: 32px 0;
+        margin: var(--app-space-section) 0;
         border: 0;
         border-top: 1px dotted var(--app-color-border);
     }
@@ -214,7 +214,7 @@
 /* 공통 문서 머리 · 제목·소개 */
 .wg_prose__head {
     margin-bottom: var(--app-space-inline);
-    padding-bottom: 20px;
+    padding-bottom: var(--app-space-block);
     border-bottom: 1px dotted var(--app-color-border);
 
     /* stylelint-disable-next-line selector-disallowed-list -- Markdown 생성 머리 */
@@ -230,7 +230,7 @@
 
     & [align="center"] > h1 {
         margin-block: var(--app-space-group);
-        font-size: clamp(28px, 3vw, 36px);
+        font-size: 24px;
     }
 
     & [align="center"] > p {
@@ -238,6 +238,7 @@
     }
 
     & [align="center"] > img {
+        width: 72px;
         image-rendering: pixelated;
     }
     /* stylelint-enable selector-disallowed-list */
@@ -258,20 +259,22 @@
 
 /* ::part 가름의 공통 표현 */
 .wg_prose__part {
-    margin-top: 56px;
-    padding-top: 10px;
+    margin-top: var(--app-space-section);
+    padding-top: var(--app-space-stack);
     border-top: 1px dotted var(--app-color-border);
     color: var(--app-color-text-strong);
     font-size: var(--app-font-size-part);
     font-weight: var(--app-font-weight-strong);
+    line-height: var(--app-line-height-heading);
+    letter-spacing: var(--app-letter-spacing-heading);
 }
 
 /* 제목 앞 번호 · 본문과 목차 동일 */
 .wg_prose__num {
-    margin-right: var(--app-space-stack);
+    margin-right: var(--app-space-inline);
     color: var(--app-color-accent);
     font-family: var(--app-font-mono);
-    font-size: 0.62em;
+    font-size: var(--app-font-size-mark);
     font-weight: var(--app-font-weight-mark);
     letter-spacing: 0;
 }

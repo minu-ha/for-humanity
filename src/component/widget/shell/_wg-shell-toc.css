@@ -44,7 +44,7 @@
     display: grid;
     padding: 3px 0;
     gap: var(--app-space-inline);
-    grid-template-columns: 2ch minmax(0, 1fr);
+    grid-template-columns: max-content minmax(0, 1fr);
     color: var(--app-color-text-muted);
     font-size: var(--app-font-size-dense);
     line-height: var(--app-line-height-tight);
@@ -86,7 +86,7 @@
     display: grid;
     padding: 3px 0 3px 20px;
     gap: var(--app-space-inline);
-    grid-template-columns: 4ch minmax(0, 1fr);
+    grid-template-columns: max-content minmax(0, 1fr);
     color: var(--app-color-text-muted);
     font-size: var(--app-font-size-detail);
     line-height: var(--app-line-height-tight);

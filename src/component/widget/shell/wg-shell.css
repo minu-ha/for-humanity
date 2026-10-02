@@ -102,6 +102,11 @@
         grid-template: "nav main" 1fr / var(--app-size-sidebar) minmax(0, 1fr);
     }
 
+    .wg_shell__root--outlined {
+        /* 목차가 왼쪽으로 이동하면 오른쪽 열의 예약 폭도 해제 */
+        max-width: var(--app-size-page);
+    }
+
     .wg_shell__sidebar {
         grid-area: nav;
         display: block;
@@ -129,9 +134,14 @@
 /* 좁은 화면 · 문서 탐색 → 목차 → 본문 순서의 1열 */
 @media (width < 1024px) {
     .wg_shell__root {
+        max-width: calc(var(--app-size-main) + var(--app-space-gutter) * 2);
         grid-template:
             "nav" auto
             "main" 1fr / minmax(0, 1fr);
+    }
+
+    .wg_shell__root--outlined {
+        max-width: calc(var(--app-size-main) + var(--app-space-gutter) * 2);
     }
 
     .wg_shell__sidebar {
