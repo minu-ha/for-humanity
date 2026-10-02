@@ -4,15 +4,15 @@
 .wg_shellToc__root {
     grid-area: toc;
 
-    /* 뷰포트 sticky · 고정 헤더 아래 열 경계 · 본문과 별도로 긴 목차 스크롤 */
+    /* 뷰포트 sticky · 화면 높이의 열 경계 · 본문과 별도로 긴 목차 스크롤 */
     position: sticky;
-    top: var(--app-size-header);
+    top: 0;
     align-self: start;
     min-width: 0;
-    min-height: calc(100vh - var(--app-size-header));
-    max-height: calc(100vh - var(--app-size-header));
+    min-height: 100vh;
+    max-height: 100vh;
     overflow-y: auto;
-    padding-block: var(--app-space-page-top);
+    padding-block: var(--app-size-brand) var(--app-space-page-top);
     padding-inline-start: var(--app-space-sidebar);
     border-left: 1px solid var(--app-color-border-layout);
 }

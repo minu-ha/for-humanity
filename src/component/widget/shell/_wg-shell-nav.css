@@ -4,25 +4,24 @@
 .wg_shellNav__root {
     grid-area: nav;
 
-    /* 뷰포트 sticky · 고정 헤더 아래 열 경계 · html·body에 overflow 미지정 */
+    /* 뷰포트 sticky · 사이트 이름 아래 목록 스크롤 · html·body에 overflow 미지정 */
     position: sticky;
-    top: var(--app-size-header);
+    top: var(--app-size-brand);
     align-self: start;
-    min-height: calc(100vh - var(--app-size-header));
-    max-height: calc(100vh - var(--app-size-header));
+    min-height: calc(100vh - var(--app-size-brand));
+    max-height: calc(100vh - var(--app-size-brand));
     overflow-y: auto;
-    padding-block: var(--app-space-page-top);
+    padding-block: 0 calc(var(--app-size-tools) + var(--app-space-inline));
     padding-inline-end: var(--app-space-sidebar);
     border-right: 1px solid var(--app-color-border-layout);
+    scroll-padding-block: var(--app-space-inline) calc(var(--app-size-tools) + var(--app-space-inline));
 }
 
-/* 문서 목록과 사이트 도구 사이 구분선 */
+/* 문서 묶음의 공통 간격 */
 .wg_shellNav__docs {
     display: flex;
     flex-direction: column;
-    padding-bottom: var(--app-space-block);
     gap: var(--app-space-stack);
-    border-bottom: 1px solid var(--app-color-border-soft);
 }
 
 /* 공통 목록 · 행 사이를 띄워 각 링크의 왼선을 구분 */
@@ -76,9 +75,20 @@
 
 .wg_shellNav__actions {
     display: flex;
+
+    /* 뷰포트 왼쪽 아래 · 페이지 최대 폭에 맞춘 문서 탐색 열 */
+    position: fixed;
+    bottom: 0;
+    left: max(var(--app-space-gutter), calc((100% - var(--app-size-page)) / 2 + var(--app-space-gutter)));
+    z-index: var(--app-z-index-sticky);
     align-items: center;
-    margin-top: var(--app-space-block);
+    width: calc(var(--app-size-sidebar) - 1px);
+    height: var(--app-size-tools);
+    padding-block: var(--app-space-block);
+    padding-inline-end: var(--app-space-sidebar);
     gap: 4px;
+    border-top: 1px solid var(--app-color-border-soft);
+    background: var(--app-color-ground);
 }
 
 .wg_shellNav__action {
@@ -148,6 +158,11 @@
 
 /* 좁은 화면 · 본문 위 텍스트 링크 목록 */
 @media (width < 1024px) {
+    .wg_shellNav__actions {
+        width: calc(100% - var(--app-space-gutter) * 2);
+        padding-inline-end: 0;
+    }
+
     .wg_shellNav__list {
         flex-flow: row wrap;
         gap: 4px var(--app-space-stack);

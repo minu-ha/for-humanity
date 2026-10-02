@@ -99,10 +99,11 @@
     --app-size-sidebar: 224px;
     --app-size-toc: 224px;
     --app-size-page: 1920px;
-    --app-size-header: calc(var(--app-font-size-title) * var(--app-line-height-title) + var(--app-space-block) * 2 + 1px);
+    --app-size-brand: calc(var(--app-font-size-title) * var(--app-line-height-title) + var(--app-space-page-top) + var(--app-space-group));
+    --app-size-tools: calc(16px + var(--app-space-inline) * 2 + var(--app-space-block) * 2 + 1px);
 
-    /* 고정 헤더 아래 제목 여백 · hash 도착점과 목차 읽는 선의 공통 기준 */
-    --app-space-anchor: calc(var(--app-size-header) + var(--app-space-block));
+    /* 화면 위쪽 제목 여백 · hash 도착점과 목차 읽는 선의 공통 기준 */
+    --app-space-anchor: 80px;
 
     /* 모서리 · 직각 기본값 */
     --app-radius-pill: 0;
@@ -115,7 +116,7 @@
     --app-outline-focus: 2px solid var(--app-color-link);
     --app-outline-focus-offset: 2px;
 
-    /* 고정 헤더 · 커서 장식 */
+    /* 사이드바 사이트 이름·하단 도구 · 커서 장식 */
     --app-z-index-sticky: 100;
     --app-z-index-popper: 300;
 
@@ -156,5 +157,6 @@
     :root {
         --app-space-page-top: 20px;
         --app-space-gutter: 16px;
+        --app-space-anchor: 48px;
     }
 }

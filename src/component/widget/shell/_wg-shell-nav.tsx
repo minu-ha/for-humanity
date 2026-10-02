@@ -65,7 +65,7 @@ export const WgShellNav = (props: WgShellNavProps) => {
                 ))}
             </div>
             {/**
-             * 문서 탐색 뒤의 사이트 도구 · 테마와 선택 저장소 링크
+             * 뷰포트 왼쪽 아래의 사이트 도구 · 테마와 선택 저장소 링크
              */}
             <div className={clsx("wg_shellNav__actions")}>
                 <button className={clsx("wg_shellNav__action")} type="button" aria-label={copy_theme_label.system} title={copy_theme_label.system} data-theme-toggle="">

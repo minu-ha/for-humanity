@@ -1,15 +1,14 @@
 /*
- * 공통 머리 아래 문서 탐색·본문·목차의 grid
+ * 사이드바 사이트 이름·문서 탐색·본문·목차의 grid
  */
 .wg_shell__root {
     display: grid;
     max-width: var(--app-size-page);
     margin: 0 auto;
     padding: 0 var(--app-space-gutter);
-    grid-template-columns: var(--app-size-sidebar) minmax(0, 1fr);
-    grid-template-areas:
-        "header header"
-        "nav main";
+    grid-template:
+        "brand main" min-content
+        "nav main" 1fr / var(--app-size-sidebar) minmax(0, 1fr);
     background: var(--app-color-ground);
     color: var(--app-color-text);
     font-family: var(--app-font-sans);
@@ -24,33 +23,26 @@
 }
 
 .wg_shell__root--outlined {
-    grid-template-columns: var(--app-size-sidebar) minmax(0, 1fr) var(--app-size-toc);
-    grid-template-areas:
-        "header header header"
-        "nav main toc";
-}
-
-.wg_shell__header {
-    grid-area: header;
-    display: flex;
-
-    /* 뷰포트 sticky · 본문과 탐색 영역 위의 불투명한 사이트 머리 */
-    position: sticky;
-    top: 0;
-    z-index: var(--app-z-index-sticky);
-    align-items: center;
-    min-width: 0;
-    height: var(--app-size-header);
-    margin-inline: calc(-1 * var(--app-space-gutter));
-    padding-block: var(--app-space-block);
-    padding-inline: var(--app-space-gutter);
-    border-bottom: 1px solid var(--app-color-border-layout);
-    background: var(--app-color-ground);
+    grid-template:
+        "brand main toc" min-content
+        "nav main toc" 1fr / var(--app-size-sidebar) minmax(0, 1fr) var(--app-size-toc);
 }
 
 .wg_shell__brand {
+    grid-area: brand;
     display: block;
+
+    /* 넓은 화면은 뷰포트, 좁은 데스크톱은 공유 사이드바 스크롤 기준 */
+    position: sticky;
+    top: 0;
+    z-index: var(--app-z-index-sticky);
+    align-self: start;
     min-width: 0;
+    height: var(--app-size-brand);
+    padding-block: var(--app-space-page-top) var(--app-space-group);
+    padding-inline-end: var(--app-space-sidebar);
+    border-right: 1px solid var(--app-color-border-layout);
+    background: var(--app-color-ground);
     overflow: hidden;
     color: var(--app-color-text-strong);
     font-family: var(--app-font-brand);
@@ -73,7 +65,7 @@
 }
 
 .wg_shell__sidebar {
-    /* 넓은 화면의 문서 탐색·목차는 페이지 grid에 직접 참여 */
+    /* 넓은 화면의 사이트 이름·문서 탐색·목차는 페이지 grid에 직접 참여 */
     display: contents;
 }
 
@@ -81,8 +73,8 @@
     grid-area: main;
     min-width: 0;
 
-    /* 마지막 절도 읽는 선까지 이동 가능한 끝 여백 */
-    padding-block: var(--app-space-page-top) calc(100vh - var(--app-space-anchor));
+    /* 문서 목록의 시작선 · 마지막 절도 읽는 선까지 이동 가능한 끝 여백 */
+    padding-block: var(--app-size-brand) calc(100vh - var(--app-space-anchor));
     padding-inline: var(--app-space-column);
 }
 
@@ -104,11 +96,8 @@
 
 /* 좁은 데스크톱 · 문서 탐색과 목차를 왼쪽 한 열에서 함께 스크롤 */
 @media (width < 1440px) {
-    .wg_shell__root--outlined {
-        grid-template-columns: var(--app-size-sidebar) minmax(0, 1fr);
-        grid-template-areas:
-            "header header"
-            "nav main";
+    .wg_shell__root {
+        grid-template: "nav main" 1fr / var(--app-size-sidebar) minmax(0, 1fr);
     }
 
     .wg_shell__sidebar {
@@ -117,34 +106,30 @@
 
         /* 뷰포트 sticky · 자식 탐색 영역은 이 컨테이너에서 함께 스크롤 */
         position: sticky;
-        top: var(--app-size-header);
+        top: 0;
         align-self: start;
         min-width: 0;
-        min-height: calc(100vh - var(--app-size-header));
-        max-height: calc(100vh - var(--app-size-header));
+        min-height: 100vh;
+        max-height: 100vh;
         overflow-y: auto;
-        padding-block: var(--app-space-page-top);
+        padding-block: 0 calc(var(--app-size-tools) + var(--app-space-inline));
         padding-inline-end: var(--app-space-sidebar);
         border-right: 1px solid var(--app-color-border-layout);
+        scroll-padding-block: var(--app-size-brand) calc(var(--app-size-tools) + var(--app-space-inline));
+    }
+
+    .wg_shell__brand {
+        padding-inline-end: 0;
+        border-right: 0;
     }
 }
 
 /* 좁은 화면 · 문서 탐색 → 목차 → 본문 순서의 1열 */
 @media (width < 1024px) {
     .wg_shell__root {
-        grid-template-columns: minmax(0, 1fr);
-        grid-template-areas:
-            "header"
-            "nav"
-            "main";
-    }
-
-    .wg_shell__root--outlined {
-        grid-template-columns: minmax(0, 1fr);
-        grid-template-areas:
-            "header"
-            "nav"
-            "main";
+        grid-template:
+            "nav" auto
+            "main" 1fr / minmax(0, 1fr);
     }
 
     .wg_shell__sidebar {
@@ -152,13 +137,18 @@
         min-height: 0;
         max-height: none;
         overflow-y: visible;
-        padding-block: var(--app-space-page-top) var(--app-space-block);
+        padding-block: 0 var(--app-space-block);
         padding-inline-end: 0;
         border-right: 0;
         border-bottom: 1px solid var(--app-color-border-layout);
     }
 
+    .wg_shell__brand {
+        position: static;
+    }
+
     .wg_shell__main {
+        padding-block-start: var(--app-space-page-top);
         padding-inline: 0;
     }
 }
