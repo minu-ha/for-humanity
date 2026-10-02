@@ -13,13 +13,14 @@ order: 20
 
 - 본문: 한국어 산세리프 · 넉넉한 행간 · 낱말 단위 줄바꿈
 - 라벨: 작은 산세리프 · 코드·번호·흐름도는 모노
-- Header: README 홈과 문서의 제목·소개·얇은 점선 · 사이트 이름과 h1의 위쪽 정렬
+- Header: 상단 고정 사이트 이름과 여백 · 아래 1px 가로선에서 문서 탐색·본문·TOC 시작
+- 본문 머리: README 홈과 문서의 제목·소개·얇은 점선
 - 면의 구분: 가는 선 · 직각 모서리 · 그림자·그라데이션 없음
 - 페이지 최대 폭 1920px · 문서 탐색·본문·TOC의 3열 배치
 - 열 경계: 옅은 1px 세로선 · 경계에서 본문까지 양쪽 48px
 - 색의 선택: 역할별 토큰 · System·Light·Dark
 - favicon: 여백을 줄인 픽셀 얼굴 · 검은 점 눈·작은 미소 · 투명 배경 · 두 가지 색
-- Brand: 기본 이름 `for humanity` · 사이드바는 텍스트 · 이름은 `title` 설정
+- Brand: 기본 이름 `for humanity` · 공통 헤더의 텍스트 · 이름은 `title` 설정
 - 커서 장식: 24px 픽셀 얼굴 · 기본 커서에서 16px 간격 · 클릭·드래그·문서 이동에서도 표시 유지
 - 문서 탐색: 목적별 묶음 · 읽는 순서 · 아이콘 없는 텍스트 링크
 - TOC: 본문 오른쪽 독립 영역 · 중립색 · 레일 없이 번호와 제목 · 모든 section·subsection 표시
@@ -36,13 +37,14 @@ order: 20
 | Kind             | Roles                                                                                  |
 |------------------|----------------------------------------------------------------------------------------|
 | `color`          | 바탕 · 글 · 선 · 강조 · 링크 · 상태                                                    |
-| `font`           | `sans` 본문·라벨 · `mono` 코드·번호·흐름도                                             |
+| `font`           | `sans` 본문·라벨 · `mono` 코드·번호·흐름도 · `brand` 사이트 이름                      |
 | `font-size`      | `label` · `mark` · `detail` · `dense` · `body` · `lead` · `part` · `section` · `title` |
 | `font-weight`    | `mark` · `active` · `strong` · `title`                                                 |
 | `line-height`    | `title` · `heading` · `tight` · `code` · `body`                                        |
 | `letter-spacing` | `label` · `brand` · `heading` · `title`                                                |
 | `space`          | `inline` · `stack` · `block` · `group` · `section` · 페이지 틀                         |
-| `size`           | `sidebar` · `toc` · `page`                                                             |
+| `size`           | `sidebar` · `toc` · `page` · `header`                                                  |
+| `z-index`        | `sticky` 고정 헤더 · `popper` 커서 장식                                               |
 | `radius`         | `pill` · `card` · `box` · `inline` · `mark`                                            |
 | `outline`        | `focus` · `focus-offset`                                                               |
 | `code`           | Shiki의 `foreground` · `background` · `token-*`                                        |
@@ -59,7 +61,7 @@ order: 20
 | `text-muted`              | 라벨·번호                    |
 | `anchor-highlight`        | 앵커로 도착한 제목의 형광펜 바탕       |
 | `border` / `border-soft`  | 상자·목록·점선 / 표 구분선             |
-| `border-layout`          | 문서 탐색·본문·TOC 사이의 열 경계       |
+| `border-layout`          | 공통 헤더의 가로선 · 문서 탐색·본문·TOC의 열 경계 |
 | `accent` / `accent-soft`  | 번호·현재 section·코드 / 행 hover 바탕 |
 | `link`                    | 본문·탐색 링크·포커스                  |
 | `link-visited`            | 방문한 본문·문서 탐색 링크              |
@@ -72,8 +74,9 @@ order: 20
 
 ## Typography
 
-Pretendard 본문·라벨, JetBrains Mono 코드·번호·흐름도. 내장 파일 사용.
-코드 폰트의 미지원 한글은 본문 폰트로 fallback.
+Pretendard 본문·라벨, JetBrains Mono 코드·번호·흐름도, Architects Daughter 사이트 이름. 내장 파일 사용.
+사이트 이름은 Architects Daughter Regular `400`. 코드·사이트 이름 폰트의 미지원 글자와 한글은 본문 폰트로 fallback.
+글꼴의 출처는 [Google Fonts](https://fonts.google.com/specimen/Architects+Daughter), OFL은 자원 폴더에 포함.
 
 | Size      | Use                                                 |
 |-----------|-----------------------------------------------------|
@@ -85,9 +88,9 @@ Pretendard 본문·라벨, JetBrains Mono 코드·번호·흐름도. 내장 파�
 | `lead`    | 소개 · h3                                           |
 | `part`    | part                                                |
 | `section` | h2                                                  |
-| `title`   | h1 · 사이드바 사이트 이름                            |
+| `title`   | h1 · 공통 헤더의 사이트 이름                          |
 
-본문·기본 번호 `mark`는 `400`, 현재 문서·TOC의 `active`는 `500`, 제목·강조 `strong`과 h1 `title`은 `600`.
+본문·기본 번호·사이트 이름의 `mark`는 `400`, 현재 문서·TOC의 `active`는 `500`, 제목·강조 `strong`과 h1 `title`은 `600`.
 TOC 번호는 제목의 색·굵기를 따름. 제목 첫 줄의 행 높이 `1lh`를 사용해 중앙 정렬하고, 여러 줄 제목에서도 첫 줄 기준 유지.
 코드 합자 비활성: `>=`, `!=` 원문 구분.
 본문과 사이드바 문서 링크는 `13.5px`, h1과 사이트 이름은 `22px`, h2는 `17px`. 라벨의 대문자 변환과 자간 확대 없음.
@@ -95,7 +98,7 @@ Shiki는 기존 역할색 참조: 키워드 strong, 함수 accent, 문자열 ver
 
 글꼴 이름과 fallback은 `token.css`에 정적 선언. CLI는 내장 `@font-face`와 내용 지문이 붙은 자원 URL 생성.
 공통 폰트 토큰의 정의를 IDE에서도 같은 소스로 확인 가능.
-본문 공통 조각과 코드 글꼴은 선요청. `font-display: optional`로 늦게 받은 글꼴의 화면 중간 교체 방지.
+사이트 이름·본문 공통 조각·코드 글꼴은 선요청. `font-display: optional`로 늦게 받은 글꼴의 화면 중간 교체 방지.
 느린 첫 방문은 대체 글꼴로 읽고, 받은 파일은 다음 문서에서 재사용. dev·preview의 글꼴 응답은 장기 캐시.
 
 ::part[Layout]
@@ -110,37 +113,42 @@ Shiki는 기존 역할색 참조: 키워드 strong, 함수 accent, 문자열 ver
 | `group`                          | 제목·본문 묶음  |
 | `section`                        | section 사이                 |
 | `page-top` · `gutter`             | 페이지 위·좌우 여백          |
-| `column`                         | 본문 좌우 패딩 · 상단 TOC 정렬 |
+| `column`                         | 본문 좌우 패딩               |
 | `sidebar`                        | 문서 탐색·TOC의 경계 쪽 여백  |
 | `anchor`                         | hash 제목 위치 · TOC 읽는 선 |
 
 공통 리듬: `inline` 8px · `stack` 12px · `block` 16px · `group` 24px · `section` 40px.
 같은 역할의 간격은 `margin`, `padding`, `gap`에서 공통 토큰 재사용.
 사이드바는 묶음 간격 12px, 라벨 아래 4px, 행 위·아래 3px로 촘촘하게 배치. 홈 이동은 사이트 이름 하나로 제공.
+공통 헤더의 위·아래 여백은 `block` 16px. 사이트 이름은 문서 탐색의 시작선에 정렬하고 나머지는 여백.
+헤더 높이는 제목의 행 높이·위아래 여백·1px 선을 합친 `size-header`. 사이트 이름은 한 줄, 긴 이름은 말줄임.
+헤더 아래 가로선에서 세 영역이 함께 시작하며, 내용의 위 여백은 `page-top` 토큰 사용.
 본문의 `column` 패딩은 양쪽 48px. grid gap 없이 열 경계에 붙이고, 읽는 여백은 본문 소유.
 문서 탐색·TOC의 `sidebar` 여백은 경계 쪽에만 16px. 반대쪽은 별도 패딩 없이 제목 폭 확보.
 문서 탐색과 오른쪽 TOC는 각각 224px 고정 폭. 제목이 길면 줄바꿈, 페이지별 제목 길이에 따른 컬럼 이동 없음.
-앵커 도착점은 화면 상단에서 80px, `640px` 미만에서는 48px. 제목 위 여백을 남기고 아래 본문을 바로 읽는 기준.
+앵커 도착점은 고정 헤더 아래 `block` 16px. 모든 폭에서 헤더가 제목을 가리지 않는 읽는 기준.
 TOC의 현재 위치와 마지막 절의 끝 여백도 같은 `anchor` 토큰 사용.
 
 한 소유자에만 필요한 간격·보정은 지역 값. 예: 문서 탐색 들여쓰기 12px, TOC 소제목 들여쓰기 20px, 목록 행의 위·아래 3px.
 같은 숫자여도 아이콘 크기·글자 크기·페이지 폭은 간격과 별도 역할.
 모서리 토큰의 기본값은 `0`. 표·흐름도는 바깥 상자 없이 표현.
-겹침 요소 추가 시 `z-index` 역할 토큰 먼저 정의. 커서 장식은 `--app-z-index-popper` 층.
+겹침 요소 추가 시 `z-index` 역할 토큰 먼저 정의. 고정 헤더는 `--app-z-index-sticky`, 커서 장식은 `--app-z-index-popper` 층.
 
 ## Responsive layout
 
 | Width                  | Layout                                                     |
 |------------------------|------------------------------------------------------------|
 | `1440px` 이상          | 문서 탐색 224px · 본문 가변 폭 · TOC 224px의 3열             |
-| `1024px` 이상·`1440px` 미만 | 문서 탐색은 왼쪽 · TOC는 본문 위                              |
+| `1024px` 이상·`1440px` 미만 | 왼쪽 문서 탐색 아래 TOC · 두 목록의 공유 스크롤 · 본문은 오른쪽 |
 | `1024px` 미만          | 문서 탐색 → TOC → 본문 순서의 1열                            |
 | `640px` 미만           | 위·좌우 여백 축소                                           |
 
 TOC가 없는 페이지는 별도 목차 열 없이 문서 탐색과 본문만 배치.
-두 탐색 영역은 넓은 화면에서 각각 sticky·스크롤. 옅은 1px 열 경계는 화면 높이만큼 유지.
-본문 위 TOC는 본문 내용의 시작선에 정렬. `1024px` 미만에서는 본문 패딩과 열 경계 쪽 여백 해제.
-본문 위로 이동한 탐색 영역은 세로 경계 해제. TOC의 소제목은 모든 폭에서 전체 표시.
+공통 헤더는 모든 폭에서 화면 상단에 고정. 테마·저장소 아이콘은 문서 목록 아래에 유지.
+넓은 화면에서는 문서 탐색과 TOC가 각각 헤더 아래 sticky·스크롤. 옅은 1px 열 경계는 헤더의 가로선에서 시작하며 남은 화면 높이만큼 유지.
+좁은 데스크톱에서는 문서 탐색·도구 다음에 가로선으로 구분한 TOC. 왼쪽 열 전체가 sticky·스크롤.
+`1024px` 미만에서는 문서 탐색·TOC를 본문 위 한 흐름으로 배치하고 세로 경계·본문 패딩·열 경계 쪽 여백 해제.
+TOC의 소제목은 모든 폭에서 전체 표시.
 폭 기준의 CSS 변수 사용 불가. `wg-shell.css`, `_wg-shell-nav.css`, `_wg-shell-toc.css`, `token.css`의 적용 구간 일치 필요.
 새 breakpoint는 배치 변경에 한정.
 

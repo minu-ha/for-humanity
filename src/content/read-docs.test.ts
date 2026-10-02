@@ -61,7 +61,7 @@ test("navigation shows every document group in reading order without document ic
     );
     assert.doesNotMatch(html, /<details\b/);
     assert.doesNotMatch(html, /wg_shellNav__docIcon/);
-    assert.equal([...html.matchAll(/href="\/"/g)].length, 1);
+    assert.doesNotMatch(html, /href="\/"/);
     assert.doesNotMatch(html, />Documents<|>Overview</);
     assert.ok(html.indexOf('href="/writing/"') < html.indexOf('href="/parts/"'));
     assert.match(html, /href="\/writing\/"[^>]*aria-current="page"/);
@@ -136,7 +136,8 @@ test("a plain root README renders at home and relative home links resolve from n
     assert.match(html, /href="\/guide\/setup\/"/);
     assert.match(html, /href="#start" data-toc-link/);
     assert.match(html, /class="shiki/);
-    assert.match(html, /wg_shellNav__brand" href="\/" aria-current="page"/);
+    assert.match(html, /wg_shell__brand" href="\/" aria-current="page"/);
+    assert.equal([...html.matchAll(/href="\/"/g)].length, 1);
     assert.match(docs[0].html, /href="\/#start"/);
     assert.doesNotMatch(html, /wg_prose__eyebrow|pg_home__card/);
     assert.equal((await app.request("/readme/")).status, 404);

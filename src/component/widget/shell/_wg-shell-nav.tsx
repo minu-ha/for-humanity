@@ -13,7 +13,7 @@ import "./_wg-shell-nav.css";
  */
 export interface WgShellNavProps {
     /**
-     * 사이드바 사이트 이름
+     * 문서 묶음 순서와 저장소 링크
      */
     site: SiteConfig;
     /**
@@ -32,11 +32,8 @@ export const WgShellNav = (props: WgShellNavProps) => {
 
     return (
         <nav className={clsx("wg_shellNav__root")} aria-label={copy_nav_aria_label}>
-            <a className={clsx("wg_shellNav__brand")} href="/" aria-current={props.current === undefined ? "page" : undefined}>
-                {props.site.title}
-            </a>
             {/**
-             * 문서 이동 · 독자 목적별 묶음 · 홈 이동은 사이트 이름 소유
+             * 문서 이동 · 독자 목적별 묶음
              */}
             <div className={clsx("wg_shellNav__docs")}>
                 {/**

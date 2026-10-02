@@ -14,7 +14,12 @@ export const font_sans_css = "src/asset/font/pretendard/pretendardvariable-dynam
 export const font_mono_css = "src/asset/font/jetbrains-mono/jetbrains-mono.css";
 
 /**
- * 사이트 이름·탐색·라틴 문자에 필요한 본문 조각 · 92개 전체 선요청 방지
+ * 사이트 이름 글꼴 CSS · Architects Daughter Regular · 라틴 subset
+ */
+export const font_brand_css = "src/asset/font/architects-daughter/architects-daughter.css";
+
+/**
+ * 탐색·라틴 문자에 필요한 본문 조각 · 92개 전체 선요청 방지
  */
 export const font_sans_preload_file = "PretendardVariable.subset.91.woff2";
 

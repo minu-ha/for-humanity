@@ -29,7 +29,7 @@ const reloadScript = `new EventSource(${JSON.stringify(asset_reload_path)}).onme
  */
 export interface WgShellProps {
     /**
-     * 사이트 이름 · 탭과 사이드바
+     * 사이트 이름 · 탭과 공통 헤더
      */
     site: SiteConfig;
     /**
@@ -81,11 +81,24 @@ export const WgShell = (props: WgShellProps) => {
                 {props.assets.reload && <script dangerouslySetInnerHTML={{__html: reloadScript}} />}
             </head>
             {/**
-             * 문서 탐색·현재 목차·본문 · 브라우저 동작 연결
+             * 사이트 머리·문서 탐색·현재 목차·본문 · 브라우저 동작 연결
              */}
             <body className={clsx("wg_shell__root", {"wg_shell__root--outlined": tocGroups.length > 0})}>
-                <WgShellNav site={props.site} docs={props.docs} current={props.current} />
-                {tocGroups.length > 0 && <WgShellToc groups={tocGroups} />}
+                {/**
+                 * 사이트 이름의 홈 이동 · 열 경계 위 공통 머리
+                 */}
+                <header className={clsx("wg_shell__header")}>
+                    <a className={clsx("wg_shell__brand")} href="/" aria-current={props.current === undefined ? "page" : undefined}>
+                        {props.site.title}
+                    </a>
+                </header>
+                {/**
+                 * 좁은 데스크톱의 문서 탐색·목차 공유 스크롤 · 넓은 화면에서는 각 열로 배치
+                 */}
+                <div className={clsx("wg_shell__sidebar")}>
+                    <WgShellNav site={props.site} docs={props.docs} current={props.current} />
+                    {tocGroups.length > 0 && <WgShellToc groups={tocGroups} />}
+                </div>
                 <main className={clsx("wg_shell__main")}>{props.children}</main>
                 <img className={clsx("wg_shell__cursorFace")} src={asset_favicon_path} width="24" height="24" alt="" aria-hidden="true" draggable={false} data-cursor-face="" />
                 <script type="module" src={asset_client_path} />

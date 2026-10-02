@@ -7,7 +7,7 @@ export interface SiteAssets {
      */
     fontCss: string;
     /**
-     * 선요청 글꼴 URL · 본문 공통 조각과 코드 글꼴
+     * 선요청 글꼴 URL · 사이트 이름·본문 공통 조각·코드
      */
     preload: string[];
     /**

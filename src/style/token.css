@@ -47,11 +47,12 @@
 
     /*
      * 내장 글꼴 · CLI는 @font-face와 자원 URL 생성
-     * 본문·라벨 Pretendard · 코드·번호·흐름도 JetBrains Mono · 한글 fallback
+     * 본문·라벨 Pretendard · 코드·번호·흐름도 JetBrains Mono · 사이트 이름 Architects Daughter
      * 영문 폭 0.6em = 흐름도 12px 격자의 7.2px
      */
     --app-font-sans: "Pretendard Variable", system-ui, "Apple SD Gothic Neo", sans-serif;
     --app-font-mono: "JetBrains Mono Variable", var(--app-font-sans);
+    --app-font-brand: "Architects Daughter", var(--app-font-sans);
 
     /* 글자 크기 · 역할별 9단계 */
     --app-font-size-label: 12px;
@@ -98,9 +99,10 @@
     --app-size-sidebar: 224px;
     --app-size-toc: 224px;
     --app-size-page: 1920px;
+    --app-size-header: calc(var(--app-font-size-title) * var(--app-line-height-title) + var(--app-space-block) * 2 + 1px);
 
-    /* 화면 위쪽 제목 여백 · hash 도착점과 목차 읽는 선의 공통 기준 */
-    --app-space-anchor: 80px;
+    /* 고정 헤더 아래 제목 여백 · hash 도착점과 목차 읽는 선의 공통 기준 */
+    --app-space-anchor: calc(var(--app-size-header) + var(--app-space-block));
 
     /* 모서리 · 직각 기본값 */
     --app-radius-pill: 0;
@@ -113,7 +115,8 @@
     --app-outline-focus: 2px solid var(--app-color-link);
     --app-outline-focus-offset: 2px;
 
-    /* 커서 장식처럼 문서 위에 뜨는 보조 요소 */
+    /* 고정 헤더 · 커서 장식 */
+    --app-z-index-sticky: 100;
     --app-z-index-popper: 300;
 
     /*
@@ -153,6 +156,5 @@
     :root {
         --app-space-page-top: 20px;
         --app-space-gutter: 16px;
-        --app-space-anchor: 48px;
     }
 }

@@ -17,7 +17,7 @@ import {createApp} from "@/app";
 import {asset_client_path, asset_favicon_path, asset_font_dir, asset_style_path} from "@/constant/asset";
 import {cli_config_file_name, cli_default_command, cli_default_docs_dir, cli_dev_port} from "@/constant/cli";
 import {copy_error_config, copy_error_font_preload, copy_error_prefix, copy_error_unknown_command} from "@/constant/copy";
-import {font_cache_control, font_mono_css, font_sans_css, font_sans_preload_file} from "@/constant/font";
+import {font_brand_css, font_cache_control, font_mono_css, font_sans_css, font_sans_preload_file} from "@/constant/font";
 import {site_config_absent} from "@/constant/site";
 import {createProcessor} from "@/content/create-processor";
 import {readDocs} from "@/content/read-docs";
@@ -74,19 +74,21 @@ const main = async () => {
     // 내장 @font-face와 파일 수집 · font-family는 token.css 소유
     const sans = toFontCss({css: join(kitRoot, font_sans_css), fontDir: asset_font_dir});
     const mono = toFontCss({css: join(kitRoot, font_mono_css), fontDir: asset_font_dir});
+    const brand = toFontCss({css: join(kitRoot, font_brand_css), fontDir: asset_font_dir});
     const sansPreload = [...sans.files].find((entry) => basename(entry[1]) === font_sans_preload_file);
 
     if (sansPreload === undefined) {
         throw new Error(`${copy_error_font_preload}: ${font_sans_preload_file}`);
     }
 
-    const fontCss = [sans.css, mono.css].join("\n");
+    const fontCss = [sans.css, mono.css, brand.css].join("\n");
     const files = new Map([
         [asset_style_path, join(kitRoot, "dist/cli.css")],
         [asset_client_path, join(kitRoot, "dist/client.js")],
         [asset_favicon_path, join(kitRoot, "src/asset/favicon.svg")],
         ...sans.files,
         ...mono.files,
+        ...brand.files,
     ]);
     const processor = createProcessor({site: siteConfig, root: docsRoot});
     const [docs, home] = await Promise.all([readDocs({root: docsRoot, processor}), readHome({root: docsRoot, processor})]);
@@ -94,7 +96,7 @@ const main = async () => {
     const app = createApp({
         site: siteConfig,
         store,
-        assets: {fontCss, preload: [sansPreload[0], ...mono.files.keys()], reload: command === "dev"},
+        assets: {fontCss, preload: [...brand.files.keys(), sansPreload[0], ...mono.files.keys()], reload: command === "dev"},
     });
 
     if (command === "build") {
