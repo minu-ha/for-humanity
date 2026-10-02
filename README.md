@@ -23,7 +23,7 @@ Write Markdown. Keep the context. Share a static site.
 - **Keep the detail.** Notes for context, native disclosures for implementation details, and links that open folded sections.
 - **Show the connections.** Tables, highlighted code, Mermaid flowcharts, status badges and color swatches.
 - **Share the result.** Static HTML, self-hosted fonts and a small browser script. No React hydration.
-- **Read your way.** System, Light and Dark themes, keyboard navigation and a layout for narrow screens.
+- **Read your way.** System-matched light and dark themes, keyboard navigation and a layout for narrow screens.
 
 ## Quick start
 
@@ -59,7 +59,6 @@ export default {
     title: "Project notes",
     description: "Decisions, working notes and the details behind them.",
     navigation: ["Getting started", "Guide", "Reference", "Examples"],
-    repository: {provider: "github", url: "https://github.com/you/your-project"},
 };
 ```
 

@@ -5,7 +5,7 @@
  */
 
 :root {
-    /* 시스템 테마 · 명시 선택은 아래 data-theme 블록 */
+    /* 시스템의 밝게·어둡게 설정을 그대로 따름 */
     color-scheme: light dark;
 
     /* 바탕 · ground 페이지, surface 상자, code 코드 */
@@ -98,9 +98,9 @@
     --app-space-sidebar: 16px;
     --app-size-sidebar: 224px;
     --app-size-toc: 224px;
-    --app-size-page: 1920px;
+    --app-size-main: 1200px;
+    --app-size-page: calc(var(--app-size-sidebar) + var(--app-size-main) + var(--app-space-gutter) * 2);
     --app-size-brand: calc(var(--app-font-size-title) * var(--app-line-height-title) + var(--app-space-page-top) + var(--app-space-group));
-    --app-size-tools: calc(16px + var(--app-space-inline) * 2 + var(--app-space-block) * 2 + 1px);
 
     /* 화면 위쪽 제목 여백 · hash 도착점과 목차 읽는 선의 공통 기준 */
     --app-space-anchor: 80px;
@@ -116,7 +116,7 @@
     --app-outline-focus: 2px solid var(--app-color-link);
     --app-outline-focus-offset: 2px;
 
-    /* 사이드바 사이트 이름·하단 도구 · 커서 장식 */
+    /* 사이드바 사이트 이름 · 커서 장식 */
     --app-z-index-sticky: 100;
     --app-z-index-popper: 300;
 
@@ -135,14 +135,6 @@
     --app-code-token-comment: var(--app-color-text-muted);
     --app-code-token-punctuation: var(--app-color-text-muted);
     --app-code-token-link: var(--app-color-link);
-}
-
-:root[data-theme="light"] {
-    color-scheme: light;
-}
-
-:root[data-theme="dark"] {
-    color-scheme: dark;
 }
 
 /* 폭 조건 · shell·nav의 breakpoint와 일치 */

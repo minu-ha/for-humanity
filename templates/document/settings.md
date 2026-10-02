@@ -15,7 +15,6 @@ export default {
     title: "for humanity",
     description: "사람이 읽는 문서를 위한 Markdown 문서 도구",
     navigation: ["Getting started", "Guide", "Reference", "Examples"],
-    repository: {provider: "github", url: "https://github.com/you/your-project"},
     status: [
         {phrase: "확인됨", kind: "verified", date: true},
         {phrase: "확인되지 않았다", kind: "unverified"},
@@ -41,6 +40,7 @@ export default {
 데스크톱에서는 사이트 이름을 고정하고 아래 목록만 스크롤. 사이트 이름은 Architects Daughter Regular, 미지원 글자는 본문 폰트로 표시.
 현재 문서 목차는 `1440px` 이상에서 본문 오른쪽, 그 미만에서는 왼쪽 문서 목록 아래에 배치.
 데스크톱의 본문과 오른쪽 목차는 문서 목록의 첫 묶음과 같은 높이에서 시작.
+본문 `main`은 좌우 패딩을 포함해 최대 `1200px`. 좁은 화면에서는 가용 폭에 맞춰 축소.
 
 ## Navigation
 
@@ -64,24 +64,6 @@ export default {
 문서는 이름만 표시. 브라우저 방문 기록에 따라 방문한 문서는 보라색, 현재 페이지는 진한 글·굵기 `500`·왼쪽 선으로 구분.
 문서 링크와 사이트 이름은 hover 시 글색·굵기를 유지하고 밑줄 표시. 문서 레일은 hover한 링크색으로 표시하되 현재 문서의 레일은 유지.
 목차는 레일 없이 중립색 번호·제목으로 표시. 현재 절·소제목의 번호와 제목은 진한 글·굵기 `500`으로 구분. 모든 소제목은 항상 표시.
-
-## Repository link
-
-뷰포트 왼쪽 아래에 고정한 테마 버튼 옆에 저장소 아이콘 표시. 목록·목차를 스크롤해도 위치 유지.
-두 아이콘은 밝은 테마에서 검정 계열, 어두운 테마에서 밝은 중립색. `repository`를 생략하면 링크도 생략.
-이 라이브러리의 배포 사이트에만 실제 프로젝트 GitHub를 지정하며, 다른 사용자의 기본 설정에 주소를 넣지 않음.
-
-```js
-export default {
-    repository: {
-        provider: "gitlab",
-        url: "https://gitlab.com/your-team/your-project",
-    },
-};
-```
-
-`provider`는 `github` 또는 `gitlab`. `url`은 `http`·`https` 주소.
-자체 호스팅 GitLab과 개인 프로필도 URL로 지정 가능. 아이콘에 서비스 이름의 툴팁과 접근 가능한 이름 제공.
 
 ## Status badges
 
@@ -108,7 +90,7 @@ export default {
 
 ## Themes and fonts
 
-테마는 읽는 사람의 선택. System → Light → Dark 순환, 브라우저에 저장.
+테마는 읽는 사람의 시스템 설정에 따라 밝게·어둡게 자동 적용.
 
 - 본문·라벨: Pretendard Variable
 - 코드·section 번호·흐름도: JetBrains Mono Variable

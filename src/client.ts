@@ -6,8 +6,6 @@
 import {heading_highlight_hold_ms} from "@/component/widget/prose/_constant/heading-highlight";
 import {cursor_face_offset_px, cursor_face_storage_key} from "@/component/widget/shell/_constant/cursor-face";
 import {reading_line_slack_px} from "@/component/widget/shell/_constant/reading-line";
-import {setThemeButton} from "@/component/widget/shell/_function/set-theme-button";
-import {theme_mode, theme_order, theme_storage_key} from "@/constant/theme";
 import {findHashTarget} from "@/util/dom/find-hash-target";
 import {revealHashTarget} from "@/util/dom/reveal-hash-target";
 
@@ -139,41 +137,6 @@ if (cursorFace) {
     addEventListener("pagehide", handlePageHide);
     addEventListener("pageshow", handlePageShow);
     cursorMedia.addEventListener("change", handleCursorMediaChange);
-}
-
-const themeButton = document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
-
-/**
- * HTML 머리에서 적용한 테마 · 미지정 시 시스템
- */
-const readThemeMode = () => {
-    return theme_order.find((mode) => mode === document.documentElement.getAttribute("data-theme")) ?? theme_mode.system;
-};
-
-if (themeButton) {
-    /**
-     * 테마 순환과 저장 · 시스템 → 밝게 → 어둡게
-     */
-    const handleThemeClick = () => {
-        const next = theme_order[(theme_order.indexOf(readThemeMode()) + 1) % theme_order.length];
-
-        if (next === theme_mode.system) {
-            document.documentElement.removeAttribute("data-theme");
-        } else {
-            document.documentElement.setAttribute("data-theme", next);
-        }
-
-        setThemeButton(themeButton, next);
-
-        try {
-            localStorage.setItem(theme_storage_key, next);
-        } catch {
-            // 저장 실패 시 현재 방문의 테마 유지
-        }
-    };
-
-    setThemeButton(themeButton, readThemeMode());
-    themeButton.addEventListener("click", handleThemeClick);
 }
 
 const hashTarget = revealHashTarget(location.hash);

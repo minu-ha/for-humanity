@@ -23,6 +23,7 @@
 }
 
 .wg_shell__root--outlined {
+    max-width: calc(var(--app-size-page) + var(--app-size-toc));
     grid-template:
         "brand main toc" min-content
         "nav main toc" 1fr / var(--app-size-sidebar) minmax(0, 1fr) var(--app-size-toc);
@@ -72,6 +73,7 @@
 .wg_shell__main {
     grid-area: main;
     min-width: 0;
+    max-width: var(--app-size-main);
 
     /* 문서 목록의 시작선 · 마지막 절도 읽는 선까지 이동 가능한 끝 여백 */
     padding-block: var(--app-size-brand) calc(100vh - var(--app-space-anchor));
@@ -112,10 +114,10 @@
         min-height: 100vh;
         max-height: 100vh;
         overflow-y: auto;
-        padding-block: 0 calc(var(--app-size-tools) + var(--app-space-inline));
+        padding-block: 0 var(--app-space-block);
         padding-inline-end: var(--app-space-sidebar);
         border-right: 1px solid var(--app-color-border-layout);
-        scroll-padding-block: var(--app-size-brand) calc(var(--app-size-tools) + var(--app-space-inline));
+        scroll-padding-block: var(--app-size-brand) var(--app-space-block);
     }
 
     .wg_shell__brand {

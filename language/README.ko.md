@@ -23,7 +23,7 @@ Markdown으로 작성하고, 맥락을 남기고, 정적 사이트로 공유.
 - **Context** — 보충 설명은 Note, 구현 상세는 Details. 접힌 section도 링크로 바로 이동
 - **Content** — 표·코드 강조·Mermaid·status badge·color swatch
 - **Static output** — 정적 HTML·자체 호스팅 폰트·작은 브라우저 스크립트. React hydration 없음
-- **Reading** — System·Light·Dark, 키보드 이동, 좁은 화면의 배치
+- **Reading** — 시스템 설정을 따르는 밝은·어두운 테마, 키보드 이동, 좁은 화면의 배치
 
 ## Quick start
 
@@ -60,7 +60,6 @@ export default {
     title: "Project notes",
     description: "결정·작업 기록·구현의 근거를 담는 문서.",
     navigation: ["Getting started", "Guide", "Reference", "Examples"],
-    repository: {provider: "github", url: "https://github.com/you/your-project"},
 };
 ```
 

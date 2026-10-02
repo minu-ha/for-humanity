@@ -156,19 +156,3 @@ test("a missing README provides a creation hint without generated overview cards
     assert.match(html, /문서 폴더에 README\.md를 추가/);
     assert.doesNotMatch(html, /pg_home__card|>Overview<|>Documents</);
 });
-
-test("repository controls use the configured provider and never leak the template repository", () => {
-    const absent = renderToStaticMarkup(WgShellNav({site: siteConfigSchema.parse({}), docs: []}));
-
-    assert.doesNotMatch(absent, /aria-label="GitHub"|aria-label="GitLab"/);
-
-    for (const provider of ["github", "gitlab"]) {
-        const site = siteConfigSchema.parse({repository: {provider, url: `https://${provider}.com/example/docs`}});
-        const html = renderToStaticMarkup(WgShellNav({site, docs: []}));
-
-        assert.match(html, new RegExp(`href="https://${provider}\\.com/example/docs"`));
-        assert.match(html, new RegExp(`aria-label="${provider === "github" ? "GitHub" : "GitLab"}"`));
-    }
-
-    assert.equal(siteConfigSchema.safeParse({repository: {provider: "github", url: "javascript:alert(1)"}}).success, false);
-});

@@ -23,7 +23,7 @@ flowchart LR
 | `cli.ts`    | 인자 · 설정 · 문서 · 폰트 · 빌드·서버 시작   | Node.js       |
 | `app.tsx`   | 첫 화면과 문서 라우트 · React → HTML         | Node.js       |
 | `dev.ts`    | 자원 · SSE 새로고침 · 페이지 앱 위임         | Node.js · dev |
-| `client.ts` | 커서 장식 · 테마 · 읽는 section · 접힌 hash 보정 | Browser      |
+| `client.ts` | 커서 장식 · 읽는 section · 접힌 hash 보정 | Browser      |
 
 ::part[Engine]
 

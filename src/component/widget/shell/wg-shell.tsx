@@ -5,19 +5,12 @@ import type {DocOutline} from "@/component/widget/shell/_type/doc-outline";
 import {WgShellNav} from "@/component/widget/shell/_wg-shell-nav";
 import {WgShellToc} from "@/component/widget/shell/_wg-shell-toc";
 import {asset_client_path, asset_favicon_path, asset_reload_path, asset_style_path} from "@/constant/asset";
-import {theme_mode, theme_storage_key} from "@/constant/theme";
 import type {Doc} from "@/type/doc";
 import type {SiteAssets} from "@/type/site-assets";
 import type {SiteConfig} from "@/type/site-config";
 import "@/style/base.css";
 import "@/style/token.css";
 import "./wg-shell.css";
-
-/**
- * 첫 페인트 전 테마 적용 · 저장소 접근 실패 시 시스템
- * 초기 smooth scroll 중지 · client.ts의 hash 보정 후 복원
- */
-const themeScript = `(function(){document.documentElement.style.scrollBehavior="auto";try{var theme=localStorage.getItem(${JSON.stringify(theme_storage_key)});if(${JSON.stringify([theme_mode.light, theme_mode.dark])}.includes(theme)){document.documentElement.setAttribute("data-theme",theme)}}catch(e){}})()`;
 
 /**
  * dev 문서 변경 시 SSE 새로고침
@@ -64,7 +57,7 @@ export const WgShell = (props: WgShellProps) => {
     return (
         <html lang="ko">
             {/**
-             * 공통 자원과 첫 페인트 전 테마
+             * 공통 자원 · 초기 smooth scroll은 client.ts의 hash 위치 보정 후 복원
              */}
             <head>
                 <meta charSet="utf-8" />
@@ -76,7 +69,7 @@ export const WgShell = (props: WgShellProps) => {
                 {props.assets.preload.map((href) => (
                     <link key={href} rel="preload" href={href} as="font" type="font/woff2" crossOrigin="" />
                 ))}
-                <script dangerouslySetInnerHTML={{__html: themeScript}} />
+                <script dangerouslySetInnerHTML={{__html: 'document.documentElement.style.scrollBehavior="auto"'}} />
                 <link rel="stylesheet" href={asset_style_path} />
                 {props.assets.reload && <script dangerouslySetInnerHTML={{__html: reloadScript}} />}
             </head>

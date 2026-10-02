@@ -23,24 +23,9 @@ export const copy_home_missing = "문서 폴더에 README.md를 추가하면 이
 export const copy_nav_toc_label = "Contents";
 
 /**
- * 저장소 아이콘의 접근 가능한 이름과 툴팁
- */
-export const copy_repository_github = "GitHub";
-export const copy_repository_gitlab = "GitLab";
-
-/**
  * 대소문자만 다른 README 중복 오류
  */
 export const copy_error_home_clash = "홈 README가 겹친다";
-
-/**
- * 테마 버튼의 접근 가능한 이름·툴팁 · System → Light → Dark
- */
-export const copy_theme_label = {
-    system: "Theme · System",
-    light: "Theme · Light",
-    dark: "Theme · Dark",
-} as const;
 
 /**
  * CLI 오류 접두사
