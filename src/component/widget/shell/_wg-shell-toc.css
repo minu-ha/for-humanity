@@ -56,8 +56,10 @@
     }
 
     &:focus-visible {
-        outline: var(--app-outline-focus);
-        outline-offset: var(--app-outline-focus-offset);
+        /* 박스 대신 hover와 같은 진한 글·밑줄로 키보드 위치 표시 */
+        outline: none;
+        color: var(--app-color-text-strong);
+        text-decoration: underline;
     }
 }
 
@@ -98,8 +100,10 @@
     }
 
     &:focus-visible {
-        outline: var(--app-outline-focus);
-        outline-offset: var(--app-outline-focus-offset);
+        /* 하위 목차도 상위 목차와 같은 포커스 표현 */
+        outline: none;
+        color: var(--app-color-text-strong);
+        text-decoration: underline;
     }
 }
 

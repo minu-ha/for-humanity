@@ -53,9 +53,11 @@
         text-decoration: underline;
     }
 
-    &:focus-visible {
-        outline: var(--app-outline-focus);
-        outline-offset: var(--app-outline-focus-offset);
+    /* 탐색 링크는 요청한 hover 표현으로 키보드 위치도 표시 */
+    &:where(:focus-visible) {
+        border-left-color: currentcolor;
+        outline: none;
+        text-decoration: underline;
     }
 }
 
