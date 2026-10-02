@@ -29,48 +29,6 @@
     list-style: none;
 }
 
-.wg_shellToc__item {
-    /* 하위 목록의 margin을 포함해 다음 항목까지 줄기 연결 */
-    display: flow-root;
-
-    /* 세로 줄기는 항목 전체 기준 · 중간 항목의 소제목 옆에서도 연결 */
-    position: relative;
-
-    &::before {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        border-left: 1px solid var(--app-color-border-soft);
-        content: "";
-        pointer-events: none;
-    }
-
-    &:where(:last-child)::before {
-        bottom: auto;
-        height: calc(0.5lh + var(--app-space-tree-row));
-    }
-}
-
-.wg_shellToc__item--trail {
-    &::before {
-        border-left-color: var(--app-color-text-strong);
-    }
-}
-
-.wg_shellToc__item--current {
-    /* 현재 항목의 첫 줄까지 강조 · 그 아래 줄기는 기본색 유지 */
-    &::after {
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: calc(0.5lh + var(--app-space-tree-row));
-        border-left: 1px solid var(--app-color-text-strong);
-        content: "";
-        pointer-events: none;
-    }
-}
-
 .wg_shellToc__link {
     /* 가로 가지는 링크 첫 줄 기준 · 여러 줄 제목에서도 연결 위치 유지 */
     position: relative;
@@ -121,6 +79,78 @@
     }
 }
 
+.wg_shellToc__item {
+    /* 하위 목록의 margin을 포함해 다음 항목까지 줄기 연결 */
+    display: flow-root;
+
+    /* 세로 줄기는 항목 전체 기준 · 중간 항목의 소제목 옆에서도 연결 */
+    position: relative;
+
+    &::before {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        border-left: 1px solid var(--app-color-border-soft);
+        content: "";
+        pointer-events: none;
+    }
+
+    &:where(:last-child)::before {
+        bottom: auto;
+        height: calc(0.5lh + var(--app-space-tree-row));
+    }
+
+    /* hover·키보드 포커스의 도착점 · 첫 줄 아래는 기본 줄기 유지 */
+    &::after {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: calc(0.5lh + var(--app-space-tree-row));
+        border-left: 1px solid transparent;
+        content: "";
+        pointer-events: none;
+    }
+
+    &:where(:hover)::after {
+        border-left-color: var(--app-color-text-strong);
+    }
+
+    &:where(:has(:focus-visible))::after {
+        border-left-color: var(--app-color-text-strong);
+    }
+
+    /* 뒤 항목까지의 세로 경로 · 같은 목록의 형제 안에서만 연결 */
+    &:where(:has(~ .wg_shellToc__item:hover))::before {
+        border-left-color: var(--app-color-text-strong);
+    }
+
+    &:where(:has(~ .wg_shellToc__item :focus-visible))::before {
+        border-left-color: var(--app-color-text-strong);
+    }
+
+    /* 하위 제목을 탐색할 때 상위 절의 가지도 연결 */
+    &:where(:hover) > .wg_shellToc__link::before {
+        border-top-color: var(--app-color-text-strong);
+    }
+
+    &:where(:has(:focus-visible)) > .wg_shellToc__link::before {
+        border-top-color: var(--app-color-text-strong);
+    }
+}
+
+.wg_shellToc__item--trail {
+    &::before {
+        border-left-color: var(--app-color-text-strong);
+    }
+}
+
+.wg_shellToc__item--current {
+    &::after {
+        border-left-color: var(--app-color-text-strong);
+    }
+}
+
 .wg_shellToc__sub {
     margin: var(--app-space-tree-row) 0 4px var(--app-space-tree-indent);
     padding: 0;
@@ -145,6 +175,34 @@
         bottom: auto;
         height: calc(0.5lh + var(--app-space-tree-row));
     }
+
+    /* hover·키보드 포커스의 도착점 · 첫 줄 아래는 기본 줄기 유지 */
+    &::after {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: calc(0.5lh + var(--app-space-tree-row));
+        border-left: 1px solid transparent;
+        content: "";
+        pointer-events: none;
+    }
+
+    &:where(:hover)::after {
+        border-left-color: var(--app-color-text-strong);
+    }
+
+    &:where(:has(:focus-visible))::after {
+        border-left-color: var(--app-color-text-strong);
+    }
+
+    /* 뒤 항목까지의 세로 경로 · 같은 목록의 형제 안에서만 연결 */
+    &:where(:has(~ .wg_shellToc__subItem:hover))::before {
+        border-left-color: var(--app-color-text-strong);
+    }
+
+    &:where(:has(~ .wg_shellToc__subItem :focus-visible))::before {
+        border-left-color: var(--app-color-text-strong);
+    }
 }
 
 .wg_shellToc__subItem--trail {
@@ -154,15 +212,8 @@
 }
 
 .wg_shellToc__subItem--current {
-    /* 현재 항목의 첫 줄까지 강조 · 그 아래 줄기는 기본색 유지 */
     &::after {
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: calc(0.5lh + var(--app-space-tree-row));
-        border-left: 1px solid var(--app-color-text-strong);
-        content: "";
-        pointer-events: none;
+        border-left-color: var(--app-color-text-strong);
     }
 }
 

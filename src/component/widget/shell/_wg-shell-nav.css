@@ -36,6 +36,34 @@
         bottom: auto;
         height: calc(0.5lh + var(--app-space-tree-row));
     }
+
+    /* hover·키보드 포커스의 도착점 · 첫 줄 아래는 기본 줄기 유지 */
+    &::after {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: calc(0.5lh + var(--app-space-tree-row));
+        border-left: 1px solid transparent;
+        content: "";
+        pointer-events: none;
+    }
+
+    &:where(:hover)::after {
+        border-left-color: var(--app-color-text-strong);
+    }
+
+    &:where(:has(:focus-visible))::after {
+        border-left-color: var(--app-color-text-strong);
+    }
+
+    /* 뒤 항목까지의 세로 경로 · 같은 목록의 형제 안에서만 연결 */
+    &:where(:has(~ .wg_shellNav__item:hover))::before {
+        border-left-color: var(--app-color-text-strong);
+    }
+
+    &:where(:has(~ .wg_shellNav__item :focus-visible))::before {
+        border-left-color: var(--app-color-text-strong);
+    }
 }
 
 .wg_shellNav__item--trail {
@@ -45,15 +73,8 @@
 }
 
 .wg_shellNav__item--current {
-    /* 현재 항목의 첫 줄까지 강조 · 그 아래 줄기는 기본색 유지 */
     &::after {
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: calc(0.5lh + var(--app-space-tree-row));
-        border-left: 1px solid var(--app-color-text-strong);
-        content: "";
-        pointer-events: none;
+        border-left-color: var(--app-color-text-strong);
     }
 }
 
