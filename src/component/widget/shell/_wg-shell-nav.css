@@ -26,7 +26,6 @@
     text-decoration: none;
 
     &:hover {
-        color: var(--app-color-link-hover);
         text-decoration: underline;
     }
 
@@ -65,14 +64,13 @@
     line-height: var(--app-line-height-tight);
     text-decoration: none;
 
-    /* 방문색보다 현재 문서와 hover 우선 */
+    /* 현재 문서의 글·레일 색 우선 */
     &:where(:visited) {
         color: var(--app-color-link-visited);
     }
 
-    &:hover {
-        border-left-color: var(--app-color-border);
-        color: var(--app-color-link-hover);
+    &:where(:hover) {
+        border-left-color: currentcolor;
         text-decoration: underline;
     }
 
@@ -86,7 +84,7 @@
 .wg_shellNav__link--active {
     border-left-color: var(--app-color-text-strong);
     color: var(--app-color-text-strong);
-    font-weight: var(--app-font-weight-mark);
+    font-weight: var(--app-font-weight-active);
 }
 
 /* 문서 묶음 이름 */
@@ -110,7 +108,7 @@
     padding: var(--app-space-inline);
     border: 0;
     background: none;
-    color: var(--app-color-link);
+    color: var(--app-color-text-strong);
     font-family: var(--app-font-sans);
     font-size: var(--app-font-size-dense);
     line-height: 1;
@@ -118,7 +116,7 @@
     text-decoration: none;
 
     &:hover {
-        color: var(--app-color-link-hover);
+        color: var(--app-color-text-muted);
     }
 
     &:focus-visible {

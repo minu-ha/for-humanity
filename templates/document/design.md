@@ -22,7 +22,7 @@ order: 20
 - Brand: 기본 이름 `for humanity` · 사이드바는 텍스트 · 이름은 `title` 설정
 - 커서 장식: 24px 픽셀 얼굴 · 기본 커서에서 16px 간격 · 클릭·드래그·문서 이동에서도 표시 유지
 - 문서 탐색: 목적별 묶음 · 읽는 순서 · 아이콘 없는 텍스트 링크
-- TOC: 본문 오른쪽 독립 영역 · 중립색 · 모든 section·subsection 표시
+- TOC: 본문 오른쪽 독립 영역 · 중립색 · 레일 없이 번호와 제목 · 모든 section·subsection 표시
 - 홈 소개: README의 얼굴·슬로건·배지·바로가기 · 가운데 정렬
 
 ::part[Tokens]
@@ -38,7 +38,7 @@ order: 20
 | `color`          | 바탕 · 글 · 선 · 강조 · 링크 · 상태                                                    |
 | `font`           | `sans` 본문·라벨 · `mono` 코드·번호·흐름도                                             |
 | `font-size`      | `label` · `mark` · `detail` · `dense` · `body` · `lead` · `part` · `section` · `title` |
-| `font-weight`    | `mark` · `strong` · `title`                                                            |
+| `font-weight`    | `mark` · `active` · `strong` · `title`                                                 |
 | `line-height`    | `title` · `heading` · `tight` · `code` · `body`                                        |
 | `letter-spacing` | `label` · `brand` · `heading` · `title`                                                |
 | `space`          | `inline` · `stack` · `block` · `group` · `section` · 페이지 틀                         |
@@ -63,7 +63,7 @@ order: 20
 | `accent` / `accent-soft`  | 번호·현재 section·코드 / 행 hover 바탕 |
 | `link`                    | 본문·탐색 링크·포커스                  |
 | `link-visited`            | 방문한 본문·문서 탐색 링크              |
-| `link-hover`              | 링크 hover                             |
+| `link-hover`              | 본문 링크 hover                        |
 | `verified` / `unverified` | 확인 / 미확인 status badge             |
 
 색은 `light-dark()` 한 줄에 밝은 값과 어두운 값.
@@ -87,7 +87,8 @@ Pretendard 본문·라벨, JetBrains Mono 코드·번호·흐름도. 내장 파�
 | `section` | h2                                                  |
 | `title`   | h1 · 사이드바 사이트 이름                            |
 
-본문 기본 굵기 `400`. 번호 `mark`, 제목·강조 `strong`, h1 `title`.
+본문·기본 번호 `mark`는 `400`, 현재 문서·TOC의 `active`는 `500`, 제목·강조 `strong`과 h1 `title`은 `600`.
+TOC 번호는 제목의 색·굵기를 따름. 제목 첫 줄의 행 높이 `1lh`를 사용해 중앙 정렬하고, 여러 줄 제목에서도 첫 줄 기준 유지.
 코드 합자 비활성: `>=`, `!=` 원문 구분.
 본문과 사이드바 문서 링크는 `13.5px`, h1과 사이트 이름은 `22px`, h2는 `17px`. 라벨의 대문자 변환과 자간 확대 없음.
 Shiki는 기존 역할색 참조: 키워드 strong, 함수 accent, 문자열 verified, 숫자 unverified, 주석 muted, 링크 link.
@@ -122,7 +123,7 @@ Shiki는 기존 역할색 참조: 키워드 strong, 함수 accent, 문자열 ver
 앵커 도착점은 화면 상단에서 80px, `640px` 미만에서는 48px. 제목 위 여백을 남기고 아래 본문을 바로 읽는 기준.
 TOC의 현재 위치와 마지막 절의 끝 여백도 같은 `anchor` 토큰 사용.
 
-한 소유자에만 필요한 간격·보정은 지역 값. 예: 목차 들여쓰기 12px·32px, 목록 행의 위·아래 3px.
+한 소유자에만 필요한 간격·보정은 지역 값. 예: 문서 탐색 들여쓰기 12px, TOC 소제목 들여쓰기 20px, 목록 행의 위·아래 3px.
 같은 숫자여도 아이콘 크기·글자 크기·페이지 폭은 간격과 별도 역할.
 모서리 토큰의 기본값은 `0`. 표·흐름도는 바깥 상자 없이 표현.
 겹침 요소 추가 시 `z-index` 역할 토큰 먼저 정의. 커서 장식은 `--app-z-index-popper` 층.
@@ -145,14 +146,14 @@ TOC가 없는 페이지는 별도 목차 열 없이 문서 탐색과 본문만 �
 
 ## Interaction
 
-- hover: 문서·본문 링크색 변경과 밑줄 · TOC는 strong 글과 밑줄
+- hover: 문서 탐색은 글색·굵기 유지와 밑줄·같은 색의 레일 · 현재 문서의 레일 유지 · 사이트 이름은 밑줄 · 본문 링크는 색 변경과 밑줄 · TOC는 strong 글과 밑줄
 - visited: 본문·문서 탐색 링크는 보라색 · 현재 문서는 strong · TOC는 중립색
 - Theme: System 모니터 · Light 해 · Dark 달 · 현재 모드의 tooltip·접근 가능한 이름
 - focus-visible: 모든 상호작용 요소에 공통 outline
-- 현재 문서·section: accent 선 · strong 글
-- TOC: 중립색 글 · 제목 클릭으로 문서 안에서 이동 · 현재 절과 소제목은 strong 글·왼쪽 선
+- 현재 문서: strong 선과 글 · active 굵기 `500`
+- TOC: 중립색 글 · 레일 없음 · 번호와 라벨의 시작선 정렬 · 현재 절·소제목의 번호·제목은 active 굵기 `500` · 클릭으로 문서 안에서 이동
 - 접힌 Details의 소제목: TOC에는 표시 · 현재 위치에서 제외 · 제목 클릭 시 본문 공개
-- 하단 도구: 테마 버튼 · 선택한 GitHub/GitLab 저장소 링크
+- 하단 도구: 테마 버튼 · 선택한 GitHub/GitLab 저장소 링크 · strong 중립색 아이콘 · hover는 muted
 - 앵커 제목: 3초 강조 후 600ms 해제 · 여러 줄의 글자 배경만 칠하고 배치 유지
 - Note: 보충 설명의 제목·왼쪽 선 · 기본 본문 토큰
 - Details: native marker·파란 제목·얇은 점선 · 접힌 본문의 hash 이동 시 공개

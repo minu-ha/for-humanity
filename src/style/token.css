@@ -64,8 +64,9 @@
     --app-font-size-section: 17px;
     --app-font-size-title: 22px;
 
-    /* 굵기 · 본문 기본 400 */
+    /* 굵기 · 기본 400 · 현재 위치 500 · 제목·강조 600 */
     --app-font-weight-mark: 400;
+    --app-font-weight-active: 500;
     --app-font-weight-strong: 600;
     --app-font-weight-title: 600;
 

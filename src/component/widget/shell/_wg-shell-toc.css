@@ -42,17 +42,15 @@
 
 .wg_shellToc__link {
     display: grid;
-    padding: 3px 0 3px 12px;
+    padding: 3px 0;
     gap: var(--app-space-inline);
     grid-template-columns: 2ch minmax(0, 1fr);
-    border-left: 2px solid var(--app-color-border-soft);
     color: var(--app-color-text-muted);
     font-size: var(--app-font-size-dense);
     line-height: var(--app-line-height-tight);
     text-decoration: none;
 
     &:hover {
-        border-left-color: var(--app-color-border);
         color: var(--app-color-text-strong);
         text-decoration: underline;
     }
@@ -64,16 +62,18 @@
 }
 
 .wg_shellToc__link--active {
-    border-left-color: var(--app-color-text-strong);
     color: var(--app-color-text-strong);
-    font-weight: var(--app-font-weight-mark);
+    font-weight: var(--app-font-weight-active);
 }
 
 .wg_shellToc__mark {
-    color: var(--app-color-text-muted);
+    color: inherit;
     font-family: var(--app-font-mono);
     font-size: var(--app-font-size-mark);
-    font-weight: 400;
+    font-weight: inherit;
+
+    /* 제목 첫 줄과 같은 높이 */
+    line-height: 1lh;
 }
 
 .wg_shellToc__sub {
@@ -84,10 +84,9 @@
 
 .wg_shellToc__subLink {
     display: grid;
-    padding: 3px 0 3px 32px;
+    padding: 3px 0 3px 20px;
     gap: var(--app-space-inline);
     grid-template-columns: 4ch minmax(0, 1fr);
-    border-left: 2px solid var(--app-color-border-soft);
     color: var(--app-color-text-muted);
     font-size: var(--app-font-size-detail);
     line-height: var(--app-line-height-tight);
@@ -105,8 +104,8 @@
 }
 
 .wg_shellToc__subLink--active {
-    border-left-color: var(--app-color-border);
     color: var(--app-color-text-strong);
+    font-weight: var(--app-font-weight-active);
 }
 
 /* 좁은 데스크톱부터 본문 위 목차 · 소제목 전체 유지 */
