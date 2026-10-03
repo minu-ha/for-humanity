@@ -7,7 +7,7 @@ order: 40
 
 사람이 읽는 문서를 Markdown으로 작성하고 정적 사이트로 공유하는 문서 도구.
 현재는 prototype. 이 사이트는 라이브러리 사용법·작성 가이드·API·가상 프로젝트 예시를 제공.
-다음 작업은 blueprint의 전용 정보 구조와 표현.
+첫 npm 패키지의 준비와 별도 프로젝트 검증을 완료. 공개 후 다음 구현 작업은 blueprint의 전용 정보 구조와 표현.
 
 ## Overview
 
@@ -17,7 +17,7 @@ order: 40
 | 2     | [Parts and syntax](#parts-and-syntax)     | Done    | 필요한 부품과 Markdown 작성 계약      |
 | 3     | [Blueprint](#blueprint)                   | Next    | 화면·결정·질문을 담는 설계 문서       |
 | 4     | [Init](#init)                             | Planned | 새 문서 프로젝트의 시작 명령          |
-| 5     | [Release](#release)                       | Planned | 설치 가능한 npm 패키지                |
+| 5     | [Release](#release)                       | Ready   | 설치 검증 완료 · npm 공개 인증 대기    |
 | 6     | [Search](#search)                         | Planned | 문서·section 탐색                     |
 | 7     | [Writing skill](#writing-skill)           | Planned | 검토 가능한 문서를 쓰는 에이전트 스킬 |
 | 8     | [Subpath deployment](#subpath-deployment) | Planned | 하위 URL 경로의 정적 배포             |
@@ -97,16 +97,16 @@ order: 40
 ## Release
 
 프로젝트 소스 밖에서도 설치와 실행이 가능한 패키지 준비.
-prototype의 첫 공개 버전은 지원 범위와 알려진 제약을 함께 고정.
+prototype의 첫 버전 `0.1.0`은 `dev`, `build`, `preview`를 지원. `init`은 별도 예정 작업이며 첫 공개의 필수 조건에서 분리.
 
-- [ ] 버전·지원 Node.js·라이선스·배포 파일 확인
-- [ ] `pack` 결과를 별도 폴더에 설치
-- [ ] `init`, `dev`, `build`, `preview`와 폰트·favicon·클라이언트 자원 확인
-- [ ] 시작 방법과 변경 기록 작성
+- [x] 버전·지원 Node.js·라이선스·배포 파일 확인
+- [x] `pack` 결과를 별도 폴더에 설치
+- [x] `dev`, `build`, `preview`와 폰트·favicon·클라이언트 자원 확인
+- [x] 시작 방법과 변경 기록 작성
 - [ ] npm 공개와 첫 릴리스 확인
 
 산출물: npm 패키지, 릴리스 기록, 설치 가이드.
-완료 기준: 저장소를 복제하지 않은 환경에서 문서 생성·개발·빌드·미리보기가 동작.
+완료 기준: npm에 공개한 패키지를 저장소를 복제하지 않은 환경에 설치하고, 작성한 문서의 개발·빌드·미리보기가 동작.
 
 ::part[Later]
 
