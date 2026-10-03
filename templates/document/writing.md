@@ -30,6 +30,8 @@ order: 10
 ```
 
 문서 폴더에는 Markdown과 선택 설정 파일. 루트 `README.md`는 홈(`/`)으로 표시하고 문서 목록에서는 제외.
+루트 `AGENTS.md`·`CLAUDE.md`는 작성 지침으로 보고 문서 수집에서 제외. 이 세 파일의 이름은 대소문자를 구분하지 않음.
+하위 폴더의 같은 이름은 일반 문서로 처리하므로 frontmatter 필수.
 `node_modules`, `dist`는 읽지 않음.
 하위 폴더도 지원. `.mdx`는 Markdown으로 처리 · JSX 실행 미지원.
 

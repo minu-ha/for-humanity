@@ -157,6 +157,25 @@ test("a missing README provides a creation hint without generated overview cards
     assert.doesNotMatch(html, /pg_home__card|>Overview<|>Documents</);
 });
 
+test("root agent instructions stay out of the rendered documents", async (t) => {
+    const root = await mkdtemp(join(tmpdir(), "for-humanity-instructions-"));
+    const site = siteConfigSchema.parse({});
+
+    t.after(() => rm(root, {recursive: true, force: true}));
+    await mkdir(join(root, "guide"));
+    await Promise.all([
+        writeFile(join(root, "README.md"), "# Home\n"),
+        writeFile(join(root, "AGENTS.md"), "# Agent instructions\n\nKeep commit titles concise.\n"),
+        writeFile(join(root, "claude.md"), "# Claude instructions\n\nCheck documents before committing.\n"),
+        writeFile(join(root, "guide/agents.md"), "---\nname: Agent guide\nlabel: Agent guide\ngroup: Guide\n---\n\nGuide.\n"),
+        writeFile(join(root, "guide/claude.md"), "---\nname: Claude guide\nlabel: Claude guide\ngroup: Guide\n---\n\nGuide.\n"),
+    ]);
+
+    const docs = await readDocs({root, processor: createProcessor({site, root})});
+
+    assert.deepEqual(new Set(docs.map((doc) => doc.id)), new Set(["guide/agents", "guide/claude"]));
+});
+
 test("relative Markdown links preserve query strings and fragments", async (t) => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-links-"));
     const site = siteConfigSchema.parse({});

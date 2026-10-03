@@ -10,12 +10,13 @@ import {docDataSchema} from "@/type/doc-data";
 import type {DocFileData} from "@/type/doc-file-data";
 
 /**
- * Markdown 수집과 렌더링 · 루트 README.md, node_modules, dist 제외
+ * Markdown 수집과 렌더링 · 루트 README는 홈, AGENTS·CLAUDE는 작성 지침으로 분리
+ * 문서 목록에서 루트 안내 파일·node_modules·dist 제외
  * 머리말·문서 식별자 중복·플러그인 오류 시 실패
  */
 export const readDocs = async (options: {root: string; processor: Processor}): Promise<Doc[]> => {
     const paths = (await readdir(options.root, {recursive: true})).filter(
-        (path) => /\.mdx?$/i.test(path) && path.toLowerCase() !== "readme.md" && !path.split(sep).includes("node_modules") && !path.startsWith(`dist${sep}`),
+        (path) => /\.mdx?$/i.test(path) && !/^(readme|agents|claude)\.md$/i.test(path) && !path.split(sep).includes("node_modules") && !path.startsWith(`dist${sep}`),
     );
     const docs = await Promise.all(
         paths.map(async (path): Promise<Doc> => {
