@@ -8,7 +8,10 @@
 
 Markdown으로 작성하고, 맥락을 남기고, 정적 사이트로 공유.
 
+[Documentation](https://for-humanity.fyi) · [npm](https://www.npmjs.com/package/for-humanity) · [Releases](https://github.com/minu-ha/for-humanity/releases)
+
 [![MIT](https://img.shields.io/badge/license-MIT-1111aa?style=flat-square)](../LICENSE)
+[![npm](https://img.shields.io/npm/v/for-humanity?style=flat-square)](https://www.npmjs.com/package/for-humanity)
 ![Node 22+](https://img.shields.io/badge/node-22%2B-444444?style=flat-square)
 ![Hono + React](https://img.shields.io/badge/Hono-%2B%20React-444444?style=flat-square)
 ![Prototype](https://img.shields.io/badge/status-prototype-9a6400?style=flat-square)

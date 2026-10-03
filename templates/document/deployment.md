@@ -9,6 +9,9 @@ for humanity의 라이브러리 문서도, 이 도구로 만든 자신의 문서
 Cloudflare Pages는 구매한 도메인 없이 `<project>.pages.dev` 주소를 제공.
 이 안내는 [공식 Git integration 문서](https://developers.cloudflare.com/pages/get-started/git-integration/) 기준.
 
+이 저장소의 문서 주소는 [for-humanity.fyi](https://for-humanity.fyi).
+Pages 프로젝트는 `for-humanity`, 기본 주소는 [for-humanity-1i2.pages.dev](https://for-humanity-1i2.pages.dev).
+
 ## Overview
 
 | Target             | Build                     | Output                   |
@@ -50,6 +53,13 @@ for humanity의 CLI는 빌드할 때만 Node.js에서 실행. 배포 후에는 �
 프로젝트 이름으로 기본 주소 생성. 사용할 수 있는 이름은 생성 시 결정.
 연결 후 `main`에 push하면 문서를 다시 빌드해 배포 · [Git integration](https://developers.cloudflare.com/pages/get-started/git-integration/).
 나중에 별도 도메인을 연결할 수도 있음.
+
+### Custom domain
+
+이 문서 사이트는 `for-humanity.fyi`를 사이트 루트에 연결.
+Pages 프로젝트의 `Custom domains → Set up a domain`에서 도메인을 추가하고 DNS 레코드를 확인.
+최상위 도메인을 쓰려면 Pages와 같은 Cloudflare 계정에 해당 도메인의 zone이 있어야 하며, 네임서버도 Cloudflare를 사용.
+도메인 활성화 후 HTTPS, 문서 직접 접속, 없는 경로의 404 응답을 확인 · [Custom domains](https://developers.cloudflare.com/pages/configuration/custom-domains/).
 
 ## Pages output
 
