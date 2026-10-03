@@ -10,7 +10,7 @@ order: 10
 공식 버전별 변경 기록. npm 패키지에 포함되는 변경 기록과 같은 원본 사용.
 공개 버전과 패키지 파일은 [Releases](releases.md) · [GitHub Releases](https://github.com/minu-ha/for-humanity/releases)에서 확인.
 
-## 0.1.1 — 2026-10-03
+## 0.1.2 — 2026-10-03
 
 Documentation and release automation update. The CLI commands and Node.js requirement are unchanged.
 
@@ -19,6 +19,9 @@ Documentation and release automation update. The CLI commands and Node.js requir
 - Deploy the documentation from `main` to Cloudflare Pages and preserve installation commands in served HTML.
 - Verify pull requests and publish npm plus GitHub Release from matching stable version tags using Trusted Publishing.
 - Add official Releases and Changelog pages to the documentation site, with the changelog generated from this file.
+- Accept both npm 11 array reports and npm 12 package-keyed reports when validating release artifacts.
+
+The `v0.1.1` attempt stopped during package validation and was not published to npm.
 
 ## 0.1.0 — 2026-10-03
 

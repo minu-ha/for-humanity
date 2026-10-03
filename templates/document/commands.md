@@ -48,13 +48,13 @@ pnpm preview
 Node.js 22 이상과 pnpm이 있는 문서 프로젝트에서 npm 패키지 설치.
 
 ```sh
-pnpm add -D --save-exact for-humanity@0.1.1
+pnpm add -D --save-exact for-humanity@0.1.2
 pnpm exec for-humanity dev docs
 ```
 
 `docs/README.md`를 홈으로 작성. 다른 문서의 frontmatter는 [Writing](writing.md) 참고.
 문서가 프로젝트 루트에 있다면 `docs` 대신 `.` 사용. 루트 `AGENTS.md`·`CLAUDE.md`는 문서 수집에서 제외.
-`0.1.1`은 `dev`, `build`, `preview` 지원. `init`은 아직 미구현.
+`0.1.2`은 `dev`, `build`, `preview` 지원. `init`은 아직 미구현.
 
 ### Test a local package
 

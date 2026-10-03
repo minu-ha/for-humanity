@@ -9,7 +9,7 @@ if (directory === undefined) {
     throw new Error("Usage: node util/smoke-package.mjs <artifact directory>");
 }
 const artifactDirectory = resolve(directory);
-const [pack] = JSON.parse(await readFile(join(artifactDirectory, "pack.json"), "utf8"));
+const [pack] = Object.values(JSON.parse(await readFile(join(artifactDirectory, "pack.json"), "utf8")));
 const consumer = await mkdtemp(join(tmpdir(), "for-humanity-consumer-"));
 
 try {

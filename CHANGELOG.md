@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.1 — 2026-10-03
+## 0.1.2 — 2026-10-03
 
 Documentation and release automation update. The CLI commands and Node.js requirement are unchanged.
 
@@ -9,6 +9,9 @@ Documentation and release automation update. The CLI commands and Node.js requir
 - Deploy the documentation from `main` to Cloudflare Pages and preserve installation commands in served HTML.
 - Verify pull requests and publish npm plus GitHub Release from matching stable version tags using Trusted Publishing.
 - Add official Releases and Changelog pages to the documentation site, with the changelog generated from this file.
+- Accept both npm 11 array reports and npm 12 package-keyed reports when validating release artifacts.
+
+The `v0.1.1` attempt stopped during package validation and was not published to npm.
 
 ## 0.1.0 — 2026-10-03
 

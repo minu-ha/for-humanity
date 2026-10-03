@@ -33,7 +33,7 @@ Markdown으로 작성하고, 맥락을 남기고, 정적 사이트로 공유.
 Node.js 22 이상과 pnpm. 자신의 문서 프로젝트에 CLI 설치.
 
 ```sh
-pnpm add -D --save-exact for-humanity@0.1.1
+pnpm add -D --save-exact for-humanity@0.1.2
 mkdir docs
 ```
 
@@ -52,7 +52,7 @@ pnpm exec for-humanity preview docs
 
 프로젝트 루트에 Markdown을 두었다면 `docs` 대신 `.` 사용. 루트 `README.md`는 홈으로 표시하며, 루트 `AGENTS.md`·`CLAUDE.md`는 사이트에서 제외.
 
-`0.1.1`은 `dev`, `build`, `preview` 지원. `init`은 예정 작업 · [Roadmap](../templates/document/roadmap.md) · [Changelog](../CHANGELOG.md).
+`0.1.2`은 `dev`, `build`, `preview` 지원. `init`은 예정 작업 · [Roadmap](../templates/document/roadmap.md) · [Changelog](../CHANGELOG.md).
 Cloudflare Pages에 빌드 결과 배포 가능. 설정은 [Deployment](../templates/document/deployment.md).
 
 ### Develop the kit
@@ -74,7 +74,7 @@ pnpm preview    # 정적 사이트 미리보기
 pnpm build:pages # Cloudflare Pages 헤더·404 페이지 포함
 ```
 
-`main`에 push하면 문서 사이트 갱신. `v0.1.1` 같은 정식 버전 태그를 push하면 검증 후 npm 배포와 GitHub Release 생성. 두 곳에 같은 패키지 파일 사용.
+`main`에 push하면 문서 사이트 갱신. `v0.1.2` 같은 정식 버전 태그를 push하면 검증 후 npm 배포와 GitHub Release 생성. 두 곳에 같은 패키지 파일 사용.
 npm의 README는 새 패키지 버전을 배포할 때 반영. 공개 절차는 [Maintenance](../templates/document/maintenance.md#packaging-and-release).
 
 ## Make it yours

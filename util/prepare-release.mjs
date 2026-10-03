@@ -25,7 +25,7 @@ if (entry === undefined || !entry.includes("\n\n") || entry.slice(entry.indexOf(
 }
 
 const artifactDirectory = resolve(directory);
-const [pack] = JSON.parse(await readFile(join(artifactDirectory, "pack.json"), "utf8"));
+const [pack] = Object.values(JSON.parse(await readFile(join(artifactDirectory, "pack.json"), "utf8")));
 if (pack.name !== metadata.name || pack.version !== metadata.version || pack.filename !== `${metadata.name}-${metadata.version}.tgz`) {
     throw new Error("Packed package does not match the release version");
 }

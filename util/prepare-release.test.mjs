@@ -46,6 +46,15 @@ test("prepares only the tagged changelog entry and the packed artifact", async (
     assert.match(await readFile(join(root, "outputs"), "utf8"), /version=0\.1\.1/);
 });
 
+test("accepts the package-keyed npm 12 pack report", async (t) => {
+    const root = await fixture(t);
+    const [pack] = JSON.parse(await readFile(join(root, "release/pack.json"), "utf8"));
+    await writeFile(join(root, "release/pack.json"), JSON.stringify({[pack.name]: pack}));
+    const result = run(root, "v0.1.1");
+    assert.equal(result.status, 0, result.stderr);
+    assert.match(await readFile(join(root, "outputs"), "utf8"), /tarball=.*for-humanity-0\.1\.1\.tgz/);
+});
+
 test("rejects a tag that differs from package.json", async (t) => {
     const root = await fixture(t);
     const result = run(root, "v0.1.2");
