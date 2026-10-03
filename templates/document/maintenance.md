@@ -95,7 +95,18 @@ pnpm pack
 
 패키지 설치 후 별도 폴더에서 `dev`, `build`, `preview` 확인.
 정적 사이트는 문서 폴더의 `dist` 전체 배포. 사이트 루트 경로 기준 · [Deployment](deployment.md).
-현재 상태: prototype · npm 공개 전.
+첫 공개 버전 `0.1.0`의 지원 범위는 `dev`, `build`, `preview`. `init`은 별도 예정 작업.
+
+공개 전 위 검증 명령을 모두 통과하고, 패키지에 CLI·CSS·클라이언트 스크립트·폰트·favicon·라이선스가 포함되는지 확인.
+
+```sh
+npm whoami
+npm publish --dry-run --access public
+npm publish --access public
+npm view for-humanity version
+```
+
+공개 후 npm에서 패키지를 새 프로젝트에 설치해 같은 명령을 확인. 다음 공개에는 새 버전 사용.
 
 ::part[Next]
 

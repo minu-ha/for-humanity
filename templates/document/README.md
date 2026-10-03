@@ -29,7 +29,34 @@ Write Markdown. Keep the context. Share a static site.
 
 ## Quick start
 
-Node.js 22 or later and pnpm. Run the project from source:
+Node.js 22 or later and pnpm. Install the CLI in your document project:
+
+```sh
+pnpm add -D --save-exact for-humanity@0.1.0
+mkdir docs
+```
+
+Create `docs/README.md` for the home page, then start the development server:
+
+```sh
+pnpm exec for-humanity dev docs
+```
+
+Open [localhost:4321](http://localhost:4321). Build and preview your static site:
+
+```sh
+pnpm exec for-humanity build docs    # Generate docs/dist
+pnpm exec for-humanity preview docs
+```
+
+If your Markdown files are in the project root, use `.` instead of `docs`. The root `README.md` becomes the home page; root `AGENTS.md` and `CLAUDE.md` stay out of the site.
+
+Version `0.1.0` supports `dev`, `build` and `preview`. `init` is planned; see the [Roadmap](roadmap.md) and [Changelog](https://github.com/minu-ha/for-humanity/blob/main/CHANGELOG.md).
+Cloudflare Pages can host the generated site. See [Deployment](deployment.md) for the build settings.
+
+### Develop the kit
+
+To work on the CLI or read this library's guides and examples locally, run the project from source:
 
 ```sh
 git clone https://github.com/minu-ha/for-humanity.git
@@ -45,9 +72,6 @@ pnpm build      # Generate templates/document/dist
 pnpm preview    # Preview the static site
 pnpm build:pages # Add Cloudflare Pages headers and a 404 page
 ```
-
-The package is a prototype. `init` and the first npm release are planned; see the [Roadmap](roadmap.md).
-Cloudflare Pages can host the site on a `pages.dev` address without a custom domain. See [Deployment](deployment.md) for the build settings.
 
 ## Make it yours
 

@@ -27,7 +27,34 @@ Markdown으로 작성하고, 맥락을 남기고, 정적 사이트로 공유.
 
 ## Quick start
 
-Node.js 22 이상과 pnpm. 현재는 소스 저장소에서 실행.
+Node.js 22 이상과 pnpm. 자신의 문서 프로젝트에 CLI 설치.
+
+```sh
+pnpm add -D --save-exact for-humanity@0.1.0
+mkdir docs
+```
+
+홈으로 사용할 `docs/README.md`를 작성한 뒤 개발 서버 실행.
+
+```sh
+pnpm exec for-humanity dev docs
+```
+
+[localhost:4321](http://localhost:4321)에서 확인. 정적 사이트 빌드와 미리보기.
+
+```sh
+pnpm exec for-humanity build docs    # docs/dist 생성
+pnpm exec for-humanity preview docs
+```
+
+프로젝트 루트에 Markdown을 두었다면 `docs` 대신 `.` 사용. 루트 `README.md`는 홈으로 표시하며, 루트 `AGENTS.md`·`CLAUDE.md`는 사이트에서 제외.
+
+`0.1.0`은 `dev`, `build`, `preview` 지원. `init`은 예정 작업 · [Roadmap](../templates/document/roadmap.md) · [Changelog](../CHANGELOG.md).
+Cloudflare Pages에 빌드 결과 배포 가능. 설정은 [Deployment](../templates/document/deployment.md).
+
+### Develop the kit
+
+CLI를 개발하거나 이 라이브러리의 가이드·예시를 로컬에서 읽으려면 소스 저장소에서 실행.
 
 ```sh
 git clone https://github.com/minu-ha/for-humanity.git
@@ -43,9 +70,6 @@ pnpm build      # templates/document/dist 생성
 pnpm preview    # 정적 사이트 미리보기
 pnpm build:pages # Cloudflare Pages 헤더·404 페이지 포함
 ```
-
-현재는 prototype. `init`과 첫 npm 공개는 [Roadmap](../templates/document/roadmap.md)의 예정 작업.
-Cloudflare Pages는 도메인 구매 없이 `pages.dev` 주소로 배포 가능. 설정은 [Deployment](../templates/document/deployment.md).
 
 ## Make it yours
 

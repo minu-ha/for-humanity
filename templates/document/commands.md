@@ -45,7 +45,20 @@ pnpm preview
 
 ### Use in another project
 
-현재 npm 공개 전. 저장소에서 만든 패키지를 문서 프로젝트에 설치.
+Node.js 22 이상과 pnpm이 있는 문서 프로젝트에서 npm 패키지 설치.
+
+```sh
+pnpm add -D --save-exact for-humanity@0.1.0
+pnpm exec for-humanity dev docs
+```
+
+`docs/README.md`를 홈으로 작성. 다른 문서의 frontmatter는 [Writing](writing.md) 참고.
+문서가 프로젝트 루트에 있다면 `docs` 대신 `.` 사용. 루트 `AGENTS.md`·`CLAUDE.md`는 문서 수집에서 제외.
+`0.1.0`은 `dev`, `build`, `preview` 지원. `init`은 아직 미구현.
+
+### Test a local package
+
+공개 전 변경을 확인할 때는 저장소에서 만든 패키지를 별도 프로젝트에 설치.
 
 ```sh
 # for humanity 저장소
