@@ -76,7 +76,7 @@ pnpm preview
 | `404.html`  | 없는 문서에 표시할 페이지                            |
 
 HTML·CSS·브라우저 스크립트에는 장기 캐시를 지정하지 않음.
-홈과 문서 경로의 `Cache-Control: no-transform`은 Cloudflare가 설치 명령의 `for-humanity@0.1.0`을 이메일 주소로 바꾸지 않도록 원문을 보존 · [Email Address Obfuscation](https://developers.cloudflare.com/waf/tools/scrape-shield/email-address-obfuscation/).
+홈과 문서 경로의 `Cache-Control: no-transform`은 Cloudflare가 설치 명령의 패키지 이름과 버전을 이메일 주소로 바꾸지 않도록 원문을 보존 · [Email Address Obfuscation](https://developers.cloudflare.com/waf/tools/scrape-shield/email-address-obfuscation/).
 헤더 규칙은 [Headers](https://developers.cloudflare.com/pages/configuration/headers/), 없는 경로의 처리는 [Serving Pages](https://developers.cloudflare.com/pages/configuration/serving-pages/) 기준.
 로컬 `preview`는 정적 파일 미리보기. Cloudflare의 `_headers` 해석과 없는 경로 처리는 배포 후 확인.
 

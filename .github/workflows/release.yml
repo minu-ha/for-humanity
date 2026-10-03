@@ -1,0 +1,93 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.repository == 'minu-ha/for-humanity'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+      - name: Check tag and main history
+        run: |
+          test "$GITHUB_REF_NAME" = "v$(node -p "require('./package.json').version")"
+          git merge-base --is-ancestor HEAD origin/main
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - name: Install npm with Trusted Publishing support
+        run: npm install --global npm@12.2.0
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+        with:
+          version: 10.33.2
+          cache: false
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test
+      - run: pnpm check
+      - run: pnpm build
+      - name: Check generated files
+        run: |
+          git diff --check
+          git diff --exit-code
+      - name: Prepare and test the package
+        id: package
+        run: |
+          release_directory="$RUNNER_TEMP/for-humanity-release"
+          mkdir -p "$release_directory"
+          npm pack --ignore-scripts --json --pack-destination "$release_directory" > "$release_directory/pack.json"
+          node util/prepare-release.mjs "$GITHUB_REF_NAME" "$release_directory"
+          node util/smoke-package.mjs "$release_directory"
+      - name: Check whether npm already has this package
+        id: registry
+        env:
+          RELEASE_VERSION: ${{ steps.package.outputs.version }}
+          RELEASE_INTEGRITY: ${{ steps.package.outputs.integrity }}
+        run: |
+          node --input-type=module <<'NODE'
+          import {appendFile} from 'node:fs/promises';
+          const response = await fetch(`https://registry.npmjs.org/for-humanity/${process.env.RELEASE_VERSION}`);
+          if (response.status === 404) {
+            await appendFile(process.env.GITHUB_OUTPUT, 'publish=true\n');
+          } else {
+            if (!response.ok) throw new Error(`npm registry returned ${response.status}`);
+            const published = await response.json();
+            if (published.dist.integrity !== process.env.RELEASE_INTEGRITY) {
+              throw new Error('This npm version already exists with different package contents');
+            }
+            console.log('The identical package is already published; continuing with GitHub Release');
+            await appendFile(process.env.GITHUB_OUTPUT, 'publish=false\n');
+          }
+          NODE
+      - name: Publish to npm using OIDC
+        if: steps.registry.outputs.publish == 'true'
+        env:
+          RELEASE_TARBALL: ${{ steps.package.outputs.tarball }}
+        run: npm publish "$RELEASE_TARBALL" --access public --ignore-scripts
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TARBALL: ${{ steps.package.outputs.tarball }}
+          RELEASE_NOTES: ${{ steps.package.outputs.notes }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" "$RELEASE_TARBALL" --repo "$GITHUB_REPOSITORY" --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" "$RELEASE_TARBALL" --repo "$GITHUB_REPOSITORY" --verify-tag --title "$GITHUB_REF_NAME" --notes-file "$RELEASE_NOTES"
+          fi

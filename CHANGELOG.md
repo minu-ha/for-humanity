@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.1 — 2026-10-03
+
+Documentation and release automation update. The CLI commands and Node.js requirement are unchanged.
+
+- Link the README to the public documentation site, npm package and GitHub Releases.
+- Set the package homepage to `https://for-humanity.fyi`.
+- Deploy the documentation from `main` to Cloudflare Pages and preserve installation commands in served HTML.
+- Verify pull requests and publish npm plus GitHub Release from matching stable version tags using Trusted Publishing.
+
 ## 0.1.0 — 2026-10-03
 
 First public release of the Markdown documentation CLI. Requires Node.js 22 or later.

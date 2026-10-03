@@ -99,14 +99,59 @@ pnpm pack
 
 공개 전 위 검증 명령을 모두 통과하고, 패키지에 CLI·CSS·클라이언트 스크립트·폰트·favicon·라이선스가 포함되는지 확인.
 
+### Automatic publishing
+
+| Event | Result |
+| ----- | ------ |
+| PR · `main` push | CI: 테스트 · 린트 · 타입 검사 · Pages 빌드 · 패키지 설치 후 빌드 |
+| `main` push | Cloudflare Git 연동으로 문서 사이트 배포 |
+| `vX.Y.Z` 태그 push | Release: 검증 · npm 배포 · 같은 `.tgz`를 첨부한 GitHub Release 생성 |
+
+워크플로는 `.github/workflows/ci.yml`, `.github/workflows/release.yml`.
+Release는 `main`에 포함된 커밋, 태그와 일치하는 `package.json` 버전, 해당 버전의 `CHANGELOG.md` 항목과 README 설치 명령 확인.
+`vX.Y.Z` 정식 버전만 지원. prerelease는 별도 정책을 추가한 뒤 사용.
+설치 검증은 저장소 밖의 새 프로젝트에서 실행. CLI·CSS·클라이언트·글꼴·favicon·라이선스와 README 포함 여부 확인.
+
+### Trusted Publisher setup
+
+[npm 패키지 설정](https://www.npmjs.com/package/for-humanity/access)의 Trusted Publisher에 한 번 등록.
+
+| Field | Value |
+| ----- | ----- |
+| Publisher | GitHub Actions |
+| Label | `GitHub release` · 선택 |
+| Organization or user | `minu-ha` |
+| Repository | `for-humanity` |
+| Workflow filename | `release.yml` · 파일명만 입력 |
+| Environment name | 비워둠 |
+| Allow npm publish | 체크 |
+| Allow npm dist-tag | 체크하지 않음 |
+
+GitHub가 발급하는 OIDC 자격 증명 사용. 별도 `NPM_TOKEN`이나 매번의 로그인·2FA 입력 불필요.
+GitHub-hosted runner, Node.js 24와 npm 12.2.0으로 배포. 패키지 사용자의 Node.js 최소 버전은 22 유지.
+설정 기준은 [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers/).
+
+### Release steps
+
+1. `package.json` 버전을 올리고 `CHANGELOG.md`에 변경 사항 기록.
+2. 최상위 `README.md`와 `language/README.ko.md`의 설치 버전·지원 버전 갱신.
+3. 검증 명령 실행. `pnpm build`가 `templates/document/README.md`도 동기화.
+4. 변경 파일만 커밋하고 `main`에 push. CI와 Pages 결과 확인.
+5. 해당 커밋에 같은 버전의 태그를 만들고 push.
+
+다음 공개 버전이 `0.1.2`인 경우:
+
 ```sh
-npm whoami
-npm publish --dry-run --access public
-npm publish --access public
-npm view for-humanity version
+git tag -a v0.1.2 -m "Release v0.1.2"
+git push origin v0.1.2
 ```
 
-공개 후 npm에서 패키지를 새 프로젝트에 설치해 같은 명령을 확인. 다음 공개에는 새 버전 사용.
+태그 push 후 Release Actions 실행 결과 확인. npm 배포가 성공한 뒤 GitHub Release 생성.
+이미 npm에 같은 버전이 있다면 패키지의 integrity가 일치할 때만 재배포를 건너뛰고 GitHub Release 작업을 이어감.
+내용이 다르면 실패. 게시한 버전은 수정하거나 덮어쓰지 않고 다음 버전으로 공개.
+
+`main`의 README 변경은 GitHub와 문서 사이트에 먼저 반영. npm README와 홈페이지 주소는 새 패키지 버전을 배포할 때 반영.
+공개 후 npm에서 패키지를 새 프로젝트에 설치해 같은 명령 확인. 다른 프로젝트의 고정된 의존성 버전은 별도 갱신.
 
 ::part[Next]
 
