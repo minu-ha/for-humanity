@@ -36,8 +36,9 @@
     "scripts": {
         "build:kit": "esbuild src/cli.ts --bundle --platform=node --format=esm --packages=external --jsx=automatic --outfile=dist/cli.js && esbuild src/client.ts --bundle --platform=browser --format=esm --jsx=automatic --minify --define:process.env.NODE_ENV='\"production\"' --outdir=dist",
         "sync:readme": "node util/sync-readme.mjs",
-        "dev": "pnpm sync:readme && pnpm build:kit && node dist/cli.js dev templates/document",
-        "build": "pnpm sync:readme && pnpm build:kit && node dist/cli.js build templates/document",
+        "sync:docs": "pnpm sync:readme && node util/sync-changelog.mjs",
+        "dev": "pnpm sync:docs && pnpm build:kit && node dist/cli.js dev templates/document",
+        "build": "pnpm sync:docs && pnpm build:kit && node dist/cli.js build templates/document",
         "build:pages": "pnpm build && node util/prepare-pages.mjs",
         "preview": "node dist/cli.js preview templates/document",
         "test": "esbuild src/util/font/to-font-css.test.ts src/content/read-docs.test.ts --bundle --platform=node --format=esm --packages=external --outbase=src --outdir=node_modules/.cache/for-humanity-tests --out-extension:.js=.mjs && node --test node_modules/.cache/for-humanity-tests/content/*.test.mjs node_modules/.cache/for-humanity-tests/util/font/*.test.mjs util/*.test.mjs",

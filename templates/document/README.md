@@ -54,7 +54,7 @@ pnpm exec for-humanity preview docs
 
 If your Markdown files are in the project root, use `.` instead of `docs`. The root `README.md` becomes the home page; root `AGENTS.md` and `CLAUDE.md` stay out of the site.
 
-Version `0.1.1` supports `dev`, `build` and `preview`. `init` is planned; see the [Roadmap](roadmap.md) and [Changelog](https://github.com/minu-ha/for-humanity/blob/main/CHANGELOG.md).
+Version `0.1.1` supports `dev`, `build` and `preview`. `init` is planned; see the [Roadmap](roadmap.md) and [Changelog](changelog.md).
 Cloudflare Pages can host the generated site. See [Deployment](deployment.md) for the build settings.
 
 ### Develop the kit
@@ -83,7 +83,7 @@ The npm README updates with each package release. See [Maintenance](maintenance.
 
 A document folder is enough to get started. Without a site configuration, the sidebar shows **for humanity**. The pixel face appears in the browser tab and follows the mouse on desktop.
 The folder's `README.md` becomes the home page at `/`, with no frontmatter required. Click the site name to return home.
-This repository generates [the documentation home](README.md) from its root README.md. Edit the repository's root README.md, then run `pnpm sync:readme`; `pnpm dev` and `pnpm build` also sync it on startup.
+This repository generates [the documentation home](README.md) from its root README.md and [the site changelog](changelog.md) from CHANGELOG.md. Edit those source files, then run `pnpm sync:docs`; `pnpm dev` and `pnpm build` also sync them on startup.
 Set your own name in `for-humanity.config.mjs`:
 
 ```js
@@ -118,6 +118,7 @@ The contract, code or reasoning behind the visible result.
 | Getting started | [Commands](commands.md) · [Deployment](deployment.md) |
 | Guide | [Writing](writing.md) · [Parts](parts.md) · [Settings](settings.md) |
 | Reference | [API](api.md) |
+| Releases | [Official releases](releases.md) · [Changelog](changelog.md) |
 | Examples | [Fictional Blueprint](blueprint.md) |
 | Development | [Architecture](architecture.md) · [Design](design.md) · [Maintenance](maintenance.md) · [Roadmap](roadmap.md) |
 

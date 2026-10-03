@@ -99,6 +99,7 @@ order: 40
 프로젝트 소스 밖에서도 설치와 실행이 가능한 패키지 준비.
 prototype의 첫 버전 `0.1.0`은 `dev`, `build`, `preview`를 지원. `init`은 별도 예정 작업이며 첫 공개의 필수 조건에서 분리.
 공개 패키지: [for-humanity@0.1.0](https://www.npmjs.com/package/for-humanity/v/0.1.0).
+이후 공식 공개 버전은 [Releases](releases.md), 변경 사항은 [Changelog](changelog.md)에서 확인.
 
 - [x] 버전·지원 Node.js·라이선스·배포 파일 확인
 - [x] `pack` 결과를 별도 폴더에 설치

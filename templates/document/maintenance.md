@@ -25,6 +25,7 @@ git diff --check
 | `pnpm build:kit` | 서버·브라우저 번들                 |
 | `pnpm build`     | 패키지 번들 · 프로젝트 문서 사이트 |
 | `pnpm build:pages` | 문서 사이트 · Cloudflare 배포 파일 |
+| `pnpm sync:docs` | README 홈 · Changelog 문서 동기화 |
 | `pnpm lint:fix`  | 자동 린트·포맷 수정                |
 
 ::part[Code]
@@ -57,6 +58,19 @@ Biome와 Grit의 커스텀 진단 메시지는 영어.
 Biome 제외 이유: 기존 렌더링 알고리즘과 diff 대조.
 주석은 프로젝트 문체 사용 · 실행 로직 변경 시 별도 확인.
 
+### Repository utilities
+
+루트 `util/`은 저장소 개발·문서 동기화·배포 검증용. npm 패키지에는 포함하지 않음.
+
+| Script | Purpose |
+| ------ | ------- |
+| `sync-readme.mjs` | 최상위 README를 문서 홈으로 변환 · 사이트용 링크 조정 |
+| `sync-changelog.mjs` | 최상위 CHANGELOG를 공식 변경 기록 문서로 생성 |
+| `prepare-pages.mjs` | Pages용 캐시 헤더와 404 페이지를 배포 폴더에 복사 |
+| `prepare-release.mjs` | 태그·버전·README·변경 기록·배포 파일 확인 · Release 본문 생성 |
+| `prepare-release.test.mjs` | 버전 불일치·변경 기록 누락·이전 설치 버전·필수 파일 누락 검사 |
+| `smoke-package.mjs` | 패키지를 별도 프로젝트에 설치 · 페이지·Mermaid·자원·README 확인 |
+
 ::part[Verification]
 
 ## Browser checks
@@ -88,6 +102,9 @@ Biome 제외 이유: 기존 렌더링 알고리즘과 diff 대조.
 - dev: 추가·수정·삭제 · 잘못된 문서 후 정상 복구
 
 ## Packaging and release
+
+공식 공개 안내는 [Releases](releases.md), 버전별 변경 기록은 [Changelog](changelog.md).
+변경 기록은 최상위 `CHANGELOG.md`에 작성. npm 패키지·GitHub Release·사이트에서 같은 기록 사용.
 
 ```sh
 pnpm pack
@@ -135,7 +152,7 @@ GitHub-hosted runner, Node.js 24와 npm 12.2.0으로 배포. 패키지 사용자
 
 1. `package.json` 버전을 올리고 `CHANGELOG.md`에 변경 사항 기록.
 2. 최상위 `README.md`와 `language/README.ko.md`의 설치 버전·지원 버전 갱신.
-3. 검증 명령 실행. `pnpm build`가 `templates/document/README.md`도 동기화.
+3. 검증 명령 실행. `pnpm build`가 `templates/document/README.md`와 `changelog.md`도 동기화.
 4. 변경 파일만 커밋하고 `main`에 push. CI와 Pages 결과 확인.
 5. 해당 커밋에 같은 버전의 태그를 만들고 push.
 

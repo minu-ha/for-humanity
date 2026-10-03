@@ -81,7 +81,7 @@ The npm README updates with each package release. See [Maintenance](https://gith
 
 A document folder is enough to get started. Without a site configuration, the sidebar shows **for humanity**. The pixel face appears in the browser tab and follows the mouse on desktop.
 The folder's `README.md` becomes the home page at `/`, with no frontmatter required. Click the site name to return home.
-This repository generates [the documentation home](https://github.com/minu-ha/for-humanity/blob/main/templates/document/README.md) from its root README.md. Edit the repository's root README.md, then run `pnpm sync:readme`; `pnpm dev` and `pnpm build` also sync it on startup.
+This repository generates [the documentation home](https://github.com/minu-ha/for-humanity/blob/main/templates/document/README.md) from its root README.md and [the site changelog](https://github.com/minu-ha/for-humanity/blob/main/templates/document/changelog.md) from CHANGELOG.md. Edit those source files, then run `pnpm sync:docs`; `pnpm dev` and `pnpm build` also sync them on startup.
 Set your own name in `for-humanity.config.mjs`:
 
 ```js
@@ -116,6 +116,7 @@ The contract, code or reasoning behind the visible result.
 | Getting started | [Commands](https://github.com/minu-ha/for-humanity/blob/main/templates/document/commands.md) · [Deployment](https://github.com/minu-ha/for-humanity/blob/main/templates/document/deployment.md) |
 | Guide | [Writing](https://github.com/minu-ha/for-humanity/blob/main/templates/document/writing.md) · [Parts](https://github.com/minu-ha/for-humanity/blob/main/templates/document/parts.md) · [Settings](https://github.com/minu-ha/for-humanity/blob/main/templates/document/settings.md) |
 | Reference | [API](https://github.com/minu-ha/for-humanity/blob/main/templates/document/api.md) |
+| Releases | [Official releases](https://github.com/minu-ha/for-humanity/blob/main/templates/document/releases.md) · [Changelog](https://github.com/minu-ha/for-humanity/blob/main/templates/document/changelog.md) |
 | Examples | [Fictional Blueprint](https://github.com/minu-ha/for-humanity/blob/main/templates/document/blueprint.md) |
 | Development | [Architecture](https://github.com/minu-ha/for-humanity/blob/main/templates/document/architecture.md) · [Design](https://github.com/minu-ha/for-humanity/blob/main/templates/document/design.md) · [Maintenance](https://github.com/minu-ha/for-humanity/blob/main/templates/document/maintenance.md) · [Roadmap](https://github.com/minu-ha/for-humanity/blob/main/templates/document/roadmap.md) |
 
