@@ -18,7 +18,7 @@ JavaScript용 공식 진입점은 아직 제공하지 않음. 내부 렌더러 �
 | 본문 부품   | Note · Details            | [Parts](parts.md)                |
 | 사이트 배포 | 문서 폴더의 `dist`        | [Deployment](deployment.md)      |
 
-이 페이지는 라이브러리의 실제 계약. [Blueprint](blueprint.md)의 HTTP API는 가상 앱의 작성 예시.
+이 페이지는 라이브러리의 실제 계약. [Design example](blueprint.md)의 HTTP API는 가상 앱의 작성 예시.
 
 ::part[CLI]
 
@@ -83,7 +83,7 @@ type: document
 | `group` | 비어 있지 않은 string 또는 비어 있지 않은 string 배열 | 필수 |
 | `parent` | 비어 있지 않은 string · 같은 그룹의 부모 문서 ID | 없음 · 그룹에 직접 표시 |
 | `order` | 0 이상의 정수           | 순서 지정 문서 뒤에서 제목순      |
-| `type`  | `document` · `blueprint` | `document`                       |
+| `type`  | 기존 `document` · `blueprint` 값 허용 · 생략 권장 | `document` · 렌더링 차이 없음 |
 
 같은 첫 글자로 시작하는 문서도 지원. 문서 id는 확장자를 제외한 소문자 파일 경로.
 예: `api.md` → `/api/`, `architecture.md` → `/architecture/`.

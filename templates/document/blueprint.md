@@ -1,9 +1,8 @@
 ---
-name: Blueprint
+name: Design example
 label: 가상 독서 목록 앱의 설계 예시
 group: Examples
 order: 10
-type: blueprint
 ---
 
 가상의 독서 목록 앱 **별책**. 책장 선택 → 읽기 상태 필터 → 책 상세 확인.
@@ -168,5 +167,5 @@ GET /api/shelves/weekend/books?status=reading
 화면 흐름은 Mermaid, 값과 계약은 표·코드, 보충 설명은 Note, 구현 상세는 Details로 작성.
 소스는 이 페이지의 `blueprint.md`. 가상 내용은 자신의 프로젝트 설명으로 교체해 사용.
 
-현재 `type: blueprint`는 일반 문서와 같은 페이지 표현.
-전용 정보 구조와 표현은 [Roadmap](roadmap.md#blueprint)의 다음 단계.
+이 견본은 일반 Markdown 문서이며 `type`을 지정하지 않습니다.
+기존 `blueprint.md` 경로는 링크 호환을 위해 유지합니다. 다른 작성 목적은 [Authoring](authoring.md)과 [Research example](research-example.md).

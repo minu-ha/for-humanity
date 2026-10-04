@@ -6,7 +6,7 @@ order: 20
 ---
 
 보충 설명은 Note, 구현 상세는 Details. 본문·비교·결정·질문은 Markdown의 글·목록·표·section.
-가상 독서 목록 앱의 사용 예는 [Blueprint](blueprint.md). 아래 데이터·API도 같은 가상 예시.
+가상 독서 목록 앱의 사용 예는 [Design example](blueprint.md). 아래 데이터·API도 같은 가상 예시.
 문서 전체 구조는 [Writing](writing.md).
 
 ## Overview
@@ -21,7 +21,9 @@ order: 20
 | 구현 상세     | `:::details[제목]`      | 필요할 때 펼쳐 보는 규칙·계약    |
 
 Decision·Question·API reference의 전용 부품은 실제 샘플에서 추가 표현이 필요할 때 선정.
-이번 기본 부품은 Note·Details. 일반 문서와 blueprint에서 같은 문법 사용.
+기본 블록은 Note·Details이며 모든 문서에서 같은 문법을 사용합니다.
+[로컬 이미지·첨부](images.md), 각주·체크 목록·표·코드·흐름도를 함께 사용합니다.
+표현을 고르는 기준과 목적별 견본은 [Authoring](authoring.md).
 
 ::part[Components]
 

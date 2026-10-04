@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## 0.4.0 — 2026-10-04
+
+- Copy explicitly referenced local images and supported attachments to fingerprinted asset URLs, resolving paths relative to their Markdown files in both build and dev.
+- Support reference-style images and raw HTML image sources, preserve query/hash suffixes, and reject missing files, unsupported local image formats and paths or symlinks outside the document root.
+- Reload referenced image and attachment changes in dev while retaining the previous valid document and resource map after failed processing.
+- Mark only the current table-of-contents anchor as active, with `aria-current="location"`, while retaining the tree path through its ancestors.
+- Add image documentation, purpose-based authoring guidance and fictional design and research examples.
+- Keep legacy `type: document` and `type: blueprint` inputs compatible, recommend omitting `type`, and focus the roadmap on reusable visualization and theme modules rather than a dedicated Blueprint renderer.
+
 ## 0.3.0 — 2026-10-04
 
 - Support nested document pages with optional `parent` IDs, preserving existing groups and document URLs.

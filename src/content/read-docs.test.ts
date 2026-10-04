@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import {mkdir, mkdtemp, rm, writeFile} from "node:fs/promises";
+import {mkdir, mkdtemp, rm, symlink, writeFile} from "node:fs/promises";
 import {tmpdir} from "node:os";
 import {join} from "node:path";
 import {test} from "node:test";
@@ -416,7 +416,7 @@ test("relative Markdown links preserve query strings and fragments", async (t) =
                 "[Fragment](../api.mdx#details?literal=yes)",
                 "[External](https://example.com/api.md?mode=compact#details)",
                 "[Absolute](/api.md?mode=compact#details)",
-                "[Asset](diagram.svg?version=2#label)",
+                "[Asset](/diagram.svg?version=2#label)",
                 "[Local](#details?literal=yes)",
             ].join("\n\n"),
         ),
@@ -433,7 +433,7 @@ test("relative Markdown links preserve query strings and fragments", async (t) =
     assert.match(setup.html, /href="\/api\/#details\?literal=yes"/);
     assert.match(setup.html, /href="https:\/\/example\.com\/api\.md\?mode=compact#details"/);
     assert.match(setup.html, /href="\/api\.md\?mode=compact#details"/);
-    assert.match(setup.html, /href="diagram\.svg\?version=2#label"/);
+    assert.match(setup.html, /href="\/diagram\.svg\?version=2#label"/);
     assert.match(setup.html, /href="#details\?literal=yes"/);
 });
 
@@ -459,4 +459,54 @@ test("headings and contents preserve authored text without automatic numbering",
     assert.match(html, /href="#overview-1"[^>]*>Overview<\/a>/);
     assert.match(html, /wg_shellToc__group">Setup<\/div>/);
     assert.doesNotMatch(html, /wg_prose__num|wg_shellToc__mark/);
+});
+
+test("local Markdown and raw HTML images share fingerprinted assets with attachments", async (t) => {
+    const root = await mkdtemp(join(tmpdir(), "for-humanity-media-"));
+    t.after(() => rm(root, {recursive: true, force: true}));
+    await mkdir(join(root, "guide"));
+    await mkdir(join(root, "img"));
+    await writeFile(join(root, "img", "sample.svg"), '<svg xmlns="http://www.w3.org/2000/svg"/>');
+    await writeFile(join(root, "guide", "report.csv"), "name,value\nsample,1\n");
+    await writeFile(
+        join(root, "guide", "page.md"),
+        '---\nname: Media\nlabel: Media\ngroup: Guide\n---\n\n![Image](../img/sample.svg)\n\n![Reference][shot]\n\n[shot]: ../img/sample.svg\n\n<img src="../img/sample.svg" alt="Raw" />\n\n[Download](report.csv?download=1#rows)\n\n![External](https://example.com/image.png)\n',
+    );
+    const files = new Map<string, string>();
+    const docs = await readDocs({root, processor: createProcessor({site: siteConfigSchema.parse({}), root, files})});
+    assert.equal(files.size, 2);
+    assert.equal(docs[0].html.match(/src="\/_fh\/media\/asset\.[a-f0-9]+\.svg"/g)?.length, 3);
+    assert.match(docs[0].html, /href="\/_fh\/media\/asset\.[a-f0-9]+\.csv\?download=1#rows"/);
+    assert.match(docs[0].html, /src="https:\/\/example.com\/image.png"/);
+});
+
+test("missing local images and paths outside the document root fail instead of producing broken output", async (t) => {
+    const root = await mkdtemp(join(tmpdir(), "for-humanity-media-"));
+    t.after(() => rm(root, {recursive: true, force: true}));
+    await writeFile(join(root, "page.md"), "---\nname: Media\nlabel: Media\ngroup: Guide\n---\n\n![Missing](missing.png)\n");
+    await assert.rejects(readDocs({root, processor: createProcessor({site: siteConfigSchema.parse({}), root})}), /자원/);
+    await writeFile(join(root, "page.md"), "---\nname: Media\nlabel: Media\ngroup: Guide\n---\n\n![Outside](../outside.png)\n");
+    await assert.rejects(readDocs({root, processor: createProcessor({site: siteConfigSchema.parse({}), root})}), /문서 폴더 밖/);
+});
+
+test("home images use the chosen root and symlink escapes cannot publish outside files", async (t) => {
+    const root = await mkdtemp(join(tmpdir(), "for-humanity-media-"));
+    const outside = await mkdtemp(join(tmpdir(), "for-humanity-outside-"));
+    t.after(() => Promise.all([rm(root, {recursive: true, force: true}), rm(outside, {recursive: true, force: true})]));
+    await writeFile(join(root, "local image.png"), "first");
+    await writeFile(join(root, "README.md"), "# Home\n\n![Home](local%20image.png)\n");
+    const files = new Map<string, string>();
+    const site = siteConfigSchema.parse({});
+    const home = await readHome({root, processor: createProcessor({site, root, files})});
+    assert.equal(files.size, 1);
+    const before = [...files.keys()][0];
+    assert.ok(home?.html.includes(before));
+    await writeFile(join(root, "local image.png"), "changed");
+    const updated = new Map<string, string>();
+    await readHome({root, processor: createProcessor({site, root, files: updated})});
+    assert.notEqual([...updated.keys()][0], before);
+    await writeFile(join(outside, "private.png"), "private");
+    await symlink(join(outside, "private.png"), join(root, "linked.png"));
+    await writeFile(join(root, "README.md"), "# Home\n\n![Private](linked.png)\n");
+    await assert.rejects(readHome({root, processor: createProcessor({site, root})}), /문서 폴더 밖/);
 });

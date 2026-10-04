@@ -7,14 +7,14 @@
 import {EventEmitter} from "node:events";
 import {existsSync, watch} from "node:fs";
 import {copyFile, mkdir, rm, writeFile} from "node:fs/promises";
-import {basename, dirname, join, relative, resolve} from "node:path";
+import {basename, dirname, extname, join, relative, resolve, sep} from "node:path";
 import {fileURLToPath, pathToFileURL} from "node:url";
 import {serve} from "@hono/node-server";
 import {serveStatic} from "@hono/node-server/serve-static";
 import {Hono} from "hono";
 import {toSSG} from "hono/ssg";
 import {createApp} from "@/app";
-import {asset_client_path, asset_favicon_path, asset_font_dir, asset_style_path} from "@/constant/asset";
+import {asset_client_path, asset_favicon_path, asset_font_dir, asset_media_extensions, asset_style_path} from "@/constant/asset";
 import {cli_config_file_name, cli_default_command, cli_default_docs_dir, cli_dev_port} from "@/constant/cli";
 import {copy_error_config, copy_error_font_preload, copy_error_prefix, copy_error_unknown_command} from "@/constant/copy";
 import {font_brand_css, font_cache_control, font_mono_css, font_sans_css, font_sans_preload_file} from "@/constant/font";
@@ -85,7 +85,7 @@ const main = async () => {
     const fontCss = [sans.css, mono.css, brand.css].join("\n");
     const stylePath = toAssetPath({path: asset_style_path, file: join(kitRoot, "dist/cli.css")});
     const clientPath = toAssetPath({path: asset_client_path, file: join(kitRoot, "dist/client.js")});
-    const files = new Map([
+    const kitFiles = new Map([
         [stylePath, join(kitRoot, "dist/cli.css")],
         [clientPath, join(kitRoot, "dist/client.js")],
         [asset_favicon_path, join(kitRoot, "src/asset/favicon.svg")],
@@ -93,7 +93,8 @@ const main = async () => {
         ...mono.files,
         ...brand.files,
     ]);
-    const processor = createProcessor({site: siteConfig, root: docsRoot});
+    const files = new Map(kitFiles);
+    const processor = createProcessor({site: siteConfig, root: docsRoot, files});
     const [docs, home] = await Promise.all([readDocs({root: docsRoot, processor}), readHome({root: docsRoot, processor})]);
     const store = {docs, home};
     const app = createApp({
@@ -132,20 +133,30 @@ const main = async () => {
      * 재처리 실패 시 직전 정상 문서 유지
      */
     const handleDocsChange = async (_event: string, filename: string | null) => {
-        if (filename !== null && !/\.mdx?$/i.test(filename)) {
-            return;
+        if (filename !== null) {
+            const segments = filename.split(sep);
+            // 출력·설치 폴더는 제외 · 실패한 참조의 파일이 뒤늦게 생겨도 다시 처리
+            if (segments.includes("dist") || segments.includes("node_modules") || (!/\.mdx?$/i.test(filename) && !asset_media_extensions.has(extname(filename).toLowerCase()))) {
+                return;
+            }
         }
 
         const currentGeneration = ++generation;
 
         try {
-            const [docs, home] = await Promise.all([readDocs({root: docsRoot, processor}), readHome({root: docsRoot, processor})]);
+            const nextFiles = new Map(kitFiles);
+            const nextProcessor = createProcessor({site: siteConfig, root: docsRoot, files: nextFiles});
+            const [docs, home] = await Promise.all([readDocs({root: docsRoot, processor: nextProcessor}), readHome({root: docsRoot, processor: nextProcessor})]);
 
             // 최신 변경의 처리 결과만 반영
             if (currentGeneration !== generation) {
                 return;
             }
 
+            files.clear();
+            for (const entry of nextFiles) {
+                files.set(...entry);
+            }
             store.docs = docs;
             store.home = home;
             reload.emit("change");

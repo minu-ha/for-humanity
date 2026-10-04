@@ -121,3 +121,8 @@ export const copy_warn_broken_link = "없는 문서로 건 링크다";
  * 미등록 날짜 상태 문구 경고
  */
 export const copy_warn_unknown_status = "설정에 없는 상태 문구다";
+
+/**
+ * 문서에서 참조한 로컬 자원의 경로·형식 오류
+ */
+export const copy_error_asset = "자원이 올바르지 않다";

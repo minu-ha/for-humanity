@@ -275,12 +275,23 @@ if (firstSection) {
         const currentSubIndex = sub === undefined ? -1 : current.subs.indexOf(sub);
 
         for (const [index, section] of tocSections.entries()) {
-            section.link.classList.toggle("wg_shellToc__link--active", section === current);
+            const active = section === current && sub === undefined;
+            section.link.classList.toggle("wg_shellToc__link--active", active);
+            if (active) {
+                section.link.setAttribute("aria-current", "location");
+            } else {
+                section.link.removeAttribute("aria-current");
+            }
             section.item.classList.toggle("wg_shellToc__item--trail", section.list === current.list && index < currentIndex);
             section.item.classList.toggle("wg_shellToc__item--current", section === current);
 
             for (const [subIndex, item] of section.subs.entries()) {
                 item.link.classList.toggle("wg_shellToc__subLink--active", item === sub);
+                if (item === sub) {
+                    item.link.setAttribute("aria-current", "location");
+                } else {
+                    item.link.removeAttribute("aria-current");
+                }
                 item.item.classList.toggle("wg_shellToc__subItem--trail", section === current && subIndex < currentSubIndex);
                 item.item.classList.toggle("wg_shellToc__subItem--current", item === sub);
             }

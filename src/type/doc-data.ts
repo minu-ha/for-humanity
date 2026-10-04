@@ -15,7 +15,7 @@ export const docDataSchema = z.object({
      */
     label: z.string(),
     /**
-     * 문서 종류 · blueprint 전용 표현 미구현
+     * 기존 type 값 호환 · 생략 권장, 렌더링 차이 없음
      */
     type: z.enum(doc_type).default(doc_type.document),
     /**

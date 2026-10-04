@@ -19,6 +19,7 @@ import {remarkParts} from "@/component/widget/prose/_function/remark-parts";
 import {remarkStatus} from "@/component/widget/prose/_function/remark-status";
 import {remarkSwatch} from "@/component/widget/prose/_function/remark-swatch";
 import {remarkUnknownDirectives} from "@/component/widget/prose/_function/remark-unknown-directives";
+import {rehypeAssets} from "@/content/rehype-assets";
 import {rehypeHeadingIds} from "@/content/rehype-heading-ids";
 import {remarkReport} from "@/content/remark-report";
 import type {SiteConfig} from "@/type/site-config";
@@ -28,7 +29,7 @@ import type {SiteConfig} from "@/type/site-config";
  * 플러그인 HTML 조각은 마지막 rehype-raw에서 해석
  * Shiki inline style: token.css의 --app-code-* 참조
  */
-export const createProcessor = (options: {site: SiteConfig; root: string}) => {
+export const createProcessor = (options: {site: SiteConfig; root: string; files?: Map<string, string>}) => {
     return unified()
         .use(remarkParse)
         .use(remarkFrontmatter, ["yaml"])
@@ -50,6 +51,7 @@ export const createProcessor = (options: {site: SiteConfig; root: string}) => {
         .use(rehypeSections)
         .use(rehypeTables)
         .use(rehypeRaw)
+        .use(rehypeAssets, {root: options.root, files: options.files ?? new Map<string, string>()})
         .use(rehypeStringify, {allowDangerousHtml: true});
 };
 

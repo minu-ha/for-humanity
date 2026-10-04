@@ -41,7 +41,7 @@ export const createDevApp = (options: DevOptions) => {
             return c.notFound();
         }
 
-        c.header("content-type", asset_content_types[extname(file)] ?? asset_content_type_default);
+        c.header("content-type", asset_content_types[extname(file).toLowerCase()] ?? asset_content_type_default);
 
         if (extname(file) === ".woff2") {
             c.header("Cache-Control", font_cache_control);

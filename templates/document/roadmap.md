@@ -7,7 +7,7 @@ order: 40
 
 사람이 읽는 문서를 Markdown으로 작성하고 정적 사이트로 공유하는 문서 도구.
 현재는 prototype. 이 사이트는 라이브러리 사용법·작성 가이드·API·가상 프로젝트 예시를 제공.
-첫 npm 패키지 `0.1.0` 공개와 별도 프로젝트 설치 검증을 완료. 다음 구현 작업은 blueprint의 전용 정보 구조와 표현.
+첫 npm 패키지 `0.1.0` 공개와 별도 프로젝트 설치 검증을 완료. 다음 구현 방향은 일반 Markdown을 보완하는 시각화·테마 모듈과 목적별 작성 견본.
 
 ## Overview
 
@@ -15,7 +15,7 @@ order: 40
 |-------|-------------------------------------------|---------|---------------------------------------|
 | 1     | [Foundation](#foundation)                 | Done    | 기존 샘플의 표현과 사용성             |
 | 2     | [Parts and syntax](#parts-and-syntax)     | Done    | 필요한 부품과 Markdown 작성 계약      |
-| 3     | [Blueprint](#blueprint)                   | Next    | 화면·결정·질문을 담는 설계 문서       |
+| 3     | [Visualization modules](#visualization-modules) | Next | 읽기 목적에 맞는 그림·비교·참조와 테마 |
 | 4     | [Init](#init)                             | Planned | 새 문서 프로젝트의 시작 명령          |
 | 5     | [Release](#release)                       | Done    | npm 패키지 공개와 설치 검증 완료       |
 | 6     | [Search](#search)                         | Planned | 문서·section 탐색                     |
@@ -50,7 +50,7 @@ order: 40
 
 ## Parts and syntax
 
-샘플: [Blueprint](blueprint.md) · 가상 독서 목록 앱의 흐름·결정·질문·API.
+샘플: [Design example](blueprint.md) · 가상 독서 목록 앱의 흐름·결정·질문·API.
 선정: [Note·Details](parts.md). Decision·Question·API reference는 section·표·링크.
 
 - [x] 본문·표·흐름도로 표현되는 부분과 새 부품이 필요한 부분 확인
@@ -65,19 +65,21 @@ order: 40
 
 ::part[Next]
 
-## Blueprint
+## Visualization modules
 
-현재 `type: blueprint`는 frontmatter에서 선택 가능. 렌더링은 일반 문서와 동일.
-전용 표현은 Parts and syntax 단계의 샘플과 부품을 바탕으로 결정.
+설계·메모·참조·조사는 같은 Markdown 렌더러를 사용합니다. 별도 Blueprint 문서 타입을 추가하지 않습니다.
+일반 Markdown으로 충분한 내용과 시각화가 필요한 내용을 구분하며 작은 모듈부터 검증합니다.
 
-- [ ] 일반 문서와 설계 문서의 정보 구조·표현 차이 확정
-- [ ] 화면 설명·결정 사항·미결 질문·참조의 배치 기준 정의
-- [ ] 기존 문서와 같은 방식으로 링크·TOC·hash 이동 연결
-- [ ] 가상 blueprint 샘플과 일반 문서 가이드 비교
-- [ ] [Writing](writing.md)에 `document`·`blueprint`의 사용 기준 반영
+- [x] 로컬 그림·첨부의 파일 기준 경로·dev·정적 빌드 전달
+- [x] 목적별 [작성 기준](authoring.md)과 가상 설계·조사 견본
+- [ ] 그림의 캡션·출처·접근성 계약과 편집 가능한 주석 검토
+- [ ] 긴 값의 정의 목록·비교·단계·카드의 실제 필요 확인과 작은 문법 설계
+- [ ] 명시적 ID·참조의 검증과 많은 하위 문서의 탐색 개선
+- [ ] 의미 토큰에 기반한 테마·사용자 모듈의 공개 입력 계약
 
-산출물: blueprint 표현, 가상 프로젝트 예시, 작성 가이드.
-완료 기준: 한 문서에서 현재 설계·결정 이유·남은 질문을 구분해 읽을 수 있고 일반 문서도 동일하게 동작.
+질문 대화상자·역참조·의존성 자동 집계는 데이터 모델이 필요한 별도 후보입니다.
+제품 전용 UI·차트·실행형 데모를 기본 기능으로 자동 이식하지 않습니다.
+완료 기준: 모듈별 사용 이유·문법·오류와 두 테마·좁은 화면·키보드의 읽기 결과를 Guide에서 확인할 수 있음.
 
 ## Init
 
@@ -86,7 +88,7 @@ order: 40
 
 - [ ] 대상 폴더 지정과 생성할 파일 목록 확정
 - [ ] 사이트 이름 입력 · 미지정 시 `for humanity`와 기본 favicon
-- [ ] 설정·일반 문서·blueprint의 최소 샘플 준비
+- [ ] 설정·일반 문서·목적별 최소 견본 준비
 - [ ] 기존 파일과 충돌할 때의 처리 기준 구현
 - [ ] 생성 직후 `dev`, `build`, `preview` 실행 확인
 - [ ] [Commands](commands.md)에 명령·결과·오류 예시 반영

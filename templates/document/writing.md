@@ -6,7 +6,7 @@ order: 10
 ---
 
 문서 한 장 = Markdown 파일 하나. frontmatter, section, part, 본문 기능의 작성 기준.
-부품의 계약과 소스·결과 예시는 [Parts](parts.md), 설계 문서 샘플은 [Blueprint](blueprint.md).
+부품의 계약과 소스·결과 예시는 [Parts](parts.md), 설계 문서 샘플은 [Design example](blueprint.md).
 
 ## Overview
 
@@ -67,10 +67,11 @@ README가 없으면 추가 안내를 표시. 사이드바의 사이트 이름을
 | `group` | 사이드바 묶음 경로                | 필수 · 이름 또는 이름 배열 |
 | `parent` | 같은 묶음 안의 부모 문서 ID       | 선택 · 비어 있지 않은 문자열 |
 | `order` | 묶음 안의 읽는 순서               | 선택 · 0 이상의 정수       |
-| `type`  | `document` / `blueprint`          | 기본 `document`            |
+| `type`  | 기존 파일의 호환 필드             | 생략 권장 · 렌더링 차이 없음 |
 
 같은 첫 글자로 시작하는 이름도 허용. `API`와 `Architecture`는 각각 별도 문서.
-`blueprint` 전용 표현은 아직 미구현.
+새 문서는 `type`을 생략합니다. 기존 `document`·`blueprint` 값은 호환을 위해 읽으며 동일하게 렌더링합니다. 별도 Blueprint 렌더러를 요구하지 않습니다.
+읽는 순서와 근거 작성은 [Authoring](authoring.md), 로컬 그림·첨부는 [Images](images.md).
 파일 경로는 확장자를 뺀 소문자 id로 사용. `.md`와 `.mdx`, 대소문자만 다른 경로의 id 중복 금지.
 YAML 영역은 `remark-frontmatter`, 값은 `yaml`, 필드 검증은 Zod로 처리.
 빈 경로와 예약 문자 `#`, `?`, `%`, `*`, `:`, `\`는 사용 불가. 첫 경로 `/_fh/`는 패키지 자원 전용.

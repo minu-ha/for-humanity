@@ -20,7 +20,12 @@ try {
     await writeFile(join(consumer, "CLAUDE.md"), "# Private instructions\n");
     await writeFile(join(consumer, "guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n# Guide\n\n```mermaid\nflowchart LR\n    A[Markdown] --> B[HTML]\n```\n");
     await mkdir(join(consumer, "guide"));
-    await writeFile(join(consumer, "guide/options.md"), "---\nname: Options\nlabel: Options\ngroup: Guide\nparent: ../guide\n---\n\nChild page.\n");
+    await mkdir(join(consumer, "images"));
+    await writeFile(join(consumer, "images", "local image.svg"), '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><rect width="10" height="10"/></svg>');
+    await writeFile(
+        join(consumer, "guide/options.md"),
+        "---\nname: Options\nlabel: Options\ngroup: Guide\nparent: ../guide\n---\n\nChild page.\n\n![Local](../images/local%20image.svg)\n\n[Expand](../images/local%20image.svg)\n",
+    );
     await writeFile(join(consumer, "guide/agents.md"), `---\nname: Nested guide\nlabel: Nested guide\ngroup: ${JSON.stringify(nestedGroup)}\n---\n\n# Nested guide\n`);
     await writeFile(join(consumer, "for-humanity.config.mjs"), `export default ${JSON.stringify({navigation: [nestedGroup, "Guide"]})};\n`);
     execFileSync("npm", ["install", "--ignore-scripts", "--no-audit", "--no-fund", join(artifactDirectory, pack.filename)], {cwd: consumer, stdio: "inherit"});
@@ -49,6 +54,9 @@ try {
     const child = await readFile(join(output, "guide/options/index.html"), "utf8");
     assert.match(child, /href="\/guide\/"[^>]*>Guide<\/a><ul\b[^>]*aria-label="Guide"/);
     assert.match(child, /href="\/guide\/options\/"[^>]*aria-current="page"/);
+    const imagePath = child.match(/src="(\/_fh\/media\/asset\.[a-f0-9]+\.svg)"/)[1];
+    assert.equal(await readFile(join(output, imagePath), "utf8"), await readFile(join(consumer, "images", "local image.svg"), "utf8"));
+    assert.ok(child.includes(`href="${imagePath}"`));
     assert.equal([...child.matchAll(/href="\/guide\/options\/"/g)].length, 1);
     assert.equal([...child.matchAll(/aria-current="page"/g)].length, 1);
     assert.equal([...child.matchAll(/wg_shellNavList__link--active/g)].length, 1);
@@ -69,7 +77,7 @@ try {
     assert.notEqual(rebuilt.match(/type="module" src="([^"]+)"/)[1], clientPath);
     const rebuiltEntries = await readdir(output, {recursive: true});
     assert.ok(!rebuiltEntries.includes(clientPath.slice(1)));
-    console.log(`Installed ${pack.name}@${pack.version}: fingerprinted assets, nested groups, parent documents, pages, Mermaid and README passed`);
+    console.log(`Installed ${pack.name}@${pack.version}: fingerprinted assets, nested groups, parent documents, local images, pages, Mermaid and README passed`);
 } finally {
     await rm(consumer, {recursive: true, force: true});
 }

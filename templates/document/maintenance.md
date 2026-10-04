@@ -191,4 +191,4 @@ git push origin v0.2.2
 ## Roadmap
 
 진행 순서, 단계별 산출물과 완료 기준은 [Roadmap](roadmap.md).
-다음 작업은 [Blueprint](blueprint.md) 샘플을 기준으로 blueprint의 전용 정보 구조와 표현 정의.
+다음 작업은 [Authoring](authoring.md)의 작성 기준과 [시각화·테마 모듈](roadmap.md#visualization-modules).
