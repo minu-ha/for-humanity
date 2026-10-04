@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {navigation_scroll_storage_key, navigation_tree_storage_key} from "@/component/widget/shell/_constant/navigation";
-import {createNavigationStores} from "@/component/widget/shell/_function/create-navigation-stores";
+import {createNavigationStores} from "@/store/navigation/create-navigation-stores";
+import {navigation_scroll_storage_key, navigation_tree_storage_key} from "@/store/navigation/navigation-storage";
 
 const fixture = () => {
     const local = new Map<string, string>();

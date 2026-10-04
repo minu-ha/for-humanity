@@ -1,9 +1,9 @@
 import {createJSONStorage, persist, type StateStorage} from "zustand/middleware";
 import {createStore} from "zustand/vanilla";
-import {navigation_scroll_storage_key, navigation_storage_version, navigation_tree_storage_key} from "@/component/widget/shell/_constant/navigation";
-import {toNavigationScrollState} from "@/component/widget/shell/_function/to-navigation-scroll-state";
-import {toNavigationTreeState} from "@/component/widget/shell/_function/to-navigation-tree-state";
-import type {NavigationScrollState, NavigationTreeState} from "@/component/widget/shell/_type/navigation-state";
+import type {NavigationScrollState, NavigationTreeState} from "@/store/navigation/navigation-state";
+import {navigation_scroll_storage_key, navigation_storage_version, navigation_tree_storage_key} from "@/store/navigation/navigation-storage";
+import {toNavigationScrollState} from "@/store/navigation/to-navigation-scroll-state";
+import {toNavigationTreeState} from "@/store/navigation/to-navigation-tree-state";
 
 /**
  * 브라우저 저장소를 늦게 읽는 경계 · 차단 환경과 테스트의 메모리 저장소 지원
@@ -20,7 +20,8 @@ interface NavigationStorage {
 }
 
 /**
- * React hydration 없이 탐색 상태를 공유하는 vanilla 스토어 · 읽기·쓰기 실패는 메모리 상태 유지
+ * 브라우저 탐색의 vanilla 스토어 생성기 · React Hook이 아니므로 use- 접두사를 붙이지 않음
+ * 서버 요청은 이 생성기를 실행하지 않으며 저장 실패 시 메모리 상태 유지
  */
 export const createNavigationStores = (options: NavigationStorage) => {
     /**

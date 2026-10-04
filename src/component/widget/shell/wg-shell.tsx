@@ -1,24 +1,19 @@
 import clsx from "clsx";
 import type {ReactNode} from "react";
-import {
-    navigation_mobile_query,
-    navigation_scroll_storage_key,
-    navigation_storage_version,
-    navigation_tree_storage_key,
-    navigation_wide_query,
-} from "@/component/widget/shell/_constant/navigation";
+import {navigation_mobile_query, navigation_wide_query} from "@/component/widget/shell/_constant/navigation";
 import {bindNavigationOverflow} from "@/component/widget/shell/_function/bind-navigation-overflow";
 import {placeNavigationOutline} from "@/component/widget/shell/_function/place-navigation-outline";
 import {restoreNavigationScroll} from "@/component/widget/shell/_function/restore-navigation-scroll";
 import {restoreNavigationTree} from "@/component/widget/shell/_function/restore-navigation-tree";
-import {toNavigationScrollState} from "@/component/widget/shell/_function/to-navigation-scroll-state";
-import {toNavigationTreeState} from "@/component/widget/shell/_function/to-navigation-tree-state";
 import {toTocGroups} from "@/component/widget/shell/_function/to-toc-groups";
 import type {DocOutline} from "@/component/widget/shell/_type/doc-outline";
 import {WgShellNav} from "@/component/widget/shell/_wg-shell-nav";
 import {WgShellToc} from "@/component/widget/shell/_wg-shell-toc";
 import {asset_favicon_path, asset_reload_path} from "@/constant/asset";
 import {copy_nav_close, copy_nav_open, copy_nav_title} from "@/constant/copy";
+import {navigation_scroll_storage_key, navigation_storage_version, navigation_tree_storage_key} from "@/store/navigation/navigation-storage";
+import {toNavigationScrollState} from "@/store/navigation/to-navigation-scroll-state";
+import {toNavigationTreeState} from "@/store/navigation/to-navigation-tree-state";
 import type {Doc} from "@/type/doc";
 import type {SiteAssets} from "@/type/site-assets";
 import type {SiteConfig} from "@/type/site-config";

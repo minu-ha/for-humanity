@@ -1,5 +1,5 @@
-import type {toNavigationScrollState} from "@/component/widget/shell/_function/to-navigation-scroll-state";
-import type {NavigationLayout} from "@/component/widget/shell/_type/navigation-state";
+import type {NavigationLayout} from "@/store/navigation/navigation-state";
+import type {toNavigationScrollState} from "@/store/navigation/to-navigation-scroll-state";
 
 /**
  * 초기 HTML과 저장 스토어가 같은 좌표 형태를 소비하는 복원 경계

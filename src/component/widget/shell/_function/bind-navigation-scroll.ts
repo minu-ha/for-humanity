@@ -1,8 +1,9 @@
-import {navigation_mobile_query, navigation_scroll_storage_key, navigation_storage_version, navigation_wide_query} from "@/component/widget/shell/_constant/navigation";
-import type {createNavigationStores} from "@/component/widget/shell/_function/create-navigation-stores";
+import {navigation_mobile_query, navigation_wide_query} from "@/component/widget/shell/_constant/navigation";
 import {restoreNavigationScroll} from "@/component/widget/shell/_function/restore-navigation-scroll";
-import {toNavigationScrollState} from "@/component/widget/shell/_function/to-navigation-scroll-state";
-import type {NavigationLayout} from "@/component/widget/shell/_type/navigation-state";
+import type {createNavigationStores} from "@/store/navigation/create-navigation-stores";
+import type {NavigationLayout} from "@/store/navigation/navigation-state";
+import {navigation_scroll_storage_key, navigation_storage_version} from "@/store/navigation/navigation-storage";
+import {toNavigationScrollState} from "@/store/navigation/to-navigation-scroll-state";
 
 /**
  * persist 스토어에 배치별 문서·목차 좌표 저장 · 첫 desktop 복원은 HTML이 완료하므로 재실행하지 않음

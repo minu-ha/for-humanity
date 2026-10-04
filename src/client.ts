@@ -9,7 +9,7 @@ import {reading_line_slack_px} from "@/component/widget/shell/_constant/reading-
 import {bindMobileNavigation} from "@/component/widget/shell/_function/bind-mobile-navigation";
 import {bindNavigationScroll} from "@/component/widget/shell/_function/bind-navigation-scroll";
 import {bindNavigationTree} from "@/component/widget/shell/_function/bind-navigation-tree";
-import {createNavigationStores} from "@/component/widget/shell/_function/create-navigation-stores";
+import {createNavigationStores} from "@/store/navigation/create-navigation-stores";
 import {findHashTarget} from "@/util/dom/find-hash-target";
 import {revealHashTarget} from "@/util/dom/reveal-hash-target";
 

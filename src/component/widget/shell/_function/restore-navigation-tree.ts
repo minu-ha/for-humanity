@@ -1,4 +1,4 @@
-import type {toNavigationTreeState} from "@/component/widget/shell/_function/to-navigation-tree-state";
+import type {toNavigationTreeState} from "@/store/navigation/to-navigation-tree-state";
 
 /**
  * import 없이 첫 paint 전에 사용할 저장 형태와 검증 함수

@@ -1,5 +1,5 @@
-import {navigation_tree_storage_key} from "@/component/widget/shell/_constant/navigation";
-import type {createNavigationStores} from "@/component/widget/shell/_function/create-navigation-stores";
+import type {createNavigationStores} from "@/store/navigation/create-navigation-stores";
+import {navigation_tree_storage_key} from "@/store/navigation/navigation-storage";
 
 /**
  * persist 스토어를 문서·목차 버튼과 연결 · 닫은 자식의 키보드 포커스는 부모 버튼으로 복원
