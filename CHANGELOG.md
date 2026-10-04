@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Clarify trunk-based development, site deployment and package release policy.
+
 ## 0.2.1 — 2026-10-04
 
 - Fingerprint stylesheet and browser-script URLs so new pages cannot reuse assets cached from an older deployment.

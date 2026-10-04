@@ -103,7 +103,8 @@ Biome 제외 이유: 기존 렌더링 알고리즘과 diff 대조.
 
 ## Packaging and release
 
-공식 공개 안내는 [Releases](releases.md), 버전별 변경 기록은 [Changelog](changelog.md).
+버전 선택·공개 시점·호환성 정책의 기준은 [Releases](releases.md). 이 문서는 검증과 공개 작업 절차 담당.
+버전별 변경 기록은 [Changelog](changelog.md).
 변경 기록은 최상위 `CHANGELOG.md`에 작성. npm 패키지·GitHub Release·사이트에서 같은 기록 사용.
 
 ```sh
@@ -148,13 +149,25 @@ GitHub가 발급하는 OIDC 자격 증명 사용. 별도 `NPM_TOKEN`이나 매�
 GitHub-hosted runner, Node.js 24와 npm 12.2.0으로 배포. 패키지 사용자의 Node.js 최소 버전은 22 유지.
 설정 기준은 [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers/).
 
+### Daily development
+
+1. 작은 변경을 구현하고 필요한 검증 실행.
+2. 사용자에게 영향을 주는 변경은 `CHANGELOG.md`의 `Unreleased`에 기록. 아직 npm에 없는 기능의 문서에는 미공개 상태 표시.
+3. 위 검증 명령을 통과한 뒤 변경 파일만 커밋하고 `main`에 push. CI와 Pages 결과 확인.
+
+평소 `package.json`과 README의 설치 버전 유지. `main` push는 사이트 갱신이며 npm 공개를 실행하지 않음.
+CI가 실패하면 다른 작업보다 실패 원인 수정 우선. 현재 Pages Git 배포와 CI는 별도로 실행되므로 로컬 검증과 두 결과 모두 확인.
+
 ### Release steps
 
-1. `package.json` 버전을 올리고 `CHANGELOG.md`에 변경 사항 기록.
-2. 최상위 `README.md`와 `language/README.ko.md`의 설치 버전·지원 버전 갱신.
-3. 검증 명령 실행. `pnpm build`가 `templates/document/README.md`와 `changelog.md`도 동기화.
-4. 변경 파일만 커밋하고 `main`에 push. CI와 Pages 결과 확인.
-5. 해당 커밋에 같은 버전의 태그를 만들고 push.
+패키지 릴리스가 작업 범위에 포함됐을 때 실행:
+
+1. 마지막 공개 태그 이후의 전체 변경을 검토하고 [Version policy](releases.md#version-policy)에 따라 버전 선택.
+2. `package.json` 버전을 올리고 `CHANGELOG.md`의 `Unreleased`를 해당 버전·공개 날짜 항목으로 옮김. 이번 공개에 포함될 미공개 기록이 남지 않았는지 확인.
+3. 최상위 `README.md`와 `language/README.ko.md`의 설치 버전·지원 버전 갱신. 공개하는 기능 문서의 미공개 표시 제거.
+4. 검증 명령 실행. `pnpm build`가 `templates/document/README.md`와 `changelog.md`도 동기화.
+5. 릴리스 준비 변경만 커밋하고 `main`에 push. 해당 커밋의 CI와 Pages 결과 확인.
+6. 검증한 릴리스 준비 커밋에 같은 버전의 태그를 만들고 push. 태그를 만들기 전후에 다른 커밋으로 대상을 바꾸지 않음.
 
 다음 공개 버전이 `0.2.2`인 경우:
 
@@ -164,6 +177,7 @@ git push origin v0.2.2
 ```
 
 태그 push 후 Release Actions 실행 결과 확인. npm 배포가 성공한 뒤 GitHub Release 생성.
+완료 보고 전 npm에서 버전·패키지 공개를 확인하고 GitHub Release 확인. 사이트 갱신 성공만으로 npm 공개 완료를 판정하지 않음.
 이미 npm에 같은 버전이 있다면 패키지의 integrity가 일치할 때만 재배포를 건너뛰고 GitHub Release 작업을 이어감.
 내용이 다르면 실패. 게시한 버전은 수정하거나 덮어쓰지 않고 다음 버전으로 공개.
 
