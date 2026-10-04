@@ -294,17 +294,29 @@
 /* 색상 강제 환경은 시스템 손잡이 유지 · 대비 설정을 덮어쓰지 않음 */
 @media (forced-colors: active) {
     .wg_shell__sidebar {
-        scrollbar-width: auto;
+        /* non-auto 표준 폭은 WebKit 전용 스타일을 비활성화해 네이티브 색상 유지 */
+        scrollbar-width: thin;
         scrollbar-color: auto;
 
-        &::-webkit-scrollbar-thumb {
-            background: CanvasText;
+        &:hover {
+            scrollbar-color: auto;
+        }
+
+        &:focus-within {
+            scrollbar-color: auto;
         }
     }
 
     .wg_shell__drawer {
-        &::-webkit-scrollbar-thumb {
-            background: CanvasText;
+        scrollbar-width: thin;
+        scrollbar-color: auto;
+
+        &:hover {
+            scrollbar-color: auto;
+        }
+
+        &:focus-within {
+            scrollbar-color: auto;
         }
     }
 }

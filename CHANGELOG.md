@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.4.3 — 2026-10-04
+
+- Use standard native navigation scrollbars in forced-color mode so browser color adjustment cannot hide custom thumbs against the background.
+
 ## 0.4.2 — 2026-10-04
 
 - Preserve sidebar and mobile drawer scroll positions across document navigation and reloads within a tab, independently of the main content.
