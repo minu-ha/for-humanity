@@ -7,7 +7,7 @@ order: 10
 ---
 
 검색 엔진과 AI 에이전트가 공개 문서의 위치를 찾도록 안내합니다.
-`url`을 설정한 사이트에서만 `robots.txt`와 `sitemap.xml`을 생성합니다. **Unreleased — npm `0.5.0`에는 아직 포함되지 않은 기능입니다.**
+`url`을 설정한 사이트에서만 `robots.txt`와 `sitemap.xml`을 생성합니다. **npm `0.6.0`부터 지원하는 기능입니다.**
 
 ## Public site URL
 

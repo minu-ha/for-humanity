@@ -53,7 +53,7 @@ pnpm exec for-humanity preview docs
 | ------------- | ---------------------------------- | ------------------------- |
 | `title`       | string                             | `for humanity`            |
 | `description` | string · HTML 설명 메타데이터        | 생략                      |
-| `url`         | HTTP(S) 루트 URL · Unreleased       | 생략 · 크롤러 파일 생성하지 않음 |
+| `url`         | HTTP(S) 루트 URL · 0.6.0+           | 생략 · 크롤러 파일 생성하지 않음 |
 | `navigation`  | 이름 또는 이름 배열로 구성한 경로 목록 · 중복 경로 금지 | 묶음 이름순 |
 | `status`      | 상태 문구 객체 배열                | 기본 상태 문구            |
 
@@ -64,7 +64,7 @@ pnpm exec for-humanity preview docs
 `status`를 지정하면 기본 목록 전체 교체. `status: []`는 상태 표지 비활성.
 설정 검증은 시작 시 수행. 변경한 설정을 반영하려면 서버 재시작.
 
-`url`은 npm `0.5.0`에 아직 없는 기능입니다. 사용자 정보·하위 경로·query·hash를 거부하고, 도메인 루트로 정규화합니다. 지정하면 홈과 문서의 사이트맵 및 `robots.txt`를 dev·build에서 제공합니다. [Crawling](crawling.md).
+`url`은 npm `0.6.0`부터 지원합니다. 사용자 정보·하위 경로·query·hash를 거부하고, 도메인 루트로 정규화합니다. 지정하면 홈과 문서의 사이트맵 및 `robots.txt`를 dev·build에서 제공합니다. [Crawling](crawling.md).
 
 ## Frontmatter
 

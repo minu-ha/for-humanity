@@ -12,6 +12,8 @@ order: 10
 
 ## Unreleased
 
+## 0.6.0 — 2026-10-04
+
 - Generate `robots.txt` and `sitemap.xml` in dev and static builds when an optional public root `url` is configured; include home and encoded document URLs, and leave projects without a URL unchanged.
 - Validate public HTTP(S) origins and reject crawler-file document path collisions before processing; document Cloudflare crawler policy and Markdown negotiation separately.
 

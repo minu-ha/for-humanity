@@ -32,9 +32,9 @@ export default {
 | ------------- | ----------------------- | -------------- |
 | `title`       | 사이드바 이름 · 탭 제목 | `for humanity` |
 | `description` | HTML 설명 메타데이터     | 생략           |
-| `url`         | 공개 HTTP(S) 루트 URL · robots.txt와 sitemap.xml 생성 · Unreleased | 생략 · 생성하지 않음 |
+| `url`         | 공개 HTTP(S) 루트 URL · robots.txt와 sitemap.xml 생성 · 0.6.0+ | 생략 · 생성하지 않음 |
 
-`url`은 npm `0.5.0` 이후의 미공개 기능입니다. 설정·출력·Cloudflare 정책은 [Crawling](crawling.md).
+`url`은 npm `0.6.0`부터 지원합니다. 설정·출력·Cloudflare 정책은 [Crawling](crawling.md).
 
 설정을 생략하면 기본 이름 `for humanity`.
 `title`을 지정하면 탭·사이드바에 같은 사이트 이름 적용. 홈의 제목과 소개는 `README.md`에서 작성.
