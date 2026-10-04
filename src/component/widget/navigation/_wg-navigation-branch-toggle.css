@@ -1,5 +1,5 @@
 /* 각 가지 항목이 위치 기준 · 텍스트 이동과 독립된 접기 동작 */
-.wg_shellBranchToggle__root {
+.wg_navigationBranchToggle__root {
     position: absolute;
     top: 0;
     right: 0;

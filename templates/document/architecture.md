@@ -7,7 +7,7 @@ order: 10
 
 라이브러리 내부 구현을 수정하는 사람을 위한 참고 문서.
 Hono 라우팅과 정적 출력, Hono JSX 서버 렌더링, unified Markdown processor.
-브라우저는 탐색 초기화와 본문 동작을 나눈 DOM 스크립트 사용.
+브라우저 탐색은 `hono/jsx/dom` 컴포넌트, 본문 동작은 별도 DOM 스크립트가 소유합니다.
 
 ## Overview
 
@@ -23,8 +23,8 @@ flowchart LR
 | `cli.ts`    | 인자 · 설정 · 문서 · 폰트 · 빌드·서버 시작   | Node.js       |
 | `app.tsx`   | 첫 화면과 문서 라우트 · Hono JSX → HTML         | Node.js       |
 | `dev.ts`    | 자원 · SSE 새로고침 · 페이지 앱 위임         | Node.js · dev |
-| `navigation.ts` | 탐색 상태 복원 · 접기 버튼 · 드로어 · 스크롤 | Browser · 동기 |
-| `client.ts` | 커서 장식 · 읽는 section · 접힌 hash 보정 | Browser · module |
+| `navigation.tsx` | Hono 클라이언트 JSX · 접힘 · 드로어 · 스크롤 | Browser · 동기 |
+| `client.ts` | 커서 장식 · 앵커 강조 · 접힌 hash 보정 | Browser · module |
 
 ::part[Engine]
 
@@ -47,7 +47,9 @@ Hono 정규식 매개변수와 wildcard 라우트 혼합 시 Router 제약도 �
 
 서버에서 JSX를 출력해도 `onClick` 함수가 HTML로 전송되지는 않습니다. 브라우저 상호작용에는 별도의 클라이언트 JavaScript가 필요합니다. Hono의 `hono/jsx/dom`은 브라우저에서 컴포넌트와 Hooks를 실행할 수 있습니다.
 
-현재 탐색은 첫 화면 전 동기 초기화로 기존 HTML에 동작을 연결하고, 본문은 클라이언트에서 다시 렌더링하지 않습니다.
+탐색은 같은 `WgNavigation` 컴포넌트를 서버와 브라우저에서 사용합니다. 서버 출력은 전체 펼침 링크를 제공하고, 브라우저의 `render`는 탐색 영역만 저장 상태를 반영한 JSX로 교체합니다. 이후 접힘·드로어·현재 헤딩은 Hooks와 `onClick` 같은 JSX 이벤트로 갱신합니다. 본문은 클라이언트에서 다시 렌더링하지 않습니다.
+
+이 방식은 React의 hydration으로 기존 DOM을 인계받는 구조가 아닙니다. Hono 브라우저 렌더러로 작은 탐색 영역만 첫 paint 전에 마운트합니다. 전체 페이지를 클라이언트 앱으로 바꾸거나 문서 링크를 SPA 라우팅으로 바꾸지 않습니다.
 
 참조: [Hono JSX](https://hono.dev/docs/guides/jsx), [Hono Client Components](https://hono.dev/docs/guides/jsx-dom).
 
@@ -56,8 +58,10 @@ Hono 정규식 매개변수와 wildcard 라우트 혼합 시 Router 제약도 �
 문서 링크는 전체 HTML 페이지를 이동합니다.  탐색의 클라이언트 상태는 Zustand vanilla 스토어가 소유합니다.
 문서 목록과 On this page는 각각 독립 스크롤 컨테이너입니다. 1536px 이상에서는 같은 폭의 양쪽 사이드바로 표시하고, 그 아래에서는 목차를 숨깁니다. 모바일 드로어에는 문서 목록만 포함합니다.
 
-`src/navigation.ts`를 esbuild가 독립 IIFE로 컴파일합니다. CLI는 생성한 `dist/navigation.js`를 코드 문자열로 읽고 탐색 DOM·드로어 바로 뒤, 본문 앞에 포함합니다. 함수의 `.toString()`이나 수동 함수 조립은 사용하지 않습니다.
-이 진입점이 첫 paint 전에 접힘 선택을 복원하고 버튼·드로어·스크롤 이벤트를 연결합니다. 큰 본문이나 외부 client module 다운로드를 기다리지 않아 버튼이 뒤늦게 나타나지 않습니다. 이미 제자리에 있는 탐색 DOM은 다시 삽입하지 않습니다.
+`src/navigation.tsx`를 esbuild가 독립 IIFE로 컴파일합니다. CLI는 생성한 `dist/navigation.js`를 코드 문자열로 읽고 탐색 HTML과 탐색 전용 JSON 바로 뒤, 본문 앞에 포함합니다. JSON에는 문서 이름·URL·계층·현재 목차만 담고 본문은 포함하지 않습니다. `<`와 줄 구분자는 escape하여 작성한 이름이 script 태그를 닫지 못하게 합니다. 함수의 `.toString()`이나 수동 함수 조립은 사용하지 않습니다.
+이 진입점은 첫 paint 전에 저장 상태를 읽고 `hono/jsx/dom` 런타임으로 탐색 컴포넌트를 마운트합니다. 브라우저 빌드만 `jsxImportSource=hono/jsx/dom`을 사용합니다. 큰 본문이나 외부 client module 다운로드를 기다리지 않아 버튼이 뒤늦게 나타나지 않습니다.
+
+Hono의 최초 레이아웃 효과는 아직 연결되지 않은 fragment에서 실행됩니다. 스크롤 측정·복원은 이 경우에만 연결 직후 microtask로 미루며 첫 paint 앞에 완료합니다. 이후 반응형 전환에서는 연결된 요소를 동기 복원합니다. 외부 저장 상태 변경으로 접힌 가지 안에 포커스가 남으면 해당 가지 버튼으로 옮깁니다.
 
 가지 선택은 `localStorage`에 문서 ID·그룹 경로·페이지별 헤딩 키로 저장합니다. 기본값은 전체 펼침입니다.
 스크롤은 같은 탭의 `sessionStorage`에 넓은 화면·좁은 데스크톱·드로어 위치를 따로 저장합니다. 기존 배치별 저장 자료도 첫 복원에서 수용합니다.
@@ -66,10 +70,10 @@ Hono 정규식 매개변수와 wildcard 라우트 혼합 시 Router 제약도 �
 
 ### Store ownership and lifetime
 
-`src/store/navigation`에 생성기·저장 키·상태 계약·저장 자료 검증을 모읍니다. DOM 이벤트와 반응형 배치는 shell이 소유합니다.
+`src/store/navigation`에 생성기·저장 키·상태 계약·저장 자료 검증을 모읍니다. JSX 이벤트·반응형 배치·스크롤 영역·현재 헤딩은 `src/component/widget/navigation`이 소유하며 구독을 설치한 효과에서 정리합니다.
 `createNavigationStores`는 브라우저의 탐색 진입점에서 페이지마다 생성하며, 서버 요청이나 정적 빌드에서는 실행하지 않습니다. 페이지 사이의 선택은 `persist`가 이어받고, BFCache 복귀에서는 최신 저장 상태를 다시 읽습니다.
 
-vanilla 생성기는 `use-` 접두사를 붙이지 않습니다. 현재 DOM 코드에는 `getState`, `setState`, `subscribe`를 사용합니다. Hono 클라이언트 컴포넌트에서는 `useSyncExternalStore`로 같은 vanilla 스토어를 구독할 수 있습니다.
+vanilla 생성기는 `use-` 접두사를 붙이지 않습니다. `useNavigationTreeStore`는 Hono의 `useSyncExternalStore`로 같은 vanilla 스토어를 구독합니다. 최초 브라우저 렌더도 저장된 값을 읽으며, 사용자 상태는 서버 요청 사이에 공유하지 않습니다.
 서버의 `AppOptions.store`는 읽은 문서 목록과 홈을 담는 별도 객체이며 사용자 탐색 상태를 저장하는 Zustand 스토어가 아닙니다.
 
 참조: [Zustand vanilla store](https://zustand.docs.pmnd.rs/reference/apis/create-store), [persist](https://zustand.docs.pmnd.rs/reference/middlewares/persist).
@@ -102,7 +106,8 @@ gray-matter는 frontmatter를 분리·해석하는 다른 선택지. 여기서�
 | Concern                       | Owner                        |
 | ----------------------------- | ---------------------------- |
 | 첫 화면 · 문서 페이지         | `src/page`                   |
-| HTML 틀 · 사이드바            | `src/component/widget/shell` |
+| HTML 틀 · 본문 배치           | `src/component/widget/shell` |
+| 문서 탐색 · 목차 · 드로어      | `src/component/widget/navigation` |
 | 탐색 저장 상태 · 검증         | `src/store/navigation`       |
 | 본문 · remark·rehype 플러그인 | `src/component/widget/prose` |
 | processor · 문서 읽기         | `src/content`                |
@@ -117,7 +122,7 @@ gray-matter는 frontmatter를 분리·해석하는 다른 선택지. 여기서�
 
 - `dist/cli.js`: npm bin 진입점
 - `dist/cli.css`: 컴포넌트 CSS 묶음
-- `dist/navigation.js`: HTML에 포함하는 동기 탐색 초기화
+- `dist/navigation.js`: HTML에 포함하는 Hono 클라이언트 JSX 런타임
 - `dist/client.js`: 외부 module로 연결하는 본문 동작
 - 자원 URL: `/_fh/` · favicon: `/favicon.svg`
 

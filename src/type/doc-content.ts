@@ -1,4 +1,4 @@
-import type {DocOutline} from "@/component/widget/shell/_type/doc-outline";
+import type {DocOutline} from "@/component/widget/navigation/_type/doc-outline";
 
 /**
  * README 홈과 일반 문서가 공유하는 렌더링 결과

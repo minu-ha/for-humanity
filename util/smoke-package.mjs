@@ -50,11 +50,13 @@ try {
     assert.ok(home.indexOf(`<script>${navigationScript}</script>`) < home.indexOf('<main class="wg_shell__main">'));
     assert.match(await readFile(join(output, "guide/index.html"), "utf8"), /<svg/);
     const nested = await readFile(join(output, "guide/agents/index.html"), "utf8");
+    const nestedNavigation = nested.match(/<nav\b[^>]*class="wg_navigationNav__root"[\s\S]*?<\/nav>/)[0];
     assert.match(nested, /Example<\/span><button\b[^>]*aria-expanded="true"[^>]*>−<\/button><ul\b/);
     assert.match(nested, /Guide<\/span><button\b[^>]*aria-expanded="true"[^>]*>−<\/button><ul\b/);
     assert.match(nested, /href="\/guide\/agents\/"[^>]*aria-current="page"/);
-    assert.equal([...nested.matchAll(/wg_shellNavList__item--current/g)].length, nestedGroup.length);
+    assert.equal([...nestedNavigation.matchAll(/wg_navigationNavList__item--current/g)].length, nestedGroup.length);
     const child = await readFile(join(output, "guide/options/index.html"), "utf8");
+    const childNavigation = child.match(/<nav\b[^>]*class="wg_navigationNav__root"[\s\S]*?<\/nav>/)[0];
     assert.match(child, /href="\/guide\/"[^>]*>Guide<\/a><button\b[^>]*aria-label="Collapse Guide"[^>]*>−<\/button><ul\b[^>]*aria-label="Guide"/);
     assert.match(child, /href="\/guide\/options\/"[^>]*aria-current="page"/);
     const imagePath = child.match(/src="(\/_fh\/media\/asset\.[a-f0-9]+\.svg)"/)[1];
@@ -62,7 +64,7 @@ try {
     assert.ok(child.includes(`href="${imagePath}"`));
     assert.equal([...child.matchAll(/href="\/guide\/options\/"/g)].length, 1);
     assert.equal([...child.matchAll(/aria-current="page"/g)].length, 1);
-    assert.equal([...child.matchAll(/wg_shellNavList__link--active/g)].length, 1);
+    assert.equal([...childNavigation.matchAll(/wg_navigationNavList__link--active/g)].length, 1);
     assert.ok(nested.indexOf('aria-label="Projects"') < nested.indexOf('aria-label="Guide"'));
     const entries = await readdir(output, {recursive: true});
     assert.ok(!entries.includes("agents/index.html"));

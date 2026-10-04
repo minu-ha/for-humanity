@@ -1,12 +1,10 @@
 /*
- * 브라우저 동작 · 모바일 탐색, 커서 장식, 읽는 절, hash 위치 보정
- * 서버 HTML의 data-* 연결 · React hydration 없음
+ * 본문 브라우저 동작 · 커서 장식, hash 위치 보정
+ * 탐색은 Hono 클라이언트 JSX 소유 · 본문과 커서의 브라우저 이벤트만 연결
  */
 
 import {heading_highlight_hold_ms} from "@/component/widget/prose/_constant/heading-highlight";
 import {cursor_face_offset_px, cursor_face_storage_key} from "@/component/widget/shell/_constant/cursor-face";
-import {reading_line_slack_px} from "@/component/widget/shell/_constant/reading-line";
-import {findHashTarget} from "@/util/dom/find-hash-target";
 import {revealHashTarget} from "@/util/dom/reveal-hash-target";
 
 const cursorFace = document.querySelector<HTMLImageElement>("[data-cursor-face]");
@@ -198,18 +196,20 @@ const handleHashClick = (event: MouseEvent) => {
         return;
     }
 
+    // 클라이언트 JSX가 탐색 링크를 다시 만들더라도 같은 hash 재클릭의 본문 공개를 유지
+    const link = event.target instanceof Element ? event.target.closest("a[href]") : null;
     if (
-        event.currentTarget instanceof HTMLAnchorElement &&
-        (event.currentTarget.target === "" || event.currentTarget.target === "_self") &&
-        !event.currentTarget.hasAttribute("download") &&
-        event.currentTarget.origin === location.origin &&
-        event.currentTarget.pathname === location.pathname &&
-        event.currentTarget.search === location.search &&
-        event.currentTarget.hash
+        link instanceof HTMLAnchorElement &&
+        (link.target === "" || link.target === "_self") &&
+        !link.hasAttribute("download") &&
+        link.origin === location.origin &&
+        link.pathname === location.pathname &&
+        link.search === location.search &&
+        link.hash
     ) {
-        const target = revealHashTarget(event.currentTarget.hash);
+        const target = revealHashTarget(link.hash);
 
-        if (event.currentTarget.hash === location.hash) {
+        if (link.hash === location.hash) {
             highlightHeading(target);
         }
     }
@@ -225,81 +225,9 @@ const handleHashChange = () => {
     highlightHeading(target);
 };
 
-for (const link of document.querySelectorAll<HTMLAnchorElement>("a[href]")) {
-    link.addEventListener("click", handleHashClick);
-}
+document.addEventListener("click", handleHashClick);
 
 addEventListener("hashchange", handleHashChange);
-
-// 목차 링크와 실제 제목 연결
-const tocSections = [...document.querySelectorAll<HTMLAnchorElement>("[data-toc-link]")].flatMap((link) => {
-    const heading = findHashTarget(link.hash);
-    const item = link.parentElement;
-
-    if (!heading || !item) {
-        return [];
-    }
-
-    return [
-        {
-            heading,
-            link,
-            item,
-            list: item.parentElement,
-            subs: [...item.querySelectorAll<HTMLAnchorElement>("[data-toc-sub-link]")].flatMap((sub) => {
-                const subHeading = findHashTarget(sub.hash);
-                const subItem = sub.parentElement;
-
-                return subHeading && subItem ? [{heading: subHeading, link: sub, item: subItem}] : [];
-            }),
-        },
-    ];
-});
-const firstSection = tocSections.at(0);
-
-if (firstSection) {
-    /**
-     * 읽는 선 기준 절·소제목 표시
-     * 기준: 제목의 scroll-margin-top + reading_line_slack_px
-     */
-    const markActive = () => {
-        // scroll-margin-top 계산값: CSS px
-        const line = Number.parseFloat(getComputedStyle(firstSection.heading).scrollMarginTop) + reading_line_slack_px;
-        // 접힌 Details 안 제목은 좌표가 남아도 현재 위치에서 제외
-        const current = tocSections.findLast((section) => section.heading.checkVisibility() && section.heading.getBoundingClientRect().top <= line) ?? firstSection;
-        const sub = current.subs.findLast((item) => item.heading.checkVisibility() && item.heading.getBoundingClientRect().top <= line);
-        const currentIndex = tocSections.indexOf(current);
-        const currentSubIndex = sub === undefined ? -1 : current.subs.indexOf(sub);
-
-        for (const [index, section] of tocSections.entries()) {
-            const active = section === current && sub === undefined;
-            section.link.classList.toggle("wg_shellToc__link--active", active);
-            if (active) {
-                section.link.setAttribute("aria-current", "location");
-            } else {
-                section.link.removeAttribute("aria-current");
-            }
-            section.item.classList.toggle("wg_shellToc__item--trail", section.list === current.list && index < currentIndex);
-            section.item.classList.toggle("wg_shellToc__item--current", section === current);
-
-            for (const [subIndex, item] of section.subs.entries()) {
-                item.link.classList.toggle("wg_shellToc__subLink--active", item === sub);
-                if (item === sub) {
-                    item.link.setAttribute("aria-current", "location");
-                } else {
-                    item.link.removeAttribute("aria-current");
-                }
-                item.item.classList.toggle("wg_shellToc__subItem--trail", section === current && subIndex < currentSubIndex);
-                item.item.classList.toggle("wg_shellToc__subItem--current", item === sub);
-            }
-        }
-    };
-
-    addEventListener("scroll", markActive, {passive: true});
-    addEventListener("resize", markActive);
-    addEventListener("toggle", markActive, true);
-    markActive();
-}
 
 const userScroll = new AbortController();
 

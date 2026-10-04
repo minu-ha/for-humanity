@@ -47,7 +47,7 @@ export const restoreNavigationScroll = (options: RestoreNavigationScrollOptions)
                 ? options.toState({positions: {[options.layout]: JSON.parse(legacy)}}).positions[options.layout]
                 : undefined;
         const position = state.positions[options.layout] ?? previous;
-        const signature = [...navigation.querySelectorAll<HTMLAnchorElement>(".wg_shellNav__root a[href]")].map((link) => `${link.pathname}:${link.textContent}`).join("\n");
+        const signature = [...navigation.querySelectorAll<HTMLAnchorElement>(".wg_navigationNav__root a[href]")].map((link) => `${link.pathname}:${link.textContent}`).join("\n");
         if (position === undefined || position.navigation !== signature) return;
 
         documents.scrollTop = position.documents;

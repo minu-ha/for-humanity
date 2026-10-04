@@ -1,18 +1,18 @@
 /*
  * 읽는 순서의 문서 목록 · 작은 회색 묶음과 링크색 문서
  */
-.wg_shellNav__root {
+.wg_navigationNav__root {
     font-size: var(--app-font-size-dense);
     line-height: var(--app-line-height-tight);
 }
 
-.wg_shellNav__docs {
+.wg_navigationNav__docs {
     display: flex;
     flex-direction: column;
     gap: var(--app-space-stack);
 }
 
-.wg_shellNav__group {
+.wg_navigationNav__group {
     padding-inline-end: calc(var(--app-size-tree-toggle) + var(--app-space-inline));
     margin: 0 0 4px;
     color: var(--app-color-text-muted);
@@ -21,7 +21,7 @@
     text-box: trim-start cap alphabetic;
 }
 
-.wg_shellNav__docGroup {
+.wg_navigationNav__docGroup {
     /* 묶음 접기 버튼의 첫 행 기준 */
     position: relative;
 }

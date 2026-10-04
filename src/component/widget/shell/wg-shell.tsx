@@ -1,11 +1,10 @@
 import clsx from "clsx";
 import type {Child} from "hono/jsx";
-import {toTocGroups} from "@/component/widget/shell/_function/to-toc-groups";
-import type {DocOutline} from "@/component/widget/shell/_type/doc-outline";
-import {WgShellNav} from "@/component/widget/shell/_wg-shell-nav";
-import {WgShellToc} from "@/component/widget/shell/_wg-shell-toc";
+import {toNavigationData} from "@/component/widget/navigation/_function/to-navigation-data/to-navigation-data";
+import {toNavigationJson} from "@/component/widget/navigation/_function/to-navigation-json";
+import type {DocOutline} from "@/component/widget/navigation/_type/doc-outline";
+import {WgNavigation} from "@/component/widget/navigation/wg-navigation";
 import {asset_favicon_path, asset_reload_path} from "@/constant/asset";
-import {copy_nav_close, copy_nav_open, copy_nav_title} from "@/constant/copy";
 import type {Doc} from "@/type/doc";
 import type {SiteAssets} from "@/type/site-assets";
 import type {SiteConfig} from "@/type/site-config";
@@ -53,7 +52,7 @@ export interface WgShellProps {
 }
 
 export const WgShell = (props: WgShellProps) => {
-    const tocGroups = props.outline === undefined ? [] : toTocGroups(props.outline);
+    const navigationData = toNavigationData({site: props.site, docs: props.docs, current: props.current, outline: props.outline});
 
     return (
         <html lang="ko">
@@ -79,82 +78,15 @@ export const WgShell = (props: WgShellProps) => {
              */}
             <body className={clsx("wg_shell__root")}>
                 {/**
-                 * 데스크톱의 문서 사이드바 · 모바일에서는 브랜드와 메뉴 버튼
+                 * 서버와 브라우저에서 공유하는 탐색 컴포넌트 · 본문은 마운트 대상에서 제외
                  */}
-                <div className={clsx("wg_shell__sidebar")}>
-                    {/**
-                     * 브랜드와 모바일 메뉴 진입 · 버튼은 동작 연결 후 표시
-                     */}
-                    <div className={clsx("wg_shell__brandRow")}>
-                        {/**
-                         * 어느 문서에서도 README 홈으로 이동
-                         */}
-                        <a className={clsx("wg_shell__brand")} href="/" aria-current={props.current === undefined ? "page" : undefined}>
-                            {props.site.title}
-                        </a>
-                        {/**
-                         * 접힌 모바일 탐색의 진입점과 열림 상태 전달
-                         */}
-                        <button
-                            className={clsx("wg_shell__menuToggle")}
-                            type="button"
-                            aria-label={copy_nav_open}
-                            aria-controls="fh-navigation-drawer"
-                            aria-expanded="false"
-                            data-navigation-open=""
-                        >
-                            <svg className={clsx("wg_shell__menuIcon")} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                                <path d="M4 6h16M4 12h16M4 18h16" />
-                            </svg>
-                        </button>
-                    </div>
-                    {/**
-                     * 같은 탐색 DOM을 모바일 대화상자로 이동 · 스크립트 없이도 기본 목록 제공
-                     */}
-                    <div className={clsx("wg_shell__navigation")} data-navigation="">
-                        {/**
-                         * 모든 페이지에서 같은 높이의 문서 탐색 · 목차 길이와 스크롤 분리
-                         */}
-                        <div className={clsx("wg_shell__documents", "wg_shell__scroll")} data-navigation-scroll="documents">
-                            <WgShellNav site={props.site} docs={props.docs} current={props.current} />
-                        </div>
-                    </div>
+                <div className={clsx("wg_shell__navigationRoot")} data-navigation-root="">
+                    <WgNavigation data={navigationData} />
                 </div>
                 {/**
-                 * 와이드 화면 전용 목차 · 드로어에는 문서 목록만 포함
+                 * 최소 탐색 자료와 컴파일된 JSX 진입점 · 첫 화면 전 상태·스크롤 복원
                  */}
-                <aside className={clsx("wg_shell__tocRail")} data-navigation-rail="">
-                    <div className={clsx("wg_shell__outline")} data-navigation-outline="">
-                        <div className={clsx("wg_shell__headings", "wg_shell__scroll")} data-navigation-scroll="outline">
-                            {tocGroups.length > 0 && <WgShellToc groups={tocGroups} pageId={props.current === undefined ? "/" : props.current} />}
-                        </div>
-                    </div>
-                </aside>
-                {/**
-                 * 브라우저의 모달 포커스·Escape 처리 · 목록은 한 번만 렌더링
-                 */}
-                <dialog className={clsx("wg_shell__drawer")} id="fh-navigation-drawer" aria-labelledby="fh-navigation-title" data-navigation-drawer="">
-                    <div className={clsx("wg_shell__drawerHeader")}>
-                        {/**
-                         * 대화상자의 접근 가능한 이름
-                         */}
-                        <h2 className={clsx("wg_shell__drawerTitle")} id="fh-navigation-title">
-                            {copy_nav_title}
-                        </h2>
-                        {/**
-                         * 목록을 스크롤해도 보이는 닫기 동작
-                         */}
-                        <button className={clsx("wg_shell__drawerClose")} type="button" aria-label={copy_nav_close} data-navigation-close="">
-                            <svg className={clsx("wg_shell__menuIcon")} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                                <path d="m6 6 12 12M18 6 6 18" />
-                            </svg>
-                        </button>
-                    </div>
-                    <div className={clsx("wg_shell__drawerContent")} data-navigation-content="" />
-                </dialog>
-                {/**
-                 * 탐색 상태와 이벤트를 본문 표시 전에 연결하는 컴파일된 브라우저 진입점
-                 */}
+                <script type="application/json" id="fh-navigation-data" dangerouslySetInnerHTML={{__html: toNavigationJson(navigationData)}} />
                 <script dangerouslySetInnerHTML={{__html: props.assets.navigationScript}} />
                 <main className={clsx("wg_shell__main")}>{props.children}</main>
                 <img className={clsx("wg_shell__cursorFace")} src={asset_favicon_path} width="24" height="24" alt="" aria-hidden="true" draggable={false} data-cursor-face="" />

@@ -4,7 +4,10 @@ import {tmpdir} from "node:os";
 import {join} from "node:path";
 import {test} from "node:test";
 import {createApp} from "@/app";
-import {WgShellNav} from "@/component/widget/shell/_wg-shell-nav";
+import {navigationDataSchema} from "@/component/widget/navigation/_constant/navigation-data-schema";
+import {toNavigationData} from "@/component/widget/navigation/_function/to-navigation-data/to-navigation-data";
+import {toNavigationJson} from "@/component/widget/navigation/_function/to-navigation-json";
+import {WgNavigation} from "@/component/widget/navigation/wg-navigation";
 import {asset_client_path, asset_style_path} from "@/constant/asset";
 import {createProcessor} from "@/content/create-processor";
 import {readDocs} from "@/content/read-docs";
@@ -12,6 +15,33 @@ import {readHome} from "@/content/read-home";
 import {toDocGroups} from "@/content/to-doc-groups/to-doc-groups";
 import {docDataSchema} from "@/type/doc-data";
 import {siteConfigSchema} from "@/type/site-config";
+
+/**
+ * 브라우저와 같은 공개 탐색 컴포넌트에서 문서 목록만 확인
+ */
+const toNavigationHtml = (options: Parameters<typeof toNavigationData>[0]) => {
+    const markup = WgNavigation({data: toNavigationData(options)}).toString();
+    const navigation = markup.match(/<nav[^>]*class="wg_navigationNav__root"[\s\S]*?<\/nav>/)?.[0];
+    assert.ok(navigation);
+    return navigation;
+};
+
+test("navigation payload excludes document bodies and safely embeds authored labels", async (t) => {
+    const root = await mkdtemp(join(tmpdir(), "for-humanity-navigation-"));
+    t.after(() => rm(root, {recursive: true, force: true}));
+    const title = "</script><script>window.injected=true</script>\u2028\u2029";
+    const site = siteConfigSchema.parse({title});
+    await writeFile(join(root, "guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Read\n\nPrivate body marker.\n");
+    const docs = await readDocs({root, processor: createProcessor({site, root})});
+    const data = toNavigationData({site, docs, current: "guide"});
+    const json = toNavigationJson(data);
+
+    assert.equal(data.title, title);
+    assert.equal(data.groups[0].docs[0].active, true);
+    assert.doesNotMatch(json, /Private body marker|<|\u2028|\u2029/);
+    assert.deepEqual(JSON.parse(json), data);
+    assert.deepEqual(navigationDataSchema.parse(JSON.parse(json)), data);
+});
 
 test("page resource URLs use the supplied content fingerprints instead of fixed cache keys", async () => {
     const site = siteConfigSchema.parse({});
@@ -31,6 +61,8 @@ test("navigation initialization runs after its DOM and before the document body"
     const html = await (await createApp({site, store: {docs: []}, assets}).request("/")).text();
     const initialization = html.indexOf(`<script>${navigationScript}</script>`);
 
+    assert.doesNotMatch(html, /\sref="|\sonClick="/, "server HTML must not serialize browser refs or handlers");
+    assert.ok(initialization > html.indexOf("fh-navigation-data"), "authored payload must be available before mounting");
     assert.ok(initialization > html.indexOf("data-navigation-drawer"), "navigation controls must exist before initialization");
     assert.ok(initialization < html.indexOf('<main class="wg_shell__main">'), "navigation must be ready before the main content is parsed");
 });
@@ -92,7 +124,7 @@ test("navigation shows every document group in reading order without document ic
     ]);
 
     const docs = await readDocs({root, processor: createProcessor({site, root})});
-    const html = WgShellNav({site, docs, current: "writing"}).toString();
+    const html = toNavigationHtml({site, docs, current: "writing"});
     const groups = [...html.matchAll(/<section\b[^>]*aria-label="([^"]+)"/g)];
 
     assert.deepEqual(
@@ -100,7 +132,7 @@ test("navigation shows every document group in reading order without document ic
         ["Getting started", "Guide"],
     );
     assert.doesNotMatch(html, /<details\b/);
-    assert.doesNotMatch(html, /wg_shellNav__docIcon/);
+    assert.doesNotMatch(html, /wg_navigationNav__docIcon/);
     assert.doesNotMatch(html, /href="\/"/);
     assert.doesNotMatch(html, />Documents<|>Overview</);
     assert.ok(html.indexOf('href="/writing/"') < html.indexOf('href="/parts/"'));
@@ -173,15 +205,15 @@ test("nested groups follow metadata paths and keep sibling branches and document
     assert.equal(groups[1].groups[0].groups[0].groups[0].groups[0].name, "Drafts");
     assert.deepEqual(toDocGroups({docs: docs.toReversed(), navigation: site.navigation}), groups);
 
-    const html = WgShellNav({site, docs, current: "authoring"}).toString();
+    const html = toNavigationHtml({site, docs, current: "authoring"});
 
     assert.match(html, /href="\/authoring\/"[^>]*aria-current="page"/);
     assert.match(html, /Atlas<\/span><button\b[^>]*aria-expanded="true"[^>]*>−<\/button><ul\b/);
     assert.match(html, /Research<\/span><button\b[^>]*aria-expanded="true"[^>]*>−<\/button><ul\b/);
     assert.equal([...html.matchAll(/href="\/authoring\/"/g)].length, 1);
     assert.equal([...html.matchAll(/>Research<\/span>/g)].length, 2);
-    assert.equal([...html.matchAll(/wg_shellNavList__item--current/g)].length, 3);
-    assert.doesNotMatch(WgShellNav({site, docs}).toString(), /aria-current="page"|wg_shellNavList__item--current/);
+    assert.equal([...html.matchAll(/wg_navigationNavList__item--current/g)].length, 3);
+    assert.doesNotMatch(toNavigationHtml({site, docs}), /aria-current="page"|wg_navigationNavList__item--current/);
     assert.ok(html.indexOf('href="/parts/"') < html.indexOf('href="/authoring/"'));
     assert.doesNotMatch(html, /<details\b/);
 });
@@ -231,18 +263,18 @@ test("parent documents contain ordered descendants with independent URLs and one
     assert.deepEqual(docs.find((doc) => doc.id === "details")?.ancestors, ["settings", "guide/site"]);
     assert.deepEqual(toDocGroups({docs: docs.toReversed(), navigation: site.navigation}), groups);
 
-    const html = WgShellNav({site, docs, current: "details"}).toString();
+    const html = toNavigationHtml({site, docs, current: "details"});
     assert.match(html, /href="\/settings\/"[^>]*>Settings<\/a><button\b[^>]*aria-label="Collapse Settings"[^>]*>−<\/button><ul\b[^>]*aria-label="Settings"/);
     assert.match(html, /href="\/guide\/site\/"[^>]*>Site<\/a><button\b[^>]*aria-label="Collapse Site"[^>]*>−<\/button><ul\b[^>]*aria-label="Site"/);
     assert.match(html, /href="\/details\/"[^>]*aria-current="page"/);
     assert.equal([...html.matchAll(/aria-current="page"/g)].length, 1);
-    assert.equal([...html.matchAll(/wg_shellNavList__link--active/g)].length, 1);
-    assert.equal([...html.matchAll(/wg_shellNavList__item--current/g)].length, 5);
+    assert.equal([...html.matchAll(/wg_navigationNavList__link--active/g)].length, 1);
+    assert.equal([...html.matchAll(/wg_navigationNavList__item--current/g)].length, 5);
     for (const doc of docs) {
         assert.equal(html.split(`href="/${doc.id}/"`).length - 1, 1);
     }
     assert.ok(html.indexOf('href="/themes/"') < html.indexOf('href="/guide/site/"'));
-    assert.doesNotMatch(WgShellNav({site, docs}).toString(), /aria-current="page"|wg_shellNavList__item--current/);
+    assert.doesNotMatch(toNavigationHtml({site, docs}), /aria-current="page"|wg_navigationNavList__item--current/);
 
     const app = createApp({
         site,
@@ -390,7 +422,7 @@ test("a plain root README renders at home and relative home links resolve from n
     assert.match(html, /href="\/guide\/setup\/"/);
     assert.match(html, /href="#start" data-toc-link/);
     assert.match(html, /class="shiki/);
-    assert.match(html, /wg_shell__brand" href="\/" aria-current="page"/);
+    assert.match(html, /wg_navigation__brand" href="\/" aria-current="page"/);
     assert.equal([...html.matchAll(/href="\/"/g)].length, 1);
     assert.match(docs[0].html, /href="\/#start"/);
     assert.doesNotMatch(html, /wg_prose__eyebrow|pg_home__card/);
@@ -499,8 +531,8 @@ test("headings and contents preserve authored text without automatic numbering",
     assert.match(html, /href="#01-keep-this-number"[^>]*>01\. Keep this number<\/a>/);
     assert.match(html, /href="#nested-heading"[^>]*>Nested heading<\/a>/);
     assert.match(html, /href="#overview-1"[^>]*>Overview<\/a>/);
-    assert.match(html, /wg_shellToc__group">Setup<\/div>/);
-    assert.doesNotMatch(html, /wg_prose__num|wg_shellToc__mark/);
+    assert.match(html, /wg_navigationToc__group">Setup<\/div>/);
+    assert.doesNotMatch(html, /wg_prose__num|wg_navigationToc__mark/);
 });
 
 test("local Markdown and raw HTML images share fingerprinted assets with attachments", async (t) => {

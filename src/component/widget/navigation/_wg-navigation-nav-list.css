@@ -1,13 +1,13 @@
 /*
  * 재귀 문서 목록 · 단계별 가지와 조상 경로의 1px 트리
  */
-.wg_shellNavList__root {
+.wg_navigationNavList__root {
     margin: 0 0 0 var(--app-space-tree-inset);
     padding: 0;
     list-style: none;
 }
 
-.wg_shellNavList__branch {
+.wg_navigationNavList__branch {
     /* 하위 묶음도 문서와 같은 첫 줄 기준으로 가지 연결 */
     position: relative;
     display: block;
@@ -28,7 +28,7 @@
     }
 }
 
-.wg_shellNavList__link {
+.wg_navigationNavList__link {
     /* 가로 가지는 링크 첫 줄 기준 · 여러 줄 제목에서도 연결 위치 유지 */
     position: relative;
     display: block;
@@ -68,7 +68,7 @@
     }
 }
 
-.wg_shellNavList__link--active {
+.wg_navigationNavList__link--active {
     color: var(--app-color-link);
     font-weight: var(--app-font-weight-active);
 
@@ -77,18 +77,18 @@
     }
 }
 
-.wg_shellNavList__item {
+.wg_navigationNavList__item {
     /* 하위 목록을 포함해 다음 형제까지 줄기 연결 */
     display: flow-root;
 
     /* 세로 줄기는 각 항목 기준 · 마지막 항목의 첫 줄 가운데에서 종료 */
     position: relative;
 
-    &:has(> .wg_shellBranchToggle__root) > .wg_shellNavList__link {
+    &:has(> .wg_navigationBranchToggle__root) > .wg_navigationNavList__link {
         padding-inline-end: calc(var(--app-size-tree-toggle) + var(--app-space-inline));
     }
 
-    &:has(> .wg_shellBranchToggle__root) > .wg_shellNavList__branch {
+    &:has(> .wg_navigationBranchToggle__root) > .wg_navigationNavList__branch {
         padding-inline-end: calc(var(--app-size-tree-toggle) + var(--app-space-inline));
     }
 
@@ -127,53 +127,53 @@
     }
 
     /* 뒤 항목까지의 세로 경로 · 같은 목록의 형제 안에서만 연결 */
-    &:where(:has(~ .wg_shellNavList__item:hover))::before {
+    &:where(:has(~ .wg_navigationNavList__item:hover))::before {
         border-left-color: var(--app-color-link);
     }
 
-    &:where(:has(~ .wg_shellNavList__item :focus-visible))::before {
+    &:where(:has(~ .wg_navigationNavList__item :focus-visible))::before {
         border-left-color: var(--app-color-link);
     }
 
-    & > .wg_shellNavList__root {
+    & > .wg_navigationNavList__root {
         margin-left: var(--app-space-tree-indent);
     }
 
     /* 하위 문서를 탐색할 때 조상 묶음의 가지도 함께 연결 */
-    &:where(:hover) > .wg_shellNavList__branch::before {
+    &:where(:hover) > .wg_navigationNavList__branch::before {
         border-top-color: var(--app-color-link);
     }
 
-    &:where(:has(:focus-visible)) > .wg_shellNavList__branch::before {
+    &:where(:has(:focus-visible)) > .wg_navigationNavList__branch::before {
         border-top-color: var(--app-color-link);
     }
 
     /* 자식 문서를 탐색할 때 클릭 가능한 부모 문서의 가지도 연결 */
-    &:where(:hover) > .wg_shellNavList__link::before {
+    &:where(:hover) > .wg_navigationNavList__link::before {
         border-top-color: var(--app-color-link);
     }
 
-    &:where(:has(:focus-visible)) > .wg_shellNavList__link::before {
+    &:where(:has(:focus-visible)) > .wg_navigationNavList__link::before {
         border-top-color: var(--app-color-link);
     }
 }
 
-.wg_shellNavList__item--trail {
+.wg_navigationNavList__item--trail {
     &::before {
         border-left-color: var(--app-color-link);
     }
 }
 
-.wg_shellNavList__item--current {
+.wg_navigationNavList__item--current {
     &::after {
         border-left-color: var(--app-color-link);
     }
 
-    & > .wg_shellNavList__branch::before {
+    & > .wg_navigationNavList__branch::before {
         border-top-color: var(--app-color-link);
     }
 
-    & > .wg_shellNavList__link::before {
+    & > .wg_navigationNavList__link::before {
         border-top-color: var(--app-color-link);
     }
 }

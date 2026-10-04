@@ -20,7 +20,7 @@ interface NavigationStorage {
 }
 
 /**
- * 브라우저 탐색의 vanilla 스토어 생성기 · React Hook이 아니므로 use- 접두사를 붙이지 않음
+ * 브라우저 탐색의 vanilla 스토어 생성기 · Hono Hook이 아닌 생성기이므로 use- 접두사를 붙이지 않음
  * 서버 요청은 이 생성기를 실행하지 않으며 저장 실패 시 메모리 상태 유지
  */
 export const createNavigationStores = (options: NavigationStorage) => {
