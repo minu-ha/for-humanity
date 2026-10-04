@@ -41,6 +41,7 @@
         "build:pages": "pnpm build && node util/prepare-pages.mjs",
         "preview": "node dist/cli.js preview templates/document",
         "test": "esbuild src/util/async/to-change-queue.test.ts src/util/font/to-font-css.test.ts src/content/read-docs.test.ts src/store/navigation/create-navigation-stores.test.ts --bundle --platform=node --format=esm --packages=external --outbase=src --outdir=node_modules/.cache/for-humanity-tests --out-extension:.js=.mjs && node --test node_modules/.cache/for-humanity-tests/util/async/*.test.mjs node_modules/.cache/for-humanity-tests/content/*.test.mjs node_modules/.cache/for-humanity-tests/util/font/*.test.mjs node_modules/.cache/for-humanity-tests/store/navigation/*.test.mjs util/*.test.mjs",
+        "test:navigation": "pnpm build:kit && node util/navigation/check-navigation.test.mjs",
         "lint": "biome check && stylelint \"src/**/*.css\"",
         "lint:fix": "biome check --write && stylelint \"src/**/*.css\" --fix",
         "typecheck": "tsc --noEmit",

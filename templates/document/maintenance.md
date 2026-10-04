@@ -20,6 +20,7 @@ git diff --check
 | Command          | Scope                              |
 | ---------------- | ---------------------------------- |
 | `pnpm test`      | 문서 경로·묶음·순서 · 글꼴 정책     |
+| `pnpm test:navigation` | 실제 브라우저의 탐색·저장 복원·드로어·포커스 |
 | `pnpm lint`      | Biome · Stylelint                  |
 | `pnpm typecheck` | TypeScript                         |
 | `pnpm build:kit` | 서버·브라우저 번들                 |
@@ -70,10 +71,23 @@ Biome 제외 이유: 기존 렌더링 알고리즘과 diff 대조.
 | `prepare-release.mjs` | 태그·버전·README·변경 기록·배포 파일 확인 · Release 본문 생성 |
 | `prepare-release.test.mjs` | 버전 불일치·변경 기록 누락·이전 설치 버전·필수 파일 누락 검사 |
 | `smoke-package.mjs` | 패키지를 별도 프로젝트에 설치 · 페이지·Mermaid·자원·README 확인 |
+| `navigation/check-navigation.test.mjs` | 임시 문서 사이트로 Hono JSX 탐색 검사 · 개인 문서와 실행 중인 서버를 사용하지 않음 |
 
 ::part[Verification]
 
 ## Browser checks
+
+Hono 클라이언트 탐색을 변경하면 자동 브라우저 검사를 실행합니다. Playwright Chromium이 필요하며 이미 설치한 Chrome으로도 실행할 수 있습니다.
+
+```sh
+pnpm exec playwright install chromium
+pnpm test:navigation
+
+# 설치된 Chrome 사용
+pnpm test:navigation chrome
+```
+
+검사는 임시 문서를 빌드하고 빈 포트의 로컬 서버를 시작합니다. 넓고 좁은 데스크톱·모바일, Dark·강제 색상·JavaScript 비활성, 접힘·스크롤 저장, 느린 본문 스크립트의 첫 프레임, 정확한 앵커·Details 공개, 드로어의 포커스와 본문 DOM 유지 여부를 확인합니다. 실행 후 임시 파일·서버·브라우저를 정리합니다. 브라우저 설치가 필요하므로 기본 `pnpm test`와 분리합니다.
 
 - 문서 전체: `1600px` Light·Dark, `1024px`, `390px`
 - 가로 넘침 · 끊긴 문서·section 링크 · 처리되지 않은 흐름도 · 콘솔 오류
@@ -89,9 +103,9 @@ Biome 제외 이유: 기존 렌더링 알고리즘과 diff 대조.
 - 현재 문서·TOC의 공통 굵기 `600` · hover·키보드 포커스의 세로 경로와 밑줄 · 탐색 종료 후 현재 경로 유지 · 하위 목차의 상위 경로 연결
 - `parent` 하위 문서: 부모·자식 링크를 한 번씩 표시 · 현재 페이지만 `aria-current`와 굵기 · 부모 문서까지 active·hover·Tab 가지 연결
 - 본문 양쪽 1px 보더·32px 패딩 · 사이드바와 간격 32px · 사이드바 자체 패딩·세로 보더 없음 · 긴 제목의 줄바꿈과 컬럼 폭 유지
-- 스크롤 중 본문 끝까지 양쪽 보더 유지 · 모든 데스크톱의 문서 탐색·TOC 공유 스크롤 · 작은 화면의 세로선·본문 패딩 해제
+- 스크롤 중 본문 끝까지 양쪽 보더 유지 · 문서 탐색과 와이드 TOC의 독립 스크롤 · 작은 화면의 세로선·본문 패딩 해제
 - 탐색 스크롤: 페이지 이동·새로고침·뒤로/앞으로 · 드로어 재열기 · 데스크톱/드로어 별도 위치 · 문서 목록 변경·저장소 차단·손상 복구
-- 스크롤바: 기본 투명 · hover·키보드 focus 시 얇은 네이티브 손잡이 · 트랙 없음 · 밝게/어둡게·드래그·강제 색상
+- 탐색 넘침: 실제 남은 내용이 있는 위·아래 끝만 흐림 · 강제 색상·JavaScript 비활성에서는 네이티브 손잡이 · 밝게/어둡게 확인
 - 한국어 hash · 폰트 로드 후 위치 · 키보드 포커스
 - 문서 묶음: 읽는 순서 · 모든 문서 공개 · 아이콘 없는 텍스트 · 키보드 링크 이동
 - 문서 탐색 링크는 방문 여부와 무관하게 링크색 유지 · 현재 문서 굵기 강조 · 본문 링크는 기존 방문색 유지
