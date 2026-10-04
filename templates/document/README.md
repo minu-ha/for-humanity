@@ -35,7 +35,7 @@ Write Markdown. Keep the context. Share a static site.
 Node.js 22 or later and pnpm. Install the CLI in your document project:
 
 ```sh
-pnpm add -D --save-exact for-humanity@0.2.1
+pnpm add -D --save-exact for-humanity@0.3.0
 mkdir docs
 ```
 
@@ -54,7 +54,7 @@ pnpm exec for-humanity preview docs
 
 If your Markdown files are in the project root, use `.` instead of `docs`. The root `README.md` becomes the home page; root `AGENTS.md` and `CLAUDE.md` stay out of the site.
 
-Version `0.2.1` supports `dev`, `build` and `preview`. `init` is planned; see the [Roadmap](roadmap.md) and [Changelog](changelog.md).
+Version `0.3.0` supports `dev`, `build` and `preview`. `init` is planned; see the [Roadmap](roadmap.md) and [Changelog](changelog.md).
 Cloudflare Pages can host the generated site. See [Deployment](deployment.md) for the build settings.
 
 ### Develop the kit
@@ -76,7 +76,7 @@ pnpm preview    # Preview the static site
 pnpm build:pages # Add Cloudflare Pages headers and a 404 page
 ```
 
-Changes pushed to `main` update the documentation site. A stable version tag such as `v0.2.1` runs checks, publishes the package to npm, then creates a GitHub Release with the same package file.
+Changes pushed to `main` update the documentation site. A stable version tag such as `v0.3.0` runs checks, publishes the package to npm, then creates a GitHub Release with the same package file.
 The npm README updates with each package release. See [Maintenance](maintenance.md#packaging-and-release) for the release steps.
 
 ## Make it yours
@@ -97,6 +97,7 @@ export default {
 See [Commands](commands.md) for using another document folder, and [Settings](settings.md) for configuration.
 Each document other than the root README chooses a `group` and optional `order`. Pages stay independent; groups do not need parent documents or nested folders. Document names may share the same first letter.
 Use `group: Guide` for one group or `group: [Projects, Example project, Research]` for nested navigation. Group paths do not change document URLs.
+Use `parent: writing` to place a document below another document in the same group. File-relative references such as `parent: ./readme` also work. Parent pages remain clickable and each page keeps its own URL; see [Navigation](navigation.md).
 
 ## Write with context
 

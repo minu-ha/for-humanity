@@ -10,5 +10,6 @@ export const toDocGroups = (options: {docs: readonly Doc[]; navigation: SiteConf
     // 같은 조상을 지정한 경로는 최초 navigation 위치를 우선
     const positions = new Map(options.navigation.flatMap((path, index) => path.map((_name, depth) => [JSON.stringify(path.slice(0, depth + 1)), index] as const)).toReversed());
 
-    return toDocGroupBranches({docs: options.docs, path: [], positions, unlistedPosition: options.navigation.length});
+    const children = Map.groupBy(options.docs, (doc) => doc.data.parent);
+    return toDocGroupBranches({docs: options.docs, children, path: [], positions, unlistedPosition: options.navigation.length});
 };

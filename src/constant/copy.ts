@@ -83,6 +83,21 @@ export const copy_error_doc_id = "문서 id에 사용할 수 없는 경로";
 export const copy_error_doc_id_clash = "문서 id가 겹친다";
 
 /**
+ * 누락되거나 홈을 가리키는 부모 문서 참조
+ */
+export const copy_error_doc_parent_missing = "부모 문서가 없다";
+
+/**
+ * 자기 참조 또는 순환하는 문서 부모 경로
+ */
+export const copy_error_doc_parent_cycle = "문서 parent가 순환한다";
+
+/**
+ * 분류 경로가 다른 문서 사이의 부모 참조
+ */
+export const copy_error_doc_parent_group = "부모 문서와 group이 다르다";
+
+/**
  * 흐름도 렌더링 실패
  */
 export const copy_error_flow = "흐름도를 그리지 못했다";

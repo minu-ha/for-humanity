@@ -19,8 +19,12 @@ export interface WgShellNavListProps {
 }
 
 export const WgShellNavList = (props: WgShellNavListProps) => {
+    const currentAncestors = new Set(props.currentDoc?.ancestors);
     const entries = [
-        ...props.group.docs.map((doc) => ({kind: "document" as const, key: `doc:${doc.id}`, doc, current: doc.id === props.currentDoc?.id})),
+        ...props.group.docs.map((doc) => {
+            const active = doc.id === props.currentDoc?.id;
+            return {kind: "document" as const, key: `doc:${doc.id}`, doc, active, current: active || currentAncestors.has(doc.id)};
+        }),
         ...props.group.groups.map((group) => ({
             kind: "group" as const,
             key: `group:${JSON.stringify(group.path)}`,
@@ -44,17 +48,28 @@ export const WgShellNavList = (props: WgShellNavListProps) => {
                     key={entry.key}
                 >
                     {/**
-                     * 독립 문서 · 키보드 포커스와 현재 페이지 표시는 링크가 담당
+                     * 문서 링크 · 부모도 독립 페이지, 현재 한 문서에만 페이지 상태 부여
                      */}
                     {entry.kind === "document" && (
-                        <a
-                            className={clsx("wg_shellNavList__link", {"wg_shellNavList__link--active": entry.current})}
-                            href={`/${entry.doc.id}/`}
-                            title={entry.doc.data.label}
-                            aria-current={entry.current ? "page" : undefined}
-                        >
-                            {entry.doc.data.name}
-                        </a>
+                        <Fragment>
+                            <a
+                                className={clsx("wg_shellNavList__link", {"wg_shellNavList__link--active": entry.active})}
+                                href={`/${entry.doc.id}/`}
+                                title={entry.doc.data.label}
+                                aria-current={entry.active ? "page" : undefined}
+                            >
+                                {entry.doc.data.name}
+                            </a>
+                            {/**
+                             * 하위 문서 · 부모 아래에서도 기존 목록의 들여쓰기와 키보드 이동 유지
+                             */}
+                            {entry.doc.children !== undefined && (
+                                <WgShellNavList
+                                    group={{name: entry.doc.data.name, path: entry.doc.data.group, docs: entry.doc.children, groups: []}}
+                                    currentDoc={props.currentDoc}
+                                />
+                            )}
+                        </Fragment>
                     )}
                     {/**
                      * 하위 묶음 · 같은 목록을 재귀로 이어 깊이에 따라 들여쓰기

@@ -81,6 +81,7 @@ type: document
 | `name`  | 비어 있지 않은 string   | 필수                             |
 | `label` | string                  | 필수                             |
 | `group` | 비어 있지 않은 string 또는 비어 있지 않은 string 배열 | 필수 |
+| `parent` | 비어 있지 않은 string · 같은 그룹의 부모 문서 ID | 없음 · 그룹에 직접 표시 |
 | `order` | 0 이상의 정수           | 순서 지정 문서 뒤에서 제목순      |
 | `type`  | `document` · `blueprint` | `document`                       |
 
@@ -91,6 +92,11 @@ type: document
 각 이름의 앞뒤 공백은 제거. 빈 이름·빈 배열은 오류. 쉼표·슬래시는 경로 구분자로 해석하지 않음.
 단일 문자열과 배열을 내부에서는 같은 경로 배열로 정규화하며, 파일 위치와 URL은 그룹 설정과 독립적.
 예약 경로·문자의 전체 목록은 [Writing](writing.md#frontmatter).
+
+`parent`는 `0.3.0`부터 지원. 기본값 없이 생략 가능. 문서 루트 기준 ID 또는 `./`·`../`로 시작하는 파일 위치 기준 참조.
+확장자와 앞뒤 `/`를 제외한 소문자 경로 사용. 예: `parent: guide/settings`, `parent: ./readme`.
+부모·자식은 같은 전체 `group` 경로를 사용. 형제는 `order`·제목·ID 순으로 정렬하며 URL은 파일 경로 그대로 유지.
+빈 값·부모 누락·홈 README·자기 참조·순환·다른 그룹의 부모는 오류. [Navigation](navigation.md)의 예시 참고.
 
 ::part[Content]
 

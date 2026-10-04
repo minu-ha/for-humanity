@@ -23,6 +23,10 @@ export const docDataSchema = z.object({
      */
     group: groupPathSchema,
     /**
+     * 같은 묶음 안의 부모 문서 id · 확장자 제외, ./·../ 상대 경로도 허용
+     */
+    parent: z.string().trim().min(1).optional(),
+    /**
      * 묶음 안의 읽는 순서 · 미지정 문서는 뒤에서 이름순
      */
     order: z.number().int().nonnegative().default(doc_order_default),

@@ -1,4 +1,5 @@
-import {locale_doc_group, locale_doc_name} from "@/constant/locale";
+import {locale_doc_group} from "@/constant/locale";
+import {toDocBranches} from "@/content/to-doc-groups/_to-doc-branches";
 import type {Doc} from "@/type/doc";
 import type {DocGroup} from "@/type/doc-group";
 
@@ -10,6 +11,10 @@ interface DocGroupBranchesOptions {
      * 부모 경로에 속한 문서
      */
     docs: readonly Doc[];
+    /**
+     * 검증된 부모 id별 문서 · 자손을 각 단계에서 다시 수집하지 않음
+     */
+    children: ReadonlyMap<Doc["data"]["parent"], Doc[]>;
     /**
      * 부모까지의 경로 · 최상위는 빈 배열
      */
@@ -49,10 +54,17 @@ export const toDocGroupBranches = (options: DocGroupBranchesOptions): DocGroup[]
             return {
                 name: group.name,
                 path: group.path,
-                docs: group.docs
-                    .filter((doc) => doc.data.group.length === group.path.length)
-                    .toSorted((a, b) => a.data.order - b.data.order || a.data.name.localeCompare(b.data.name, locale_doc_name) || a.id.localeCompare(b.id, locale_doc_name)),
-                groups: toDocGroupBranches({docs: group.docs, path: group.path, positions: options.positions, unlistedPosition: options.unlistedPosition}),
+                docs: toDocBranches({
+                    docs: group.docs.filter((doc) => doc.data.group.length === group.path.length && doc.data.parent === undefined),
+                    children: options.children,
+                }),
+                groups: toDocGroupBranches({
+                    docs: group.docs,
+                    children: options.children,
+                    path: group.path,
+                    positions: options.positions,
+                    unlistedPosition: options.unlistedPosition,
+                }),
             };
         });
 };

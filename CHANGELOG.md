@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.3.0 — 2026-10-04
+
+- Support nested document pages with optional `parent` IDs, preserving existing groups and document URLs.
+- Resolve `./` and `../` parent references relative to document files so project folders can also be used as document roots.
+- Reject missing parents, self references, parent cycles and parent links across different group paths.
+- Extend active, hover and keyboard focus tree paths through clickable parent documents.
 - Distinguish sidebar groups from document links and page headings, and rename the table of contents to "On this page" with a gray label matching the groups.
 - Clarify trunk-based development, site deployment and package release policy.
 

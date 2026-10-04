@@ -1,9 +1,16 @@
 import {readdir, readFile} from "node:fs/promises";
-import {join, sep} from "node:path";
+import {join, posix, sep} from "node:path";
 import {VFile} from "vfile";
 import {parse as parseYaml} from "yaml";
 import {asset_dir, asset_favicon_path} from "@/constant/asset";
-import {copy_error_doc_id, copy_error_doc_id_clash, copy_error_frontmatter} from "@/constant/copy";
+import {
+    copy_error_doc_id,
+    copy_error_doc_id_clash,
+    copy_error_doc_parent_cycle,
+    copy_error_doc_parent_group,
+    copy_error_doc_parent_missing,
+    copy_error_frontmatter,
+} from "@/constant/copy";
 import type {Processor} from "@/content/create-processor";
 import type {Doc} from "@/type/doc";
 import {docDataSchema} from "@/type/doc-data";
@@ -49,8 +56,14 @@ export const readDocs = async (options: {root: string; processor: Processor}): P
                 throw new Error(`${copy_error_frontmatter}: ${path}: ${parsed.error.issues.map((issue) => `${issue.path.join(".")} ${issue.message}`).join(", ")}`);
             }
 
+            // 상대 부모 id는 파일 위치 기준으로 한 번 해소 · 문서 루트를 바꿔도 같은 관계 유지
+            const data = {
+                ...parsed.data,
+                parent: parsed.data.parent !== undefined && /^\.\.?\//.test(parsed.data.parent) ? posix.join(posix.dirname(id), parsed.data.parent) : parsed.data.parent,
+            };
+
             // 플러그인의 제목·절 정보 공유
-            const fh: DocFileData = {frontmatter: parsed.data, headings: [], sections: []};
+            const fh: DocFileData = {frontmatter: data, headings: [], sections: []};
             file.data.fh = fh;
 
             // YAML 노드만 제외 · 본문 위치와 오류의 원본 줄·열·offset 유지
@@ -59,7 +72,8 @@ export const readDocs = async (options: {root: string; processor: Processor}): P
 
             return {
                 id,
-                data: parsed.data,
+                data,
+                ancestors: [],
                 html: options.processor.stringify(rendered, file),
                 outline: {headings: fh.headings, sections: fh.sections},
             };
@@ -71,5 +85,25 @@ export const readDocs = async (options: {root: string; processor: Processor}): P
         throw new Error(`${copy_error_doc_id_clash}: ${duplicateIds.map((entry) => entry[0]).join(", ")}`);
     }
 
-    return docs;
+    // 모든 파일을 수집한 뒤 부모 참조 검증 · 파일 읽기 순서와 무관한 문서 경로
+    const docsById = new Map(docs.map((doc) => [doc.id, doc]));
+    return docs.map((doc) => {
+        const ancestors = new Set([doc.id]);
+        for (let parentId = doc.data.parent; parentId !== undefined; ) {
+            const parent = docsById.get(parentId);
+            if (parent === undefined) {
+                throw new Error(`${copy_error_doc_parent_missing}: ${doc.id} → ${parentId}`);
+            }
+            if (ancestors.has(parent.id)) {
+                throw new Error(`${copy_error_doc_parent_cycle}: ${[...ancestors, parent.id].join(" → ")}`);
+            }
+            if (JSON.stringify(parent.data.group) !== JSON.stringify(doc.data.group)) {
+                throw new Error(`${copy_error_doc_parent_group}: ${doc.id} → ${parent.id}`);
+            }
+            ancestors.add(parent.id);
+            parentId = parent.data.parent;
+        }
+
+        return {...doc, ancestors: [...ancestors].slice(1).toReversed()};
+    });
 };

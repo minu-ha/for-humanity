@@ -160,6 +160,133 @@ test("nested groups follow metadata paths and keep sibling branches and document
     assert.doesNotMatch(html, /<details\b/);
 });
 
+test("parent is an optional nonempty document ID", () => {
+    const data = {name: "Child", label: "Child", group: "Guide"};
+
+    assert.equal(docDataSchema.parse(data).parent, undefined);
+    assert.equal(docDataSchema.parse({...data, parent: " guide/settings "}).parent, "guide/settings");
+    for (const parent of ["", " ", null, 1, [], ["guide"]]) {
+        assert.equal(docDataSchema.safeParse({...data, parent}).success, false);
+    }
+});
+
+test("parent documents contain ordered descendants with independent URLs and one current page", async (t) => {
+    const root = await mkdtemp(join(tmpdir(), "for-humanity-parents-"));
+    const site = siteConfigSchema.parse({navigation: [["Projects", "Atlas", "Guide"]]});
+
+    t.after(() => rm(root, {recursive: true, force: true}));
+    await mkdir(join(root, "guide"));
+    await Promise.all([
+        writeFile(join(root, "settings.md"), "---\nname: Settings\nlabel: Settings\ngroup: [Projects, Atlas, Guide]\norder: 10\n---\n\nSettings introduction.\n"),
+        writeFile(join(root, "guide/site.md"), "---\nname: Site\nlabel: Site\ngroup: [Projects, Atlas, Guide]\nparent: settings\norder: 20\n---\n\nSite introduction.\n"),
+        writeFile(join(root, "themes.md"), "---\nname: Themes\nlabel: Themes\ngroup: [Projects, Atlas, Guide]\nparent: settings\norder: 10\n---\n\nThemes introduction.\n"),
+        writeFile(join(root, "details.md"), "---\nname: Details\nlabel: Details\ngroup: [Projects, Atlas, Guide]\nparent: guide/site\n---\n\nDeep child.\n"),
+        writeFile(join(root, "writing.md"), "---\nname: Writing\nlabel: Writing\ngroup: [Projects, Atlas, Guide]\norder: 20\n---\n\nIndependent guide.\n"),
+    ]);
+
+    const docs = await readDocs({root, processor: createProcessor({site, root})});
+    const groups = toDocGroups({docs, navigation: site.navigation});
+    const guide = groups[0].groups[0].groups[0];
+
+    assert.deepEqual(
+        guide.docs.map((doc) => doc.id),
+        ["settings", "writing"],
+    );
+    assert.ok(guide.docs[0].children);
+    assert.deepEqual(
+        guide.docs[0].children.map((doc) => doc.id),
+        ["themes", "guide/site"],
+    );
+    assert.ok(guide.docs[0].children[1].children);
+    assert.deepEqual(
+        guide.docs[0].children[1].children.map((doc) => doc.id),
+        ["details"],
+    );
+    assert.deepEqual(docs.find((doc) => doc.id === "details")?.ancestors, ["settings", "guide/site"]);
+    assert.deepEqual(toDocGroups({docs: docs.toReversed(), navigation: site.navigation}), groups);
+
+    const html = renderToStaticMarkup(WgShellNav({site, docs, current: "details"}));
+    assert.match(html, /href="\/settings\/"[^>]*>Settings<\/a><ul\b[^>]*aria-label="Settings"/);
+    assert.match(html, /href="\/guide\/site\/"[^>]*>Site<\/a><ul\b[^>]*aria-label="Site"/);
+    assert.match(html, /href="\/details\/"[^>]*aria-current="page"/);
+    assert.equal([...html.matchAll(/aria-current="page"/g)].length, 1);
+    assert.equal([...html.matchAll(/wg_shellNavList__link--active/g)].length, 1);
+    assert.equal([...html.matchAll(/wg_shellNavList__item--current/g)].length, 5);
+    for (const doc of docs) {
+        assert.equal(html.split(`href="/${doc.id}/"`).length - 1, 1);
+    }
+    assert.ok(html.indexOf('href="/themes/"') < html.indexOf('href="/guide/site/"'));
+    assert.doesNotMatch(renderToStaticMarkup(WgShellNav({site, docs})), /aria-current="page"|wg_shellNavList__item--current/);
+
+    const app = createApp({site, store: {docs}, assets: {stylePath: asset_style_path, clientPath: asset_client_path, fontCss: "", preload: [], reload: false}});
+    for (const doc of docs) {
+        assert.equal((await app.request(`/${doc.id}/`)).status, 200);
+    }
+});
+
+test("relative parent IDs work with both the whole collection and a project document root", async (t) => {
+    const root = await mkdtemp(join(tmpdir(), "for-humanity-parents-"));
+    const site = siteConfigSchema.parse({});
+    t.after(() => rm(root, {recursive: true, force: true}));
+
+    await mkdir(join(root, "project/research"), {recursive: true});
+    await mkdir(join(root, "project/guide"));
+    await Promise.all([
+        writeFile(join(root, "project/research/README.md"), "---\nname: Research\nlabel: Research\ngroup: Guide\n---\n\nResearch introduction.\n"),
+        writeFile(join(root, "project/research/parts.md"), "---\nname: Parts\nlabel: Parts\ngroup: Guide\nparent: ./readme\n---\n\nText.\n"),
+        writeFile(join(root, "project/guide/authoring.md"), "---\nname: Authoring\nlabel: Authoring\ngroup: Guide\nparent: ../research/readme\n---\n\nText.\n"),
+    ]);
+    for (const scope of [root, join(root, "project")]) {
+        const docs = await readDocs({root: scope, processor: createProcessor({site, root: scope})});
+        const parentId = scope === root ? "project/research/readme" : "research/readme";
+        const groups = toDocGroups({docs, navigation: site.navigation});
+        assert.deepEqual(
+            groups[0].docs.map((doc) => doc.id),
+            [parentId],
+        );
+        assert.ok(groups[0].docs[0].children);
+        assert.equal(groups[0].docs[0].children.length, 2);
+        assert.ok(groups[0].docs[0].children.every((doc) => doc.data.parent === parentId));
+        assert.ok(groups[0].docs[0].children.every((doc) => doc.ancestors.length === 1 && doc.ancestors[0] === parentId));
+    }
+});
+
+test("missing and home document parents fail when loading documents", async (t) => {
+    const root = await mkdtemp(join(tmpdir(), "for-humanity-parents-"));
+    const site = siteConfigSchema.parse({});
+    t.after(() => rm(root, {recursive: true, force: true}));
+
+    await writeFile(join(root, "README.md"), "# Home\n");
+    for (const parent of ["missing", "readme", "guide.md", "/guide/"]) {
+        await writeFile(join(root, "child.md"), `---\nname: Child\nlabel: Child\ngroup: Guide\nparent: ${parent}\n---\n\nText.\n`);
+        await assert.rejects(readDocs({root, processor: createProcessor({site, root})}), /부모 문서가 없다: child/);
+    }
+});
+
+test("self references and cycles fail when loading documents", async (t) => {
+    const root = await mkdtemp(join(tmpdir(), "for-humanity-parents-"));
+    const site = siteConfigSchema.parse({});
+    t.after(() => rm(root, {recursive: true, force: true}));
+
+    await writeFile(join(root, "first.md"), "---\nname: First\nlabel: First\ngroup: Guide\nparent: first\n---\n\nText.\n");
+    await assert.rejects(readDocs({root, processor: createProcessor({site, root})}), /문서 parent가 순환한다/);
+
+    await writeFile(join(root, "first.md"), "---\nname: First\nlabel: First\ngroup: Guide\nparent: second\n---\n\nText.\n");
+    await writeFile(join(root, "second.md"), "---\nname: Second\nlabel: Second\ngroup: Guide\nparent: third\n---\n\nText.\n");
+    await writeFile(join(root, "third.md"), "---\nname: Third\nlabel: Third\ngroup: Guide\nparent: first\n---\n\nText.\n");
+    await assert.rejects(readDocs({root, processor: createProcessor({site, root})}), /문서 parent가 순환한다/);
+});
+
+test("parent and child must use the same complete group path", async (t) => {
+    const root = await mkdtemp(join(tmpdir(), "for-humanity-parents-"));
+    const site = siteConfigSchema.parse({});
+    t.after(() => rm(root, {recursive: true, force: true}));
+
+    await writeFile(join(root, "parent.md"), "---\nname: Parent\nlabel: Parent\ngroup: [Projects, Atlas, Research]\n---\n\nText.\n");
+    await writeFile(join(root, "child.md"), "---\nname: Child\nlabel: Child\ngroup: [Projects, Beacon, Research]\nparent: parent\n---\n\nText.\n");
+    await assert.rejects(readDocs({root, processor: createProcessor({site, root})}), /부모 문서와 group이 다르다: child/);
+});
+
 test("frontmatter supports BOM, CRLF and a closing fence at EOF", async (t) => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-docs-"));
     const site = siteConfigSchema.parse({});

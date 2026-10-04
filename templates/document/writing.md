@@ -65,6 +65,7 @@ README가 없으면 추가 안내를 표시. 사이드바의 사이트 이름을
 | `name`  | 제목 · 문서 목록                  | 필수 · 비어 있지 않은 이름 |
 | `label` | 짧은 문서 설명 · 목록 툴팁        | 필수                       |
 | `group` | 사이드바 묶음 경로                | 필수 · 이름 또는 이름 배열 |
+| `parent` | 같은 묶음 안의 부모 문서 ID       | 선택 · 비어 있지 않은 문자열 |
 | `order` | 묶음 안의 읽는 순서               | 선택 · 0 이상의 정수       |
 | `type`  | `document` / `blueprint`          | 기본 `document`            |
 
@@ -112,6 +113,10 @@ group:
 한 묶음에 직접 문서와 하위 묶음이 함께 있으면 직접 문서를 먼저 표시. 프로젝트 소개 문서는 `[Projects, Example project]`, 조사 문서는 `[Projects, Example project, Research]`로 묶으면 됨.
 파일 이름에 번호나 알파벳을 붙여 순서를 맞출 필요 없음.
 모든 문서 묶음은 항상 표시. 문서는 이름과 1px 트리 선으로 표시.
+같은 그룹 안에서 문서 아래에 다른 문서를 두려면 `parent` 지정. 부모도 클릭 가능한 독립 문서이며 파일 URL은 유지.
+`parent: writing`은 문서 루트 기준 ID, `parent: ./readme`는 현재 파일 위치 기준 참조. 확장자는 제외.
+부모·자식의 전체 `group` 경로는 같아야 하며, 같은 부모 아래에서는 `order`로 순서 지정.
+예시와 오류 조건은 [Navigation](navigation.md).
 `On this page`는 현재 문서 안의 절만 표시.
 
 ## Sections and parts

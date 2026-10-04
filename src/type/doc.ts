@@ -13,4 +13,8 @@ export interface Doc extends DocContent {
      * 검증된 머리말
      */
     data: DocData;
+    /**
+     * 검증된 부모 문서 경로 · 최상위부터 직접 부모까지, 자신은 제외
+     */
+    ancestors: string[];
 }
