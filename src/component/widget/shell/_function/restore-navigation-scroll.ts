@@ -18,13 +18,13 @@ interface RestoreNavigationScrollOptions {
      */
     layout: NavigationLayout;
     /**
-     * HTML에 함께 직렬화할 자료 검증
+     * persist와 같은 저장 자료 검증
      */
     toState: typeof toNavigationScrollState;
 }
 
 /**
- * 탐색 HTML 직후 복원 · import 없이 실행하며 기존 배치별 저장 자료도 한 번 수용
+ * 탐색 진입점에서 첫 paint 전 복원 · 기존 배치별 저장 자료도 한 번 수용
  */
 export const restoreNavigationScroll = (options: RestoreNavigationScrollOptions) => {
     const navigation = document.querySelector<HTMLElement>("[data-navigation]");

@@ -1,5 +1,5 @@
 /*
- * 넓은 화면은 같은 폭의 양쪽 탐색 · 좁은 desktop은 목차를 왼쪽으로 합침
+ * 넓은 화면은 같은 폭의 양쪽 탐색 · 좁은 화면은 문서 탐색만 표시
  */
 .wg_shell__root {
     display: grid;
@@ -118,7 +118,7 @@
 }
 
 .wg_shell__documents {
-    /* 넓은 화면은 뷰포트 전체 · 공유 사이드바에서만 목록 높이 제한 */
+    /* 모든 배치에서 남은 탐색 높이를 문서 목록 전체에 사용 */
     flex: 1;
     min-height: 0;
 }
@@ -145,18 +145,6 @@
     height: calc(100dvh - var(--app-size-brand));
     min-width: 0;
     min-height: 0;
-
-    & > .wg_shell__outline {
-        margin-top: var(--app-space-group);
-        padding-top: var(--app-space-group);
-        border-top: 1px solid var(--app-color-border-soft);
-    }
-
-    /* 스크립트가 없을 때도 기본 공유 사이드바에서 두 영역을 분리 */
-    &:has(> .wg_shell__outline .wg_shellToc__root) > .wg_shell__documents {
-        flex: none;
-        max-height: 60%;
-    }
 }
 
 .wg_shell__tocRail {
@@ -174,7 +162,7 @@
         height: 100%;
     }
 
-    &:empty {
+    &:where(:has(.wg_shell__headings:empty)) {
         display: none;
     }
 }
@@ -309,10 +297,14 @@
     }
 }
 
-/* 1500px 기본 폭과 스크롤바를 수용하는 1536px 아래는 같은 목차를 왼쪽으로 이동 */
+/* 1500px 기본 폭을 수용하지 못하는 화면은 오른쪽 목차를 숨김 */
 @media (width < 1536px) {
     .wg_shell__root {
         grid-template: "nav main ." 1fr / calc(var(--app-size-sidebar) + var(--app-space-sidebar-gap)) minmax(0, var(--app-size-main)) minmax(0, 1fr);
+    }
+
+    .wg_shell__tocRail {
+        display: none;
     }
 }
 

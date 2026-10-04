@@ -1,19 +1,11 @@
 import clsx from "clsx";
 import type {ReactNode} from "react";
-import {navigation_mobile_query, navigation_wide_query} from "@/component/widget/shell/_constant/navigation";
-import {bindNavigationOverflow} from "@/component/widget/shell/_function/bind-navigation-overflow";
-import {placeNavigationOutline} from "@/component/widget/shell/_function/place-navigation-outline";
-import {restoreNavigationScroll} from "@/component/widget/shell/_function/restore-navigation-scroll";
-import {restoreNavigationTree} from "@/component/widget/shell/_function/restore-navigation-tree";
 import {toTocGroups} from "@/component/widget/shell/_function/to-toc-groups";
 import type {DocOutline} from "@/component/widget/shell/_type/doc-outline";
 import {WgShellNav} from "@/component/widget/shell/_wg-shell-nav";
 import {WgShellToc} from "@/component/widget/shell/_wg-shell-toc";
 import {asset_favicon_path, asset_reload_path} from "@/constant/asset";
 import {copy_nav_close, copy_nav_open, copy_nav_title} from "@/constant/copy";
-import {navigation_scroll_storage_key, navigation_storage_version, navigation_tree_storage_key} from "@/store/navigation/navigation-storage";
-import {toNavigationScrollState} from "@/store/navigation/to-navigation-scroll-state";
-import {toNavigationTreeState} from "@/store/navigation/to-navigation-tree-state";
 import type {Doc} from "@/type/doc";
 import type {SiteAssets} from "@/type/site-assets";
 import type {SiteConfig} from "@/type/site-config";
@@ -25,15 +17,6 @@ import "./wg-shell.css";
  * dev 문서 변경 시 SSE 새로고침
  */
 const reloadScript = `new EventSource(${JSON.stringify(asset_reload_path)}).onmessage=function(){location.reload()}`;
-
-/**
- * 탐색 DOM 직후 동기 실행 · 큰 본문과 module 다운로드를 기다리지 않고 첫 위치·흐림 적용
- * 손잡이 숨김으로 달라지는 목록 폭을 먼저 확정한 뒤 좌표 복원
- */
-const navigationScript = `(${placeNavigationOutline.toString()})(${JSON.stringify(navigation_wide_query)});
-(${restoreNavigationTree.toString()})({key:${JSON.stringify(navigation_tree_storage_key)},version:${navigation_storage_version},toState:(${toNavigationTreeState.toString()})});
-(${bindNavigationOverflow.toString()})();
-if(!matchMedia(${JSON.stringify(navigation_mobile_query)}).matches){(${restoreNavigationScroll.toString()})({key:${JSON.stringify(navigation_scroll_storage_key)},version:${navigation_storage_version},layout:matchMedia(${JSON.stringify(navigation_wide_query)}).matches?"wide":"desktop",toState:(${toNavigationScrollState.toString()})})}`;
 
 /**
  * 공통 HTML 틀의 입력 · 문서 탐색·현재 목차·본문
@@ -96,7 +79,7 @@ export const WgShell = (props: WgShellProps) => {
              */}
             <body className={clsx("wg_shell__root")}>
                 {/**
-                 * 데스크톱의 공유 사이드바 · 모바일에서는 브랜드와 메뉴 버튼
+                 * 데스크톱의 문서 사이드바 · 모바일에서는 브랜드와 메뉴 버튼
                  */}
                 <div className={clsx("wg_shell__sidebar")}>
                     {/**
@@ -135,22 +118,18 @@ export const WgShell = (props: WgShellProps) => {
                         <div className={clsx("wg_shell__documents", "wg_shell__scroll")} data-navigation-scroll="documents">
                             <WgShellNav site={props.site} docs={props.docs} current={props.current} />
                         </div>
-                        {/**
-                         * 기본 목차는 문서 아래 · 넓은 화면은 첫 paint 전 같은 DOM을 오른쪽으로 이동
-                         */}
-                        <div className={clsx("wg_shell__outline")} data-navigation-outline="">
-                            <div className={clsx("wg_shell__headings", "wg_shell__scroll")} data-navigation-scroll="outline">
-                                {tocGroups.length > 0 && <WgShellToc groups={tocGroups} pageId={props.current === undefined ? "/" : props.current} />}
-                            </div>
-                        </div>
                     </div>
                 </div>
                 {/**
-                 * 넓은 화면의 오른쪽 목차 · 좁은 화면은 첫 paint 전 같은 DOM을 문서 목록 아래로 이동
+                 * 와이드 화면 전용 목차 · 드로어에는 문서 목록만 포함
                  */}
-                <aside className={clsx("wg_shell__tocRail")} data-navigation-rail="" />
-                <script dangerouslySetInnerHTML={{__html: navigationScript}} />
-                <main className={clsx("wg_shell__main")}>{props.children}</main>
+                <aside className={clsx("wg_shell__tocRail")} data-navigation-rail="">
+                    <div className={clsx("wg_shell__outline")} data-navigation-outline="">
+                        <div className={clsx("wg_shell__headings", "wg_shell__scroll")} data-navigation-scroll="outline">
+                            {tocGroups.length > 0 && <WgShellToc groups={tocGroups} pageId={props.current === undefined ? "/" : props.current} />}
+                        </div>
+                    </div>
+                </aside>
                 {/**
                  * 브라우저의 모달 포커스·Escape 처리 · 목록은 한 번만 렌더링
                  */}
@@ -173,6 +152,11 @@ export const WgShell = (props: WgShellProps) => {
                     </div>
                     <div className={clsx("wg_shell__drawerContent")} data-navigation-content="" />
                 </dialog>
+                {/**
+                 * 탐색 상태와 이벤트를 본문 표시 전에 연결하는 컴파일된 브라우저 진입점
+                 */}
+                <script dangerouslySetInnerHTML={{__html: props.assets.navigationScript}} />
+                <main className={clsx("wg_shell__main")}>{props.children}</main>
                 <img className={clsx("wg_shell__cursorFace")} src={asset_favicon_path} width="24" height="24" alt="" aria-hidden="true" draggable={false} data-cursor-face="" />
                 <script type="module" src={props.assets.clientPath} />
             </body>

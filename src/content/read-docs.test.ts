@@ -16,13 +16,40 @@ import {siteConfigSchema} from "@/type/site-config";
 
 test("page resource URLs use the supplied content fingerprints instead of fixed cache keys", async () => {
     const site = siteConfigSchema.parse({});
-    const assets = {fontCss: "", preload: [], reload: false, stylePath: "/_fh/style.abc123.css", clientPath: "/_fh/client.def456.js"};
+    const assets = {fontCss: "", preload: [], reload: false, navigationScript: "", stylePath: "/_fh/style.abc123.css", clientPath: "/_fh/client.def456.js"};
     const app = createApp({site, store: {docs: []}, assets});
     const html = await (await app.request("/")).text();
 
     assert.match(html, /rel="stylesheet" href="\/_fh\/style\.abc123\.css"/);
     assert.match(html, /type="module" src="\/_fh\/client\.def456\.js"/);
     assert.doesNotMatch(html, /(?:href|src)="\/_fh\/(?:style\.css|client\.js)"/);
+});
+
+test("navigation initialization runs after its DOM and before the document body", async () => {
+    const site = siteConfigSchema.parse({});
+    const navigationScript = "window.navigationFixture = true;";
+    const assets = {fontCss: "", preload: [], reload: false, stylePath: asset_style_path, clientPath: asset_client_path, navigationScript};
+    const html = await (await createApp({site, store: {docs: []}, assets}).request("/")).text();
+    const initialization = html.indexOf(`<script>${navigationScript}</script>`);
+
+    assert.ok(initialization > html.indexOf("data-navigation-drawer"), "navigation controls must exist before initialization");
+    assert.ok(initialization < html.indexOf('<main class="wg_shell__main">'), "navigation must be ready before the main content is parsed");
+});
+
+test("the page outline belongs only to the right rail rather than mobile navigation", async (t) => {
+    const root = await mkdtemp(join(tmpdir(), "for-humanity-outline-"));
+    t.after(() => rm(root, {recursive: true, force: true}));
+    await writeFile(join(root, "README.md"), "# Home\n\n## Read here\n\n### More context\n\nText.\n");
+    const site = siteConfigSchema.parse({});
+    const home = await readHome({root, processor: createProcessor({site, root})});
+    const assets = {fontCss: "", preload: [], reload: false, navigationScript: "", stylePath: asset_style_path, clientPath: asset_client_path};
+    const html = await (await createApp({site, store: {docs: [], home}, assets}).request("/")).text();
+    const rail = html.match(/<aside\b[^>]*data-navigation-rail=""[^>]*>([\s\S]*?)<\/aside>/)?.[1];
+
+    assert.ok(rail, "the right rail must exist");
+    assert.ok(rail.includes('data-navigation-scroll="outline"'), "the right rail must own the outline scroll area");
+    assert.match(rail, /Read here/);
+    assert.equal([...html.matchAll(/data-navigation-scroll="outline"/g)].length, 1);
 });
 
 test("documents with the same initial retain distinct URLs", async (t) => {
@@ -218,7 +245,11 @@ test("parent documents contain ordered descendants with independent URLs and one
     assert.ok(html.indexOf('href="/themes/"') < html.indexOf('href="/guide/site/"'));
     assert.doesNotMatch(renderToStaticMarkup(WgShellNav({site, docs})), /aria-current="page"|wg_shellNavList__item--current/);
 
-    const app = createApp({site, store: {docs}, assets: {stylePath: asset_style_path, clientPath: asset_client_path, fontCss: "", preload: [], reload: false}});
+    const app = createApp({
+        site,
+        store: {docs},
+        assets: {stylePath: asset_style_path, clientPath: asset_client_path, navigationScript: "", fontCss: "", preload: [], reload: false},
+    });
     for (const doc of docs) {
         assert.equal((await app.request(`/${doc.id}/`)).status, 200);
     }
@@ -340,7 +371,11 @@ test("a plain root README renders at home and relative home links resolve from n
     ]);
 
     const [docs, home] = await Promise.all([readDocs({root, processor}), readHome({root, processor})]);
-    const app = createApp({site, store: {docs, home}, assets: {stylePath: asset_style_path, clientPath: asset_client_path, fontCss: "", preload: [], reload: false}});
+    const app = createApp({
+        site,
+        store: {docs, home},
+        assets: {stylePath: asset_style_path, clientPath: asset_client_path, navigationScript: "", fontCss: "", preload: [], reload: false},
+    });
     const response = await app.request("/");
     const html = await response.text();
 
@@ -369,7 +404,11 @@ test("a missing README provides a creation hint without generated overview cards
 
     t.after(() => rm(root, {recursive: true, force: true}));
     const home = await readHome({root, processor: createProcessor({site, root})});
-    const app = createApp({site, store: {docs: [], home}, assets: {stylePath: asset_style_path, clientPath: asset_client_path, fontCss: "", preload: [], reload: false}});
+    const app = createApp({
+        site,
+        store: {docs: [], home},
+        assets: {stylePath: asset_style_path, clientPath: asset_client_path, navigationScript: "", fontCss: "", preload: [], reload: false},
+    });
     const html = await (await app.request("/")).text();
 
     assert.equal(home, undefined);
@@ -448,7 +487,11 @@ test("headings and contents preserve authored text without automatic numbering",
     );
 
     const docs = await readDocs({root, processor: createProcessor({site, root})});
-    const app = createApp({site, store: {docs}, assets: {stylePath: asset_style_path, clientPath: asset_client_path, fontCss: "", preload: [], reload: false}});
+    const app = createApp({
+        site,
+        store: {docs},
+        assets: {stylePath: asset_style_path, clientPath: asset_client_path, navigationScript: "", fontCss: "", preload: [], reload: false},
+    });
     const html = await (await app.request("/guide/")).text();
 
     assert.match(html, /<h2[^>]*id="overview"[^>]*><span class="wg_prose__headingText">Overview<\/span><\/h2>/);

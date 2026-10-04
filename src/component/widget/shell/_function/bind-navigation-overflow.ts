@@ -1,6 +1,6 @@
 /**
  * 실제 남은 내용이 있는 위·아래 끝만 흐림 표시 · 스크롤·글꼴·화면 크기 추적
- * HTML 직후 직렬화해 실행하므로 import나 바깥 변수 없이 브라우저 DOM만 사용
+ * 탐색 진입점에서 첫 paint 전에 연결 · 네이티브 손잡이 숨김도 같은 시점에 적용
  * 관찰자는 문서 수명 동안 유지 · BFCache 복귀에서도 같은 탐색 DOM 추적
  */
 export const bindNavigationOverflow = () => {

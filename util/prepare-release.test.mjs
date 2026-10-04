@@ -7,7 +7,17 @@ import test from "node:test";
 import {fileURLToPath} from "node:url";
 
 const script = fileURLToPath(new URL("prepare-release.mjs", import.meta.url));
-const files = ["dist/cli.js", "dist/cli.css", "dist/client.js", "src/asset/favicon.svg", "README.md", "LICENSE", "CHANGELOG.md", "src/asset/font/example.woff2"];
+const files = [
+    "dist/cli.js",
+    "dist/cli.css",
+    "dist/client.js",
+    "dist/navigation.js",
+    "src/asset/favicon.svg",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "src/asset/font/example.woff2",
+];
 
 const fixture = async (t) => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-release-test-"));
@@ -93,4 +103,14 @@ test("rejects a package without its CLI stylesheet", async (t) => {
     const result = run(root, "v0.1.1");
     assert.notEqual(result.status, 0);
     assert.match(result.stderr, /dist\/cli\.css/);
+});
+
+test("rejects a package without its navigation initialization", async (t) => {
+    const root = await fixture(t);
+    const pack = JSON.parse(await readFile(join(root, "release/pack.json"), "utf8"));
+    pack[0].files = pack[0].files.filter((file) => file.path !== "dist/navigation.js");
+    await writeFile(join(root, "release/pack.json"), JSON.stringify(pack));
+    const result = run(root, "v0.1.1");
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /dist\/navigation\.js/);
 });

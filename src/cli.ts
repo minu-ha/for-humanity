@@ -5,7 +5,7 @@
  */
 
 import {EventEmitter} from "node:events";
-import {existsSync, watch} from "node:fs";
+import {existsSync, readFileSync, watch} from "node:fs";
 import {copyFile, mkdir, rm, writeFile} from "node:fs/promises";
 import {basename, dirname, extname, join, relative, resolve, sep} from "node:path";
 import {fileURLToPath, pathToFileURL} from "node:url";
@@ -87,6 +87,7 @@ const main = async () => {
     const fontCss = [sans.css, mono.css, brand.css].join("\n");
     const stylePath = toAssetPath({path: asset_style_path, file: join(kitRoot, "dist/cli.css")});
     const clientPath = toAssetPath({path: asset_client_path, file: join(kitRoot, "dist/client.js")});
+    const navigationScript = readFileSync(join(kitRoot, "dist/navigation.js"), "utf8");
     const kitFiles = new Map([
         [stylePath, join(kitRoot, "dist/cli.css")],
         [clientPath, join(kitRoot, "dist/client.js")],
@@ -102,7 +103,7 @@ const main = async () => {
     const app = createApp({
         site: siteConfig,
         store,
-        assets: {stylePath, clientPath, fontCss, preload: [...brand.files.keys(), sansPreload[0], ...mono.files.keys()], reload: command === "dev"},
+        assets: {stylePath, clientPath, navigationScript, fontCss, preload: [...brand.files.keys(), sansPreload[0], ...mono.files.keys()], reload: command === "dev"},
     });
 
     if (command === "build") {

@@ -1,5 +1,5 @@
 /*
- * 문서 탐색 아래 목차 · 회색 제목·묶음과 본문 글색의 이동 대상 구분
+ * 와이드 화면의 오른쪽 목차 · 회색 제목·묶음과 본문 글색의 이동 대상 구분
  */
 .wg_shellToc__root {
     font-size: var(--app-font-size-dense);

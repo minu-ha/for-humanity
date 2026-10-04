@@ -11,6 +11,10 @@ export interface SiteAssets {
      */
     clientPath: string;
     /**
+     * 탐색 DOM 뒤에서 동기 실행할 컴파일된 브라우저 초기화 코드
+     */
+    navigationScript: string;
+    /**
      * 내장 @font-face · head의 style 내용
      */
     fontCss: string;

@@ -1,7 +1,7 @@
 import type {NavigationTreeState} from "@/store/navigation/navigation-state";
 
 /**
- * 저장소 자료에서 boolean 접힘 선택만 수용 · HTML의 첫 paint 전에도 직렬화해 사용
+ * persist 저장 자료에서 boolean 접힘 선택만 수용
  */
 export const toNavigationTreeState = (value: unknown): NavigationTreeState => {
     if (

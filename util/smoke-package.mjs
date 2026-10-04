@@ -45,6 +45,9 @@ try {
     assert.match(clientPath, /^\/_fh\/client\.[a-f0-9]+\.js$/);
     assert.equal(await readFile(join(output, stylePath), "utf8"), await readFile(join(packageRoot, "dist/cli.css"), "utf8"));
     assert.equal(await readFile(join(output, clientPath), "utf8"), await readFile(join(packageRoot, "dist/client.js"), "utf8"));
+    const navigationScript = await readFile(join(packageRoot, "dist/navigation.js"), "utf8");
+    assert.ok(home.includes(`<script>${navigationScript}</script>`));
+    assert.ok(home.indexOf(`<script>${navigationScript}</script>`) < home.indexOf('<main class="wg_shell__main">'));
     assert.match(await readFile(join(output, "guide/index.html"), "utf8"), /<svg/);
     const nested = await readFile(join(output, "guide/agents/index.html"), "utf8");
     assert.match(nested, /Example<\/span><button\b[^>]*aria-expanded="true"[^>]*>−<\/button><ul\b/);
