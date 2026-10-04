@@ -23,8 +23,9 @@ const reloadScript = `new EventSource(${JSON.stringify(asset_reload_path)}).onme
 
 /**
  * 탐색 DOM 직후 동기 실행 · 큰 본문과 module 다운로드를 기다리지 않고 첫 위치·흐림 적용
+ * 손잡이 숨김으로 달라지는 목록 폭을 먼저 확정한 뒤 좌표 복원
  */
-const navigationScript = `if(!matchMedia(${JSON.stringify(navigation_mobile_query)}).matches){(${restoreNavigationScroll.toString()})(${JSON.stringify(`${navigation_scroll_storage_key}:desktop`)})}(${bindNavigationOverflow.toString()})()`;
+const navigationScript = `(${bindNavigationOverflow.toString()})();if(!matchMedia(${JSON.stringify(navigation_mobile_query)}).matches){(${restoreNavigationScroll.toString()})(${JSON.stringify(`${navigation_scroll_storage_key}:desktop`)})}`;
 
 /**
  * 공통 HTML 틀의 입력 · 문서 탐색·현재 목차·본문
