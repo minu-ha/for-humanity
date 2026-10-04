@@ -10,6 +10,12 @@ order: 10
 공식 버전별 변경 기록. npm 패키지에 포함되는 변경 기록과 같은 원본 사용.
 공개 버전과 패키지 파일은 [Releases](releases.md) · [GitHub Releases](https://github.com/minu-ha/for-humanity/releases)에서 확인.
 
+## 0.2.0 — 2026-10-04
+
+- Support nested navigation with `group` name arrays while keeping single-name groups compatible.
+- Order nested sibling groups with paths in `navigation`, independently of document folders.
+- Extend active, hover and keyboard focus tree paths through ancestor groups.
+
 ## 0.1.2 — 2026-10-03
 
 Documentation and release automation update. The CLI commands and Node.js requirement are unchanged.

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0 — 2026-10-04
+
+- Support nested navigation with `group` name arrays while keeping single-name groups compatible.
+- Order nested sibling groups with paths in `navigation`, independently of document folders.
+- Extend active, hover and keyboard focus tree paths through ancestor groups.
+
 ## 0.1.2 — 2026-10-03
 
 Documentation and release automation update. The CLI commands and Node.js requirement are unchanged.

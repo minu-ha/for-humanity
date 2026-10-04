@@ -53,10 +53,12 @@ pnpm exec for-humanity preview docs
 | ------------- | ---------------------------------- | ------------------------- |
 | `title`       | string                             | `for humanity`            |
 | `description` | string · HTML 설명 메타데이터        | 생략                      |
-| `navigation`  | 중복 없는 비어 있지 않은 string 배열 | 묶음 이름순              |
+| `navigation`  | 이름 또는 이름 배열로 구성한 경로 목록 · 중복 경로 금지 | 묶음 이름순 |
 | `status`      | 상태 문구 객체 배열                | 기본 상태 문구            |
 
 `navigation: []`도 허용. 지정하지 않은 묶음은 마지막에서 이름순 배치.
+문자열은 최상위 묶음, 이름 배열은 중첩 경로. 배열의 각 이름은 비어 있지 않은 string이며 경로 배열은 빈 배열 불가.
+경로의 첫 설정 위치를 조상에도 적용. 같은 이름이라도 전체 경로가 다르면 별도 묶음. `"Guide"`와 `["Guide"]`는 같은 경로로 처리.
 상태 객체: `phrase`는 빈칸만 있지 않은 string, `kind`는 `verified` 또는 `unverified`, `date`는 선택 boolean.
 `status`를 지정하면 기본 목록 전체 교체. `status: []`는 상태 표지 비활성.
 설정 검증은 시작 시 수행. 변경한 설정을 반영하려면 서버 재시작.
@@ -78,13 +80,16 @@ type: document
 | ------- | ----------------------- | -------------------------------- |
 | `name`  | 비어 있지 않은 string   | 필수                             |
 | `label` | string                  | 필수                             |
-| `group` | 비어 있지 않은 string   | 필수                             |
+| `group` | 비어 있지 않은 string 또는 비어 있지 않은 string 배열 | 필수 |
 | `order` | 0 이상의 정수           | 순서 지정 문서 뒤에서 제목순      |
 | `type`  | `document` · `blueprint` | `document`                       |
 
 같은 첫 글자로 시작하는 문서도 지원. 문서 id는 확장자를 제외한 소문자 파일 경로.
 예: `api.md` → `/api/`, `architecture.md` → `/architecture/`.
 이름·순서가 같은 문서도 파일 id로 구분. id가 겹치는 파일은 빌드 오류.
+`group: [Projects, Example project, Research]`는 최상위부터 중첩한 탐색 경로. 고정된 깊이 제한 없음.
+각 이름의 앞뒤 공백은 제거. 빈 이름·빈 배열은 오류. 쉼표·슬래시는 경로 구분자로 해석하지 않음.
+단일 문자열과 배열을 내부에서는 같은 경로 배열로 정규화하며, 파일 위치와 URL은 그룹 설정과 독립적.
 예약 경로·문자의 전체 목록은 [Writing](writing.md#frontmatter).
 
 ::part[Content]

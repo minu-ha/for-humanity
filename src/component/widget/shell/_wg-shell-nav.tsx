@@ -1,6 +1,7 @@
 import clsx from "clsx";
+import {WgShellNavList} from "@/component/widget/shell/_wg-shell-nav-list";
 import {copy_nav_aria_label} from "@/constant/copy";
-import {toDocGroups} from "@/content/to-doc-groups";
+import {toDocGroups} from "@/content/to-doc-groups/to-doc-groups";
 import type {Doc} from "@/type/doc";
 import type {SiteConfig} from "@/type/site-config";
 import "./_wg-shell-nav.css";
@@ -25,6 +26,7 @@ export interface WgShellNavProps {
 
 export const WgShellNav = (props: WgShellNavProps) => {
     const docGroups = toDocGroups({docs: props.docs, navigation: props.site.navigation});
+    const currentDoc = props.docs.find((doc) => doc.id === props.current);
 
     return (
         <nav className={clsx("wg_shellNav__root")} aria-label={copy_nav_aria_label}>
@@ -35,40 +37,12 @@ export const WgShellNav = (props: WgShellNavProps) => {
                 {/**
                  * 묶음 이름과 독립 문서 · 제목이 링크의 접근 가능한 이름
                  */}
-                {docGroups.map((group) => {
-                    const currentIndex = group.docs.findIndex((doc) => doc.id === props.current);
-
-                    return (
-                        <section className={clsx("wg_shellNav__docGroup")} key={group.name} aria-label={group.name}>
-                            <div className={clsx("wg_shellNav__group")}>{group.name}</div>
-                            {/**
-                             * 현재 문서와 묶음 시작부터 이어지는 세로 경로 표시
-                             */}
-                            <ul className={clsx("wg_shellNav__list")}>
-                                {group.docs.map((doc, index) => (
-                                    <li
-                                        className={clsx("wg_shellNav__item", {
-                                            "wg_shellNav__item--trail": index < currentIndex,
-                                            "wg_shellNav__item--current": index === currentIndex,
-                                        })}
-                                        key={doc.id}
-                                    >
-                                        <a
-                                            className={clsx("wg_shellNav__link", {
-                                                "wg_shellNav__link--active": index === currentIndex,
-                                            })}
-                                            href={`/${doc.id}/`}
-                                            title={doc.data.label}
-                                            aria-current={index === currentIndex ? "page" : undefined}
-                                        >
-                                            {doc.data.name}
-                                        </a>
-                                    </li>
-                                ))}
-                            </ul>
-                        </section>
-                    );
-                })}
+                {docGroups.map((group) => (
+                    <section className={clsx("wg_shellNav__docGroup")} key={group.name} aria-label={group.name}>
+                        <div className={clsx("wg_shellNav__group")}>{group.name}</div>
+                        <WgShellNavList group={group} currentDoc={currentDoc} />
+                    </section>
+                ))}
             </div>
         </nav>
     );

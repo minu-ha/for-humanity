@@ -64,7 +64,7 @@ README가 없으면 추가 안내를 표시. 사이드바의 사이트 이름을
 | ------- | --------------------------------- | -------------------------- |
 | `name`  | 제목 · 문서 목록                  | 필수 · 비어 있지 않은 이름 |
 | `label` | 짧은 문서 설명 · 목록 툴팁        | 필수                       |
-| `group` | 사이드바 묶음                     | 필수 · 비어 있지 않은 이름 |
+| `group` | 사이드바 묶음 경로                | 필수 · 이름 또는 이름 배열 |
 | `order` | 묶음 안의 읽는 순서               | 선택 · 0 이상의 정수       |
 | `type`  | `document` / `blueprint`          | 기본 `document`            |
 
@@ -80,6 +80,26 @@ YAML 영역은 `remark-frontmatter`, 값은 `yaml`, 필드 검증은 Zod로 처�
 하위 폴더를 만들지 않아도 `group`으로 문서를 묶음. 묶음은 페이지가 아닌 탐색 제목.
 그 안의 각 문서는 독립적인 파일·URL·목차를 가짐.
 
+단일 묶음은 `group: Guide`. 여러 단계는 최상위부터 이름 배열로 지정.
+
+```yaml
+group: [Projects, Example project, Research]
+```
+
+여러 줄로 작성해도 같은 경로.
+
+```yaml
+group:
+  - Projects
+  - Example project
+  - Research
+```
+
+위 문서는 `Projects → Example project → Research` 아래에 표시. 필요한 만큼 단계를 추가할 수 있으며 같은 경로를 쓰는 문서는 함께 묶음.
+`[Projects, Another project, Research]`의 Research는 다른 묶음.
+각 이름은 빈칸만 있지 않은 문자열. 빈 배열·빈 단계는 오류. 쉼표·슬래시는 이름의 일부로 유지하므로 문자열을 경로 구분자로 나누지 않음.
+폴더와 탐색 경로는 독립적. `research.md`처럼 루트에 둔 문서도 위 경로로 묶을 수 있으며, 그룹을 바꿔도 파일 URL과 상대 링크는 유지.
+
 | File              | Name         | Group       | Order |
 | ----------------- | ------------ | ----------- | ----- |
 | `writing.md`      | Writing      | Guide       | 10    |
@@ -87,8 +107,9 @@ YAML 영역은 `remark-frontmatter`, 값은 `yaml`, 필드 검증은 Zod로 처�
 | `api.md`          | API          | Reference   | 10    |
 | `architecture.md` | Architecture | Development | 10    |
 
-묶음 순서는 [Settings](settings.md#navigation)의 `navigation`. 묶음 안은 작은 `order` 먼저.
+각 단계의 형제 묶음 순서는 [Settings](settings.md#navigation)의 `navigation`. 묶음 안의 직접 문서는 작은 `order` 먼저.
 `order`를 생략한 문서는 순서를 지정한 문서 뒤에서 제목순, 제목도 같으면 파일 id순.
+한 묶음에 직접 문서와 하위 묶음이 함께 있으면 직접 문서를 먼저 표시. 프로젝트 소개 문서는 `[Projects, Example project]`, 조사 문서는 `[Projects, Example project, Research]`로 묶으면 됨.
 파일 이름에 번호나 알파벳을 붙여 순서를 맞출 필요 없음.
 모든 문서 묶음은 항상 표시. 문서는 이름과 1px 트리 선으로 표시.
 `Contents`는 현재 문서 안의 절만 표시.

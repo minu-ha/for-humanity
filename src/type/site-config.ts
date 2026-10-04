@@ -2,6 +2,7 @@ import {z} from "zod";
 import {copy_error_navigation_clash, copy_site_title_default} from "@/constant/copy";
 import {site_navigation_default} from "@/constant/site";
 import {status_default_phrases, status_kind} from "@/constant/status";
+import {groupPathSchema} from "@/type/group-path";
 
 /**
  * for-humanity.config.mjs 설정 스키마
@@ -17,12 +18,12 @@ export const siteConfigSchema = z.object({
      */
     description: z.string().optional(),
     /**
-     * 탐색 묶음의 읽는 순서 · 미지정 묶음은 뒤에서 이름순
+     * 탐색 묶음 경로의 읽는 순서 · 미지정 형제 묶음은 뒤에서 이름순
      */
     navigation: z
-        .array(z.string().trim().min(1))
-        .refine((groups) => new Set(groups).size === groups.length, copy_error_navigation_clash)
-        .default([...site_navigation_default]),
+        .array(groupPathSchema)
+        .refine((groups) => new Set(groups.map((path) => JSON.stringify(path))).size === groups.length, copy_error_navigation_clash)
+        .default(site_navigation_default.map((name) => [name])),
     /**
      * 본문에서 상태 표지로 표시할 문구
      */

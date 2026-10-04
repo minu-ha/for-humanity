@@ -13,13 +13,15 @@ const [pack] = Object.values(JSON.parse(await readFile(join(artifactDirectory, "
 const consumer = await mkdtemp(join(tmpdir(), "for-humanity-consumer-"));
 
 try {
+    const nestedGroup = ["Projects", "Example", "Guide"];
     await writeFile(join(consumer, "package.json"), JSON.stringify({name: "release-consumer", private: true, type: "module"}));
     await writeFile(join(consumer, "README.md"), "# Package home\n\n[Guide](guide.md)\n");
     await writeFile(join(consumer, "AGENTS.md"), "# Private instructions\n");
     await writeFile(join(consumer, "CLAUDE.md"), "# Private instructions\n");
     await writeFile(join(consumer, "guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n# Guide\n\n```mermaid\nflowchart LR\n    A[Markdown] --> B[HTML]\n```\n");
     await mkdir(join(consumer, "guide"));
-    await writeFile(join(consumer, "guide/agents.md"), "---\nname: Nested guide\nlabel: Nested guide\ngroup: Guide\n---\n\n# Nested guide\n");
+    await writeFile(join(consumer, "guide/agents.md"), `---\nname: Nested guide\nlabel: Nested guide\ngroup: ${JSON.stringify(nestedGroup)}\n---\n\n# Nested guide\n`);
+    await writeFile(join(consumer, "for-humanity.config.mjs"), `export default ${JSON.stringify({navigation: [nestedGroup, "Guide"]})};\n`);
     execFileSync("npm", ["install", "--ignore-scripts", "--no-audit", "--no-fund", join(artifactDirectory, pack.filename)], {cwd: consumer, stdio: "inherit"});
 
     const packageRoot = join(consumer, "node_modules", pack.name);
@@ -31,7 +33,12 @@ try {
     const output = join(consumer, "dist");
     assert.match(await readFile(join(output, "index.html"), "utf8"), /Package home/);
     assert.match(await readFile(join(output, "guide/index.html"), "utf8"), /<svg/);
-    assert.match(await readFile(join(output, "guide/agents/index.html"), "utf8"), /Nested guide/);
+    const nested = await readFile(join(output, "guide/agents/index.html"), "utf8");
+    assert.match(nested, /Example<\/span><ul\b/);
+    assert.match(nested, /Guide<\/span><ul\b/);
+    assert.match(nested, /href="\/guide\/agents\/"[^>]*aria-current="page"/);
+    assert.equal([...nested.matchAll(/wg_shellNavList__item--current/g)].length, nestedGroup.length);
+    assert.ok(nested.indexOf('aria-label="Projects"') < nested.indexOf('aria-label="Guide"'));
     const entries = await readdir(output, {recursive: true});
     assert.ok(!entries.includes("agents/index.html"));
     assert.ok(!entries.includes("claude/index.html"));
@@ -41,7 +48,7 @@ try {
             `Missing ${extension} assets`,
         );
     }
-    console.log(`Installed ${pack.name}@${pack.version}: pages, Mermaid, assets and README passed`);
+    console.log(`Installed ${pack.name}@${pack.version}: nested navigation, pages, Mermaid, assets and README passed`);
 } finally {
     await rm(consumer, {recursive: true, force: true});
 }

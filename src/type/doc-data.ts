@@ -1,5 +1,6 @@
 import {z} from "zod";
 import {doc_order_default, doc_type} from "@/constant/doc";
+import {groupPathSchema} from "@/type/group-path";
 
 /**
  * 문서 frontmatter 스키마 · 검증 실패 시 빌드 중단
@@ -18,9 +19,9 @@ export const docDataSchema = z.object({
      */
     type: z.enum(doc_type).default(doc_type.document),
     /**
-     * 사이드바의 문서 묶음
+     * 사이드바의 문서 묶음 경로 · 문자열도 배열로 정규화
      */
-    group: z.string().trim().min(1),
+    group: groupPathSchema,
     /**
      * 묶음 안의 읽는 순서 · 미지정 문서는 뒤에서 이름순
      */

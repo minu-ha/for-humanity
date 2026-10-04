@@ -9,6 +9,8 @@ import {WgShellNav} from "@/component/widget/shell/_wg-shell-nav";
 import {createProcessor} from "@/content/create-processor";
 import {readDocs} from "@/content/read-docs";
 import {readHome} from "@/content/read-home";
+import {toDocGroups} from "@/content/to-doc-groups/to-doc-groups";
+import {docDataSchema} from "@/type/doc-data";
 import {siteConfigSchema} from "@/type/site-config";
 
 test("documents with the same initial retain distinct URLs", async (t) => {
@@ -65,6 +67,85 @@ test("navigation shows every document group in reading order without document ic
     assert.doesNotMatch(html, />Documents<|>Overview</);
     assert.ok(html.indexOf('href="/writing/"') < html.indexOf('href="/parts/"'));
     assert.match(html, /href="\/writing\/"[^>]*aria-current="page"/);
+});
+
+test("group paths preserve literal names and reject empty or invalid segments", () => {
+    const data = {name: "Guide", label: "Guide"};
+
+    assert.deepEqual(docDataSchema.parse({...data, group: " Guide "}).group, ["Guide"]);
+    assert.deepEqual(docDataSchema.parse({...data, group: [" Projects ", "Example project", "Research"]}).group, ["Projects", "Example project", "Research"]);
+    assert.deepEqual(docDataSchema.parse({...data, group: "Research, decisions / notes"}).group, ["Research, decisions / notes"]);
+
+    for (const group of ["", " ", [], ["Projects", " "], ["Projects", 1], [["Projects"]], null]) {
+        assert.equal(docDataSchema.safeParse({...data, group}).success, false);
+    }
+
+    assert.equal(siteConfigSchema.safeParse({navigation: ["Guide", [" Guide "]]}).success, false);
+    assert.equal(siteConfigSchema.safeParse({navigation: [["Projects", ""]]}).success, false);
+    assert.equal(siteConfigSchema.safeParse({navigation: []}).success, true);
+});
+
+test("nested groups follow metadata paths and keep sibling branches and document URLs distinct", async (t) => {
+    const root = await mkdtemp(join(tmpdir(), "for-humanity-groups-"));
+    const site = siteConfigSchema.parse({navigation: ["Guide", ["Projects", "Atlas", "Research"], ["Projects", "Atlas", "Decisions"]]});
+
+    t.after(() => rm(root, {recursive: true, force: true}));
+    await Promise.all([
+        writeFile(join(root, "guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\nText.\n"),
+        writeFile(join(root, "guide-two.md"), "---\nname: More guide\nlabel: Guide\ngroup: [Guide]\n---\n\nText.\n"),
+        writeFile(join(root, "overview.md"), "---\nname: Overview\nlabel: Overview\ngroup: [Projects, Atlas]\n---\n\nText.\n"),
+        writeFile(join(root, "parts.md"), "---\nname: Parts\nlabel: Parts\ngroup: [Projects, Atlas, Research]\norder: 1\n---\n\nText.\n"),
+        writeFile(join(root, "authoring.md"), "---\nname: Authoring\nlabel: Authoring\ngroup: [Projects, Atlas, Research]\norder: 2\n---\n\nText.\n"),
+        writeFile(join(root, "decision.md"), "---\nname: Decision\nlabel: Decision\ngroup: [Projects, Atlas, Decisions]\n---\n\nText.\n"),
+        writeFile(join(root, "other.md"), "---\nname: Other research\nlabel: Other research\ngroup: [Projects, Beacon, Research]\n---\n\nText.\n"),
+        writeFile(join(root, "deep.md"), "---\nname: Deep research\nlabel: Deep research\ngroup: [Projects, Atlas, Research, Archive, Drafts]\n---\n\nText.\n"),
+    ]);
+
+    const docs = await readDocs({root, processor: createProcessor({site, root})});
+    const groups = toDocGroups({docs, navigation: site.navigation});
+
+    assert.deepEqual(
+        groups.map((group) => group.name),
+        ["Guide", "Projects"],
+    );
+    assert.deepEqual(
+        groups[0].docs.map((doc) => doc.id),
+        ["guide", "guide-two"],
+    );
+    assert.deepEqual(
+        groups[1].groups.map((group) => group.name),
+        ["Atlas", "Beacon"],
+    );
+    assert.deepEqual(
+        groups[1].groups[0].docs.map((doc) => doc.id),
+        ["overview"],
+    );
+    assert.deepEqual(
+        groups[1].groups[0].groups.map((group) => group.name),
+        ["Research", "Decisions"],
+    );
+    assert.deepEqual(
+        groups[1].groups[0].groups[0].docs.map((doc) => doc.id),
+        ["parts", "authoring"],
+    );
+    assert.deepEqual(
+        groups[1].groups[1].groups[0].docs.map((doc) => doc.id),
+        ["other"],
+    );
+    assert.equal(groups[1].groups[0].groups[0].groups[0].groups[0].name, "Drafts");
+    assert.deepEqual(toDocGroups({docs: docs.toReversed(), navigation: site.navigation}), groups);
+
+    const html = renderToStaticMarkup(WgShellNav({site, docs, current: "authoring"}));
+
+    assert.match(html, /href="\/authoring\/"[^>]*aria-current="page"/);
+    assert.match(html, /Atlas<\/span><ul\b/);
+    assert.match(html, /Research<\/span><ul\b/);
+    assert.equal([...html.matchAll(/href="\/authoring\/"/g)].length, 1);
+    assert.equal([...html.matchAll(/>Research<\/span>/g)].length, 2);
+    assert.equal([...html.matchAll(/wg_shellNavList__item--current/g)].length, 3);
+    assert.doesNotMatch(renderToStaticMarkup(WgShellNav({site, docs})), /aria-current="page"|wg_shellNavList__item--current/);
+    assert.ok(html.indexOf('href="/parts/"') < html.indexOf('href="/authoring/"'));
+    assert.doesNotMatch(html, /<details\b/);
 });
 
 test("frontmatter supports BOM, CRLF and a closing fence at EOF", async (t) => {
