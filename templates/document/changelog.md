@@ -12,6 +12,13 @@ order: 10
 
 ## Unreleased
 
+## 0.4.4 — 2026-10-04
+
+- Keep the document list and page outline in separate native scroll areas, so a shorter outline cannot clamp the document list position.
+- Restore desktop document navigation before its first paint and avoid reinserting the same navigation DOM during startup.
+- Indicate remaining navigation content with conditional top and bottom fades, keeping native scrollbars in forced colors and without JavaScript.
+- Connect the active outline branch through its parent while highlighting only the exact current heading.
+
 ## 0.4.3 — 2026-10-04
 
 - Use standard native navigation scrollbars in forced-color mode so browser color adjustment cannot hide custom thumbs against the background.

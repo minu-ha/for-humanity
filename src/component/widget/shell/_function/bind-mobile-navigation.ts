@@ -107,7 +107,10 @@ export const bindMobileNavigation = () => {
 
         if (mobile.matches) {
             openButton.classList.add("wg_shell__menuToggle--visible");
-            content.append(navigation);
+
+            if (navigation.parentElement !== content) {
+                content.append(navigation);
+            }
 
             if (focused instanceof HTMLElement && navigation.contains(focused)) {
                 openButton.focus({preventScroll: true});
@@ -117,7 +120,11 @@ export const bindMobileNavigation = () => {
         }
 
         closeNavigation();
-        sidebar.append(navigation);
+
+        // 첫 desktop 연결에서 같은 DOM을 재삽입하면 내부 스크롤이 0으로 초기화됨
+        if (navigation.parentElement !== sidebar) {
+            sidebar.append(navigation);
+        }
 
         if (focused instanceof HTMLElement && navigation.contains(focused)) {
             focused.focus({preventScroll: true});

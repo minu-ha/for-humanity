@@ -1,123 +1,84 @@
 import {navigation_mobile_query, navigation_scroll_storage_key} from "@/component/widget/shell/_constant/navigation";
+import {restoreNavigationScroll} from "@/component/widget/shell/_function/restore-navigation-scroll";
 
 /**
- * 문서 이동·새로고침에서 공유 탐색의 위치 유지 · 본문 스크롤과 독립
- * 저장소 실패는 기본 탐색 유지, 문서 목록 변경은 이전 위치를 사용하지 않음
+ * 문서 목록과 페이지 목차의 위치를 따로 저장 · TOC 길이가 목록 위치를 바꾸지 않음
+ * 첫 데스크톱 복원은 HTML에서 완료 · 늦은 module 실행에서 다시 이동하지 않음
  */
 export const bindNavigationScroll = () => {
     const navigation = document.querySelector<HTMLElement>("[data-navigation]");
-    const sidebar = document.querySelector<HTMLElement>(".wg_shell__sidebar");
+    const documents = document.querySelector<HTMLElement>('[data-navigation-scroll="documents"]');
+    const outline = document.querySelector<HTMLElement>('[data-navigation-scroll="outline"]');
     const dialog = document.querySelector<HTMLDialogElement>("[data-navigation-drawer]");
     const openButton = document.querySelector<HTMLButtonElement>("[data-navigation-open]");
 
-    if (!navigation || !sidebar || !dialog || !openButton) {
+    if (!navigation || !documents || !outline || !dialog || !openButton) {
         return;
     }
 
     const mobile = matchMedia(navigation_mobile_query);
     const layout = {mobile: mobile.matches};
-    // 목차와 현재 상태는 페이지마다 바뀜 · 공통 문서 링크의 순서로 저장 위치의 유효성 판단
+    const ports = [documents, outline];
+    const positions = new Map<string, Map<HTMLElement, number>>();
     const signature = [...navigation.querySelectorAll<HTMLAnchorElement>(".wg_shellNav__root a[href]")].map((link) => `${link.pathname}:${link.textContent}`).join("\n");
-    const positions = new Map<HTMLElement, number>();
-    const storageKeys = new Map<HTMLElement, string>([
-        [sidebar, `${navigation_scroll_storage_key}:desktop`],
-        [dialog, `${navigation_scroll_storage_key}:drawer`],
-    ]);
-    const userInput = new AbortController();
-
-    for (const [port, key] of storageKeys) {
-        try {
-            const value = sessionStorage.getItem(key);
-
-            if (value !== null) {
-                const stored: unknown = JSON.parse(value);
-
-                if (
-                    typeof stored === "object" &&
-                    stored !== null &&
-                    "navigation" in stored &&
-                    stored.navigation === signature &&
-                    "top" in stored &&
-                    typeof stored.top === "number" &&
-                    Number.isFinite(stored.top) &&
-                    stored.top >= 0
-                ) {
-                    positions.set(port, stored.top);
-                }
-            }
-        } catch {
-            // 차단되거나 손상된 저장소는 복원만 생략 · 스크롤과 기본 링크 이동 유지
-        }
-
-        for (const type of ["wheel", "touchstart", "pointerdown", "keydown"]) {
-            port.addEventListener(type, () => userInput.abort(), {once: true, passive: true});
-        }
-    }
-    const initialPositions = new Map(positions);
 
     /**
-     * 네이티브 스크롤 범위로 복원 · 닫힌 드로어의 0 좌표는 복원하지 않음
+     * 숨김·닫기보다 먼저 마지막 위치 보존 · 저장소 차단 시에도 드로어 재열기 유지
+     */
+    const saveScroll = () => {
+        if (layout.mobile !== mobile.matches || (mobile.matches && !dialog.open)) {
+            return;
+        }
+
+        const key = `${navigation_scroll_storage_key}:${mobile.matches ? "drawer" : "desktop"}`;
+        positions.set(key, new Map(ports.map((port) => [port, port.scrollTop])));
+
+        try {
+            sessionStorage.setItem(key, JSON.stringify({navigation: signature, pathname: location.pathname, documents: documents.scrollTop, outline: outline.scrollTop}));
+        } catch {
+            // 현재 페이지 안의 위치는 메모리에 유지 · 저장 실패가 링크 이동을 막지 않음
+        }
+    };
+
+    /**
+     * 열기·반응형 DOM 이동 완료 후 화면별 위치 복원
      */
     const restoreScroll = () => {
         layout.mobile = mobile.matches;
-        const port = mobile.matches ? dialog : sidebar;
-        const top = positions.get(port);
 
-        if (top === undefined || (mobile.matches && !dialog.open)) {
+        if (mobile.matches && !dialog.open) {
             return;
         }
 
-        port.scrollTop = top;
-    };
+        const key = `${navigation_scroll_storage_key}:${mobile.matches ? "drawer" : "desktop"}`;
+        const saved = positions.get(key);
 
-    /**
-     * 드로어 닫기 이전 클릭·현재 스크롤·페이지 이탈에서 마지막 탐색 위치 저장
-     */
-    const saveScroll = (event: Event) => {
-        const port = mobile.matches ? dialog : sidebar;
-        const key = storageKeys.get(port);
+        if (saved === undefined) {
+            restoreNavigationScroll(key);
+        } else {
+            for (const port of ports) {
+                const top = saved.get(port);
 
-        // 반응형 전환의 숨김·닫기 스크롤은 사용자 위치가 아님 · 활성 포트만 저장
-        if (layout.mobile !== mobile.matches || (event.type === "scroll" && event.currentTarget !== port) || key === undefined || (mobile.matches && !dialog.open)) {
-            return;
-        }
-
-        positions.set(port, port.scrollTop);
-
-        try {
-            sessionStorage.setItem(key, JSON.stringify({navigation: signature, top: port.scrollTop}));
-        } catch {
-            // 저장 실패도 같은 페이지의 드로어 재열기와 반응형 위치 복원은 유지
-        }
-    };
-
-    /**
-     * 글꼴로 탐색 높이가 달라진 경우 한 번만 재보정 · 사용자 입력이 먼저면 유지
-     */
-    const settleScroll = async () => {
-        await document.fonts.ready;
-
-        if (!userInput.signal.aborted) {
-            const port = mobile.matches ? dialog : sidebar;
-            const top = initialPositions.get(port);
-
-            if (top !== undefined && (!mobile.matches || dialog.open)) {
-                port.scrollTop = top;
+                if (top !== undefined) {
+                    port.scrollTop = top;
+                }
             }
         }
+
+        saveScroll();
     };
 
-    sidebar.addEventListener("scroll", saveScroll, {passive: true});
-    dialog.addEventListener("scroll", saveScroll, {passive: true});
+    for (const port of ports) {
+        port.addEventListener("scroll", saveScroll, {passive: true});
+    }
+
+    // 캡처 단계에서 모바일의 기본 닫기보다 먼저 저장
     navigation.addEventListener("click", saveScroll, {capture: true});
+    dialog.addEventListener("cancel", saveScroll);
+    dialog.querySelector("[data-navigation-close]")?.addEventListener("click", saveScroll, {capture: true});
+    dialog.addEventListener("click", saveScroll, {capture: true});
     openButton.addEventListener("click", restoreScroll);
     mobile.addEventListener("change", restoreScroll);
     addEventListener("pagehide", saveScroll);
-    restoreScroll();
-
-    if (document.readyState === "complete") {
-        settleScroll();
-    } else {
-        addEventListener("load", settleScroll, {once: true});
-    }
+    saveScroll();
 };

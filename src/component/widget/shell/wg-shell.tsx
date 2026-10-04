@@ -1,5 +1,8 @@
 import clsx from "clsx";
 import type {ReactNode} from "react";
+import {navigation_mobile_query, navigation_scroll_storage_key} from "@/component/widget/shell/_constant/navigation";
+import {bindNavigationOverflow} from "@/component/widget/shell/_function/bind-navigation-overflow";
+import {restoreNavigationScroll} from "@/component/widget/shell/_function/restore-navigation-scroll";
 import {toTocGroups} from "@/component/widget/shell/_function/to-toc-groups";
 import type {DocOutline} from "@/component/widget/shell/_type/doc-outline";
 import {WgShellNav} from "@/component/widget/shell/_wg-shell-nav";
@@ -17,6 +20,11 @@ import "./wg-shell.css";
  * dev 문서 변경 시 SSE 새로고침
  */
 const reloadScript = `new EventSource(${JSON.stringify(asset_reload_path)}).onmessage=function(){location.reload()}`;
+
+/**
+ * 탐색 DOM 직후 동기 실행 · 큰 본문과 module 다운로드를 기다리지 않고 첫 위치·흐림 적용
+ */
+const navigationScript = `if(!matchMedia(${JSON.stringify(navigation_mobile_query)}).matches){(${restoreNavigationScroll.toString()})(${JSON.stringify(`${navigation_scroll_storage_key}:desktop`)})}(${bindNavigationOverflow.toString()})()`;
 
 /**
  * 공통 HTML 틀의 입력 · 문서 탐색·현재 목차·본문
@@ -112,10 +120,23 @@ export const WgShell = (props: WgShellProps) => {
                      * 같은 탐색 DOM을 모바일 대화상자로 이동 · 스크립트 없이도 기본 목록 제공
                      */}
                     <div className={clsx("wg_shell__navigation")} data-navigation="">
-                        <WgShellNav site={props.site} docs={props.docs} current={props.current} />
-                        {tocGroups.length > 0 && <WgShellToc groups={tocGroups} />}
+                        {/**
+                         * 모든 페이지에서 같은 높이의 문서 탐색 · 목차 길이와 스크롤 분리
+                         */}
+                        <div className={clsx("wg_shell__documents", "wg_shell__scroll")} data-navigation-scroll="documents">
+                            <WgShellNav site={props.site} docs={props.docs} current={props.current} />
+                        </div>
+                        {/**
+                         * 문서 목록 아래 현재 페이지 목차 · 남은 뷰포트 안에서 독립 스크롤
+                         */}
+                        <div className={clsx("wg_shell__outline")}>
+                            <div className={clsx("wg_shell__headings", "wg_shell__scroll")} data-navigation-scroll="outline">
+                                {tocGroups.length > 0 && <WgShellToc groups={tocGroups} />}
+                            </div>
+                        </div>
                     </div>
                 </div>
+                <script dangerouslySetInnerHTML={{__html: navigationScript}} />
                 <main className={clsx("wg_shell__main")}>{props.children}</main>
                 {/**
                  * 브라우저의 모달 포커스·Escape 처리 · 목록은 한 번만 렌더링

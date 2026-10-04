@@ -27,7 +27,7 @@
 .wg_shell__brandRow {
     display: flex;
 
-    /* 공유 사이드바의 스크롤 기준 · 목록과 목차 위에서 이름 고정 */
+    /* 두 스크롤 영역 바깥 · 목록과 목차 위에서 이름 고정 */
     position: sticky;
     top: 0;
     z-index: var(--app-z-index-sticky);
@@ -103,50 +103,69 @@
     display: flex;
 }
 
+/* sticky 틀 안에서 문서 목록과 목차의 스크롤 높이를 독립 유지 */
 .wg_shell__sidebar {
     grid-area: nav;
-
-    /* 뷰포트 sticky · 문서 탐색과 목차는 이 컨테이너에서 함께 스크롤 */
     position: sticky;
     top: 0;
     align-self: start;
     min-width: 0;
-    min-height: 100vh;
-    max-height: 100vh;
+    height: 100dvh;
     margin-inline-end: var(--app-space-sidebar-gap);
-    overflow-y: auto;
-    overscroll-behavior-y: contain;
-
-    /* 얇은 네이티브 손잡이 · 트랙 없이 기존 본문 간격 안쪽에 표시 */
-    scrollbar-gutter: stable;
-    scrollbar-width: auto;
-    scrollbar-color: auto;
-    scroll-padding-block: var(--app-size-brand) var(--app-space-block);
-
-    &::-webkit-scrollbar {
-        width: 3px;
-    }
-
-    &::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        border-radius: 3px;
-        background: transparent;
-    }
-
-    &:hover::-webkit-scrollbar-thumb {
-        background: var(--app-color-border-soft);
-    }
-
-    &:focus-within::-webkit-scrollbar-thumb {
-        background: var(--app-color-border-soft);
-    }
 }
 
 .wg_shell__navigation {
+    display: flex;
+    flex-direction: column;
+    height: calc(100dvh - var(--app-size-brand));
     min-width: 0;
+    min-height: 0;
+}
+
+.wg_shell__documents {
+    /* TOC 길이가 바뀌어도 공통 목록의 스크롤 범위는 동일 */
+    flex: none;
+    max-height: 60%;
+}
+
+.wg_shell__outline {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    margin-top: var(--app-space-group);
+    padding-top: var(--app-space-group);
+    border-top: 1px solid var(--app-color-border-soft);
+
+    &:has(.wg_shell__headings:empty) {
+        display: none;
+    }
+}
+
+.wg_shell__headings {
+    min-height: 0;
+}
+
+.wg_shell__scroll {
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scroll-padding-block: var(--app-size-navigation-fade);
+}
+
+.wg_shell__scroll--ready {
+    /* 흐림으로 넘침을 알릴 때만 손잡이 숨김 · JS 없으면 네이티브 손잡이 유지 */
+    scrollbar-width: none;
+}
+
+.wg_shell__scroll--above {
+    mask-image: linear-gradient(to bottom, transparent, #000 var(--app-size-navigation-fade));
+}
+
+.wg_shell__scroll--below {
+    mask-image: linear-gradient(to bottom, #000 calc(100% - var(--app-size-navigation-fade)), transparent);
+}
+
+.wg_shell__scroll--above.wg_shell__scroll--below {
+    mask-image: linear-gradient(to bottom, transparent, #000 var(--app-size-navigation-fade), #000 calc(100% - var(--app-size-navigation-fade)), transparent);
 }
 
 .wg_shell__main {
@@ -174,32 +193,7 @@
     border-right: 1px solid var(--app-color-border-layout);
     background: var(--app-color-ground);
     color: var(--app-color-text);
-    scrollbar-gutter: stable;
-    scrollbar-width: auto;
-    scrollbar-color: auto;
-    overscroll-behavior: contain;
-    scroll-padding-block: var(--app-size-mobile-header) var(--app-space-group);
-
-    &::-webkit-scrollbar {
-        width: 3px;
-    }
-
-    &::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        border-radius: 3px;
-        background: transparent;
-    }
-
-    &:hover::-webkit-scrollbar-thumb {
-        background: var(--app-color-border-soft);
-    }
-
-    &:focus-within::-webkit-scrollbar-thumb {
-        background: var(--app-color-border-soft);
-    }
+    overflow: hidden;
 
     &::backdrop {
         background: var(--app-color-backdrop);
@@ -207,10 +201,7 @@
 }
 
 .wg_shell__drawerHeader {
-    /* 스크롤하는 drawer 안에서 닫기 버튼 유지 */
-    position: sticky;
-    top: 0;
-    z-index: var(--app-z-index-sticky);
+    /* 두 스크롤 영역 바깥에서 닫기 버튼 유지 */
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -252,6 +243,11 @@
 
 .wg_shell__drawerContent {
     min-width: 0;
+    height: calc(100% - var(--app-size-mobile-header) - var(--app-space-block));
+
+    & > .wg_shell__navigation {
+        height: 100%;
+    }
 }
 
 .wg_shell__cursorFace {
@@ -270,54 +266,12 @@
     visibility: visible;
 }
 
-/* Firefox는 표준 thin 사용 · 손잡이 폭은 브라우저가 결정 */
-@supports not selector(::-webkit-scrollbar) {
-    .wg_shell__sidebar {
-        scrollbar-width: thin;
-        scrollbar-color: transparent transparent;
-
-        &:hover {
-            scrollbar-color: var(--app-color-border-soft) transparent;
-        }
-
-        &:focus-within {
-            scrollbar-color: var(--app-color-border-soft) transparent;
-        }
-    }
-
-    .wg_shell__drawer {
-        scrollbar-width: thin;
-        scrollbar-color: var(--app-color-border-soft) transparent;
-    }
-}
-
-/* 색상 강제 환경은 시스템 손잡이 유지 · 대비 설정을 덮어쓰지 않음 */
+/* 강제 색상 환경은 흐림 대신 시스템 손잡이로 넘침 표시 */
 @media (forced-colors: active) {
-    .wg_shell__sidebar {
-        /* non-auto 표준 폭은 WebKit 전용 스타일을 비활성화해 네이티브 색상 유지 */
+    .wg_shell__scroll {
+        mask-image: none;
         scrollbar-width: thin;
         scrollbar-color: auto;
-
-        &:hover {
-            scrollbar-color: auto;
-        }
-
-        &:focus-within {
-            scrollbar-color: auto;
-        }
-    }
-
-    .wg_shell__drawer {
-        scrollbar-width: thin;
-        scrollbar-color: auto;
-
-        &:hover {
-            scrollbar-color: auto;
-        }
-
-        &:focus-within {
-            scrollbar-color: auto;
-        }
     }
 }
 
@@ -332,12 +286,18 @@
 
     .wg_shell__sidebar {
         position: static;
-        min-height: 0;
-        max-height: none;
-        overflow-y: visible;
+        height: auto;
         margin-block-end: var(--app-space-block);
         margin-inline-end: 0;
         border-bottom: 1px solid var(--app-color-border-layout);
+    }
+
+    .wg_shell__sidebar > .wg_shell__navigation {
+        height: auto;
+
+        & > .wg_shell__documents {
+            max-height: none;
+        }
     }
 
     .wg_shell__sidebar--navigationReady {

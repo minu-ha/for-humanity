@@ -2,9 +2,6 @@
  * 문서 탐색 아래 목차 · 회색 제목·묶음과 본문 글색의 이동 대상 구분
  */
 .wg_shellToc__root {
-    margin-top: var(--app-space-group);
-    padding-top: var(--app-space-group);
-    border-top: 1px solid var(--app-color-border-soft);
     font-size: var(--app-font-size-dense);
     line-height: var(--app-line-height-tight);
 }
@@ -149,6 +146,11 @@
 .wg_shellToc__item--current {
     &::after {
         border-left-color: var(--app-color-text-strong);
+    }
+
+    /* 현재 소제목의 상위 절은 글 강조 없이 경로의 가로 가지 연결 */
+    & > .wg_shellToc__link::before {
+        border-top-color: var(--app-color-text-strong);
     }
 }
 
