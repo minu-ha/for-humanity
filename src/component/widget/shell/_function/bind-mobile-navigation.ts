@@ -1,4 +1,5 @@
-import {navigation_mobile_query} from "@/component/widget/shell/_constant/navigation";
+import {navigation_mobile_query, navigation_wide_query} from "@/component/widget/shell/_constant/navigation";
+import {placeNavigationOutline} from "@/component/widget/shell/_function/place-navigation-outline";
 import {revealHashTarget} from "@/util/dom/reveal-hash-target";
 
 /**
@@ -18,6 +19,7 @@ export const bindMobileNavigation = () => {
     }
 
     const mobile = matchMedia(navigation_mobile_query);
+    const wide = matchMedia(navigation_wide_query);
 
     /**
      * Escape 등 네이티브 닫기에서도 배경 스크롤과 버튼의 상태 복원
@@ -111,6 +113,7 @@ export const bindMobileNavigation = () => {
             if (navigation.parentElement !== content) {
                 content.append(navigation);
             }
+            placeNavigationOutline(navigation_wide_query);
 
             if (focused instanceof HTMLElement && navigation.contains(focused)) {
                 openButton.focus({preventScroll: true});
@@ -125,8 +128,9 @@ export const bindMobileNavigation = () => {
         if (navigation.parentElement !== sidebar) {
             sidebar.append(navigation);
         }
+        placeNavigationOutline(navigation_wide_query);
 
-        if (focused instanceof HTMLElement && navigation.contains(focused)) {
+        if (focused instanceof HTMLElement && (navigation.contains(focused) || focused.closest("[data-navigation-outline]"))) {
             focused.focus({preventScroll: true});
         } else if (focused === openButton || (focused instanceof HTMLElement && dialog.contains(focused))) {
             sidebar.querySelector<HTMLAnchorElement>(".wg_shell__brand")?.focus({preventScroll: true});
@@ -142,6 +146,7 @@ export const bindMobileNavigation = () => {
     dialog.addEventListener("click", handleBackdropClick);
     navigation.addEventListener("click", handleNavigationClick);
     mobile.addEventListener("change", handleLayoutChange);
+    wide.addEventListener("change", handleLayoutChange);
     handleLayoutChange();
     sidebar.classList.add("wg_shell__sidebar--navigationReady");
 };

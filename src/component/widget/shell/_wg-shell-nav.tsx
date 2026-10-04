@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import {WgShellBranchToggle} from "@/component/widget/shell/_wg-shell-branch-toggle";
 import {WgShellNavList} from "@/component/widget/shell/_wg-shell-nav-list";
 import {copy_nav_aria_label} from "@/constant/copy";
 import {toDocGroups} from "@/content/to-doc-groups/to-doc-groups";
@@ -40,7 +41,8 @@ export const WgShellNav = (props: WgShellNavProps) => {
                 {docGroups.map((group) => (
                     <section className={clsx("wg_shellNav__docGroup")} key={group.name} aria-label={group.name}>
                         <div className={clsx("wg_shellNav__group")}>{group.name}</div>
-                        <WgShellNavList group={group} currentDoc={currentDoc} />
+                        <WgShellBranchToggle branchKey={`group:${JSON.stringify(group.path)}`} label={group.name} />
+                        <WgShellNavList group={group} currentDoc={currentDoc} branchKey={`group:${JSON.stringify(group.path)}`} />
                     </section>
                 ))}
             </div>

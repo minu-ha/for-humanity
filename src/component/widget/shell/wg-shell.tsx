@@ -1,8 +1,18 @@
 import clsx from "clsx";
 import type {ReactNode} from "react";
-import {navigation_mobile_query, navigation_scroll_storage_key} from "@/component/widget/shell/_constant/navigation";
+import {
+    navigation_mobile_query,
+    navigation_scroll_storage_key,
+    navigation_storage_version,
+    navigation_tree_storage_key,
+    navigation_wide_query,
+} from "@/component/widget/shell/_constant/navigation";
 import {bindNavigationOverflow} from "@/component/widget/shell/_function/bind-navigation-overflow";
+import {placeNavigationOutline} from "@/component/widget/shell/_function/place-navigation-outline";
 import {restoreNavigationScroll} from "@/component/widget/shell/_function/restore-navigation-scroll";
+import {restoreNavigationTree} from "@/component/widget/shell/_function/restore-navigation-tree";
+import {toNavigationScrollState} from "@/component/widget/shell/_function/to-navigation-scroll-state";
+import {toNavigationTreeState} from "@/component/widget/shell/_function/to-navigation-tree-state";
 import {toTocGroups} from "@/component/widget/shell/_function/to-toc-groups";
 import type {DocOutline} from "@/component/widget/shell/_type/doc-outline";
 import {WgShellNav} from "@/component/widget/shell/_wg-shell-nav";
@@ -25,7 +35,10 @@ const reloadScript = `new EventSource(${JSON.stringify(asset_reload_path)}).onme
  * 탐색 DOM 직후 동기 실행 · 큰 본문과 module 다운로드를 기다리지 않고 첫 위치·흐림 적용
  * 손잡이 숨김으로 달라지는 목록 폭을 먼저 확정한 뒤 좌표 복원
  */
-const navigationScript = `(${bindNavigationOverflow.toString()})();if(!matchMedia(${JSON.stringify(navigation_mobile_query)}).matches){(${restoreNavigationScroll.toString()})(${JSON.stringify(`${navigation_scroll_storage_key}:desktop`)})}`;
+const navigationScript = `(${placeNavigationOutline.toString()})(${JSON.stringify(navigation_wide_query)});
+(${restoreNavigationTree.toString()})({key:${JSON.stringify(navigation_tree_storage_key)},version:${navigation_storage_version},toState:(${toNavigationTreeState.toString()})});
+(${bindNavigationOverflow.toString()})();
+if(!matchMedia(${JSON.stringify(navigation_mobile_query)}).matches){(${restoreNavigationScroll.toString()})({key:${JSON.stringify(navigation_scroll_storage_key)},version:${navigation_storage_version},layout:matchMedia(${JSON.stringify(navigation_wide_query)}).matches?"wide":"desktop",toState:(${toNavigationScrollState.toString()})})}`;
 
 /**
  * 공통 HTML 틀의 입력 · 문서 탐색·현재 목차·본문
@@ -128,15 +141,19 @@ export const WgShell = (props: WgShellProps) => {
                             <WgShellNav site={props.site} docs={props.docs} current={props.current} />
                         </div>
                         {/**
-                         * 문서 목록 아래 현재 페이지 목차 · 남은 뷰포트 안에서 독립 스크롤
+                         * 기본 목차는 문서 아래 · 넓은 화면은 첫 paint 전 같은 DOM을 오른쪽으로 이동
                          */}
-                        <div className={clsx("wg_shell__outline")}>
+                        <div className={clsx("wg_shell__outline")} data-navigation-outline="">
                             <div className={clsx("wg_shell__headings", "wg_shell__scroll")} data-navigation-scroll="outline">
-                                {tocGroups.length > 0 && <WgShellToc groups={tocGroups} />}
+                                {tocGroups.length > 0 && <WgShellToc groups={tocGroups} pageId={props.current === undefined ? "/" : props.current} />}
                             </div>
                         </div>
                     </div>
                 </div>
+                {/**
+                 * 넓은 화면의 오른쪽 목차 · 좁은 화면은 첫 paint 전 같은 DOM을 문서 목록 아래로 이동
+                 */}
+                <aside className={clsx("wg_shell__tocRail")} data-navigation-rail="" />
                 <script dangerouslySetInnerHTML={{__html: navigationScript}} />
                 <main className={clsx("wg_shell__main")}>{props.children}</main>
                 {/**

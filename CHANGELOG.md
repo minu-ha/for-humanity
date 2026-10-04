@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Use equal 240px document and outline sidebars at 1536px and wider, retaining stacked navigation on smaller desktops and the mobile drawer.
+- Add separate expand/collapse buttons to document groups, parent documents, outline parts and headings with children, with every branch expanded by default.
+- Persist branch choices through Zustand vanilla stores in localStorage and independent wide, desktop and drawer scroll positions in sessionStorage, restoring layout and saved choices before the first paint.
+
 ## 0.4.4 — 2026-10-04
 
 - Keep the document list and page outline in separate native scroll areas, so a shorter outline cannot clamp the document list position.

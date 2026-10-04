@@ -51,16 +51,19 @@ Hono 정규식 매개변수와 wildcard 라우트 혼합 시 Router 제약도 �
 
 ## Navigation lifecycle
 
-문서 링크는 전체 HTML 페이지를 이동합니다. React 브라우저 hydration과 전역 클라이언트 스토어는 사용하지 않습니다.
-문서 목록과 On this page는 같은 사이드바의 위·아래에 배치하지만 스크롤 컨테이너는 별도입니다. 공통 목록의 높이는 페이지별 목차 길이와 무관합니다.
+문서 링크는 전체 HTML 페이지를 이동합니다. React 브라우저 hydration은 사용하지 않으며, 탐색의 클라이언트 상태는 Zustand vanilla 스토어가 소유합니다.
+문서 목록과 On this page는 각각 독립 스크롤 컨테이너입니다. 1536px 이상에서는 같은 폭의 양쪽 사이드바로 분리하고, 좁은 화면에서는 같은 목차 DOM을 문서 목록 아래로 이동합니다.
 
-탐색 HTML 바로 뒤의 작은 동기 스크립트가 첫 paint 전에 데스크톱 위치와 넘침 흐림을 적용합니다. 큰 본문이나 외부 client module 다운로드를 기다리지 않습니다.
-`restoreNavigationScroll`과 `bindNavigationOverflow`는 이 조기 실행을 위해 외부 변수 없이 직렬화 가능한 함수로 유지합니다.
-클라이언트는 이후 위치 저장과 드로어·반응형 전환을 연결하고, 이미 제자리에 있는 탐색 DOM을 다시 삽입하지 않습니다.
+탐색 HTML 바로 뒤의 동기 스크립트는 배치·접힘 선택·스크롤바 폭을 먼저 확정하고 첫 paint 전에 저장 좌표를 복원합니다. 큰 본문이나 외부 client module 다운로드를 기다리지 않습니다.
+이 초기 복원은 저장 자료를 읽기만 하며, 클라이언트의 모든 탐색 상태 갱신·저장은 `createNavigationStores`의 `persist` 스토어로 모읍니다. 초기 HTML과 스토어는 같은 검증 함수를 사용합니다.
+클라이언트는 버튼·드로어·반응형 전환을 연결하고, 이미 제자리에 있는 탐색 DOM은 다시 삽입하지 않습니다.
 
-문서 목록은 같은 탭의 `sessionStorage`에 데스크톱·드로어 위치를 나누어 저장합니다. 문서 링크 순서가 달라지면 이전 위치는 무효입니다.
-목차 위치는 같은 페이지를 새로고침할 때만 복원하고 다른 문서의 목차는 시작점에서 읽습니다. 저장소가 차단되거나 값이 손상돼도 기본 탐색은 유지합니다.
+가지 선택은 `localStorage`에 문서 ID·그룹 경로·페이지별 헤딩 키로 저장합니다. 기본값은 전체 펼침입니다.
+스크롤은 같은 탭의 `sessionStorage`에 넓은 화면·좁은 데스크톱·드로어 위치를 따로 저장합니다. 기존 배치별 저장 자료도 첫 복원에서 수용합니다.
+문서 링크 순서가 달라지면 이전 위치는 무효입니다. 목차 위치는 같은 페이지에서만 복원하고 다른 문서의 목차는 시작점에서 읽습니다. 저장소가 차단되거나 값이 손상돼도 메모리 상태와 기본 탐색은 유지합니다.
 `ResizeObserver`와 스크롤 이벤트는 실제 위·아래 넘침이 있는 끝만 흐리게 합니다. 강제 색상과 JavaScript 미사용 환경은 네이티브 손잡이를 사용합니다.
+
+참조: [Zustand vanilla store](https://zustand.docs.pmnd.rs/reference/apis/create-store), [persist](https://zustand.docs.pmnd.rs/reference/middlewares/persist).
 
 ## Markdown pipeline
 

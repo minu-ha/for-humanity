@@ -13,9 +13,15 @@
 }
 
 .wg_shellNav__group {
+    padding-inline-end: calc(var(--app-size-tree-toggle) + var(--app-space-inline));
     margin: 0 0 4px;
     color: var(--app-color-text-muted);
     font-size: var(--app-font-size-group);
     line-height: calc(var(--app-font-size-dense) * var(--app-line-height-tight));
     text-box: trim-start cap alphabetic;
+}
+
+.wg_shellNav__docGroup {
+    /* 묶음 접기 버튼의 첫 행 기준 */
+    position: relative;
 }

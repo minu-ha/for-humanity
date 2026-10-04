@@ -15,10 +15,21 @@
 }
 
 .wg_shellToc__group {
-    margin: var(--app-space-stack) 0 4px;
+    margin: 0 0 4px;
+    padding-inline-end: calc(var(--app-size-tree-toggle) + var(--app-space-inline));
     color: var(--app-color-text-muted);
     font-size: var(--app-font-size-group);
     line-height: calc(var(--app-font-size-dense) * var(--app-line-height-tight));
+}
+
+.wg_shellToc__groupSection {
+    /* 가름 제목과 그 하위 목록을 하나의 접힘 대상으로 연결 */
+    position: relative;
+    display: flow-root;
+}
+
+.wg_shellToc__groupSection--named {
+    margin-top: var(--app-space-stack);
 }
 
 .wg_shellToc__list {
@@ -83,6 +94,10 @@
 
     /* 세로 줄기는 항목 전체 기준 · 중간 항목의 소제목 옆에서도 연결 */
     position: relative;
+
+    &:has(> .wg_shellBranchToggle__root) > .wg_shellToc__link {
+        padding-inline-end: calc(var(--app-size-tree-toggle) + var(--app-space-inline));
+    }
 
     &::before {
         position: absolute;

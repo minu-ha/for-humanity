@@ -1,12 +1,15 @@
 /*
- * 넓은 화면은 본문 중앙 정렬 · 폭이 줄면 오른쪽 여백부터 축소
+ * 넓은 화면은 같은 폭의 양쪽 탐색 · 좁은 desktop은 목차를 왼쪽으로 합침
  */
 .wg_shell__root {
     display: grid;
     max-width: var(--app-size-page);
     margin: 0 auto;
     padding: 0 var(--app-space-gutter);
-    grid-template: "nav main ." 1fr / calc(var(--app-size-sidebar) + var(--app-space-sidebar-gap)) minmax(0, var(--app-size-main)) minmax(0, 1fr);
+    grid-template: "nav main outline" 1fr / calc(var(--app-size-sidebar) + var(--app-space-sidebar-gap)) minmax(0, var(--app-size-main)) calc(
+            var(--app-size-sidebar) +
+            var(--app-space-sidebar-gap)
+        );
     background: var(--app-color-ground);
     color: var(--app-color-text);
     font-family: var(--app-font-sans);
@@ -114,35 +117,66 @@
     margin-inline-end: var(--app-space-sidebar-gap);
 }
 
+.wg_shell__documents {
+    /* 넓은 화면은 뷰포트 전체 · 공유 사이드바에서만 목록 높이 제한 */
+    flex: 1;
+    min-height: 0;
+}
+
+.wg_shell__outline {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+
+    &:where(:has(.wg_shell__headings:empty)) {
+        display: none;
+    }
+}
+
+.wg_shell__headings {
+    flex: 1;
+    min-height: 0;
+}
+
 .wg_shell__navigation {
     display: flex;
     flex-direction: column;
     height: calc(100dvh - var(--app-size-brand));
     min-width: 0;
     min-height: 0;
-}
 
-.wg_shell__documents {
-    /* TOC 길이가 바뀌어도 공통 목록의 스크롤 범위는 동일 */
-    flex: none;
-    max-height: 60%;
-}
+    & > .wg_shell__outline {
+        margin-top: var(--app-space-group);
+        padding-top: var(--app-space-group);
+        border-top: 1px solid var(--app-color-border-soft);
+    }
 
-.wg_shell__outline {
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    margin-top: var(--app-space-group);
-    padding-top: var(--app-space-group);
-    border-top: 1px solid var(--app-color-border-soft);
-
-    &:has(.wg_shell__headings:empty) {
-        display: none;
+    /* 스크립트가 없을 때도 기본 공유 사이드바에서 두 영역을 분리 */
+    &:has(> .wg_shell__outline .wg_shellToc__root) > .wg_shell__documents {
+        flex: none;
+        max-height: 60%;
     }
 }
 
-.wg_shell__headings {
-    min-height: 0;
+.wg_shell__tocRail {
+    /* body의 오른쪽 grid 열 · 문서 스크롤과 독립된 뷰포트 기준 sticky */
+    grid-area: outline;
+    position: sticky;
+    top: 0;
+    align-self: start;
+    min-width: 0;
+    height: 100dvh;
+    margin-inline-start: var(--app-space-sidebar-gap);
+    padding-top: var(--app-size-brand);
+
+    & > .wg_shell__outline {
+        height: 100%;
+    }
+
+    &:empty {
+        display: none;
+    }
 }
 
 .wg_shell__scroll {
@@ -275,6 +309,13 @@
     }
 }
 
+/* 1500px 기본 폭과 스크롤바를 수용하는 1536px 아래는 같은 목차를 왼쪽으로 이동 */
+@media (width < 1536px) {
+    .wg_shell__root {
+        grid-template: "nav main ." 1fr / calc(var(--app-size-sidebar) + var(--app-space-sidebar-gap)) minmax(0, var(--app-size-main)) minmax(0, 1fr);
+    }
+}
+
 /* 좁은 화면 · 상단 브랜드와 메뉴 버튼 · 탐색 목록은 네이티브 모달 */
 @media (width < 1024px) {
     .wg_shell__root {
@@ -294,10 +335,10 @@
 
     .wg_shell__sidebar > .wg_shell__navigation {
         height: auto;
+    }
 
-        & > .wg_shell__documents {
-            max-height: none;
-        }
+    .wg_shell__sidebar > .wg_shell__navigation > .wg_shell__documents {
+        max-height: none;
     }
 
     .wg_shell__sidebar--navigationReady {

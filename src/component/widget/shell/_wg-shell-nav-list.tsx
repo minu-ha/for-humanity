@@ -1,5 +1,7 @@
 import clsx from "clsx";
 import {Fragment} from "react";
+import {toNavigationBranchId} from "@/component/widget/shell/_function/to-navigation-branch-id";
+import {WgShellBranchToggle} from "@/component/widget/shell/_wg-shell-branch-toggle";
 import type {Doc} from "@/type/doc";
 import type {DocGroup} from "@/type/doc-group";
 import "./_wg-shell-nav-list.css";
@@ -16,6 +18,10 @@ export interface WgShellNavListProps {
      * 현재 문서 · 조상 묶음의 경로까지 표시
      */
     currentDoc?: Doc;
+    /**
+     * 부모 버튼과 연결할 가지 키 · 루트 묶음·문서 모두 같은 규칙 사용
+     */
+    branchKey: string;
 }
 
 export const WgShellNavList = (props: WgShellNavListProps) => {
@@ -35,7 +41,7 @@ export const WgShellNavList = (props: WgShellNavListProps) => {
     const currentIndex = entries.findIndex((entry) => entry.current);
 
     return (
-        <ul className={clsx("wg_shellNavList__root")} aria-label={props.group.name}>
+        <ul className={clsx("wg_shellNavList__root")} aria-label={props.group.name} id={toNavigationBranchId(props.branchKey)}>
             {/**
              * 현재 경로 앞의 줄기와 도착 가지 · 문서 링크는 원래 파일 URL 사용
              */}
@@ -63,10 +69,12 @@ export const WgShellNavList = (props: WgShellNavListProps) => {
                             {/**
                              * 하위 문서 · 부모 아래에서도 기존 목록의 들여쓰기와 키보드 이동 유지
                              */}
-                            {entry.doc.children !== undefined && (
+                            {entry.doc.children !== undefined && entry.doc.children.length > 0 && <WgShellBranchToggle branchKey={entry.key} label={entry.doc.data.name} />}
+                            {entry.doc.children !== undefined && entry.doc.children.length > 0 && (
                                 <WgShellNavList
                                     group={{name: entry.doc.data.name, path: entry.doc.data.group, docs: entry.doc.children, groups: []}}
                                     currentDoc={props.currentDoc}
+                                    branchKey={entry.key}
                                 />
                             )}
                         </Fragment>
@@ -77,7 +85,8 @@ export const WgShellNavList = (props: WgShellNavListProps) => {
                     {entry.kind === "group" && (
                         <Fragment>
                             <span className={clsx("wg_shellNavList__branch")}>{entry.group.name}</span>
-                            <WgShellNavList group={entry.group} currentDoc={props.currentDoc} />
+                            <WgShellBranchToggle branchKey={entry.key} label={entry.group.name} />
+                            <WgShellNavList group={entry.group} currentDoc={props.currentDoc} branchKey={entry.key} />
                         </Fragment>
                     )}
                 </li>

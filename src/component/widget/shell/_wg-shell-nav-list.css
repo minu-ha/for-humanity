@@ -84,6 +84,14 @@
     /* 세로 줄기는 각 항목 기준 · 마지막 항목의 첫 줄 가운데에서 종료 */
     position: relative;
 
+    &:has(> .wg_shellBranchToggle__root) > .wg_shellNavList__link {
+        padding-inline-end: calc(var(--app-size-tree-toggle) + var(--app-space-inline));
+    }
+
+    &:has(> .wg_shellBranchToggle__root) > .wg_shellNavList__branch {
+        padding-inline-end: calc(var(--app-size-tree-toggle) + var(--app-space-inline));
+    }
+
     &::before {
         position: absolute;
         top: 0;

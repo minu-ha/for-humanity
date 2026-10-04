@@ -1,84 +1,96 @@
-import {navigation_mobile_query, navigation_scroll_storage_key} from "@/component/widget/shell/_constant/navigation";
+import {navigation_mobile_query, navigation_scroll_storage_key, navigation_storage_version, navigation_wide_query} from "@/component/widget/shell/_constant/navigation";
+import type {createNavigationStores} from "@/component/widget/shell/_function/create-navigation-stores";
 import {restoreNavigationScroll} from "@/component/widget/shell/_function/restore-navigation-scroll";
+import {toNavigationScrollState} from "@/component/widget/shell/_function/to-navigation-scroll-state";
+import type {NavigationLayout} from "@/component/widget/shell/_type/navigation-state";
 
 /**
- * 문서 목록과 페이지 목차의 위치를 따로 저장 · TOC 길이가 목록 위치를 바꾸지 않음
- * 첫 데스크톱 복원은 HTML에서 완료 · 늦은 module 실행에서 다시 이동하지 않음
+ * persist 스토어에 배치별 문서·목차 좌표 저장 · 첫 desktop 복원은 HTML이 완료하므로 재실행하지 않음
  */
-export const bindNavigationScroll = () => {
+export const bindNavigationScroll = (scroll: ReturnType<typeof createNavigationStores>["scroll"]) => {
     const navigation = document.querySelector<HTMLElement>("[data-navigation]");
     const documents = document.querySelector<HTMLElement>('[data-navigation-scroll="documents"]');
     const outline = document.querySelector<HTMLElement>('[data-navigation-scroll="outline"]');
     const dialog = document.querySelector<HTMLDialogElement>("[data-navigation-drawer]");
     const openButton = document.querySelector<HTMLButtonElement>("[data-navigation-open]");
-
-    if (!navigation || !documents || !outline || !dialog || !openButton) {
-        return;
-    }
+    if (!navigation || !documents || !outline || !dialog || !openButton) return;
 
     const mobile = matchMedia(navigation_mobile_query);
-    const layout = {mobile: mobile.matches};
+    const wide = matchMedia(navigation_wide_query);
+    /**
+     * 스크롤 수명이 다른 세 배치 구분
+     */
+    const getLayout = (): NavigationLayout => {
+        if (mobile.matches) return "drawer";
+        return wide.matches ? "wide" : "desktop";
+    };
+    const layout = {current: getLayout()};
     const ports = [documents, outline];
-    const positions = new Map<string, Map<HTMLElement, number>>();
     const signature = [...navigation.querySelectorAll<HTMLAnchorElement>(".wg_shellNav__root a[href]")].map((link) => `${link.pathname}:${link.textContent}`).join("\n");
 
     /**
-     * 숨김·닫기보다 먼저 마지막 위치 보존 · 저장소 차단 시에도 드로어 재열기 유지
+     * 숨김·닫기보다 먼저 보존 · CSS 배치 전환으로 잘린 위치가 이전 배치를 덮지 않도록 함
      */
     const saveScroll = () => {
-        if (layout.mobile !== mobile.matches || (mobile.matches && !dialog.open)) {
-            return;
-        }
-
-        const key = `${navigation_scroll_storage_key}:${mobile.matches ? "drawer" : "desktop"}`;
-        positions.set(key, new Map(ports.map((port) => [port, port.scrollTop])));
-
-        try {
-            sessionStorage.setItem(key, JSON.stringify({navigation: signature, pathname: location.pathname, documents: documents.scrollTop, outline: outline.scrollTop}));
-        } catch {
-            // 현재 페이지 안의 위치는 메모리에 유지 · 저장 실패가 링크 이동을 막지 않음
-        }
+        if (layout.current !== getLayout() || (mobile.matches && !dialog.open)) return;
+        scroll.setState((state) => ({
+            positions: {
+                ...state.positions,
+                [layout.current]: {
+                    navigation: signature,
+                    pathname: location.pathname,
+                    documents: documents.scrollTop,
+                    outline: outline.scrollTop,
+                },
+            },
+        }));
     };
 
     /**
-     * 열기·반응형 DOM 이동 완료 후 화면별 위치 복원
+     * 모달 열기·반응형 이동 후 위치 복원 · 이전 자료는 첫 사용에서 새 스토어 형태로 보존
      */
     const restoreScroll = () => {
-        layout.mobile = mobile.matches;
-
-        if (mobile.matches && !dialog.open) {
-            return;
-        }
-
-        const key = `${navigation_scroll_storage_key}:${mobile.matches ? "drawer" : "desktop"}`;
-        const saved = positions.get(key);
-
-        if (saved === undefined) {
-            restoreNavigationScroll(key);
+        layout.current = getLayout();
+        if (mobile.matches && !dialog.open) return;
+        const position = scroll.getState().positions[layout.current];
+        if (position === undefined) {
+            documents.scrollTop = 0;
+            outline.scrollTop = 0;
+            restoreNavigationScroll({key: navigation_scroll_storage_key, version: navigation_storage_version, layout: layout.current, toState: toNavigationScrollState});
         } else {
-            for (const port of ports) {
-                const top = saved.get(port);
-
-                if (top !== undefined) {
-                    port.scrollTop = top;
-                }
-            }
+            documents.scrollTop = position.navigation === signature ? position.documents : 0;
+            outline.scrollTop = position.navigation === signature && position.pathname === location.pathname ? position.outline : 0;
         }
-
+        navigation.dataset.navigationLayout = layout.current;
         saveScroll();
+    };
+
+    /**
+     * BFCache의 이전 메모리 상태가 다음 문서에서 저장한 좌표를 덮지 않도록 새 자료부터 복원
+     */
+    const handlePageShow = (event: PageTransitionEvent) => {
+        if (event.persisted) {
+            scroll.persist.rehydrate();
+            restoreScroll();
+        }
     };
 
     for (const port of ports) {
         port.addEventListener("scroll", saveScroll, {passive: true});
+        port.addEventListener("click", saveScroll, {capture: true});
     }
-
-    // 캡처 단계에서 모바일의 기본 닫기보다 먼저 저장
-    navigation.addEventListener("click", saveScroll, {capture: true});
     dialog.addEventListener("cancel", saveScroll);
     dialog.querySelector("[data-navigation-close]")?.addEventListener("click", saveScroll, {capture: true});
     dialog.addEventListener("click", saveScroll, {capture: true});
     openButton.addEventListener("click", restoreScroll);
     mobile.addEventListener("change", restoreScroll);
+    wide.addEventListener("change", restoreScroll);
     addEventListener("pagehide", saveScroll);
-    saveScroll();
+    addEventListener("pageshow", handlePageShow);
+    // 첫 paint의 배치가 module 도착 전에 바뀐 경우에만 새 배치의 저장 좌표를 복원
+    if (!mobile.matches && navigation.dataset.navigationLayout !== layout.current) {
+        restoreScroll();
+    } else {
+        saveScroll();
+    }
 };
