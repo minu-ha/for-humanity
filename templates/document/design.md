@@ -39,7 +39,7 @@ order: 20
 |------------------|----------------------------------------------------------------------------------------|
 | `color`          | 바탕 · 글 · 선 · 강조 · 링크 · 상태                                                    |
 | `font`           | `sans` 본문·라벨 · `mono` 코드·흐름도 · `brand` 사이트 이름                      |
-| `font-size`      | `label` · `detail` · `dense` · `body` · `lead` · `part` · `section` · `title` |
+| `font-size`      | `group` · `label` · `detail` · `dense` · `body` · `lead` · `part` · `section` · `title` |
 | `font-weight`    | `mark` · `active` · `strong` · `title`                                                 |
 | `line-height`    | `title` · `heading` · `tight` · `code` · `body`                                        |
 | `letter-spacing` | `label` · `brand` · `heading` · `title`                                                |
@@ -59,14 +59,14 @@ order: 20
 | `code`                    | 코드 상자                              |
 | `text`                    | 본문                                   |
 | `text-strong`             | 제목·굵은 글·현재 section              |
-| `text-muted`              | 라벨·목차                    |
+| `text-muted`              | 라벨·클릭할 수 없는 탐색 묶음                    |
 | `anchor-highlight`        | 앵커로 도착한 제목의 형광펜 바탕       |
 | `backdrop`                | 모바일 탐색 모달의 배경 가림          |
 | `border` / `border-soft`  | 상자·목록·점선 / 표 구분선             |
 | `border-layout`          | 본문 양쪽 경계           |
 | `accent` / `accent-soft`  | 현재 section·코드 / 행 hover 바탕 |
 | `link`                    | 본문·탐색 링크·포커스                  |
-| `link-visited`            | 방문한 본문·문서 탐색 링크              |
+| `link-visited`            | 방문한 본문 링크              |
 | `link-hover`              | 본문 링크 hover                        |
 | `verified` / `unverified` | 확인 / 미확인 status badge             |
 
@@ -82,7 +82,8 @@ Pretendard 본문·라벨, JetBrains Mono 코드·흐름도, Architects Daughter
 
 | Size      | Use                                                 |
 |-----------|-----------------------------------------------------|
-| `label`   | TOC 라벨 · 문서·TOC 묶음 |
+| `group`   | 클릭할 수 없는 문서·TOC 묶음 · 11px |
+| `label`   | On this page 라벨 · 12px |
 | `detail`  | subsection 링크 · 코드 블록 · status badge          |
 | `dense`   | TOC · 표 · h5                           |
 | `body`    | 본문 · h4                 |
@@ -91,10 +92,12 @@ Pretendard 본문·라벨, JetBrains Mono 코드·흐름도, Architects Daughter
 | `section` | h2                                                  |
 | `title`   | h1 · 사이드바 사이트 이름                            |
 
-본문·목차 라벨·사이트 이름의 `mark`는 `400`, 현재 문서·TOC의 `active`는 `500`, 제목·강조 `strong`과 h1 `title`은 `600`.
+본문·묶음·사이트 이름의 `mark`는 `400`, 현재 문서·TOC의 `active`, On this page·제목·강조의 `strong`과 h1 `title`은 `600`.
+문서 링크는 링크색, 목차의 절·소제목 링크는 본문 글색. 클릭할 수 없는 묶음은 회색과 작은 크기로 구분.
 TOC는 작성한 제목을 그대로 표시하고 자동 번호를 붙이지 않음. 트리 가지는 제목 첫 줄의 가운데에 연결하며 여러 줄 제목에서도 같은 기준 유지.
 코드 합자 비활성: `>=`, `!=` 원문 구분.
-본문·사이드바·목차·코드는 `12px`, h1과 사이트 이름은 `16px`, h2는 `14px`, part는 `13px`.
+본문·사이드바 링크·목차·코드는 `12px`, 사이드바 묶음은 `11px`, h1과 사이트 이름은 `16px`, h2는 `14px`, part는 `13px`.
+작은 묶음의 행 상자는 기존 탐색 링크와 같은 `18px`로 유지해 트리 줄기와 가지 정렬 보존.
 본문 행간은 `1.7`(20.4px), 제목·탐색은 `1.5`, 코드 블록은 `1.65`. 작은 글자의 획이 붙지 않도록 본문·라벨·코드는 기본 자간 유지.
 h1 자간은 `-0.015em`, h2·part는 `-0.01em`. 작성자가 붙인 번호도 제목과 같은 글꼴·크기 사용.
 h1과 문서 묶음 라벨에는 `text-box: trim-start cap alphabetic` 적용. 크기가 달라도 대문자 위쪽 시작선을 맞추며, 미지원 브라우저는 기존 행 상자로 표시. [MDN text-box](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-box).

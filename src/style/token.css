@@ -55,7 +55,8 @@
     --app-font-mono: "JetBrains Mono Variable", var(--app-font-sans);
     --app-font-brand: "Architects Daughter", var(--app-font-sans);
 
-    /* 글자 크기 · 12px 기본과 역할별 제목 크기 */
+    /* 글자 크기 · 11px 비상호작용 묶음 · 12px 기본과 역할별 제목 크기 */
+    --app-font-size-group: 11px;
     --app-font-size-label: 12px;
     --app-font-size-detail: 12px;
     --app-font-size-dense: 12px;
@@ -65,9 +66,9 @@
     --app-font-size-section: 14px;
     --app-font-size-title: 16px;
 
-    /* 굵기 · 기본 400 · 현재 위치 500 · 제목·강조 600 */
+    /* 굵기 · 기본 400 · 현재 위치·제목·강조 600 */
     --app-font-weight-mark: 400;
-    --app-font-weight-active: 500;
+    --app-font-weight-active: 600;
     --app-font-weight-strong: 600;
     --app-font-weight-title: 600;
 

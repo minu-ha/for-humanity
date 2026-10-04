@@ -35,7 +35,7 @@ export const copy_home_missing = "문서 폴더에 README.md를 추가하면 이
 /**
  * 현재 문서 목차 라벨
  */
-export const copy_nav_toc_label = "Contents";
+export const copy_nav_toc_label = "On this page";
 
 /**
  * 대소문자만 다른 README 중복 오류

@@ -1,5 +1,5 @@
 /*
- * 읽는 순서의 문서 목록 · 중립색 1px 트리
+ * 읽는 순서의 문서 목록 · 작은 회색 묶음과 링크색 문서
  */
 .wg_shellNav__root {
     font-size: var(--app-font-size-dense);
@@ -15,6 +15,7 @@
 .wg_shellNav__group {
     margin: 0 0 4px;
     color: var(--app-color-text-muted);
-    font-size: var(--app-font-size-label);
+    font-size: var(--app-font-size-group);
+    line-height: calc(var(--app-font-size-dense) * var(--app-line-height-tight));
     text-box: trim-start cap alphabetic;
 }

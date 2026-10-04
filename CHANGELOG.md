@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Distinguish sidebar groups from document links and page headings, and rename the table of contents to "On this page".
 - Clarify trunk-based development, site deployment and package release policy.
 
 ## 0.2.1 — 2026-10-04
