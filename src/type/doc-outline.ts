@@ -1,5 +1,5 @@
-import type {DocSection} from "@/component/widget/prose/_type/doc-section";
 import type {DocHeading} from "@/type/doc-heading";
+import type {DocSection} from "@/type/doc-section";
 
 /**
  * 문서 렌더링 결과의 목차 입력

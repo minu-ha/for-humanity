@@ -1,5 +1,5 @@
+import type {DocBranch} from "@/component/widget/navigation/_type/doc-branch";
 import type {Doc} from "@/type/doc";
-import type {DocBranch} from "@/type/doc-branch";
 
 /**
  * 사이드바의 문서 묶음 · 같은 이름도 전체 경로로 구분

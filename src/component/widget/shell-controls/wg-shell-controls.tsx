@@ -5,19 +5,19 @@ import {WgNavigation, type WgNavigationProps} from "@/component/widget/navigatio
 import {heading_highlight_hold_ms} from "@/component/widget/prose/_constant/heading-highlight";
 import {asset_reload_path} from "@/constant/asset";
 import {revealHashTarget} from "@/util/dom/reveal-hash-target";
-import "./wg-shell-browser.css";
+import "./wg-shell-controls.css";
 
 /**
  * 셸의 서버·브라우저 공통 입력 · 탐색 계약을 그대로 사용하고 dev 갱신만 추가
  */
-export interface WgShellBrowserProps extends WgNavigationProps {
+export interface WgShellControlsProps extends WgNavigationProps {
     /**
      * 문서 변경 알림에 따른 dev 새로고침 활성화
      */
     reload: boolean;
 }
 
-export const WgShellBrowser = (props: WgShellBrowserProps) => {
+export const WgShellControls = (props: WgShellControlsProps) => {
     const headingRef = useRef<HTMLElement | null>(null);
     const timerRef = useRef(0);
     const arrivalRef = useRef<AbortController | null>(null);
@@ -161,7 +161,7 @@ export const WgShellBrowser = (props: WgShellBrowserProps) => {
             {/**
              * 별도 DOM 경계로 탐색 갱신이 커서 형제 사이에서 dialog를 재삽입하지 않게 함
              */}
-            <div className={clsx("wg_shellBrowser__navigation")}>
+            <div className={clsx("wg_shellControls__navigation")}>
                 <WgNavigation data={props.data} stores={props.stores} />
             </div>
             <WgCursorFace ready={props.stores !== undefined} />

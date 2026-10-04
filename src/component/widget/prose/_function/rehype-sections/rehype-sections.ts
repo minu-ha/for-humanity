@@ -1,7 +1,7 @@
 import type {Root} from "hast";
 import type {VFile} from "vfile";
 import {toSectionHeadings} from "@/component/widget/prose/_function/rehype-sections/_to-section-headings";
-import type {DocSection} from "@/component/widget/prose/_type/doc-section";
+import type {DocSection} from "@/type/doc-section";
 
 /**
  * h2·h3의 가름 메타데이터 수집 · 작성한 제목은 그대로 유지

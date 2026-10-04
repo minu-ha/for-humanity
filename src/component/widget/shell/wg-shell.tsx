@@ -2,10 +2,10 @@ import clsx from "clsx";
 import type {Child} from "hono/jsx";
 import {toNavigationData} from "@/component/widget/navigation/_function/to-navigation-data/to-navigation-data";
 import {toNavigationJson} from "@/component/widget/navigation/_function/to-navigation-json";
-import type {DocOutline} from "@/component/widget/navigation/_type/doc-outline";
-import {WgShellBrowser} from "@/component/widget/shell/wg-shell-browser";
+import {WgShellControls} from "@/component/widget/shell-controls/wg-shell-controls";
 import {asset_favicon_path} from "@/constant/asset";
 import type {Doc} from "@/type/doc";
+import type {DocOutline} from "@/type/doc-outline";
 import type {SiteAssets} from "@/type/site-assets";
 import type {SiteConfig} from "@/type/site-config";
 import "@/style/base.css";
@@ -52,7 +52,7 @@ export const WgShell = (props: WgShellProps) => {
     return (
         <html lang="ko">
             {/**
-             * 공통 자원 · 브라우저 동작은 WgShellBrowser의 생명주기에서 연결
+             * 공통 자원 · 브라우저 동작은 WgShellControls의 생명주기에서 연결
              */}
             <head>
                 <meta charSet="utf-8" />
@@ -74,7 +74,7 @@ export const WgShell = (props: WgShellProps) => {
                  * 서버·브라우저의 공통 셸 조립 · 본문 HTML은 마운트 범위에서 제외
                  */}
                 <div className={clsx("wg_shell__browserRoot")} data-shell-browser-root="" data-shell-reload={props.assets.reload ? "" : undefined}>
-                    <WgShellBrowser data={navigationData} reload={props.assets.reload} />
+                    <WgShellControls data={navigationData} reload={props.assets.reload} />
                 </div>
                 {/**
                  * 최소 탐색 자료와 단일 JSX 번들 · 본문 전 상태·스크롤 복원

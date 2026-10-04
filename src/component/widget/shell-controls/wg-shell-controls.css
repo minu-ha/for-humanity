@@ -1,4 +1,4 @@
-.wg_shellBrowser__navigation {
+.wg_shellControls__navigation {
     /* Hono 갱신의 DOM 경계 · 탐색 자식은 기존 body grid에 참여 */
     display: contents;
 }

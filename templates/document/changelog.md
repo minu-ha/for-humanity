@@ -12,6 +12,8 @@ order: 10
 
 ## Unreleased
 
+- Place document loading, Markdown processing and server setup under the CLI owner; keep document tree construction under navigation and share a standalone shell-controls widget through a lifecycle-managed Hono browser root.
+
 - Consolidate browser behavior into a single Hono JSX shell entry, with component-owned anchor effects, dev reload subscriptions and an independent cursor widget that cleans up events and timers.
 - Separate CLI and browser entry folders and move package build/test commands into repository scripts using the esbuild API.
 

@@ -1,7 +1,7 @@
-import {locale_doc_group} from "@/constant/locale";
-import {toDocBranches} from "@/content/to-doc-groups/_to-doc-branches";
+import {locale_doc_group} from "@/component/widget/navigation/_constant/locale";
+import {toDocBranches} from "@/component/widget/navigation/_function/to-doc-groups/_to-doc-branches";
+import type {DocGroup} from "@/component/widget/navigation/_type/doc-group";
 import type {Doc} from "@/type/doc";
-import type {DocGroup} from "@/type/doc-group";
 
 /**
  * 같은 부모의 문서를 다음 경로 단계로 묶는 재귀 입력

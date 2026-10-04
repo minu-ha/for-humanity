@@ -1,6 +1,6 @@
-import {locale_doc_name} from "@/constant/locale";
+import {locale_doc_name} from "@/component/widget/navigation/_constant/locale";
+import type {DocBranch} from "@/component/widget/navigation/_type/doc-branch";
 import type {Doc} from "@/type/doc";
-import type {DocBranch} from "@/type/doc-branch";
 
 /**
  * 검증된 부모 관계로 문서 가지를 재귀 구성 · 형제 순서와 URL 유지

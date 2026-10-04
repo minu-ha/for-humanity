@@ -1,6 +1,6 @@
 import {toNavigationDocument} from "@/component/widget/navigation/_function/to-navigation-data/_to-navigation-document";
+import type {DocGroup} from "@/component/widget/navigation/_type/doc-group";
 import type {NavigationGroup} from "@/component/widget/navigation/_type/navigation-data";
-import type {DocGroup} from "@/type/doc-group";
 
 /**
  * 전체 묶음 경로와 본문 없는 하위 가지 · 현재 문서의 경로만 트리선으로 연결

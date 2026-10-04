@@ -11,7 +11,7 @@ import {
     copy_error_doc_parent_missing,
     copy_error_frontmatter,
 } from "@/constant/copy";
-import type {Processor} from "@/content/create-processor";
+import type {Processor} from "@/entry/cli/_function/create-processor/create-processor";
 import type {Doc} from "@/type/doc";
 import {docDataSchema} from "@/type/doc-data";
 import type {DocFileData} from "@/type/doc-file-data";

@@ -1,6 +1,6 @@
-import type {DocSection} from "@/component/widget/prose/_type/doc-section";
 import type {DocData} from "@/type/doc-data";
 import type {DocHeading} from "@/type/doc-heading";
+import type {DocSection} from "@/type/doc-section";
 
 /**
  * 문서 처리 중간 계약 · read-docs의 머리말과 rehype의 제목·절 정보

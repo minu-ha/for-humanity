@@ -9,7 +9,7 @@ const outDir = "node_modules/.cache/for-humanity-tests";
 const entryPoints = [
     "src/util/async/to-change-queue.test.ts",
     "src/util/font/to-font-css.test.ts",
-    "src/content/read-docs.test.ts",
+    "src/entry/cli/cli.test.ts",
     "src/store/navigation/create-navigation-stores.test.ts",
 ];
 

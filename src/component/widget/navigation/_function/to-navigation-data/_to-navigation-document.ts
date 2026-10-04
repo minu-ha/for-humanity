@@ -1,5 +1,5 @@
+import type {DocBranch} from "@/component/widget/navigation/_type/doc-branch";
 import type {NavigationDoc} from "@/component/widget/navigation/_type/navigation-data";
-import type {DocBranch} from "@/type/doc-branch";
 
 /**
  * 本문 없는 문서 가지 · 재귀에서도 현재 페이지와 조상 경로만 유지

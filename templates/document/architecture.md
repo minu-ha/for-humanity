@@ -7,7 +7,7 @@ order: 10
 
 라이브러리 내부 구현을 수정하는 사람을 위한 참고 문서.
 Hono 라우팅과 정적 출력, Hono JSX 서버 렌더링, unified Markdown processor.
-브라우저 탐색은 `hono/jsx/dom` 컴포넌트, 본문 동작은 별도 DOM 스크립트가 소유합니다.
+브라우저 탐색·앵커·커서는 `hono/jsx/dom` 위젯이 소유하고, CLI가 문서를 읽어 본문 HTML을 준비합니다.
 
 ## Overview
 
@@ -21,8 +21,8 @@ flowchart LR
 | Entry       | Responsibility                               | Runtime       |
 | ----------- | -------------------------------------------- | ------------- |
 | `src/entry/cli/cli.ts`    | 인자 · 설정 · 문서 · 폰트 · 빌드·서버 시작   | Node.js       |
-| `app.tsx`   | 첫 화면과 문서 라우트 · Hono JSX → HTML         | Node.js       |
-| `dev.ts`    | 자원 · SSE 새로고침 · 페이지 앱 위임         | Node.js · dev |
+| `src/entry/cli/_function/create-app.tsx` | 첫 화면과 문서 라우트 · Hono JSX → HTML | Node.js |
+| `src/entry/cli/_function/create-dev-app.ts` | 자원 · SSE 새로고침 · 페이지 앱 위임 | Node.js · dev |
 | `src/entry/browser/browser.tsx` | 입력 검증 · 저장소 생성 · 브라우저 셸 마운트 | Browser · 동기 |
 
 ::part[Engine]
@@ -40,15 +40,31 @@ flowchart LR
 페이지 앱과 dev 앱의 분리는 SSG 대상과 개발 전용 자원의 경계.
 Hono 정규식 매개변수와 wildcard 라우트 혼합 시 Router 제약도 이 경계에서 격리.
 
+### Document processing lifetime
+
+`src/entry/cli/_function`이 파일 읽기·frontmatter 검증·Markdown 처리·서버 구성을 소유합니다. `create-processor`의 전용 플러그인은 그 함수 폴더의 `_` 파일에 둡니다. 본문의 표현을 만드는 플러그인은 `prose` 위젯이 계속 소유합니다.
+
+- `build`: Markdown을 한 번 처리하고 페이지 앱의 라우트를 정적 HTML로 출력합니다.
+- `dev` 시작: 전체 문서와 README를 읽어 본문 HTML을 메모리에 준비합니다.
+- `dev` 문서·자원 변경: 처리기를 새로 만들고 문서·자원 목록을 함께 교체한 뒤 브라우저에 갱신을 알립니다.
+- `dev` 페이지 요청: 준비한 본문을 Hono JSX 셸과 조립합니다. 요청마다 Markdown을 다시 읽거나 변환하지 않습니다.
+- `preview`와 배포 사이트: 이미 생성한 HTML·CSS·자원을 제공합니다.
+
 ### JSX and browser runtime
 
 페이지 JSX는 `hono/jsx`로 HTML을 만듭니다. `tsconfig.json`의 `jsxImportSource`가 `hono/jsx`이며 React 서버 렌더러와 React 의존성은 사용하지 않습니다. Markdown 본문은 unified가 HTML로 변환한 뒤 페이지의 `<article>` 안에 넣습니다.
 
 서버에서 JSX를 출력해도 `onClick` 함수가 HTML로 전송되지는 않습니다. 브라우저 상호작용에는 별도의 클라이언트 JavaScript가 필요합니다. Hono의 `hono/jsx/dom`은 브라우저에서 컴포넌트와 Hooks를 실행할 수 있습니다.
 
-셸은 같은 `WgShellBrowser`를 서버와 브라우저에서 조립합니다. 이 컴포넌트가 `WgNavigation`과 `WgCursorFace`를 함께 렌더링합니다. 서버 출력은 전체 펼침 링크를 제공하고, 브라우저의 `render`는 탐색·커서 영역만 저장 상태를 반영한 JSX로 교체합니다. 이후 접힘·드로어·현재 헤딩은 Hooks와 `onClick` 같은 JSX 이벤트로 갱신합니다. 본문은 클라이언트에서 다시 렌더링하지 않습니다.
+`WgShell`은 HTML 문서·자원·본문 배치를 소유합니다. `src/component/widget/shell-controls`의 `WgShellControls`는 서버와 브라우저가 공유하는 탐색·커서 조립과 앵커 수명을 소유합니다. `browser.tsx`는 DOM과 서버 자료를 찾고 검증·스토어 생성·최초 마운트를 실행하는 진입점입니다.
+
+서버는 `WgShellControls`로 전체 펼침 링크를 출력합니다. 브라우저 진입점은 `hono/jsx/dom/client`의 `createRoot(root).render(...)`로 같은 영역을 저장 상태가 반영된 JSX로 교체합니다. 이후 접힘·드로어·현재 헤딩은 Hooks와 JSX 이벤트로 갱신합니다. 컴포넌트 해제는 같은 root의 `unmount()`가 Effect 정리를 실행합니다. 본문은 마운트 범위 밖의 서버 HTML로 유지합니다.
 
 Hono 브라우저 렌더러로 탐색·커서 영역을 첫 paint 전에 마운트합니다. 본문은 서버가 만든 HTML을 그대로 표시하고 문서 링크는 전체 페이지를 이동합니다.
+
+현재 Hono의 `hydrateRoot`는 내부에서 `createRoot`와 `render`를 호출합니다. React의 hydration처럼 기존 DOM을 재사용하는 의미가 아닙니다. `createRoot`는 갱신·해제할 수 있는 root 수명을 제공하며 최초 DOM 교체 방식은 같습니다. [Hono 구현](https://github.com/honojs/hono/blob/main/src/jsx/dom/client.ts)
+
+JSX·Hooks로 동작을 소유하면서 정적 본문을 유지하는 현재 조건에서는 작은 제어 영역을 한 번 마운트하는 구성을 사용합니다. 최초 DOM 교체 비용은 남습니다. DOM 재사용을 요구한다면 실제 hydration을 제공하는 렌더러나 서버 DOM에 이벤트를 직접 연결하는 구성이 필요하며, 후자는 DOM과 상태 갱신을 함께 관리해야 합니다.
 
 참조: [Hono JSX](https://hono.dev/docs/guides/jsx), [Hono Client Components](https://hono.dev/docs/guides/jsx-dom).
 
@@ -69,7 +85,7 @@ Hono의 최초 레이아웃 효과는 아직 연결되지 않은 fragment에서 
 
 ### Shell and cursor lifecycle
 
-`WgShellBrowser`가 앵커 클릭·hash 변경·Details 공개·3초 헤딩 강조·초기 글꼴 보정과 dev SSE 연결을 소유합니다. 초기화는 본문 앞에서 실행되므로 본문 대상 조회는 `DOMContentLoaded` 이후로 미룹니다. 새로 생성한 `AbortController`로 DOM 이벤트를 묶고, 해제 시 이벤트·강조 타이머·도착 감시·SSE를 정리합니다. 글꼴 완료를 기다리는 비동기 보정도 해제된 인스턴스에서는 실행하지 않습니다.
+`WgShellControls`가 앵커 클릭·hash 변경·Details 공개·3초 헤딩 강조·초기 글꼴 보정과 dev SSE 연결을 소유합니다. 초기화는 본문 앞에서 실행되므로 본문 대상 조회는 `DOMContentLoaded` 이후로 미룹니다. 새로 생성한 `AbortController`로 DOM 이벤트를 묶고, 해제 시 이벤트·강조 타이머·도착 감시·SSE를 정리합니다. 글꼴 완료를 기다리는 비동기 보정도 해제된 인스턴스에서는 실행하지 않습니다.
 
 커서 장식은 `src/component/widget/cursor-face`의 `WgCursorFace`가 DOM ref·좌표·미디어 조건·전역 이벤트·예약 frame을 소유합니다. 마지막 좌표는 같은 탭의 페이지 이동에서만 이어받으며 터치·reduced motion에서는 숨깁니다. 본문과 커서 동작을 모듈 최상위에서 바로 실행하지 않고 컴포넌트의 Effect에서 설치·정리합니다.
 
@@ -113,15 +129,19 @@ gray-matter는 frontmatter를 분리·해석하는 다른 선택지. 여기서�
 | Concern                       | Owner                        |
 | ----------------------------- | ---------------------------- |
 | 첫 화면 · 문서 페이지         | `src/page`                   |
-| HTML 틀 · 본문 배치 · 앵커 수명 | `src/component/widget/shell` |
+| HTML 틀 · 자원 · 본문 배치    | `src/component/widget/shell` |
+| 공통 제어 UI · 앵커 수명      | `src/component/widget/shell-controls` |
 | 포인터 장식 · 좌표 · 입력 구독 | `src/component/widget/cursor-face` |
-| 문서 탐색 · 목차 · 드로어      | `src/component/widget/navigation` |
+| 문서 트리 계산 · 탐색 · 목차 · 드로어 | `src/component/widget/navigation` |
 | 탐색 저장 상태 · 검증         | `src/store/navigation`       |
 | 본문 · remark·rehype 플러그인 | `src/component/widget/prose` |
-| processor · 문서 읽기         | `src/content`                |
+| processor · 문서 읽기 · 서버 구성 | `src/entry/cli/_function` |
+| 최초 브라우저 마운트          | `src/entry/browser` |
 | 상수 · 문구 · 스키마          | `src/constant` · `src/type`  |
 | 색 · 폰트 · 간격              | `src/style/token.css`        |
 | 격자 렌더러 · 폰트 변환       | `src/util`                   |
+
+문서 렌더 결과의 공통 계약(`DocContent`, `DocOutline`, `DocSection`)은 `src/type`에 둡니다. CLI와 본문·탐색 위젯이 같은 계약을 소비하며 루트 타입이 위젯 내부 타입에 의존하지 않습니다. 문서 트리 표현 계약(`DocGroup`, `DocBranch`)은 탐색 위젯의 `_type`에 둡니다.
 
 ## Package output
 

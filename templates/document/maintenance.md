@@ -53,6 +53,8 @@ Biome와 Grit의 커스텀 진단 메시지는 영어.
 
 의미·소유권·주석·접근성은 수동 리뷰 대상. 린트만으로 컨벤션 충족 판정 불가.
 
+CLI의 파일 읽기·Markdown 조립·서버 구성은 `src/entry/cli`가 소유합니다. 문서 그룹과 부모 트리 계산은 `navigation` 위젯, 서버와 브라우저가 공유하는 제어 UI는 `shell-controls` 위젯이 소유합니다. `src/entry/browser`는 자료 검증·스토어 생성·root 마운트를 연결하며 위젯의 생명주기를 복제하지 않습니다. 실행 시점과 폴더 경계는 [Architecture](architecture.md#document-processing-lifetime)를 참고합니다.
+
 ### Grid renderer
 
 `src/util/mermaid/render-flow.js`: blueprint 계열과 공유한 JS 구현.

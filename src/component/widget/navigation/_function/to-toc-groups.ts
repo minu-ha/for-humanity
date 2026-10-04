@@ -1,7 +1,7 @@
 import {takeWhile} from "es-toolkit/array";
-import type {DocOutline} from "@/component/widget/navigation/_type/doc-outline";
 import type {TocGroup, TocSection} from "@/component/widget/navigation/_type/toc-group";
 import {section_heading_depth} from "@/component/widget/prose/_constant/section";
+import type {DocOutline} from "@/type/doc-outline";
 
 /**
  * h2별 h3 수집 · 가름 시작 절에서 목차 묶음 분리

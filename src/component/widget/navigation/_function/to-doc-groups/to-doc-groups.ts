@@ -1,4 +1,4 @@
-import {toDocGroupBranches} from "@/content/to-doc-groups/_to-doc-group-branches";
+import {toDocGroupBranches} from "@/component/widget/navigation/_function/to-doc-groups/_to-doc-group-branches";
 import type {Doc} from "@/type/doc";
 import type {SiteConfig} from "@/type/site-config";
 

@@ -34,22 +34,20 @@ try {
     const lifecycle = await build({
         stdin: {
             contents: `
-                import {useState} from 'hono/jsx';
-                import {flushSync, render} from 'hono/jsx/dom';
-                import {WgShellBrowser} from '@/component/widget/shell/wg-shell-browser';
+                import {flushSync} from 'hono/jsx/dom';
+                import {createRoot} from 'hono/jsx/dom/client';
+                import {WgShellControls} from '@/component/widget/shell-controls/wg-shell-controls';
                 import {createNavigationStores} from '@/store/navigation/create-navigation-stores';
                 const root = document.querySelector('[data-shell-browser-root]');
                 const data = JSON.parse(document.getElementById('fh-navigation-data').textContent);
                 const stores = createNavigationStores({local: () => localStorage, session: () => sessionStorage});
-                const Fixture = () => {
-                    const [mounted, setMounted] = useState(false);
-                    window.shellFixture = {
-                        mount: () => flushSync(() => setMounted(true)),
-                        unmount: () => flushSync(() => setMounted(false)),
-                    };
-                    return mounted ? <WgShellBrowser data={data} stores={stores} reload={true} /> : null;
+                window.shellFixture = {
+                    mount: () => {
+                        const shell = createRoot(root);
+                        shell.render(<WgShellControls data={data} stores={stores} reload={true} />);
+                        window.shellFixture.unmount = () => flushSync(() => shell.unmount());
+                    },
                 };
-                render(<Fixture />, root);
             `,
             loader: "tsx",
             resolveDir: process.cwd(),

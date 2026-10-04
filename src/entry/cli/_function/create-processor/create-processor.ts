@@ -19,9 +19,9 @@ import {remarkParts} from "@/component/widget/prose/_function/remark-parts";
 import {remarkStatus} from "@/component/widget/prose/_function/remark-status";
 import {remarkSwatch} from "@/component/widget/prose/_function/remark-swatch";
 import {remarkUnknownDirectives} from "@/component/widget/prose/_function/remark-unknown-directives";
-import {rehypeAssets} from "@/content/rehype-assets";
-import {rehypeHeadingIds} from "@/content/rehype-heading-ids";
-import {remarkReport} from "@/content/remark-report";
+import {rehypeAssets} from "@/entry/cli/_function/create-processor/_rehype-assets";
+import {rehypeHeadingIds} from "@/entry/cli/_function/create-processor/_rehype-heading-ids";
+import {remarkReport} from "@/entry/cli/_function/create-processor/_remark-report";
 import type {SiteConfig} from "@/type/site-config";
 
 /**

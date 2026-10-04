@@ -1,9 +1,9 @@
+import {toDocGroups} from "@/component/widget/navigation/_function/to-doc-groups/to-doc-groups";
 import {toNavigationGroup} from "@/component/widget/navigation/_function/to-navigation-data/_to-navigation-group";
 import {toTocGroups} from "@/component/widget/navigation/_function/to-toc-groups";
-import type {DocOutline} from "@/component/widget/navigation/_type/doc-outline";
 import type {NavigationData} from "@/component/widget/navigation/_type/navigation-data";
-import {toDocGroups} from "@/content/to-doc-groups/to-doc-groups";
 import type {Doc} from "@/type/doc";
+import type {DocOutline} from "@/type/doc-outline";
 import type {SiteConfig} from "@/type/site-config";
 
 /**
