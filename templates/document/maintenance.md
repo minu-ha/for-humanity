@@ -61,6 +61,8 @@ Biome 제외 이유: 기존 렌더링 알고리즘과 diff 대조.
 
 ### Repository utilities
 
+루트 `script/`는 패키지 명령의 실행 절차를 관리합니다. `build-kit.mjs`는 esbuild API로 CLI·CSS·브라우저 번들을 생성하고, `test.mjs`는 TypeScript 테스트를 컴파일한 뒤 Node 테스트 러너를 실행합니다. `package.json`에는 진입 명령만 두며 두 스크립트 모두 npm 실행용 의존성이 아닙니다.
+
 루트 `util/`은 저장소 개발·문서 동기화·배포 검증용. npm 패키지에는 포함하지 않음.
 
 | Script | Purpose |
