@@ -10,6 +10,11 @@ order: 10
 공식 버전별 변경 기록. npm 패키지에 포함되는 변경 기록과 같은 원본 사용.
 공개 버전과 패키지 파일은 [Releases](releases.md) · [GitHub Releases](https://github.com/minu-ha/for-humanity/releases)에서 확인.
 
+## 0.2.1 — 2026-10-04
+
+- Fingerprint stylesheet and browser-script URLs so new pages cannot reuse assets cached from an older deployment.
+- Cache fingerprinted CSS, scripts and fonts with immutable headers on Cloudflare Pages.
+
 ## 0.2.0 — 2026-10-04
 
 - Support nested navigation with `group` name arrays while keeping single-name groups compatible.

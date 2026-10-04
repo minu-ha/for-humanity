@@ -4,7 +4,7 @@ import {toTocGroups} from "@/component/widget/shell/_function/to-toc-groups";
 import type {DocOutline} from "@/component/widget/shell/_type/doc-outline";
 import {WgShellNav} from "@/component/widget/shell/_wg-shell-nav";
 import {WgShellToc} from "@/component/widget/shell/_wg-shell-toc";
-import {asset_client_path, asset_favicon_path, asset_reload_path, asset_style_path} from "@/constant/asset";
+import {asset_favicon_path, asset_reload_path} from "@/constant/asset";
 import {copy_nav_close, copy_nav_open, copy_nav_title} from "@/constant/copy";
 import type {Doc} from "@/type/doc";
 import type {SiteAssets} from "@/type/site-assets";
@@ -71,7 +71,7 @@ export const WgShell = (props: WgShellProps) => {
                     <link key={href} rel="preload" href={href} as="font" type="font/woff2" crossOrigin="" />
                 ))}
                 <script dangerouslySetInnerHTML={{__html: 'document.documentElement.style.scrollBehavior="auto"'}} />
-                <link rel="stylesheet" href={asset_style_path} />
+                <link rel="stylesheet" href={props.assets.stylePath} />
                 {props.assets.reload && <script dangerouslySetInnerHTML={{__html: reloadScript}} />}
             </head>
             {/**
@@ -140,7 +140,7 @@ export const WgShell = (props: WgShellProps) => {
                     <div className={clsx("wg_shell__drawerContent")} data-navigation-content="" />
                 </dialog>
                 <img className={clsx("wg_shell__cursorFace")} src={asset_favicon_path} width="24" height="24" alt="" aria-hidden="true" draggable={false} data-cursor-face="" />
-                <script type="module" src={asset_client_path} />
+                <script type="module" src={props.assets.clientPath} />
             </body>
         </html>
     );

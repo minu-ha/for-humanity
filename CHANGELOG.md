@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1 — 2026-10-04
+
+- Fingerprint stylesheet and browser-script URLs so new pages cannot reuse assets cached from an older deployment.
+- Cache fingerprinted CSS, scripts and fonts with immutable headers on Cloudflare Pages.
+
 ## 0.2.0 — 2026-10-04
 
 - Support nested navigation with `group` name arrays while keeping single-name groups compatible.

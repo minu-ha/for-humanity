@@ -156,11 +156,11 @@ GitHub-hosted runner, Node.js 24와 npm 12.2.0으로 배포. 패키지 사용자
 4. 변경 파일만 커밋하고 `main`에 push. CI와 Pages 결과 확인.
 5. 해당 커밋에 같은 버전의 태그를 만들고 push.
 
-다음 공개 버전이 `0.2.1`인 경우:
+다음 공개 버전이 `0.2.2`인 경우:
 
 ```sh
-git tag -a v0.2.1 -m "Release v0.2.1"
-git push origin v0.2.1
+git tag -a v0.2.2 -m "Release v0.2.2"
+git push origin v0.2.2
 ```
 
 태그 push 후 Release Actions 실행 결과 확인. npm 배포가 성공한 뒤 GitHub Release 생성.

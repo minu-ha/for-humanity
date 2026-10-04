@@ -31,7 +31,14 @@ try {
     execFileSync(process.execPath, [join(packageRoot, "dist/cli.js"), "build", "."], {cwd: consumer, stdio: "inherit"});
 
     const output = join(consumer, "dist");
-    assert.match(await readFile(join(output, "index.html"), "utf8"), /Package home/);
+    const home = await readFile(join(output, "index.html"), "utf8");
+    assert.match(home, /Package home/);
+    const stylePath = home.match(/rel="stylesheet" href="([^"]+)"/)[1];
+    const clientPath = home.match(/type="module" src="([^"]+)"/)[1];
+    assert.match(stylePath, /^\/_fh\/style\.[a-f0-9]+\.css$/);
+    assert.match(clientPath, /^\/_fh\/client\.[a-f0-9]+\.js$/);
+    assert.equal(await readFile(join(output, stylePath), "utf8"), await readFile(join(packageRoot, "dist/cli.css"), "utf8"));
+    assert.equal(await readFile(join(output, clientPath), "utf8"), await readFile(join(packageRoot, "dist/client.js"), "utf8"));
     assert.match(await readFile(join(output, "guide/index.html"), "utf8"), /<svg/);
     const nested = await readFile(join(output, "guide/agents/index.html"), "utf8");
     assert.match(nested, /Example<\/span><ul\b/);
@@ -48,7 +55,14 @@ try {
             `Missing ${extension} assets`,
         );
     }
-    console.log(`Installed ${pack.name}@${pack.version}: nested navigation, pages, Mermaid, assets and README passed`);
+    await writeFile(join(packageRoot, "dist/client.js"), `${await readFile(join(packageRoot, "dist/client.js"), "utf8")}\n/* changed package bytes */\n`);
+    execFileSync(process.execPath, [join(packageRoot, "dist/cli.js"), "build", "."], {cwd: consumer, stdio: "inherit"});
+    const rebuilt = await readFile(join(output, "index.html"), "utf8");
+    assert.equal(rebuilt.match(/rel="stylesheet" href="([^"]+)"/)[1], stylePath);
+    assert.notEqual(rebuilt.match(/type="module" src="([^"]+)"/)[1], clientPath);
+    const rebuiltEntries = await readdir(output, {recursive: true});
+    assert.ok(!rebuiltEntries.includes(clientPath.slice(1)));
+    console.log(`Installed ${pack.name}@${pack.version}: fingerprinted assets, nested navigation, pages, Mermaid and README passed`);
 } finally {
     await rm(consumer, {recursive: true, force: true});
 }

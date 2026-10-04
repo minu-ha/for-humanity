@@ -3,6 +3,14 @@
  */
 export interface SiteAssets {
     /**
+     * 내용 지문으로 구분한 스타일시트 URL
+     */
+    stylePath: string;
+    /**
+     * 내용 지문으로 구분한 브라우저 스크립트 URL
+     */
+    clientPath: string;
+    /**
      * 내장 @font-face · head의 style 내용
      */
     fontCss: string;

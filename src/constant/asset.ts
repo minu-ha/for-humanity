@@ -8,12 +8,12 @@
 export const asset_dir = "_fh";
 
 /**
- * esbuild의 컴포넌트 CSS 묶음
+ * 내용 지문을 붙일 esbuild CSS의 기본 URL
  */
 export const asset_style_path = `/${asset_dir}/style.css`;
 
 /**
- * 테마·목차·hash 보정 브라우저 스크립트
+ * 내용 지문을 붙일 테마·목차·hash 보정 스크립트의 기본 URL
  */
 export const asset_client_path = `/${asset_dir}/client.js`;
 

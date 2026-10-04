@@ -25,6 +25,7 @@ import {readHome} from "@/content/read-home";
 import {createDevApp} from "@/dev";
 import {siteConfigSchema} from "@/type/site-config";
 import {toErrorMessage} from "@/util/error/to-error-message";
+import {toAssetPath} from "@/util/file/to-asset-path";
 import {toFontCss} from "@/util/font/to-font-css";
 
 const commands = ["dev", "build", "preview"];
@@ -82,9 +83,11 @@ const main = async () => {
     }
 
     const fontCss = [sans.css, mono.css, brand.css].join("\n");
+    const stylePath = toAssetPath({path: asset_style_path, file: join(kitRoot, "dist/cli.css")});
+    const clientPath = toAssetPath({path: asset_client_path, file: join(kitRoot, "dist/client.js")});
     const files = new Map([
-        [asset_style_path, join(kitRoot, "dist/cli.css")],
-        [asset_client_path, join(kitRoot, "dist/client.js")],
+        [stylePath, join(kitRoot, "dist/cli.css")],
+        [clientPath, join(kitRoot, "dist/client.js")],
         [asset_favicon_path, join(kitRoot, "src/asset/favicon.svg")],
         ...sans.files,
         ...mono.files,
@@ -96,7 +99,7 @@ const main = async () => {
     const app = createApp({
         site: siteConfig,
         store,
-        assets: {fontCss, preload: [...brand.files.keys(), sansPreload[0], ...mono.files.keys()], reload: command === "dev"},
+        assets: {stylePath, clientPath, fontCss, preload: [...brand.files.keys(), sansPreload[0], ...mono.files.keys()], reload: command === "dev"},
     });
 
     if (command === "build") {

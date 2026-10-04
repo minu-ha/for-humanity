@@ -6,12 +6,24 @@ import {test} from "node:test";
 import {renderToStaticMarkup} from "react-dom/server";
 import {createApp} from "@/app";
 import {WgShellNav} from "@/component/widget/shell/_wg-shell-nav";
+import {asset_client_path, asset_style_path} from "@/constant/asset";
 import {createProcessor} from "@/content/create-processor";
 import {readDocs} from "@/content/read-docs";
 import {readHome} from "@/content/read-home";
 import {toDocGroups} from "@/content/to-doc-groups/to-doc-groups";
 import {docDataSchema} from "@/type/doc-data";
 import {siteConfigSchema} from "@/type/site-config";
+
+test("page resource URLs use the supplied content fingerprints instead of fixed cache keys", async () => {
+    const site = siteConfigSchema.parse({});
+    const assets = {fontCss: "", preload: [], reload: false, stylePath: "/_fh/style.abc123.css", clientPath: "/_fh/client.def456.js"};
+    const app = createApp({site, store: {docs: []}, assets});
+    const html = await (await app.request("/")).text();
+
+    assert.match(html, /rel="stylesheet" href="\/_fh\/style\.abc123\.css"/);
+    assert.match(html, /type="module" src="\/_fh\/client\.def456\.js"/);
+    assert.doesNotMatch(html, /(?:href|src)="\/_fh\/(?:style\.css|client\.js)"/);
+});
 
 test("documents with the same initial retain distinct URLs", async (t) => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-docs-"));
@@ -201,7 +213,7 @@ test("a plain root README renders at home and relative home links resolve from n
     ]);
 
     const [docs, home] = await Promise.all([readDocs({root, processor}), readHome({root, processor})]);
-    const app = createApp({site, store: {docs, home}, assets: {fontCss: "", preload: [], reload: false}});
+    const app = createApp({site, store: {docs, home}, assets: {stylePath: asset_style_path, clientPath: asset_client_path, fontCss: "", preload: [], reload: false}});
     const response = await app.request("/");
     const html = await response.text();
 
@@ -230,7 +242,7 @@ test("a missing README provides a creation hint without generated overview cards
 
     t.after(() => rm(root, {recursive: true, force: true}));
     const home = await readHome({root, processor: createProcessor({site, root})});
-    const app = createApp({site, store: {docs: [], home}, assets: {fontCss: "", preload: [], reload: false}});
+    const app = createApp({site, store: {docs: [], home}, assets: {stylePath: asset_style_path, clientPath: asset_client_path, fontCss: "", preload: [], reload: false}});
     const html = await (await app.request("/")).text();
 
     assert.equal(home, undefined);
@@ -309,7 +321,7 @@ test("headings and contents preserve authored text without automatic numbering",
     );
 
     const docs = await readDocs({root, processor: createProcessor({site, root})});
-    const app = createApp({site, store: {docs}, assets: {fontCss: "", preload: [], reload: false}});
+    const app = createApp({site, store: {docs}, assets: {stylePath: asset_style_path, clientPath: asset_client_path, fontCss: "", preload: [], reload: false}});
     const html = await (await app.request("/guide/")).text();
 
     assert.match(html, /<h2[^>]*id="overview"[^>]*><span class="wg_prose__headingText">Overview<\/span><\/h2>/);
