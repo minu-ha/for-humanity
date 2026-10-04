@@ -22,7 +22,8 @@ flowchart LR
 | ----------- | -------------------------------------------- | ------------- |
 | `src/entry/cli/cli.ts`    | 인자 · 설정 · 문서 · 폰트 · 빌드·서버 시작   | Node.js       |
 | `src/entry/cli/_function/create-app.tsx` | 첫 화면과 문서 라우트 · Hono JSX → HTML | Node.js |
-| `src/entry/cli/_function/create-dev-app.ts` | 자원 · SSE 새로고침 · 페이지 앱 위임 | Node.js · dev |
+| `src/entry/cli/_function/create-dev-app.ts` | 자원 · SSE 새로고침 · 페이지와 크롤러 앱 위임 | Node.js · dev |
+| `src/entry/cli/_function/to-crawling-app.ts` | 공개 URL을 설정한 사이트의 robots.txt · 사이트맵 응답 | Node.js |
 | `src/entry/browser/browser.tsx` | 입력 검증 · 저장소 생성 · 브라우저 셸 마운트 | Browser · 동기 |
 
 ::part[Engine]
@@ -32,13 +33,15 @@ flowchart LR
 페이지 앱의 라우트: `/`, `/:slug{.+}/`. 문서 id에는 하위 폴더 포함.
 `/`는 문서 폴더의 `README.md`. 일반 문서 목록과 별도로 읽고, 개발 중 함께 갱신.
 
+공개 `url`이 설정됐으면 CLI의 `toCrawlingApp`에서 `/robots.txt`·`/sitemap.xml` 응답을 만듭니다. 크롤러 앱은 페이지 앱과 별도로 유지합니다. dev 앱은 두 파일 요청만 크롤러 앱에 위임하고, build는 각 앱을 `toSSG`로 출력합니다. 사이트맵은 같은 문서 store의 URL만 읽습니다. URL 미지정 프로젝트에는 크롤러 앱과 생성 파일이 없습니다.
+
 - Hono JSX: `c.html`에 컴포넌트를 전달해 HTML 문서 생성
 - build: Hono `ssgParams`와 `toSSG`로 같은 라우트 출력
 - dev: `@hono/node-server`로 같은 페이지 앱 제공
 - preview: `serveStatic`으로 빌드 결과 제공
 
 페이지 앱과 dev 앱의 분리는 SSG 대상과 개발 전용 자원의 경계.
-Hono 정규식 매개변수와 wildcard 라우트 혼합 시 Router 제약도 이 경계에서 격리.
+Hono의 고정 파일·wildcard 경로를 중첩 문서의 정규식 매개변수와 합치면 기본 라우터가 바뀌면서 문서 요청이 누락될 수 있으므로, 페이지 라우팅과 파일 응답도 이 경계에서 격리합니다.
 
 ### Document processing lifetime
 

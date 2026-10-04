@@ -5,7 +5,7 @@ group: Guide
 order: 30
 ---
 
-문서 폴더의 `for-humanity.config.mjs`. 제목, 소개, 문서 묶음 순서, status badge 설정.
+문서 폴더의 `for-humanity.config.mjs`. 제목, 소개, 공개 URL, 문서 묶음 순서, status badge 설정.
 설정 파일과 각 항목 모두 선택. 생략한 값은 기본값 적용.
 
 ## Overview
@@ -32,6 +32,9 @@ export default {
 | ------------- | ----------------------- | -------------- |
 | `title`       | 사이드바 이름 · 탭 제목 | `for humanity` |
 | `description` | HTML 설명 메타데이터     | 생략           |
+| `url`         | 공개 HTTP(S) 루트 URL · robots.txt와 sitemap.xml 생성 · Unreleased | 생략 · 생성하지 않음 |
+
+`url`은 npm `0.5.0` 이후의 미공개 기능입니다. 설정·출력·Cloudflare 정책은 [Crawling](crawling.md).
 
 설정을 생략하면 기본 이름 `for humanity`.
 `title`을 지정하면 탭·사이드바에 같은 사이트 이름 적용. 홈의 제목과 소개는 `README.md`에서 작성.

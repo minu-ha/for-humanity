@@ -5,6 +5,7 @@ import {type Context, Hono} from "hono";
 import {streamSSE} from "hono/streaming";
 import {asset_content_type_default, asset_content_types, asset_dir, asset_favicon_path, asset_reload_path} from "@/constant/asset";
 import {font_cache_control} from "@/constant/font";
+import {crawling_robots_path, crawling_sitemap_path} from "@/entry/cli/_constant/crawling";
 
 /**
  * 개발 서버 입력 계약
@@ -14,6 +15,10 @@ export interface DevOptions {
      * 정적 자원 외 요청을 처리할 페이지 앱
      */
     pages: Hono;
+    /**
+     * 공개 URL을 설정한 프로젝트의 크롤러 파일 앱
+     */
+    crawling?: Hono;
     /**
      * 자원 URL → 파일 경로 · 정적 빌드와 동일 목록
      */
@@ -25,7 +30,7 @@ export interface DevOptions {
 }
 
 /**
- * 개발 전용 자원·SSE 라우트 · 나머지 요청은 페이지 앱에 위임
+ * 개발 전용 자원·SSE와 선택적 크롤러 응답 · 나머지 요청은 페이지 앱에 위임
  * 정적 빌드의 페이지 라우트와 분리
  */
 export const createDevApp = (options: DevOptions) => {
@@ -73,6 +78,9 @@ export const createDevApp = (options: DevOptions) => {
     );
     app.get(`/${asset_dir}/*`, handleAsset);
     app.get(asset_favicon_path, handleAsset);
+    if (options.crawling !== undefined) {
+        app.on("GET", [crawling_robots_path, crawling_sitemap_path], (c) => options.crawling?.fetch(c.req.raw, c.env) ?? c.notFound());
+    }
     app.all("/*", (c) => options.pages.fetch(c.req.raw, c.env));
 
     return app;

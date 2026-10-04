@@ -19,11 +19,13 @@ import {copy_error_config, copy_error_font_preload, copy_error_prefix, copy_erro
 import {font_brand_css, font_cache_control, font_mono_css, font_sans_css, font_sans_preload_file} from "@/constant/font";
 import {site_config_absent} from "@/constant/site";
 import {cli_config_file_name, cli_default_command, cli_default_docs_dir, cli_dev_port, cli_reload_delay_ms} from "@/entry/cli/_constant/cli";
+import {crawling_reserved_roots} from "@/entry/cli/_constant/crawling";
 import {createApp} from "@/entry/cli/_function/create-app";
 import {createDevApp} from "@/entry/cli/_function/create-dev-app";
 import {createProcessor} from "@/entry/cli/_function/create-processor/create-processor";
 import {readDocs} from "@/entry/cli/_function/read-docs";
 import {readHome} from "@/entry/cli/_function/read-home";
+import {toCrawlingApp} from "@/entry/cli/_function/to-crawling-app";
 import {siteConfigSchema} from "@/type/site-config";
 import {toChangeQueue} from "@/util/async/to-change-queue";
 import {toErrorMessage} from "@/util/error/to-error-message";
@@ -96,8 +98,12 @@ const main = async () => {
     ]);
     const files = new Map(kitFiles);
     const processor = createProcessor({site: siteConfig, root: docsRoot, files});
-    const [docs, home] = await Promise.all([readDocs({root: docsRoot, processor}), readHome({root: docsRoot, processor})]);
+    const [docs, home] = await Promise.all([
+        readDocs({root: docsRoot, processor, reserved: siteConfig.url === undefined ? undefined : crawling_reserved_roots}),
+        readHome({root: docsRoot, processor}),
+    ]);
     const store = {docs, home};
+    const crawling = siteConfig.url === undefined ? undefined : toCrawlingApp({url: siteConfig.url, store});
     const app = createApp({
         site: siteConfig,
         store,
@@ -114,12 +120,20 @@ const main = async () => {
             throw result.error;
         }
 
+        const crawlerResult = crawling === undefined ? undefined : await toSSG(crawling, {writeFile, mkdir}, {dir: outDir});
+
+        if (crawlerResult?.success === false) {
+            throw crawlerResult.error;
+        }
+
         for (const [url, file] of files) {
             await mkdir(dirname(join(outDir, url)), {recursive: true});
             await copyFile(file, join(outDir, url));
         }
 
-        console.log(`${result.files.length} pages, ${files.size} assets → ${relative(process.cwd(), outDir)}`);
+        console.log(
+            `${crawlerResult === undefined ? result.files.length : result.files.length + crawlerResult.files.length} files, ${files.size} assets → ${relative(process.cwd(), outDir)}`,
+        );
 
         return;
     }
@@ -127,7 +141,7 @@ const main = async () => {
     const reload = new EventEmitter();
     let generation = 0;
 
-    serve({fetch: createDevApp({pages: app, files, reload}).fetch, port: cli_dev_port}, (info) => console.log(`http://localhost:${info.port}/`));
+    serve({fetch: createDevApp({pages: app, crawling, files, reload}).fetch, port: cli_dev_port}, (info) => console.log(`http://localhost:${info.port}/`));
 
     /**
      * 갱신은 하나씩 실행 · 연속 저장 합치기 · 최신 변경만 적용
@@ -139,7 +153,10 @@ const main = async () => {
                 const currentGeneration = generation;
                 const nextFiles = new Map(kitFiles);
                 const nextProcessor = createProcessor({site: siteConfig, root: docsRoot, files: nextFiles});
-                const [docs, home] = await Promise.all([readDocs({root: docsRoot, processor: nextProcessor}), readHome({root: docsRoot, processor: nextProcessor})]);
+                const [docs, home] = await Promise.all([
+                    readDocs({root: docsRoot, processor: nextProcessor, reserved: siteConfig.url === undefined ? undefined : crawling_reserved_roots}),
+                    readHome({root: docsRoot, processor: nextProcessor}),
+                ]);
 
                 if (currentGeneration !== generation) {
                     return;

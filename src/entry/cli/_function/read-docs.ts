@@ -17,11 +17,29 @@ import {docDataSchema} from "@/type/doc-data";
 import type {DocFileData} from "@/type/doc-file-data";
 
 /**
+ * 문서 폴더를 읽고 명령별 출력 경로와 함께 검증하는 입력
+ */
+export interface ReadDocsParams {
+    /**
+     * CLI에 넘긴 문서 폴더의 절대 경로
+     */
+    root: string;
+    /**
+     * 설정·자원 목록을 연결한 Markdown 처리기
+     */
+    processor: Processor;
+    /**
+     * 명령이 생성할 파일과 충돌하는 첫 경로 조각 · 생략 시 추가 예약 없음
+     */
+    reserved?: readonly string[];
+}
+
+/**
  * Markdown 수집과 렌더링 · 루트 README는 홈, AGENTS·CLAUDE는 작성 지침으로 분리
  * 문서 목록에서 루트 안내 파일·node_modules·dist 제외
  * 머리말·문서 식별자 중복·플러그인 오류 시 실패
  */
-export const readDocs = async (options: {root: string; processor: Processor}): Promise<Doc[]> => {
+export const readDocs = async (options: ReadDocsParams): Promise<Doc[]> => {
     const paths = (await readdir(options.root, {recursive: true})).filter(
         (path) => /\.mdx?$/i.test(path) && !/^(readme|agents|claude)\.md$/i.test(path) && !path.split(sep).includes("node_modules") && !path.startsWith(`dist${sep}`),
     );
@@ -39,6 +57,7 @@ export const readDocs = async (options: {root: string; processor: Processor}): P
                 segments.some((segment) => segment === "" || segment === "." || segment === ".." || segment === "index.html") ||
                 /[#?%*:\\]/.test(id) ||
                 /[\p{Cc}]/u.test(id) ||
+                options.reserved?.includes(segments[0]) === true ||
                 segments[0] === asset_dir ||
                 segments[0] === asset_favicon_path.slice(1)
             ) {

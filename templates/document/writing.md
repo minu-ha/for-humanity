@@ -76,6 +76,7 @@ README가 없으면 추가 안내를 표시. 사이드바의 사이트 이름을
 YAML 영역은 `remark-frontmatter`, 값은 `yaml`, 필드 검증은 Zod로 처리.
 빈 경로와 예약 문자 `#`, `?`, `%`, `*`, `:`, `\`는 사용 불가. 첫 경로 `/_fh/`는 패키지 자원 전용.
 `.`·`..`·`index.html` 경로 조각, 제어문자, 첫 경로 `/favicon.svg/`는 정적 출력과 충돌하므로 사용 불가.
+공개 `url`을 지정하면 첫 경로 `robots.txt`·`sitemap.xml`도 생성 파일 전용으로 예약됩니다. [Crawling](crawling.md).
 
 ### Navigation groups
 

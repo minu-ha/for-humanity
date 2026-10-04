@@ -14,6 +14,8 @@ Pages 프로젝트는 `for-humanity`, 기본 주소는 [for-humanity-1i2.pages.d
 
 ## Overview
 
+공개 사이트의 `robots.txt`와 `sitemap.xml`을 생성하려면 문서 설정에 배포할 루트 `url`을 지정합니다. 설정과 Cloudflare 진단 항목은 [Crawling](crawling.md). 현재 npm `0.5.0`에는 없는 미공개 기능입니다.
+
 | Target             | Build                     | Output                   |
 | ------------------ | ------------------------- | ------------------------ |
 | 이 저장소의 문서   | `pnpm build:pages`        | `templates/document/dist` |

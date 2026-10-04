@@ -63,6 +63,11 @@ export const copy_error_unknown_command = "모르는 명령이다";
 export const copy_error_config = "설정이 틀렸다";
 
 /**
+ * 공개 사이트 URL의 미지원 경로·자격 증명·검색·앵커 오류
+ */
+export const copy_error_site_url = "url은 사용자 정보·하위 경로·query·hash가 없는 HTTP(S) 사이트 루트여야 한다";
+
+/**
  * 문서 frontmatter 오류 · 파일과 항목 추가
  */
 export const copy_error_frontmatter = "frontmatter가 올바르지 않다";

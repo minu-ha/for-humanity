@@ -27,7 +27,7 @@ try {
         "---\nname: Options\nlabel: Options\ngroup: Guide\nparent: ../guide\n---\n\nChild page.\n\n![Local](../images/local%20image.svg)\n\n[Expand](../images/local%20image.svg)\n",
     );
     await writeFile(join(consumer, "guide/agents.md"), `---\nname: Nested guide\nlabel: Nested guide\ngroup: ${JSON.stringify(nestedGroup)}\n---\n\n# Nested guide\n`);
-    await writeFile(join(consumer, "for-humanity.config.mjs"), `export default ${JSON.stringify({navigation: [nestedGroup, "Guide"]})};\n`);
+    await writeFile(join(consumer, "for-humanity.config.mjs"), `export default ${JSON.stringify({url: "https://docs.example.org", navigation: [nestedGroup, "Guide"]})};\n`);
     execFileSync("npm", ["install", "--ignore-scripts", "--no-audit", "--no-fund", join(artifactDirectory, pack.filename)], {cwd: consumer, stdio: "inherit"});
 
     const packageRoot = join(consumer, "node_modules", pack.name);
@@ -39,6 +39,12 @@ try {
     const output = join(consumer, "dist");
     const home = await readFile(join(output, "index.html"), "utf8");
     assert.match(home, /Package home/);
+    assert.equal(await readFile(join(output, "robots.txt"), "utf8"), "User-agent: *\nAllow: /\n\nSitemap: https://docs.example.org/sitemap.xml\n");
+    const sitemap = await readFile(join(output, "sitemap.xml"), "utf8");
+    assert.deepEqual(
+        [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((entry) => entry[1]).toSorted(),
+        ["https://docs.example.org/", "https://docs.example.org/guide/", "https://docs.example.org/guide/agents/", "https://docs.example.org/guide/options/"].toSorted(),
+    );
     const stylePath = home.match(/rel="stylesheet" href="([^"]+)"/)[1];
     assert.doesNotMatch(home, /<script\b[^>]*\bsrc=/);
     assert.match(stylePath, /^\/_fh\/style\.[a-f0-9]+\.css$/);
@@ -75,13 +81,18 @@ try {
     }
     const changedBrowserScript = `${browserScript}\n/* changed package bytes */\n`;
     await writeFile(join(packageRoot, "dist/browser.js"), changedBrowserScript);
+    await writeFile(join(consumer, "for-humanity.config.mjs"), `export default ${JSON.stringify({navigation: [nestedGroup, "Guide"]})};\n`);
     execFileSync(process.execPath, [join(packageRoot, "dist/cli.js"), "build", "."], {cwd: consumer, stdio: "inherit"});
     const rebuilt = await readFile(join(output, "index.html"), "utf8");
     assert.equal(rebuilt.match(/rel="stylesheet" href="([^"]+)"/)[1], stylePath);
     assert.ok(rebuilt.includes(`<script>${changedBrowserScript}</script>`));
     const rebuiltEntries = await readdir(output, {recursive: true});
+    assert.ok(!rebuiltEntries.includes("robots.txt"), "removing the public URL must also remove previous crawler files");
+    assert.ok(!rebuiltEntries.includes("sitemap.xml"), "projects without a public URL must not emit a sitemap");
     assert.ok(!rebuiltEntries.some((file) => file.endsWith(".js")), "the shell bundle must be embedded rather than copied as a second script");
-    console.log(`Installed ${pack.name}@${pack.version}: fingerprinted assets, nested groups, parent documents, local images, pages, Mermaid and README passed`);
+    console.log(
+        `Installed ${pack.name}@${pack.version}: fingerprinted assets, nested groups, parent documents, local images, pages, Mermaid, README and opt-in crawler files passed`,
+    );
 } finally {
     await rm(consumer, {recursive: true, force: true});
 }

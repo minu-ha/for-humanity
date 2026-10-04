@@ -1,5 +1,5 @@
 import {z} from "zod";
-import {copy_error_navigation_clash, copy_site_title_default} from "@/constant/copy";
+import {copy_error_navigation_clash, copy_error_site_url, copy_site_title_default} from "@/constant/copy";
 import {site_navigation_default} from "@/constant/site";
 import {status_default_phrases, status_kind} from "@/constant/status";
 import {groupPathSchema} from "@/type/group-path";
@@ -17,6 +17,15 @@ export const siteConfigSchema = z.object({
      * HTML 설명 메타데이터 · 선택
      */
     description: z.string().optional(),
+    /**
+     * 공개 사이트 루트 URL · 지정할 때만 robots.txt와 sitemap.xml 생성
+     */
+    url: z
+        .url({protocol: /^https?$/})
+        .transform((value) => new URL(value))
+        .refine((value) => value.username === "" && value.password === "" && value.pathname === "/" && value.search === "" && value.hash === "", copy_error_site_url)
+        .transform((value) => value.origin)
+        .optional(),
     /**
      * 탐색 묶음 경로의 읽는 순서 · 미지정 형제 묶음은 뒤에서 이름순
      */

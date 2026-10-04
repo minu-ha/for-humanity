@@ -1,8 +1,10 @@
 import assert from "node:assert/strict";
-import {mkdir, mkdtemp, rm, symlink, writeFile} from "node:fs/promises";
+import {EventEmitter} from "node:events";
+import {mkdir, mkdtemp, readFile, rm, symlink, writeFile} from "node:fs/promises";
 import {tmpdir} from "node:os";
 import {join} from "node:path";
 import {test} from "node:test";
+import {toSSG} from "hono/ssg";
 import {navigationDataSchema} from "@/component/widget/navigation/_constant/navigation-data-schema";
 import {toDocGroups} from "@/component/widget/navigation/_function/to-doc-groups/to-doc-groups";
 import {toNavigationData} from "@/component/widget/navigation/_function/to-navigation-data/to-navigation-data";
@@ -10,9 +12,11 @@ import {toNavigationJson} from "@/component/widget/navigation/_function/to-navig
 import {WgNavigation} from "@/component/widget/navigation/wg-navigation";
 import {asset_style_path} from "@/constant/asset";
 import {createApp} from "@/entry/cli/_function/create-app";
+import {createDevApp} from "@/entry/cli/_function/create-dev-app";
 import {createProcessor} from "@/entry/cli/_function/create-processor/create-processor";
 import {readDocs} from "@/entry/cli/_function/read-docs";
 import {readHome} from "@/entry/cli/_function/read-home";
+import {toCrawlingApp} from "@/entry/cli/_function/to-crawling-app";
 import {docDataSchema} from "@/type/doc-data";
 import {siteConfigSchema} from "@/type/site-config";
 
@@ -52,6 +56,107 @@ test("page resource URLs use the supplied content fingerprints instead of fixed 
     assert.match(html, /rel="stylesheet" href="\/_fh\/style\.abc123\.css"/);
     assert.doesNotMatch(html, /<script\b[^>]*\bsrc=/, "browser behavior must share one inline JSX entry");
     assert.doesNotMatch(html, /(?:href|src)="\/_fh\/(?:style\.css|client\.js)"/);
+});
+
+test("public site URL is opt-in and normalizes an HTTP(S) root URL", () => {
+    assert.deepEqual(siteConfigSchema.parse({url: "https://docs.example.org/"}), {...siteConfigSchema.parse({}), url: "https://docs.example.org"});
+    assert.deepEqual(siteConfigSchema.parse({url: "http://localhost:4321"}), {...siteConfigSchema.parse({}), url: "http://localhost:4321"});
+    assert.equal("url" in siteConfigSchema.parse({}), false);
+});
+
+test("public site URL rejects unsupported protocols, credentials and non-root URLs", () => {
+    for (const url of [
+        "",
+        "/",
+        "file:///docs",
+        "ftp://docs.example.org",
+        "https://user:password@docs.example.org",
+        "https://docs.example.org/docs/",
+        "https://docs.example.org/?q=guide",
+        "https://docs.example.org/#guide",
+    ]) {
+        assert.equal(siteConfigSchema.safeParse({url}).success, false, url);
+    }
+});
+
+test("crawler files are absent when the public site URL is omitted", async () => {
+    const site = siteConfigSchema.parse({});
+    const assets = {fontCss: "", preload: [], reload: false, browserScript: "", stylePath: asset_style_path};
+    const app = createDevApp({pages: createApp({site, store: {docs: []}, assets}), files: new Map(), reload: new EventEmitter()});
+
+    assert.equal((await app.request("/robots.txt")).status, 404);
+    assert.equal((await app.request("/sitemap.xml")).status, 404);
+});
+
+test("crawler files list home and encoded nested document URLs with the current document store", async (t) => {
+    const root = await mkdtemp(join(tmpdir(), "for-humanity-crawling-"));
+    t.after(() => rm(root, {recursive: true, force: true}));
+    await mkdir(join(root, "guide"));
+    await writeFile(join(root, "guide.md"), "---\nname: Start\nlabel: Start\ngroup: Guide\n---\n\nStart here.\n");
+    await writeFile(join(root, "guide/한국어 & tools.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Read\n\nText.\n");
+    const site = siteConfigSchema.parse({url: "https://docs.example.org/"});
+    const docs = await readDocs({root, processor: createProcessor({site, root})});
+    const store = {docs};
+    const assets = {fontCss: "", preload: [], reload: false, browserScript: "", stylePath: asset_style_path};
+    assert.ok(site.url);
+    const app = createDevApp({pages: createApp({site, store, assets}), crawling: toCrawlingApp({url: site.url, store}), files: new Map(), reload: new EventEmitter()});
+    const robots = await app.request("/robots.txt");
+    const sitemap = await app.request("/sitemap.xml");
+
+    assert.equal((await app.request("/guide/")).status, 200, "crawler routes must preserve ordinary document routes");
+    assert.equal((await app.request(`/guide/${encodeURIComponent("한국어 & tools")}/`)).status, 200, "crawler routes must preserve nested document routes");
+    assert.equal(robots.status, 200);
+    assert.match(String(robots.headers.get("content-type")), /^text\/plain/);
+    assert.equal(await robots.text(), "User-agent: *\nAllow: /\n\nSitemap: https://docs.example.org/sitemap.xml\n");
+    assert.equal(sitemap.status, 200);
+    assert.match(String(sitemap.headers.get("content-type")), /^application\/xml/);
+    const xml = await sitemap.text();
+    assert.match(xml, /^<\?xml version="1\.0" encoding="UTF-8"\?>/);
+    assert.match(xml, /<urlset xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9">/);
+    assert.match(xml, /<loc>https:\/\/docs\.example\.org\/<\/loc>/);
+    assert.ok(xml.includes(`<loc>https://docs.example.org/guide/${encodeURIComponent("한국어 & tools")}/</loc>`));
+    assert.equal([...xml.matchAll(/<loc>/g)].length, 3);
+    assert.doesNotMatch(xml, /<lastmod>|<changefreq>|<priority>|robots\.txt|sitemap\.xml|_fh|#read/);
+
+    store.docs = [];
+    assert.equal([...(await (await app.request("/sitemap.xml")).text()).matchAll(/<loc>/g)].length, 1);
+});
+
+test("SSG writes crawler files and preserves ordinary and nested document pages", async (t) => {
+    const root = await mkdtemp(join(tmpdir(), "for-humanity-crawling-build-"));
+    t.after(() => rm(root, {recursive: true, force: true}));
+    await mkdir(join(root, "guide"));
+    await writeFile(join(root, "guide.md"), "---\nname: Start\nlabel: Start\ngroup: Guide\n---\n\nStart here.\n");
+    await writeFile(join(root, "guide/details.md"), "---\nname: Details\nlabel: Details\ngroup: Guide\n---\n\nNested details.\n");
+    const site = siteConfigSchema.parse({url: "https://docs.example.org"});
+    const docs = await readDocs({root, processor: createProcessor({site, root})});
+    const assets = {fontCss: "", preload: [], reload: false, browserScript: "", stylePath: asset_style_path};
+    const app = createApp({site, store: {docs}, assets});
+    const result = await toSSG(app, {writeFile, mkdir}, {dir: root});
+    assert.ok(site.url);
+    const crawlerResult = await toSSG(toCrawlingApp({url: site.url, store: {docs}}), {writeFile, mkdir}, {dir: root});
+
+    assert.equal(result.success, true);
+    assert.equal(crawlerResult.success, true);
+    assert.equal(result.files.length + crawlerResult.files.length, 5, "home, both documents and both crawler files must be emitted");
+    assert.match(await readFile(join(root, "guide/index.html"), "utf8"), /Start here\./);
+    assert.match(await readFile(join(root, "guide/details/index.html"), "utf8"), /Nested details\./);
+    assert.match(await readFile(join(root, "robots.txt"), "utf8"), /Sitemap: https:\/\/docs\.example\.org\/sitemap\.xml/);
+    assert.match(await readFile(join(root, "sitemap.xml"), "utf8"), /<loc>https:\/\/docs\.example\.org\/<\/loc>/);
+});
+
+test("crawler filenames reject conflicting document roots only when reserved", async (t) => {
+    const root = await mkdtemp(join(tmpdir(), "for-humanity-crawling-paths-"));
+    t.after(() => rm(root, {recursive: true, force: true}));
+    await mkdir(join(root, "sitemap.xml"));
+    await writeFile(join(root, "Robots.txt.md"), "---\nname: Robots\nlabel: Robots\ngroup: Guide\n---\n\nText.\n");
+    await writeFile(join(root, "sitemap.xml/guide.md"), "---\nname: Sitemap\nlabel: Sitemap\ngroup: Guide\n---\n\nText.\n");
+    const site = siteConfigSchema.parse({});
+    const processor = createProcessor({site, root});
+    const params = {root, processor, reserved: ["robots.txt", "sitemap.xml"]};
+
+    await assert.rejects(readDocs(params), /문서 id에 사용할 수 없는 경로/);
+    assert.equal((await readDocs({root, processor})).length, 2);
 });
 
 test("navigation initialization runs after its DOM and before the document body", async () => {

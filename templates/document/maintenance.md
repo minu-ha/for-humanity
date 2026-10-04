@@ -74,7 +74,7 @@ Biome 제외 이유: 기존 렌더링 알고리즘과 diff 대조.
 | `prepare-pages.mjs` | Pages용 캐시 헤더와 404 페이지를 배포 폴더에 복사 |
 | `prepare-release.mjs` | 태그·버전·README·변경 기록·배포 파일 확인 · Release 본문 생성 |
 | `prepare-release.test.mjs` | 버전 불일치·변경 기록 누락·이전 설치 버전·필수 파일 누락 검사 |
-| `smoke-package.mjs` | 패키지를 별도 프로젝트에 설치 · 페이지·Mermaid·자원·README 확인 |
+| `smoke-package.mjs` | 패키지를 별도 프로젝트에 설치 · 페이지·Mermaid·자원·README·공개 URL 지정과 생략 시 크롤러 파일 확인 |
 | `navigation/check-navigation.test.mjs` | 임시 문서 사이트로 Hono JSX 탐색 검사 · 개인 문서와 실행 중인 서버를 사용하지 않음 |
 
 ::part[Verification]
