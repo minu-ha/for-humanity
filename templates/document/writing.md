@@ -112,11 +112,11 @@ group:
 한 묶음에 직접 문서와 하위 묶음이 함께 있으면 직접 문서를 먼저 표시. 프로젝트 소개 문서는 `[Projects, Example project]`, 조사 문서는 `[Projects, Example project, Research]`로 묶으면 됨.
 파일 이름에 번호나 알파벳을 붙여 순서를 맞출 필요 없음.
 모든 문서 묶음은 항상 표시. 문서는 이름과 1px 트리 선으로 표시.
-`Contents`는 현재 문서 안의 절만 표시.
+`On this page`는 현재 문서 안의 절만 표시.
 
 ## Sections and parts
 
-- `##` → section · Contents의 상위 항목
+- `##` → section · On this page의 상위 항목
 - `###` → subsection · 해당 section 아래 중첩 항목
 - 첫 section 앞의 글 → 문서 header
 - `::part[Setup]` → 여러 section을 묶는 part · TOC 그룹

@@ -98,8 +98,8 @@ type: document
 
 | Syntax                 | Result                       |
 | ---------------------- | ---------------------------- |
-| `##` · `###`           | 절·소제목과 Contents      |
-| `::part[Title]`         | 본문과 Contents의 절 묶음    |
+| `##` · `###`           | 절·소제목과 On this page      |
+| `::part[Title]`         | 본문과 On this page의 절 묶음    |
 | `:::note[Title]`        | 보충 설명                    |
 | `:::details[Title]`     | 접힌 구현 상세               |
 | Details의 `{open}`     | 처음부터 펼친 상세           |

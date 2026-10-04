@@ -12,7 +12,7 @@ order: 10
 
 ## Unreleased
 
-- Distinguish sidebar groups from document links and page headings, and rename the table of contents to "On this page".
+- Distinguish sidebar groups from document links and page headings, and rename the table of contents to "On this page" with a gray label matching the groups.
 - Clarify trunk-based development, site deployment and package release policy.
 
 ## 0.2.1 — 2026-10-04
