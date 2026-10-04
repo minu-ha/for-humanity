@@ -17,3 +17,8 @@ export const cli_config_file_name = "for-humanity.config.mjs";
  * dev·preview 공통 포트
  */
 export const cli_dev_port = 4321;
+
+/**
+ * 연속 저장을 하나의 문서 갱신으로 합치는 대기 시간 · ms
+ */
+export const cli_reload_delay_ms = 150;

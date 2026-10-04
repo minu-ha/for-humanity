@@ -11,11 +11,12 @@ import {basename, dirname, extname, join, relative, resolve, sep} from "node:pat
 import {fileURLToPath, pathToFileURL} from "node:url";
 import {serve} from "@hono/node-server";
 import {serveStatic} from "@hono/node-server/serve-static";
+import {debounce} from "es-toolkit";
 import {Hono} from "hono";
 import {toSSG} from "hono/ssg";
 import {createApp} from "@/app";
 import {asset_client_path, asset_favicon_path, asset_font_dir, asset_media_extensions, asset_style_path} from "@/constant/asset";
-import {cli_config_file_name, cli_default_command, cli_default_docs_dir, cli_dev_port} from "@/constant/cli";
+import {cli_config_file_name, cli_default_command, cli_default_docs_dir, cli_dev_port, cli_reload_delay_ms} from "@/constant/cli";
 import {copy_error_config, copy_error_font_preload, copy_error_prefix, copy_error_unknown_command} from "@/constant/copy";
 import {font_brand_css, font_cache_control, font_mono_css, font_sans_css, font_sans_preload_file} from "@/constant/font";
 import {site_config_absent} from "@/constant/site";
@@ -24,6 +25,7 @@ import {readDocs} from "@/content/read-docs";
 import {readHome} from "@/content/read-home";
 import {createDevApp} from "@/dev";
 import {siteConfigSchema} from "@/type/site-config";
+import {toChangeQueue} from "@/util/async/to-change-queue";
 import {toErrorMessage} from "@/util/error/to-error-message";
 import {toAssetPath} from "@/util/file/to-asset-path";
 import {toFontCss} from "@/util/font/to-font-css";
@@ -129,40 +131,46 @@ const main = async () => {
     serve({fetch: createDevApp({pages: app, files, reload}).fetch, port: cli_dev_port}, (info) => console.log(`http://localhost:${info.port}/`));
 
     /**
-     * Markdown 변경 시 전체 재처리와 새로고침
-     * 재처리 실패 시 직전 정상 문서 유지
+     * 갱신은 하나씩 실행 · 연속 저장 합치기 · 최신 변경만 적용
+     * 문서 수가 많아도 파일 이벤트마다 전체 렌더링이 동시에 쌓이지 않음
      */
-    const handleDocsChange = async (_event: string, filename: string | null) => {
+    const reloadDocs = debounce(
+        toChangeQueue({
+            run: async () => {
+                const currentGeneration = generation;
+                const nextFiles = new Map(kitFiles);
+                const nextProcessor = createProcessor({site: siteConfig, root: docsRoot, files: nextFiles});
+                const [docs, home] = await Promise.all([readDocs({root: docsRoot, processor: nextProcessor}), readHome({root: docsRoot, processor: nextProcessor})]);
+
+                if (currentGeneration !== generation) {
+                    return;
+                }
+
+                files.clear();
+                for (const entry of nextFiles) {
+                    files.set(...entry);
+                }
+                store.docs = docs;
+                store.home = home;
+                reload.emit("change");
+            },
+            onError: (error) => console.error(`${copy_error_prefix}: ${toErrorMessage(error)}`),
+        }),
+        cli_reload_delay_ms,
+    );
+
+    /**
+     * 입력 변경 감지 · 출력·설치 폴더 제외 · 누락 자원 추가도 다시 확인
+     */
+    const handleDocsChange = (_event: string, filename: string | null) => {
         if (filename !== null) {
             const segments = filename.split(sep);
-            // 출력·설치 폴더는 제외 · 실패한 참조의 파일이 뒤늦게 생겨도 다시 처리
             if (segments.includes("dist") || segments.includes("node_modules") || (!/\.mdx?$/i.test(filename) && !asset_media_extensions.has(extname(filename).toLowerCase()))) {
                 return;
             }
         }
-
-        const currentGeneration = ++generation;
-
-        try {
-            const nextFiles = new Map(kitFiles);
-            const nextProcessor = createProcessor({site: siteConfig, root: docsRoot, files: nextFiles});
-            const [docs, home] = await Promise.all([readDocs({root: docsRoot, processor: nextProcessor}), readHome({root: docsRoot, processor: nextProcessor})]);
-
-            // 최신 변경의 처리 결과만 반영
-            if (currentGeneration !== generation) {
-                return;
-            }
-
-            files.clear();
-            for (const entry of nextFiles) {
-                files.set(...entry);
-            }
-            store.docs = docs;
-            store.home = home;
-            reload.emit("change");
-        } catch (error) {
-            console.error(`${copy_error_prefix}: ${toErrorMessage(error)}`);
-        }
+        generation += 1;
+        reloadDocs();
     };
 
     watch(docsRoot, {recursive: true}, handleDocsChange);

@@ -12,6 +12,11 @@ order: 10
 
 ## Unreleased
 
+## 0.4.1 — 2026-10-04
+
+- Coalesce consecutive document and asset saves and serialize dev refreshes so bulk AI edits cannot start overlapping full-site renders and exhaust memory.
+- Continue queued and later edits after failed processing, and apply only the latest valid generation.
+
 ## 0.4.0 — 2026-10-04
 
 - Copy explicitly referenced local images and supported attachments to fingerprinted asset URLs, resolving paths relative to their Markdown files in both build and dev.
