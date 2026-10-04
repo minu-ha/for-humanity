@@ -3,7 +3,6 @@ import {mkdir, mkdtemp, rm, symlink, writeFile} from "node:fs/promises";
 import {tmpdir} from "node:os";
 import {join} from "node:path";
 import {test} from "node:test";
-import {renderToStaticMarkup} from "react-dom/server";
 import {createApp} from "@/app";
 import {WgShellNav} from "@/component/widget/shell/_wg-shell-nav";
 import {asset_client_path, asset_style_path} from "@/constant/asset";
@@ -93,7 +92,7 @@ test("navigation shows every document group in reading order without document ic
     ]);
 
     const docs = await readDocs({root, processor: createProcessor({site, root})});
-    const html = renderToStaticMarkup(WgShellNav({site, docs, current: "writing"}));
+    const html = WgShellNav({site, docs, current: "writing"}).toString();
     const groups = [...html.matchAll(/<section\b[^>]*aria-label="([^"]+)"/g)];
 
     assert.deepEqual(
@@ -174,7 +173,7 @@ test("nested groups follow metadata paths and keep sibling branches and document
     assert.equal(groups[1].groups[0].groups[0].groups[0].groups[0].name, "Drafts");
     assert.deepEqual(toDocGroups({docs: docs.toReversed(), navigation: site.navigation}), groups);
 
-    const html = renderToStaticMarkup(WgShellNav({site, docs, current: "authoring"}));
+    const html = WgShellNav({site, docs, current: "authoring"}).toString();
 
     assert.match(html, /href="\/authoring\/"[^>]*aria-current="page"/);
     assert.match(html, /Atlas<\/span><button\b[^>]*aria-expanded="true"[^>]*>−<\/button><ul\b/);
@@ -182,7 +181,7 @@ test("nested groups follow metadata paths and keep sibling branches and document
     assert.equal([...html.matchAll(/href="\/authoring\/"/g)].length, 1);
     assert.equal([...html.matchAll(/>Research<\/span>/g)].length, 2);
     assert.equal([...html.matchAll(/wg_shellNavList__item--current/g)].length, 3);
-    assert.doesNotMatch(renderToStaticMarkup(WgShellNav({site, docs})), /aria-current="page"|wg_shellNavList__item--current/);
+    assert.doesNotMatch(WgShellNav({site, docs}).toString(), /aria-current="page"|wg_shellNavList__item--current/);
     assert.ok(html.indexOf('href="/parts/"') < html.indexOf('href="/authoring/"'));
     assert.doesNotMatch(html, /<details\b/);
 });
@@ -232,7 +231,7 @@ test("parent documents contain ordered descendants with independent URLs and one
     assert.deepEqual(docs.find((doc) => doc.id === "details")?.ancestors, ["settings", "guide/site"]);
     assert.deepEqual(toDocGroups({docs: docs.toReversed(), navigation: site.navigation}), groups);
 
-    const html = renderToStaticMarkup(WgShellNav({site, docs, current: "details"}));
+    const html = WgShellNav({site, docs, current: "details"}).toString();
     assert.match(html, /href="\/settings\/"[^>]*>Settings<\/a><button\b[^>]*aria-label="Collapse Settings"[^>]*>−<\/button><ul\b[^>]*aria-label="Settings"/);
     assert.match(html, /href="\/guide\/site\/"[^>]*>Site<\/a><button\b[^>]*aria-label="Collapse Site"[^>]*>−<\/button><ul\b[^>]*aria-label="Site"/);
     assert.match(html, /href="\/details\/"[^>]*aria-current="page"/);
@@ -243,7 +242,7 @@ test("parent documents contain ordered descendants with independent URLs and one
         assert.equal(html.split(`href="/${doc.id}/"`).length - 1, 1);
     }
     assert.ok(html.indexOf('href="/themes/"') < html.indexOf('href="/guide/site/"'));
-    assert.doesNotMatch(renderToStaticMarkup(WgShellNav({site, docs})), /aria-current="page"|wg_shellNavList__item--current/);
+    assert.doesNotMatch(WgShellNav({site, docs}).toString(), /aria-current="page"|wg_shellNavList__item--current/);
 
     const app = createApp({
         site,

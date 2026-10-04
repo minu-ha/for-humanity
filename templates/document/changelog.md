@@ -12,6 +12,8 @@ order: 10
 
 ## Unreleased
 
+- Generate page HTML with Hono JSX and remove the React server renderer and dependencies.
+
 - Use equal 240px document and outline sidebars at 1536px and wider, showing the outline only on wide screens and keeping document navigation in the mobile drawer.
 - Add separate expand/collapse buttons to document groups, parent documents, outline parts and headings with children, with every branch expanded by default.
 - Persist branch choices through Zustand vanilla stores in localStorage and independent wide, desktop and drawer scroll positions in sessionStorage, restoring layout and saved choices before the first paint.

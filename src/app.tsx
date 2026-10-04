@@ -1,7 +1,7 @@
 import {Hono} from "hono";
+import {html} from "hono/html";
+import type {Child} from "hono/jsx";
 import {ssgParams} from "hono/ssg";
-import type {ReactElement} from "react";
-import {renderToStaticMarkup} from "react-dom/server";
 import {PgDoc} from "@/page/doc/pg-doc";
 import {PgHome} from "@/page/home/pg-home";
 import type {Doc} from "@/type/doc";
@@ -28,10 +28,10 @@ export interface AppOptions {
 }
 
 /**
- * React 서버 렌더링 · 브라우저 React 번들 없음
+ * Hono JSX 페이지에 HTML 문서 선언 추가 · 서버와 정적 출력에서 같은 렌더러 사용
  */
-const toHtml = (page: ReactElement) => {
-    return `<!DOCTYPE html>${renderToStaticMarkup(page)}`;
+const toHtml = (page: Child) => {
+    return html`<!DOCTYPE html>${page}`;
 };
 
 /**

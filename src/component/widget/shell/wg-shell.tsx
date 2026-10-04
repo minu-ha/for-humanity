@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import type {ReactNode} from "react";
+import type {Child} from "hono/jsx";
 import {toTocGroups} from "@/component/widget/shell/_function/to-toc-groups";
 import type {DocOutline} from "@/component/widget/shell/_type/doc-outline";
 import {WgShellNav} from "@/component/widget/shell/_wg-shell-nav";
@@ -49,7 +49,7 @@ export interface WgShellProps {
     /**
      * 현재 페이지 본문
      */
-    children: ReactNode;
+    children: Child;
 }
 
 export const WgShell = (props: WgShellProps) => {

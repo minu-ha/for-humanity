@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import {Fragment} from "react";
+import {Fragment} from "hono/jsx";
 import {toNavigationBranchId} from "@/component/widget/shell/_function/to-navigation-branch-id";
 import {WgShellBranchToggle} from "@/component/widget/shell/_wg-shell-branch-toggle";
 import type {Doc} from "@/type/doc";
