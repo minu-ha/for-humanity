@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Consolidate browser behavior into a single Hono JSX shell entry, with component-owned anchor effects, dev reload subscriptions and an independent cursor widget that cleans up events and timers.
+- Separate CLI and browser entry folders and move package build/test commands into repository scripts using the esbuild API.
+
 - Generate page HTML with Hono JSX and remove the React server renderer and dependencies.
 - Render interactive navigation with Hono client JSX components and Hooks, including native event handlers, persisted branch state, drawer focus and scroll restoration before the first paint. Keep the Markdown body as server-generated HTML.
 

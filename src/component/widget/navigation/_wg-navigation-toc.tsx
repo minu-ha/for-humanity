@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import {useEffect, useState} from "hono/jsx";
+import {useLayoutEffect, useState} from "hono/jsx";
 import {reading_line_slack_px} from "@/component/widget/navigation/_constant/reading-line";
 import {toNavigationBranchId} from "@/component/widget/navigation/_function/to-navigation-branch-id";
 import type {TocGroup} from "@/component/widget/navigation/_type/toc-group";
@@ -34,9 +34,9 @@ export const WgNavigationToc = (props: WgNavigationTocProps) => {
     const [currentSlug, setCurrentSlug] = useState<string>();
 
     /**
-     * 본문이 파싱된 뒤 읽는 위치를 추적 · 목차 요소와 직접 DOM 갱신은 하지 않음
+     * 구독은 연결마다 한 번 설치 · 초기 갱신은 본문 파싱 이후로 미룸
      */
-    useEffect(() => {
+    useLayoutEffect(() => {
         const sections = props.groups.flatMap((group) => group.sections);
         const headings = sections.flatMap((section) => [section.heading, ...section.subs.map((sub) => sub.heading)]);
         const frame = {id: 0};

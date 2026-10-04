@@ -1,0 +1,15 @@
+.wg_cursorFace__root {
+    /* 뷰포트 기준 · 본문 흐름과 포인터 입력에 참여하지 않는 장식 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: var(--app-z-index-popper);
+    visibility: hidden;
+    pointer-events: none;
+    user-select: none;
+    image-rendering: pixelated;
+}
+
+.wg_cursorFace__root--visible {
+    visibility: visible;
+}

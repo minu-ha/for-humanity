@@ -1,7 +1,11 @@
+import {rm} from "node:fs/promises";
 import {fileURLToPath} from "node:url";
 import {build} from "esbuild";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
+
+// 이름이 바뀐 번들이 다음 npm 패키지에 남지 않도록 생성물만 비운다.
+await rm(new URL("../dist/", import.meta.url), {recursive: true, force: true});
 
 // CLI의 서버 JSX와 CSS · 설치한 패키지는 이 출력만 실행한다.
 await build({
@@ -16,23 +20,10 @@ await build({
     logLevel: "info",
 });
 
-// 브라우저 진입점의 JSX는 Hono DOM 렌더러로 컴파일한다.
+// 탐색·본문 이벤트·커서를 한 Hono DOM 번들로 컴파일한다.
 await build({
     absWorkingDir: root,
-    entryPoints: ["src/client.ts"],
-    bundle: true,
-    platform: "browser",
-    format: "esm",
-    jsx: "automatic",
-    minify: true,
-    define: {"process.env.NODE_ENV": '"production"'},
-    outfile: "dist/client.js",
-    logLevel: "info",
-});
-
-await build({
-    absWorkingDir: root,
-    entryPoints: ["src/navigation.tsx"],
+    entryPoints: ["src/entry/browser/browser.tsx"],
     bundle: true,
     platform: "browser",
     format: "iife",
@@ -41,6 +32,6 @@ await build({
     loader: {".css": "empty"},
     minify: true,
     define: {"process.env.NODE_ENV": '"production"'},
-    outfile: "dist/navigation.js",
+    outfile: "dist/browser.js",
     logLevel: "info",
 });

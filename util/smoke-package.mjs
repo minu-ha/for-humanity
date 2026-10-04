@@ -40,14 +40,12 @@ try {
     const home = await readFile(join(output, "index.html"), "utf8");
     assert.match(home, /Package home/);
     const stylePath = home.match(/rel="stylesheet" href="([^"]+)"/)[1];
-    const clientPath = home.match(/type="module" src="([^"]+)"/)[1];
+    assert.doesNotMatch(home, /<script\b[^>]*\bsrc=/);
     assert.match(stylePath, /^\/_fh\/style\.[a-f0-9]+\.css$/);
-    assert.match(clientPath, /^\/_fh\/client\.[a-f0-9]+\.js$/);
     assert.equal(await readFile(join(output, stylePath), "utf8"), await readFile(join(packageRoot, "dist/cli.css"), "utf8"));
-    assert.equal(await readFile(join(output, clientPath), "utf8"), await readFile(join(packageRoot, "dist/client.js"), "utf8"));
-    const navigationScript = await readFile(join(packageRoot, "dist/navigation.js"), "utf8");
-    assert.ok(home.includes(`<script>${navigationScript}</script>`));
-    assert.ok(home.indexOf(`<script>${navigationScript}</script>`) < home.indexOf('<main class="wg_shell__main">'));
+    const browserScript = await readFile(join(packageRoot, "dist/browser.js"), "utf8");
+    assert.ok(home.includes(`<script>${browserScript}</script>`));
+    assert.ok(home.indexOf(`<script>${browserScript}</script>`) < home.indexOf('<main class="wg_shell__main">'));
     assert.match(await readFile(join(output, "guide/index.html"), "utf8"), /<svg/);
     const nested = await readFile(join(output, "guide/agents/index.html"), "utf8");
     const nestedNavigation = nested.match(/<nav\b[^>]*class="wg_navigationNav__root"[\s\S]*?<\/nav>/)[0];
@@ -69,19 +67,20 @@ try {
     const entries = await readdir(output, {recursive: true});
     assert.ok(!entries.includes("agents/index.html"));
     assert.ok(!entries.includes("claude/index.html"));
-    for (const extension of [".woff2", ".css", ".js", ".svg"]) {
+    for (const extension of [".woff2", ".css", ".svg"]) {
         assert.ok(
             entries.some((file) => file.endsWith(extension)),
             `Missing ${extension} assets`,
         );
     }
-    await writeFile(join(packageRoot, "dist/client.js"), `${await readFile(join(packageRoot, "dist/client.js"), "utf8")}\n/* changed package bytes */\n`);
+    const changedBrowserScript = `${browserScript}\n/* changed package bytes */\n`;
+    await writeFile(join(packageRoot, "dist/browser.js"), changedBrowserScript);
     execFileSync(process.execPath, [join(packageRoot, "dist/cli.js"), "build", "."], {cwd: consumer, stdio: "inherit"});
     const rebuilt = await readFile(join(output, "index.html"), "utf8");
     assert.equal(rebuilt.match(/rel="stylesheet" href="([^"]+)"/)[1], stylePath);
-    assert.notEqual(rebuilt.match(/type="module" src="([^"]+)"/)[1], clientPath);
+    assert.ok(rebuilt.includes(`<script>${changedBrowserScript}</script>`));
     const rebuiltEntries = await readdir(output, {recursive: true});
-    assert.ok(!rebuiltEntries.includes(clientPath.slice(1)));
+    assert.ok(!rebuiltEntries.some((file) => file.endsWith(".js")), "the shell bundle must be embedded rather than copied as a second script");
     console.log(`Installed ${pack.name}@${pack.version}: fingerprinted assets, nested groups, parent documents, local images, pages, Mermaid and README passed`);
 } finally {
     await rm(consumer, {recursive: true, force: true});

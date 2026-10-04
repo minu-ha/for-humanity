@@ -1,12 +1,12 @@
 /*
- * 첫 화면 전 Hono 클라이언트 JSX 마운트 · 본문은 서버가 만든 HTML 유지
+ * 브라우저 진입 · 검증한 탐색 자료로 셸의 Hono JSX 컴포넌트만 마운트
  */
 import {render} from "hono/jsx/dom";
 import {navigationDataSchema} from "@/component/widget/navigation/_constant/navigation-data-schema";
-import {WgNavigation} from "@/component/widget/navigation/wg-navigation";
+import {WgShellBrowser} from "@/component/widget/shell/wg-shell-browser";
 import {createNavigationStores} from "@/store/navigation/create-navigation-stores";
 
-const root = document.querySelector<HTMLElement>("[data-navigation-root]");
+const root = document.querySelector<HTMLElement>("[data-shell-browser-root]");
 const payload = document.getElementById("fh-navigation-data");
 
 if (root !== null && payload !== null) {
@@ -14,9 +14,9 @@ if (root !== null && payload !== null) {
         const value: unknown = JSON.parse(payload.textContent);
         const data = navigationDataSchema.parse(value);
         const stores = createNavigationStores({local: () => localStorage, session: () => sessionStorage});
-        render(<WgNavigation data={data} stores={stores} />, root);
+        render(<WgShellBrowser data={data} stores={stores} reload={root.hasAttribute("data-shell-reload")} />, root);
     } catch (error) {
-        // 초기화 오류는 서버의 기본 탐색을 유지 · 문서 링크와 네이티브 스크롤 사용 가능
-        console.error("for-humanity navigation initialization failed", error);
+        // 초기화 오류에서도 서버의 링크·본문과 네이티브 스크롤 유지
+        console.error("for-humanity browser initialization failed", error);
     }
 }

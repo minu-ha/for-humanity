@@ -20,11 +20,10 @@ flowchart LR
 
 | Entry       | Responsibility                               | Runtime       |
 | ----------- | -------------------------------------------- | ------------- |
-| `cli.ts`    | 인자 · 설정 · 문서 · 폰트 · 빌드·서버 시작   | Node.js       |
+| `src/entry/cli/cli.ts`    | 인자 · 설정 · 문서 · 폰트 · 빌드·서버 시작   | Node.js       |
 | `app.tsx`   | 첫 화면과 문서 라우트 · Hono JSX → HTML         | Node.js       |
 | `dev.ts`    | 자원 · SSE 새로고침 · 페이지 앱 위임         | Node.js · dev |
-| `navigation.tsx` | Hono 클라이언트 JSX · 접힘 · 드로어 · 스크롤 | Browser · 동기 |
-| `client.ts` | 커서 장식 · 앵커 강조 · 접힌 hash 보정 | Browser · module |
+| `src/entry/browser/browser.tsx` | 입력 검증 · 저장소 생성 · 브라우저 셸 마운트 | Browser · 동기 |
 
 ::part[Engine]
 
@@ -47,9 +46,9 @@ Hono 정규식 매개변수와 wildcard 라우트 혼합 시 Router 제약도 �
 
 서버에서 JSX를 출력해도 `onClick` 함수가 HTML로 전송되지는 않습니다. 브라우저 상호작용에는 별도의 클라이언트 JavaScript가 필요합니다. Hono의 `hono/jsx/dom`은 브라우저에서 컴포넌트와 Hooks를 실행할 수 있습니다.
 
-탐색은 같은 `WgNavigation` 컴포넌트를 서버와 브라우저에서 사용합니다. 서버 출력은 전체 펼침 링크를 제공하고, 브라우저의 `render`는 탐색 영역만 저장 상태를 반영한 JSX로 교체합니다. 이후 접힘·드로어·현재 헤딩은 Hooks와 `onClick` 같은 JSX 이벤트로 갱신합니다. 본문은 클라이언트에서 다시 렌더링하지 않습니다.
+셸은 같은 `WgShellBrowser`를 서버와 브라우저에서 조립합니다. 이 컴포넌트가 `WgNavigation`과 `WgCursorFace`를 함께 렌더링합니다. 서버 출력은 전체 펼침 링크를 제공하고, 브라우저의 `render`는 탐색·커서 영역만 저장 상태를 반영한 JSX로 교체합니다. 이후 접힘·드로어·현재 헤딩은 Hooks와 `onClick` 같은 JSX 이벤트로 갱신합니다. 본문은 클라이언트에서 다시 렌더링하지 않습니다.
 
-이 방식은 React의 hydration으로 기존 DOM을 인계받는 구조가 아닙니다. Hono 브라우저 렌더러로 작은 탐색 영역만 첫 paint 전에 마운트합니다. 전체 페이지를 클라이언트 앱으로 바꾸거나 문서 링크를 SPA 라우팅으로 바꾸지 않습니다.
+Hono 브라우저 렌더러로 탐색·커서 영역을 첫 paint 전에 마운트합니다. 본문은 서버가 만든 HTML을 그대로 표시하고 문서 링크는 전체 페이지를 이동합니다.
 
 참조: [Hono JSX](https://hono.dev/docs/guides/jsx), [Hono Client Components](https://hono.dev/docs/guides/jsx-dom).
 
@@ -58,8 +57,8 @@ Hono 정규식 매개변수와 wildcard 라우트 혼합 시 Router 제약도 �
 문서 링크는 전체 HTML 페이지를 이동합니다.  탐색의 클라이언트 상태는 Zustand vanilla 스토어가 소유합니다.
 문서 목록과 On this page는 각각 독립 스크롤 컨테이너입니다. 1536px 이상에서는 같은 폭의 양쪽 사이드바로 표시하고, 그 아래에서는 목차를 숨깁니다. 모바일 드로어에는 문서 목록만 포함합니다.
 
-`src/navigation.tsx`를 esbuild가 독립 IIFE로 컴파일합니다. CLI는 생성한 `dist/navigation.js`를 코드 문자열로 읽고 탐색 HTML과 탐색 전용 JSON 바로 뒤, 본문 앞에 포함합니다. JSON에는 문서 이름·URL·계층·현재 목차만 담고 본문은 포함하지 않습니다. `<`와 줄 구분자는 escape하여 작성한 이름이 script 태그를 닫지 못하게 합니다. 함수의 `.toString()`이나 수동 함수 조립은 사용하지 않습니다.
-이 진입점은 첫 paint 전에 저장 상태를 읽고 `hono/jsx/dom` 런타임으로 탐색 컴포넌트를 마운트합니다. 브라우저 빌드만 `jsxImportSource=hono/jsx/dom`을 사용합니다. 큰 본문이나 외부 client module 다운로드를 기다리지 않아 버튼이 뒤늦게 나타나지 않습니다.
+`script/build-kit.mjs`가 esbuild API로 `src/entry/browser/browser.tsx`를 단일 IIFE로 컴파일합니다. CLI는 생성한 `dist/browser.js`를 코드 문자열로 읽고 탐색 HTML과 탐색 전용 JSON 바로 뒤, 본문 앞에 포함합니다. JSON에는 문서 이름·URL·계층·현재 목차만 담고 본문은 포함하지 않습니다. `<`와 줄 구분자는 escape하여 작성한 이름이 script 태그를 닫지 못하게 합니다. 함수의 `.toString()`이나 수동 함수 조립은 사용하지 않습니다.
+이 진입점은 첫 paint 전에 저장 상태를 읽고 `hono/jsx/dom` 런타임으로 탐색 컴포넌트를 마운트합니다. 브라우저 빌드만 `jsxImportSource=hono/jsx/dom`을 사용합니다. 외부 JS 다운로드를 기다리지 않아 버튼이 뒤늦게 나타나지 않습니다. 별도의 `client.ts`나 본문 module은 없습니다.
 
 Hono의 최초 레이아웃 효과는 아직 연결되지 않은 fragment에서 실행됩니다. 스크롤 측정·복원은 이 경우에만 연결 직후 microtask로 미루며 첫 paint 앞에 완료합니다. 이후 반응형 전환에서는 연결된 요소를 동기 복원합니다. 외부 저장 상태 변경으로 접힌 가지 안에 포커스가 남으면 해당 가지 버튼으로 옮깁니다.
 
@@ -67,6 +66,14 @@ Hono의 최초 레이아웃 효과는 아직 연결되지 않은 fragment에서 
 스크롤은 같은 탭의 `sessionStorage`에 넓은 화면·좁은 데스크톱·드로어 위치를 따로 저장합니다. 기존 배치별 저장 자료도 첫 복원에서 수용합니다.
 문서 링크 순서가 달라지면 이전 위치는 무효입니다. 목차 위치는 같은 페이지에서만 복원하고 다른 문서의 목차는 시작점에서 읽습니다. 저장소가 차단되거나 값이 손상돼도 메모리 상태와 기본 탐색은 유지합니다.
 `ResizeObserver`와 스크롤 이벤트는 실제 위·아래 넘침이 있는 끝만 흐리게 합니다. 강제 색상과 JavaScript 미사용 환경은 네이티브 손잡이를 사용합니다.
+
+### Shell and cursor lifecycle
+
+`WgShellBrowser`가 앵커 클릭·hash 변경·Details 공개·3초 헤딩 강조·초기 글꼴 보정과 dev SSE 연결을 소유합니다. 초기화는 본문 앞에서 실행되므로 본문 대상 조회는 `DOMContentLoaded` 이후로 미룹니다. 새로 생성한 `AbortController`로 DOM 이벤트를 묶고, 해제 시 이벤트·강조 타이머·도착 감시·SSE를 정리합니다. 글꼴 완료를 기다리는 비동기 보정도 해제된 인스턴스에서는 실행하지 않습니다.
+
+커서 장식은 `src/component/widget/cursor-face`의 `WgCursorFace`가 DOM ref·좌표·미디어 조건·전역 이벤트·예약 frame을 소유합니다. 마지막 좌표는 같은 탭의 페이지 이동에서만 이어받으며 터치·reduced motion에서는 숨깁니다. 본문과 커서 동작을 모듈 최상위에서 바로 실행하지 않고 컴포넌트의 Effect에서 설치·정리합니다.
+
+`.tsx`는 JSX 문법의 구분입니다. 서버의 `hono/jsx`는 HTML을 만들고 Effect 콜백은 실행하지 않습니다. esbuild가 브라우저 진입점에서 가져오는 컴포넌트·Hook을 JS로 묶으며, `hono/jsx/dom` 렌더러가 브라우저에서 Effect를 실행합니다. Hono가 Hook마다 자동으로 청크를 생성하거나 전송하는 구조는 아닙니다.
 
 ### Store ownership and lifetime
 
@@ -106,7 +113,8 @@ gray-matter는 frontmatter를 분리·해석하는 다른 선택지. 여기서�
 | Concern                       | Owner                        |
 | ----------------------------- | ---------------------------- |
 | 첫 화면 · 문서 페이지         | `src/page`                   |
-| HTML 틀 · 본문 배치           | `src/component/widget/shell` |
+| HTML 틀 · 본문 배치 · 앵커 수명 | `src/component/widget/shell` |
+| 포인터 장식 · 좌표 · 입력 구독 | `src/component/widget/cursor-face` |
 | 문서 탐색 · 목차 · 드로어      | `src/component/widget/navigation` |
 | 탐색 저장 상태 · 검증         | `src/store/navigation`       |
 | 본문 · remark·rehype 플러그인 | `src/component/widget/prose` |
@@ -117,13 +125,12 @@ gray-matter는 frontmatter를 분리·해석하는 다른 선택지. 여기서�
 
 ## Package output
 
-`build:kit`: esbuild로 서버 CLI와 CSS, 브라우저 스크립트 생성.
+`build:kit`: `script/build-kit.mjs`에서 esbuild API로 CLI·CSS·단일 브라우저 번들을 생성합니다. 이전 번들이 npm 패키지에 남지 않도록 `dist` 생성물을 먼저 비웁니다.
 폰트와 favicon 원본은 패키지에 포함, 사이트 빌드 시 결과 폴더로 복사.
 
 - `dist/cli.js`: npm bin 진입점
 - `dist/cli.css`: 컴포넌트 CSS 묶음
-- `dist/navigation.js`: HTML에 포함하는 Hono 클라이언트 JSX 런타임
-- `dist/client.js`: 외부 module로 연결하는 본문 동작
+- `dist/browser.js`: HTML에 포함하는 셸·탐색·커서의 Hono JSX 런타임
 - 자원 URL: `/_fh/` · favicon: `/favicon.svg`
 
 패키지 빌드와 문서 사이트 빌드는 별도 단계. 절차는 [Maintenance](maintenance.md).

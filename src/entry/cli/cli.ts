@@ -15,7 +15,7 @@ import {debounce} from "es-toolkit";
 import {Hono} from "hono";
 import {toSSG} from "hono/ssg";
 import {createApp} from "@/app";
-import {asset_client_path, asset_favicon_path, asset_font_dir, asset_media_extensions, asset_style_path} from "@/constant/asset";
+import {asset_favicon_path, asset_font_dir, asset_media_extensions, asset_style_path} from "@/constant/asset";
 import {cli_config_file_name, cli_default_command, cli_default_docs_dir, cli_dev_port, cli_reload_delay_ms} from "@/constant/cli";
 import {copy_error_config, copy_error_font_preload, copy_error_prefix, copy_error_unknown_command} from "@/constant/copy";
 import {font_brand_css, font_cache_control, font_mono_css, font_sans_css, font_sans_preload_file} from "@/constant/font";
@@ -86,11 +86,9 @@ const main = async () => {
 
     const fontCss = [sans.css, mono.css, brand.css].join("\n");
     const stylePath = toAssetPath({path: asset_style_path, file: join(kitRoot, "dist/cli.css")});
-    const clientPath = toAssetPath({path: asset_client_path, file: join(kitRoot, "dist/client.js")});
-    const navigationScript = readFileSync(join(kitRoot, "dist/navigation.js"), "utf8");
+    const browserScript = readFileSync(join(kitRoot, "dist/browser.js"), "utf8");
     const kitFiles = new Map([
         [stylePath, join(kitRoot, "dist/cli.css")],
-        [clientPath, join(kitRoot, "dist/client.js")],
         [asset_favicon_path, join(kitRoot, "src/asset/favicon.svg")],
         ...sans.files,
         ...mono.files,
@@ -103,7 +101,7 @@ const main = async () => {
     const app = createApp({
         site: siteConfig,
         store,
-        assets: {stylePath, clientPath, navigationScript, fontCss, preload: [...brand.files.keys(), sansPreload[0], ...mono.files.keys()], reload: command === "dev"},
+        assets: {stylePath, browserScript, fontCss, preload: [...brand.files.keys(), sansPreload[0], ...mono.files.keys()], reload: command === "dev"},
     });
 
     if (command === "build") {

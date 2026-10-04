@@ -13,11 +13,6 @@ export const asset_dir = "_fh";
 export const asset_style_path = `/${asset_dir}/style.css`;
 
 /**
- * 내용 지문을 붙일 테마·목차·hash 보정 스크립트의 기본 URL
- */
-export const asset_client_path = `/${asset_dir}/client.js`;
-
-/**
  * 자체 호스팅 글꼴 폴더
  */
 export const asset_font_dir = `/${asset_dir}/fonts`;

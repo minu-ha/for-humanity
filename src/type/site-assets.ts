@@ -7,13 +7,9 @@ export interface SiteAssets {
      */
     stylePath: string;
     /**
-     * 내용 지문으로 구분한 브라우저 스크립트 URL
+     * 셸 DOM 뒤에서 동기 실행할 단일 Hono JSX 브라우저 번들
      */
-    clientPath: string;
-    /**
-     * 탐색 DOM 뒤에서 동기 실행할 컴파일된 브라우저 초기화 코드
-     */
-    navigationScript: string;
+    browserScript: string;
     /**
      * 내장 @font-face · head의 style 내용
      */

@@ -30,7 +30,7 @@ if (pack.name !== metadata.name || pack.version !== metadata.version || pack.fil
     throw new Error("Packed package does not match the release version");
 }
 const paths = new Set(pack.files.map((file) => file.path));
-for (const file of ["dist/cli.js", "dist/cli.css", "dist/client.js", "dist/navigation.js", "src/asset/favicon.svg", "README.md", "LICENSE", "CHANGELOG.md"]) {
+for (const file of ["dist/cli.js", "dist/cli.css", "dist/browser.js", "src/asset/favicon.svg", "README.md", "LICENSE", "CHANGELOG.md"]) {
     if (!paths.has(file)) {
         throw new Error(`Packed package is missing ${file}`);
     }

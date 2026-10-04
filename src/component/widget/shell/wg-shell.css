@@ -27,8 +27,8 @@
     overflow: hidden;
 }
 
-.wg_shell__navigationRoot {
-    /* 탐색 컴포넌트의 마운트 경계 · 자식은 body의 기존 grid에 참여 */
+.wg_shell__browserRoot {
+    /* 브라우저 셸의 마운트 경계 · 자식은 body의 기존 grid에 참여 */
     display: contents;
 }
 
@@ -41,22 +41,6 @@
     /* 문서 목록의 시작선 · 마지막 절도 읽는 선까지 이동 가능한 끝 여백 */
     padding-block: var(--app-size-brand) calc(100vh - var(--app-space-anchor));
     padding-inline: var(--app-space-column);
-}
-
-.wg_shell__cursorFace {
-    /* 뷰포트 기준 · 본문 흐름과 포인터 입력에 참여하지 않는 장식 */
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: var(--app-z-index-popper);
-    visibility: hidden;
-    pointer-events: none;
-    user-select: none;
-    image-rendering: pixelated;
-}
-
-.wg_shell__cursorFace--visible {
-    visibility: visible;
 }
 
 /* 오른쪽 목차를 숨기는 화면에서 본문과 문서 목록의 간격 유지 */
