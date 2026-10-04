@@ -1,6 +1,6 @@
 {
     "name": "for-humanity",
-    "version": "0.4.1",
+    "version": "0.4.2",
     "description": "Documents written for humans to read: a docs kit with a sidebar, parts, sections and flowcharts, built on Hono and React",
     "keywords": [
         "docs",

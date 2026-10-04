@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.4.2 — 2026-10-04
+
+- Preserve sidebar and mobile drawer scroll positions across document navigation and reloads within a tab, independently of the main content.
+- Show thin native navigation scrollbar thumbs on hover or keyboard focus, with a transparent track, Firefox thin fallback and system colors in forced-color environments.
+- Explain when related sections belong in one page's headings and when a separate child document is appropriate.
+
 ## 0.4.1 — 2026-10-04
 
 - Coalesce consecutive document and asset saves and serialize dev refreshes so bulk AI edits cannot start overlapping full-site renders and exhaust memory.

@@ -7,10 +7,12 @@ import {heading_highlight_hold_ms} from "@/component/widget/prose/_constant/head
 import {cursor_face_offset_px, cursor_face_storage_key} from "@/component/widget/shell/_constant/cursor-face";
 import {reading_line_slack_px} from "@/component/widget/shell/_constant/reading-line";
 import {bindMobileNavigation} from "@/component/widget/shell/_function/bind-mobile-navigation";
+import {bindNavigationScroll} from "@/component/widget/shell/_function/bind-navigation-scroll";
 import {findHashTarget} from "@/util/dom/find-hash-target";
 import {revealHashTarget} from "@/util/dom/reveal-hash-target";
 
 bindMobileNavigation();
+bindNavigationScroll();
 
 const cursorFace = document.querySelector<HTMLImageElement>("[data-cursor-face]");
 
