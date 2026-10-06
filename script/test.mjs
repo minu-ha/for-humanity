@@ -5,7 +5,8 @@ import {fileURLToPath} from "node:url";
 import {build} from "esbuild";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
-const outDir = "node_modules/.cache/for-humanity-tests";
+// Node의 --test는 node_modules 안 파일을 건너뛰므로 저장소 루트의 무시 폴더에 빌드한다.
+const outDir = ".cache/for-humanity-tests";
 const entryPoints = [
     "src/util/async/to-change-queue.test.ts",
     "src/util/font/to-font-css.test.ts",
