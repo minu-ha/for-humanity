@@ -9,7 +9,7 @@ import {findHashTarget} from "@/util/dom/find-hash-target";
 import "./_wg-navigation-toc.css";
 
 /**
- * 현재 문서의 목차 · 읽는 제목 한 항목과 조상 트리선 구분
+ * 현재 문서의 목차 · 읽는 제목 한 항목만 강조
  */
 export interface WgNavigationTocProps {
     /**
@@ -86,7 +86,6 @@ export const WgNavigationToc = (props: WgNavigationTocProps) => {
              * 가름별 제목 이동 · 하위 제목이 현재 위치여도 부모 글씨는 강조하지 않음
              */}
             {props.groups.map((group) => {
-                const currentIndex = group.sections.findIndex((section) => section.heading.slug === currentSlug || section.subs.some((sub) => sub.heading.slug === currentSlug));
                 const partKey = `outline:${props.pageId}:part:${group.sections[0].heading.slug}`;
                 return (
                     <div
@@ -96,17 +95,10 @@ export const WgNavigationToc = (props: WgNavigationTocProps) => {
                         {group.part !== undefined && <div className={clsx("wg_navigationToc__group")}>{group.part}</div>}
                         {group.part !== undefined && <WgNavigationBranchToggle branchKey={partKey} label={group.part} collapsed={props.collapsed} onToggle={props.onToggle} />}
                         <ul className={clsx("wg_navigationToc__list")} id={toNavigationBranchId(partKey)} hidden={props.collapsed[partKey] === true}>
-                            {group.sections.map((section, index) => {
-                                const currentSubIndex = section.subs.findIndex((sub) => sub.heading.slug === currentSlug);
+                            {group.sections.map((section) => {
                                 const sectionKey = `outline:${props.pageId}:heading:${section.heading.slug}`;
                                 return (
-                                    <li
-                                        className={clsx("wg_navigationToc__item", {
-                                            "wg_navigationToc__item--trail": index < currentIndex,
-                                            "wg_navigationToc__item--current": index === currentIndex,
-                                        })}
-                                        key={section.heading.slug}
-                                    >
+                                    <li className={clsx("wg_navigationToc__item")} key={section.heading.slug}>
                                         <a
                                             className={clsx("wg_navigationToc__link", {"wg_navigationToc__link--active": section.heading.slug === currentSlug})}
                                             href={`#${section.heading.slug}`}
@@ -119,18 +111,12 @@ export const WgNavigationToc = (props: WgNavigationTocProps) => {
                                             <WgNavigationBranchToggle branchKey={sectionKey} label={section.heading.text} collapsed={props.collapsed} onToggle={props.onToggle} />
                                         )}
                                         {/**
-                                         * 조상과 이전 형제의 트리선은 연결 · 활성 링크는 한 제목만
+                                         * 하위 제목 · 활성 링크는 한 제목만
                                          */}
                                         {section.subs.length > 0 && (
                                             <ul className={clsx("wg_navigationToc__sub")} id={toNavigationBranchId(sectionKey)} hidden={props.collapsed[sectionKey] === true}>
-                                                {section.subs.map((sub, subIndex) => (
-                                                    <li
-                                                        className={clsx("wg_navigationToc__subItem", {
-                                                            "wg_navigationToc__subItem--trail": subIndex < currentSubIndex,
-                                                            "wg_navigationToc__subItem--current": subIndex === currentSubIndex,
-                                                        })}
-                                                        key={sub.heading.slug}
-                                                    >
+                                                {section.subs.map((sub) => (
+                                                    <li className={clsx("wg_navigationToc__subItem")} key={sub.heading.slug}>
                                                         <a
                                                             className={clsx("wg_navigationToc__subLink", {"wg_navigationToc__subLink--active": sub.heading.slug === currentSlug})}
                                                             href={`#${sub.heading.slug}`}

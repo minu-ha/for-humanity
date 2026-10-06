@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Remove tree lines from the document navigation and page outline, keeping nesting through indentation.
+
 ## 0.6.0 — 2026-10-04
 
 - Generate `robots.txt` and `sitemap.xml` in dev and static builds when an optional public root `url` is configured; include home and encoded document URLs, and leave projects without a URL unchanged.

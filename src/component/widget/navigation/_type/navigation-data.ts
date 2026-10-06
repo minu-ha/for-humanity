@@ -21,10 +21,6 @@ export interface NavigationDoc {
      */
     active: boolean;
     /**
-     * 현재 문서와 조상의 트리 경로
-     */
-    current: boolean;
-    /**
      * 클릭 가능한 하위 문서
      */
     children: NavigationDoc[];
@@ -42,10 +38,6 @@ export interface NavigationGroup {
      * 최상위부터 현재 묶음까지
      */
     path: string[];
-    /**
-     * 현재 페이지가 속한 묶음 경로
-     */
-    current: boolean;
     /**
      * 현재 단계의 문서
      */

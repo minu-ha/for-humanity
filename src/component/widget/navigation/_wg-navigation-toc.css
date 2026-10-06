@@ -33,139 +33,43 @@
 }
 
 .wg_navigationToc__list {
-    margin: 0 0 0 var(--app-space-tree-inset);
+    margin: 0;
     padding: 0;
     list-style: none;
 }
 
 .wg_navigationToc__link {
-    /* 가로 가지는 링크 첫 줄 기준 · 여러 줄 제목에서도 연결 위치 유지 */
-    position: relative;
     display: block;
-    padding: var(--app-space-tree-row) 0 var(--app-space-tree-row) calc(var(--app-space-tree-indent) + var(--app-space-inline));
+    padding: var(--app-space-tree-row) 0;
     color: var(--app-color-text);
     font-size: var(--app-font-size-dense);
     line-height: var(--app-line-height-tight);
     text-decoration: none;
-
-    &::before {
-        position: absolute;
-        top: calc(0.5lh + var(--app-space-tree-row));
-        left: 0;
-        width: var(--app-space-tree-indent);
-        border-top: 1px solid var(--app-color-border-soft);
-        content: "";
-        pointer-events: none;
-    }
 
     &:where(:hover) {
         color: var(--app-color-text-strong);
         text-decoration: underline;
     }
 
-    &:where(:hover)::before {
-        border-top-color: currentcolor;
-    }
-
-    /* 박스 대신 hover와 같은 진한 글·밑줄·가지선으로 키보드 위치 표시 */
+    /* 박스 대신 hover와 같은 진한 글·밑줄로 키보드 위치 표시 */
     &:where(:focus-visible) {
         outline: none;
         color: var(--app-color-text-strong);
         text-decoration: underline;
-    }
-
-    &:where(:focus-visible)::before {
-        border-top-color: currentcolor;
     }
 }
 
 .wg_navigationToc__link--active {
     color: var(--app-color-text-strong);
     font-weight: var(--app-font-weight-active);
-
-    &::before {
-        border-top-color: currentcolor;
-    }
 }
 
 .wg_navigationToc__item {
-    /* 하위 목록의 margin을 포함해 다음 항목까지 줄기 연결 */
-    display: flow-root;
-
-    /* 세로 줄기는 항목 전체 기준 · 중간 항목의 소제목 옆에서도 연결 */
+    /* 접기 버튼의 첫 행 기준 */
     position: relative;
 
     &:has(> .wg_navigationBranchToggle__root) > .wg_navigationToc__link {
         padding-inline-end: calc(var(--app-size-tree-toggle) + var(--app-space-inline));
-    }
-
-    &::before {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        border-left: 1px solid var(--app-color-border-soft);
-        content: "";
-        pointer-events: none;
-    }
-
-    &:where(:last-child)::before {
-        bottom: auto;
-        height: calc(0.5lh + var(--app-space-tree-row));
-    }
-
-    /* hover·키보드 포커스의 도착점 · 첫 줄 아래는 기본 줄기 유지 */
-    &::after {
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: calc(0.5lh + var(--app-space-tree-row));
-        border-left: 1px solid transparent;
-        content: "";
-        pointer-events: none;
-    }
-
-    &:where(:hover)::after {
-        border-left-color: var(--app-color-text-strong);
-    }
-
-    &:where(:has(:focus-visible))::after {
-        border-left-color: var(--app-color-text-strong);
-    }
-
-    /* 뒤 항목까지의 세로 경로 · 같은 목록의 형제 안에서만 연결 */
-    &:where(:has(~ .wg_navigationToc__item:hover))::before {
-        border-left-color: var(--app-color-text-strong);
-    }
-
-    &:where(:has(~ .wg_navigationToc__item :focus-visible))::before {
-        border-left-color: var(--app-color-text-strong);
-    }
-
-    /* 하위 제목을 탐색할 때 상위 절의 가지도 연결 */
-    &:where(:hover) > .wg_navigationToc__link::before {
-        border-top-color: var(--app-color-text-strong);
-    }
-
-    &:where(:has(:focus-visible)) > .wg_navigationToc__link::before {
-        border-top-color: var(--app-color-text-strong);
-    }
-}
-
-.wg_navigationToc__item--trail {
-    &::before {
-        border-left-color: var(--app-color-text-strong);
-    }
-}
-
-.wg_navigationToc__item--current {
-    &::after {
-        border-left-color: var(--app-color-text-strong);
-    }
-
-    /* 현재 소제목의 상위 절은 글 강조 없이 경로의 가로 가지 연결 */
-    & > .wg_navigationToc__link::before {
-        border-top-color: var(--app-color-text-strong);
     }
 }
 
@@ -175,93 +79,17 @@
     list-style: none;
 }
 
-.wg_navigationToc__subItem {
-    /* 하위 줄기는 소제목 항목 기준 · 마지막 소제목 첫 줄에서 종료 */
-    position: relative;
-
-    &::before {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        border-left: 1px solid var(--app-color-border-soft);
-        content: "";
-        pointer-events: none;
-    }
-
-    &:where(:last-child)::before {
-        bottom: auto;
-        height: calc(0.5lh + var(--app-space-tree-row));
-    }
-
-    /* hover·키보드 포커스의 도착점 · 첫 줄 아래는 기본 줄기 유지 */
-    &::after {
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: calc(0.5lh + var(--app-space-tree-row));
-        border-left: 1px solid transparent;
-        content: "";
-        pointer-events: none;
-    }
-
-    &:where(:hover)::after {
-        border-left-color: var(--app-color-text-strong);
-    }
-
-    &:where(:has(:focus-visible))::after {
-        border-left-color: var(--app-color-text-strong);
-    }
-
-    /* 뒤 항목까지의 세로 경로 · 같은 목록의 형제 안에서만 연결 */
-    &:where(:has(~ .wg_navigationToc__subItem:hover))::before {
-        border-left-color: var(--app-color-text-strong);
-    }
-
-    &:where(:has(~ .wg_navigationToc__subItem :focus-visible))::before {
-        border-left-color: var(--app-color-text-strong);
-    }
-}
-
-.wg_navigationToc__subItem--trail {
-    &::before {
-        border-left-color: var(--app-color-text-strong);
-    }
-}
-
-.wg_navigationToc__subItem--current {
-    &::after {
-        border-left-color: var(--app-color-text-strong);
-    }
-}
-
 .wg_navigationToc__subLink {
-    /* 하위 가지도 링크 첫 줄 기준 · 줄바꿈된 제목 옆으로 선이 늘어나지 않음 */
-    position: relative;
     display: block;
-    padding: var(--app-space-tree-row) 0 var(--app-space-tree-row) calc(var(--app-space-tree-indent) + var(--app-space-inline));
+    padding: var(--app-space-tree-row) 0;
     color: var(--app-color-text);
     font-size: var(--app-font-size-detail);
     line-height: var(--app-line-height-tight);
     text-decoration: none;
 
-    &::before {
-        position: absolute;
-        top: calc(0.5lh + var(--app-space-tree-row));
-        left: 0;
-        width: var(--app-space-tree-indent);
-        border-top: 1px solid var(--app-color-border-soft);
-        content: "";
-        pointer-events: none;
-    }
-
     &:where(:hover) {
         color: var(--app-color-text-strong);
         text-decoration: underline;
-    }
-
-    &:where(:hover)::before {
-        border-top-color: currentcolor;
     }
 
     /* 상위 목차와 같은 키보드 표현 */
@@ -270,17 +98,9 @@
         color: var(--app-color-text-strong);
         text-decoration: underline;
     }
-
-    &:where(:focus-visible)::before {
-        border-top-color: currentcolor;
-    }
 }
 
 .wg_navigationToc__subLink--active {
     color: var(--app-color-text-strong);
     font-weight: var(--app-font-weight-active);
-
-    &::before {
-        border-top-color: currentcolor;
-    }
 }

@@ -92,9 +92,8 @@
     --app-space-group: 20px;
     --app-space-section: 32px;
 
-    /* 탐색 트리 · 항목 위아래 여백·묶음 안쪽 여백·가지와 중첩 들여쓰기 */
+    /* 탐색 트리 · 항목 위아래 여백·중첩 들여쓰기 */
     --app-space-tree-row: 2px;
-    --app-space-tree-inset: 4px;
     --app-space-tree-indent: 12px;
 
     /* 페이지 틀 · 좁은 화면 값은 아래 @media */

@@ -6,13 +6,11 @@ const navigationDocSchema: ZodMiniType<NavigationDoc> = object({
     name: string(),
     label: string(),
     active: boolean(),
-    current: boolean(),
     children: lazy(() => array(navigationDocSchema)),
 });
 const navigationGroupSchema: ZodMiniType<NavigationGroup> = object({
     name: string(),
     path: array(string()),
-    current: boolean(),
     docs: array(navigationDocSchema),
     groups: lazy(() => array(navigationGroupSchema)),
 });

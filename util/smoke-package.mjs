@@ -58,7 +58,7 @@ try {
     assert.match(nested, /Example<\/span><button\b[^>]*aria-expanded="true"[^>]*>−<\/button><ul\b/);
     assert.match(nested, /Guide<\/span><button\b[^>]*aria-expanded="true"[^>]*>−<\/button><ul\b/);
     assert.match(nested, /href="\/guide\/agents\/"[^>]*aria-current="page"/);
-    assert.equal([...nestedNavigation.matchAll(/wg_navigationNavList__item--current/g)].length, nestedGroup.length);
+    assert.equal([...nestedNavigation.matchAll(/wg_navigationNavList__link--active/g)].length, 1);
     const child = await readFile(join(output, "guide/options/index.html"), "utf8");
     const childNavigation = child.match(/<nav\b[^>]*class="wg_navigationNav__root"[\s\S]*?<\/nav>/)[0];
     assert.match(child, /href="\/guide\/"[^>]*>Guide<\/a><button\b[^>]*aria-label="Collapse Guide"[^>]*>−<\/button><ul\b[^>]*aria-label="Guide"/);

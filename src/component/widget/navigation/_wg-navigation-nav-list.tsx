@@ -29,18 +29,9 @@ export interface WgNavigationNavListProps {
 
 export const WgNavigationNavList = (props: WgNavigationNavListProps) => {
     const entries = [
-        ...props.group.docs.map((doc) => {
-            const active = doc.active;
-            return {kind: "document" as const, key: `doc:${doc.id}`, doc, active, current: doc.current};
-        }),
-        ...props.group.groups.map((group) => ({
-            kind: "group" as const,
-            key: `group:${JSON.stringify(group.path)}`,
-            group,
-            current: group.current,
-        })),
+        ...props.group.docs.map((doc) => ({kind: "document" as const, key: `doc:${doc.id}`, doc})),
+        ...props.group.groups.map((group) => ({kind: "group" as const, key: `group:${JSON.stringify(group.path)}`, group})),
     ];
-    const currentIndex = entries.findIndex((entry) => entry.current);
 
     return (
         <ul
@@ -50,26 +41,20 @@ export const WgNavigationNavList = (props: WgNavigationNavListProps) => {
             hidden={props.collapsed[props.branchKey] === true}
         >
             {/**
-             * 현재 경로 앞의 줄기와 도착 가지 · 문서 링크는 원래 파일 URL 사용
+             * 문서 링크는 원래 파일 URL 사용
              */}
-            {entries.map((entry, index) => (
-                <li
-                    className={clsx("wg_navigationNavList__item", {
-                        "wg_navigationNavList__item--trail": index < currentIndex,
-                        "wg_navigationNavList__item--current": entry.current,
-                    })}
-                    key={entry.key}
-                >
+            {entries.map((entry) => (
+                <li className={clsx("wg_navigationNavList__item")} key={entry.key}>
                     {/**
                      * 문서 링크 · 부모도 독립 페이지, 현재 한 문서에만 페이지 상태 부여
                      */}
                     {entry.kind === "document" && (
                         <Fragment>
                             <a
-                                className={clsx("wg_navigationNavList__link", {"wg_navigationNavList__link--active": entry.active})}
+                                className={clsx("wg_navigationNavList__link", {"wg_navigationNavList__link--active": entry.doc.active})}
                                 href={`/${entry.doc.id}/`}
                                 title={entry.doc.label}
-                                aria-current={entry.active ? "page" : undefined}
+                                aria-current={entry.doc.active ? "page" : undefined}
                             >
                                 {entry.doc.name}
                             </a>
@@ -81,7 +66,7 @@ export const WgNavigationNavList = (props: WgNavigationNavListProps) => {
                             )}
                             {entry.doc.children.length > 0 && (
                                 <WgNavigationNavList
-                                    group={{name: entry.doc.name, path: props.group.path, current: entry.current, docs: entry.doc.children, groups: []}}
+                                    group={{name: entry.doc.name, path: props.group.path, docs: entry.doc.children, groups: []}}
                                     collapsed={props.collapsed}
                                     onToggle={props.onToggle}
                                     branchKey={entry.key}

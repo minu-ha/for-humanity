@@ -318,8 +318,7 @@ test("nested groups follow metadata paths and keep sibling branches and document
     assert.match(html, /Research<\/span><button\b[^>]*aria-expanded="true"[^>]*>−<\/button><ul\b/);
     assert.equal([...html.matchAll(/href="\/authoring\/"/g)].length, 1);
     assert.equal([...html.matchAll(/>Research<\/span>/g)].length, 2);
-    assert.equal([...html.matchAll(/wg_navigationNavList__item--current/g)].length, 3);
-    assert.doesNotMatch(toNavigationHtml({site, docs}), /aria-current="page"|wg_navigationNavList__item--current/);
+    assert.doesNotMatch(toNavigationHtml({site, docs}), /aria-current="page"/);
     assert.ok(html.indexOf('href="/parts/"') < html.indexOf('href="/authoring/"'));
     assert.doesNotMatch(html, /<details\b/);
 });
@@ -375,12 +374,11 @@ test("parent documents contain ordered descendants with independent URLs and one
     assert.match(html, /href="\/details\/"[^>]*aria-current="page"/);
     assert.equal([...html.matchAll(/aria-current="page"/g)].length, 1);
     assert.equal([...html.matchAll(/wg_navigationNavList__link--active/g)].length, 1);
-    assert.equal([...html.matchAll(/wg_navigationNavList__item--current/g)].length, 5);
     for (const doc of docs) {
         assert.equal(html.split(`href="/${doc.id}/"`).length - 1, 1);
     }
     assert.ok(html.indexOf('href="/themes/"') < html.indexOf('href="/guide/site/"'));
-    assert.doesNotMatch(toNavigationHtml({site, docs}), /aria-current="page"|wg_navigationNavList__item--current/);
+    assert.doesNotMatch(toNavigationHtml({site, docs}), /aria-current="page"/);
 
     const app = createApp({
         site,

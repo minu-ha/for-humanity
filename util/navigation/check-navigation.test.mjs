@@ -203,7 +203,6 @@ try {
         await page.waitForFunction(() => document.querySelector('[aria-current="location"]')?.getAttribute("href") === "#detail-10");
         assert.equal(await page.locator('[aria-current="location"]').count(), 1);
         assert.equal(await page.locator('a[href="#section-10"]').getAttribute("aria-current"), null);
-        assert.equal(await page.locator('a[href="#section-10"]').evaluate((element) => element.parentElement.classList.contains("wg_navigationToc__item--current")), true);
 
         await page.getByRole("link", {name: "Hidden detail", exact: true}).click();
         await page.waitForFunction(() => document.querySelector("details").open);

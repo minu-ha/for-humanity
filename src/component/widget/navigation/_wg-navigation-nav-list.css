@@ -1,87 +1,48 @@
 /*
- * 재귀 문서 목록 · 단계별 가지와 조상 경로의 1px 트리
+ * 재귀 문서 목록 · 단계별 들여쓰기
  */
 .wg_navigationNavList__root {
-    margin: 0 0 0 var(--app-space-tree-inset);
+    margin: 0;
     padding: 0;
     list-style: none;
 }
 
 .wg_navigationNavList__branch {
-    /* 하위 묶음도 문서와 같은 첫 줄 기준으로 가지 연결 */
-    position: relative;
     display: block;
-    padding: var(--app-space-tree-row) 0 var(--app-space-tree-row) calc(var(--app-space-tree-indent) + var(--app-space-inline));
+    padding: var(--app-space-tree-row) 0;
     color: var(--app-color-text-muted);
     font-size: var(--app-font-size-group);
     line-height: calc(var(--app-font-size-dense) * var(--app-line-height-tight));
     overflow-wrap: anywhere;
-
-    &::before {
-        position: absolute;
-        top: calc(0.5lh + var(--app-space-tree-row));
-        left: 0;
-        width: var(--app-space-tree-indent);
-        border-top: 1px solid var(--app-color-border-soft);
-        content: "";
-        pointer-events: none;
-    }
 }
 
 .wg_navigationNavList__link {
-    /* 가로 가지는 링크 첫 줄 기준 · 여러 줄 제목에서도 연결 위치 유지 */
-    position: relative;
     display: block;
-    padding: var(--app-space-tree-row) 0 var(--app-space-tree-row) calc(var(--app-space-tree-indent) + var(--app-space-inline));
+    padding: var(--app-space-tree-row) 0;
     color: var(--app-color-link);
     font-size: var(--app-font-size-dense);
     line-height: var(--app-line-height-tight);
     text-decoration: none;
     overflow-wrap: anywhere;
 
-    &::before {
-        position: absolute;
-        top: calc(0.5lh + var(--app-space-tree-row));
-        left: 0;
-        width: var(--app-space-tree-indent);
-        border-top: 1px solid var(--app-color-border-soft);
-        content: "";
-        pointer-events: none;
-    }
-
     &:where(:hover) {
         text-decoration: underline;
     }
 
-    &:where(:hover)::before {
-        border-top-color: currentcolor;
-    }
-
-    /* hover와 같은 밑줄·가지선으로 키보드 위치 표시 */
+    /* hover와 같은 밑줄로 키보드 위치 표시 */
     &:where(:focus-visible) {
         outline: none;
         text-decoration: underline;
-    }
-
-    &:where(:focus-visible)::before {
-        border-top-color: currentcolor;
     }
 }
 
 .wg_navigationNavList__link--active {
     color: var(--app-color-link);
     font-weight: var(--app-font-weight-active);
-
-    &::before {
-        border-top-color: currentcolor;
-    }
 }
 
 .wg_navigationNavList__item {
-    /* 하위 목록을 포함해 다음 형제까지 줄기 연결 */
-    display: flow-root;
-
-    /* 세로 줄기는 각 항목 기준 · 마지막 항목의 첫 줄 가운데에서 종료 */
+    /* 접기 버튼의 첫 행 기준 */
     position: relative;
 
     &:has(> .wg_navigationBranchToggle__root) > .wg_navigationNavList__link {
@@ -92,88 +53,7 @@
         padding-inline-end: calc(var(--app-size-tree-toggle) + var(--app-space-inline));
     }
 
-    &::before {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        border-left: 1px solid var(--app-color-border-soft);
-        content: "";
-        pointer-events: none;
-    }
-
-    &:where(:last-child)::before {
-        bottom: auto;
-        height: calc(0.5lh + var(--app-space-tree-row));
-    }
-
-    /* hover·키보드 포커스의 도착점 · 첫 줄 아래는 기본 줄기 유지 */
-    &::after {
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: calc(0.5lh + var(--app-space-tree-row));
-        border-left: 1px solid transparent;
-        content: "";
-        pointer-events: none;
-    }
-
-    &:where(:hover)::after {
-        border-left-color: var(--app-color-link);
-    }
-
-    &:where(:has(:focus-visible))::after {
-        border-left-color: var(--app-color-link);
-    }
-
-    /* 뒤 항목까지의 세로 경로 · 같은 목록의 형제 안에서만 연결 */
-    &:where(:has(~ .wg_navigationNavList__item:hover))::before {
-        border-left-color: var(--app-color-link);
-    }
-
-    &:where(:has(~ .wg_navigationNavList__item :focus-visible))::before {
-        border-left-color: var(--app-color-link);
-    }
-
     & > .wg_navigationNavList__root {
         margin-left: var(--app-space-tree-indent);
-    }
-
-    /* 하위 문서를 탐색할 때 조상 묶음의 가지도 함께 연결 */
-    &:where(:hover) > .wg_navigationNavList__branch::before {
-        border-top-color: var(--app-color-link);
-    }
-
-    &:where(:has(:focus-visible)) > .wg_navigationNavList__branch::before {
-        border-top-color: var(--app-color-link);
-    }
-
-    /* 자식 문서를 탐색할 때 클릭 가능한 부모 문서의 가지도 연결 */
-    &:where(:hover) > .wg_navigationNavList__link::before {
-        border-top-color: var(--app-color-link);
-    }
-
-    &:where(:has(:focus-visible)) > .wg_navigationNavList__link::before {
-        border-top-color: var(--app-color-link);
-    }
-}
-
-.wg_navigationNavList__item--trail {
-    &::before {
-        border-left-color: var(--app-color-link);
-    }
-}
-
-.wg_navigationNavList__item--current {
-    &::after {
-        border-left-color: var(--app-color-link);
-    }
-
-    & > .wg_navigationNavList__branch::before {
-        border-top-color: var(--app-color-link);
-    }
-
-    & > .wg_navigationNavList__link::before {
-        border-top-color: var(--app-color-link);
     }
 }
