@@ -4,7 +4,7 @@
  */
 
 /**
- * 본문·코드 글꼴 CSS · 패키지 기준 경로 · Regular·SemiBold 두 파일
+ * 본문·코드 글꼴 CSS · 패키지 기준 경로 · Regular·SemiBold·Italic 세 파일
  */
 export const font_mono_css = "src/asset/font/monoplex-kr/monoplex-kr.css";
 
