@@ -1,5 +1,5 @@
 /*
- * 와이드 화면의 오른쪽 목차 · 회색 제목·묶음과 본문 글색의 이동 대상 구분
+ * 와이드 화면의 오른쪽 목차 · 라벨·묶음은 문서 탐색의 묶음과 같은 표현
  */
 .wg_navigationToc__root {
     font-size: var(--app-font-size-dense);
@@ -7,22 +7,23 @@
 }
 
 .wg_navigationToc__label {
-    margin-bottom: var(--app-space-inline);
-    color: var(--app-color-text-muted);
-    font-size: var(--app-font-size-label);
-    font-weight: var(--app-font-weight-strong);
-    letter-spacing: var(--app-letter-spacing-label);
-}
-
-.wg_navigationToc__group {
-    margin: 0 0 4px;
+    margin: 0 0 var(--app-space-tree-label);
     color: var(--app-color-text-muted);
     font-size: var(--app-font-size-group);
     line-height: calc(var(--app-font-size-dense) * var(--app-line-height-tight));
+    text-box: trim-start cap alphabetic;
+}
+
+.wg_navigationToc__group {
+    margin: 0 0 var(--app-space-tree-label);
+    color: var(--app-color-text-muted);
+    font-size: var(--app-font-size-group);
+    line-height: calc(var(--app-font-size-dense) * var(--app-line-height-tight));
+    text-box: trim-start cap alphabetic;
 }
 
 .wg_navigationToc__groupSection--named {
-    margin-top: var(--app-space-stack);
+    margin-top: var(--app-space-tree-group);
 }
 
 .wg_navigationToc__list {

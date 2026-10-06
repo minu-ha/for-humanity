@@ -56,7 +56,6 @@
 
     /* 글자 크기 · 11px 비상호작용 묶음 · 12px 기본과 역할별 제목 크기 */
     --app-font-size-group: 11px;
-    --app-font-size-label: 12px;
     --app-font-size-detail: 12px;
     --app-font-size-dense: 12px;
     --app-font-size-body: 12px;
@@ -71,15 +70,14 @@
     --app-font-weight-strong: 600;
     --app-font-weight-title: 600;
 
-    /* 행간 · 작은 제목·탐색은 1.5, 본문은 한글 획 사이 여유 확보 */
+    /* 행간 · 작은 제목·탐색은 1.4, 본문은 한글 획 사이 여유 확보 */
     --app-line-height-title: 1.5;
     --app-line-height-heading: 1.5;
-    --app-line-height-tight: 1.5;
+    --app-line-height-tight: 1.4;
     --app-line-height-code: 1.65;
     --app-line-height-body: 1.7;
 
-    /* 자간 · 12px 본문·라벨은 기본 폭, 제목만 미세하게 조임 */
-    --app-letter-spacing-label: 0;
+    /* 자간 · 사이트 이름은 기본 폭, 제목만 미세하게 조임 */
     --app-letter-spacing-brand: 0;
     --app-letter-spacing-heading: -0.01em;
     --app-letter-spacing-title: -0.015em;
@@ -91,8 +89,10 @@
     --app-space-group: 20px;
     --app-space-section: 32px;
 
-    /* 탐색 트리 · 항목 위아래 여백·중첩 들여쓰기 */
-    --app-space-tree-row: 2px;
+    /* 탐색 트리 · 항목 위아래 여백·묶음 사이·묶음 라벨 아래·중첩 들여쓰기 */
+    --app-space-tree-row: 0px;
+    --app-space-tree-group: 16px;
+    --app-space-tree-label: 2px;
     --app-space-tree-indent: 12px;
 
     /* 페이지 틀 · 좁은 화면 값은 아래 @media */

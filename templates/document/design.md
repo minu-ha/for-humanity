@@ -39,10 +39,10 @@ order: 20
 |------------------|----------------------------------------------------------------------------------------|
 | `color`          | 바탕 · 글 · 선 · 강조 · 링크 · 상태                                                    |
 | `font`           | `mono` 본문·라벨·코드·흐름도 · `brand` 사이트 이름                                |
-| `font-size`      | `group` · `label` · `detail` · `dense` · `body` · `lead` · `part` · `section` · `title` |
+| `font-size`      | `group` · `detail` · `dense` · `body` · `lead` · `part` · `section` · `title`           |
 | `font-weight`    | `mark` · `active` · `strong` · `title`                                                 |
 | `line-height`    | `title` · `heading` · `tight` · `code` · `body`                                        |
-| `letter-spacing` | `label` · `brand` · `heading` · `title`                                                |
+| `letter-spacing` | `brand` · `heading` · `title`                                                          |
 | `space`          | `inline` · `stack` · `block` · `group` · `section` · 페이지 틀                         |
 | `size`           | `sidebar` · `main` · `page` · `brand` · `mobile-header` · `menu-button` · `drawer`                                         |
 | `z-index`        | `sticky` 사이드바 사이트 이름 · `popper` 커서 장식                           |
@@ -83,8 +83,7 @@ Monoplex KR은 Regular `400`·SemiBold `600` 두 파일. 영문 반각과 한글
 
 | Size      | Use                                                 |
 |-----------|-----------------------------------------------------|
-| `group`   | 클릭할 수 없는 문서·TOC 묶음 · 11px |
-| `label`   | On this page 라벨 · 12px |
+| `group`   | 클릭할 수 없는 문서·TOC 묶음 · On this page 라벨 · 11px |
 | `detail`  | subsection 링크 · 코드 블록 · status badge          |
 | `dense`   | TOC · 표 · h5                           |
 | `body`    | 본문 · h4                 |
@@ -93,15 +92,15 @@ Monoplex KR은 Regular `400`·SemiBold `600` 두 파일. 영문 반각과 한글
 | `section` | h2                                                  |
 | `title`   | h1 · 사이드바 사이트 이름                            |
 
-본문·묶음·사이트 이름의 `mark`는 `400`, 현재 문서·TOC의 `active`, On this page·제목·강조의 `strong`과 h1 `title`은 `600`.
-문서 링크는 링크색, 목차의 절·소제목 링크는 본문 글색. 클릭할 수 없는 묶음은 회색과 작은 크기로 구분. `On this page` 제목도 같은 회색을 사용.
+본문·묶음·On this page·사이트 이름의 `mark`는 `400`, 현재 문서·TOC의 `active`, 제목·강조의 `strong`과 h1 `title`은 `600`.
+문서 링크는 링크색, 목차의 절·소제목 링크는 본문 글색. 클릭할 수 없는 묶음은 회색과 작은 크기로 구분. `On this page` 제목도 묶음 라벨과 같은 표현.
 TOC는 작성한 제목을 그대로 표시하고 자동 번호를 붙이지 않음.
 Monoplex KR에는 코드 합자 없음: `>=`, `!=` 원문 그대로 표시.
-본문·사이드바 링크·목차·코드는 `12px`, 사이드바 묶음은 `11px`, h1과 사이트 이름은 `16px`, h2는 `14px`, part는 `13px`.
-작은 묶음의 행 상자는 탐색 링크와 같은 `18px`.
-본문 행간은 `1.7`(20.4px), 제목·탐색은 `1.5`, 코드 블록은 `1.65`. 작은 글자의 획이 붙지 않도록 본문·라벨·코드는 기본 자간 유지.
+본문·사이드바 링크·목차·코드는 `12px`, 사이드바 묶음과 On this page는 `11px`, h1과 사이트 이름은 `16px`, h2는 `14px`, part는 `13px`.
+작은 묶음의 행 상자는 탐색 링크와 같은 `16.8px`(12px × 1.4).
+본문 행간은 `1.7`(20.4px), 작은 제목·탐색은 `1.4`, 코드 블록은 `1.65`. 작은 글자의 획이 붙지 않도록 본문·라벨·코드는 기본 자간 유지.
 h1 자간은 `-0.015em`, h2·part는 `-0.01em`. 작성자가 붙인 번호도 제목과 같은 글꼴·크기 사용.
-h1과 문서 묶음 라벨에는 `text-box: trim-start cap alphabetic` 적용. 크기가 달라도 대문자 위쪽 시작선을 맞추며, 미지원 브라우저는 기존 행 상자로 표시. [MDN text-box](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-box).
+h1, 문서·목차 묶음 라벨, On this page에는 `text-box: trim-start cap alphabetic` 적용. 크기가 달라도 대문자 위쪽 시작선을 맞추며, 미지원 브라우저는 기존 행 상자로 표시. [MDN text-box](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-box).
 README 홈의 소개 제목은 `24px`, 얼굴은 `72px`. Markdown 원문의 내용은 유지하고 사이트에서만 크기 조정.
 Shiki는 기존 역할색 참조: 키워드 strong, 함수 accent, 문자열 verified, 숫자 unverified, 주석 muted, 링크 link.
 
@@ -124,12 +123,12 @@ Shiki는 기존 역할색 참조: 키워드 strong, 함수 accent, 문자열 ver
 | `page-top` · `gutter`             | 페이지 위·좌우 여백          |
 | `column`                         | 본문 좌우 패딩               |
 | `sidebar-gap`                    | 사이드바와 본문 사이의 간격 |
-| `tree-row` · `tree-indent` | 트리 항목 위아래 여백 · 중첩 들여쓰기 |
+| `tree-row` · `tree-group` · `tree-label` · `tree-indent` | 트리 항목 위아래 여백 · 묶음 사이 · 묶음 라벨 아래 · 중첩 들여쓰기 |
 | `anchor`                         | hash 제목 위치 · TOC 읽는 선 |
 
 공통 리듬: `inline` 6px · `stack` 10px · `block` 14px · `group` 20px · `section` 32px.
 같은 역할의 간격은 `margin`, `padding`, `gap`에서 공통 토큰 재사용.
-사이드바는 묶음 간격 10px, 라벨 아래 4px, 행 위·아래 2px로 배치. 데스크톱의 한 줄 항목 높이는 22px. 모바일에서는 위·아래 여백 7px로 32px 높이를 확보하며 행 사이 별도 간격 없음. 홈 이동은 사이트 이름 하나로 제공.
+사이드바는 묶음 간격 `tree-group` 16px, 라벨 아래 `tree-label` 2px, 행 위·아래 여백 없이 배치. 데스크톱의 한 줄 항목 높이는 16.8px. 모바일에서는 위·아래 여백 7px로 약 31px 높이를 확보하며 행 사이 별도 간격 없음. 홈 이동은 사이트 이름 하나로 제공.
 사이트 이름은 사이드바 상단. 제목의 행 높이·페이지 위 여백·목록 전 `group` 20px를 합친 `size-brand` 사용.
 사이트 이름은 한 줄, 긴 이름은 말줄임. 데스크톱에서는 이름을 고정하고 아래 목록만 스크롤.
 사이트 이름은 `page-top`에서 시작. 데스크톱의 본문은 `size-brand`만큼 위 여백을 두고 문서 탐색의 첫 묶음과 정렬.
@@ -141,7 +140,7 @@ Shiki는 기존 역할색 참조: 키워드 strong, 함수 accent, 문자열 ver
 앵커 도착점은 데스크톱 80px, 모바일에서는 고정 헤더 56px와 여백 14px를 합친 70px. 제목 위 여백을 남기고 아래 본문을 바로 읽는 기준.
 TOC의 현재 위치와 마지막 절의 끝 여백도 같은 `anchor` 토큰 사용.
 
-한 소유자에만 필요한 보정은 지역 값. 예: 하위 목록 아래 여백 4px.
+문서 탐색과 목차의 묶음 사이는 `tree-group` 16px로 공유. 문서 탐색은 묶음 목록의 `gap`, 목차는 이름 있는 가름의 위 여백. 한 소유자에만 필요한 보정은 지역 값. 예: 하위 목록 아래 여백 4px.
 같은 숫자여도 아이콘 크기·글자 크기·페이지 폭은 간격과 별도 역할.
 모서리 토큰의 기본값은 `0`. 표·흐름도는 바깥 상자 없이 표현.
 겹침 요소 추가 시 `z-index` 역할 토큰 먼저 정의. 사이드바 사이트 이름은 `--app-z-index-sticky`, 커서 장식은 `--app-z-index-popper` 층.

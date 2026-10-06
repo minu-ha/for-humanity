@@ -25,7 +25,7 @@ try {
     );
     await writeFile(join(root, "child.md"), "---\nname: Child\nlabel: Child\ngroup: Guide\nparent: guide\norder: 1\n---\n\n## Short page\n\nText.\n");
     await Promise.all(
-        Array.from({length: 40}, (_, index) =>
+        Array.from({length: 60}, (_, index) =>
             writeFile(join(root, `page-${index}.md`), `---\nname: Page ${index}\nlabel: Page\ngroup: Guide\norder: ${index + 2}\n---\n\n## Read\n\nText.\n`),
         ),
     );

@@ -9,11 +9,11 @@
 .wg_navigationNav__docs {
     display: flex;
     flex-direction: column;
-    gap: var(--app-space-stack);
+    gap: var(--app-space-tree-group);
 }
 
 .wg_navigationNav__group {
-    margin: 0 0 4px;
+    margin: 0 0 var(--app-space-tree-label);
     color: var(--app-color-text-muted);
     font-size: var(--app-font-size-group);
     line-height: calc(var(--app-font-size-dense) * var(--app-line-height-tight));

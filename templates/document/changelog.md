@@ -15,6 +15,7 @@ order: 10
 - Replace Pretendard and JetBrains Mono with bundled Monoplex KR for body text, labels, code and flowcharts; align the flowchart grid to its 1:2 Latin–Hangul widths.
 - Remove tree lines from the document navigation and page outline, keeping nesting through indentation.
 - Remove the expand/collapse buttons and their saved branch choices; nested documents and headings are always shown.
+- Tighten navigation and outline rows to 16.8px with a 1.4 line height and share a 16px gap between groups; style `On this page` like the group labels.
 
 ## 0.6.0 — 2026-10-04
 
