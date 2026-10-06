@@ -1,0 +1,20 @@
+/*
+ * Monoplex KR 1.1.0 · https://github.com/y-kim/monoplex/releases/tag/monoplex-kr-1.1.0
+ * 릴리스 TTF를 서브셋 없이 WOFF2로만 압축 · OFL FAQ의 이름 유지 조건 · 라이선스는 옆의 LICENSE.md
+ * fonttools ttLib.woff2 compress MonoplexKR-Regular.ttf
+ */
+@font-face {
+    font-family: "Monoplex KR";
+    font-style: normal;
+    font-display: swap;
+    font-weight: 400;
+    src: url(./MonoplexKR-Regular.woff2) format("woff2");
+}
+
+@font-face {
+    font-family: "Monoplex KR";
+    font-style: normal;
+    font-display: swap;
+    font-weight: 600;
+    src: url(./MonoplexKR-SemiBold.woff2) format("woff2");
+}

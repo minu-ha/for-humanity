@@ -11,8 +11,8 @@ order: 20
 
 ## Overview
 
-- 본문: 한국어 산세리프 · 넉넉한 행간 · 낱말 단위 줄바꿈
-- 라벨: 작은 산세리프 · 코드·흐름도는 모노
+- 본문: 고정폭 Monoplex KR · 넉넉한 행간 · 낱말 단위 줄바꿈
+- 라벨: 작은 회색 글자 · 본문·코드·흐름도가 같은 고정폭 글꼴
 - 페이지 시작선: 문서 탐색의 첫 묶음·h1의 위쪽 정렬 · 사이트 이름은 그 위
 - 본문 머리: README 홈과 문서의 제목·소개·얇은 점선
 - 면의 구분: 가는 선 · 직각 모서리 · 그림자·그라데이션 없음
@@ -38,7 +38,7 @@ order: 20
 | Kind             | Roles                                                                                  |
 |------------------|----------------------------------------------------------------------------------------|
 | `color`          | 바탕 · 글 · 선 · 강조 · 링크 · 상태                                                    |
-| `font`           | `sans` 본문·라벨 · `mono` 코드·흐름도 · `brand` 사이트 이름                      |
+| `font`           | `mono` 본문·라벨·코드·흐름도 · `brand` 사이트 이름                                |
 | `font-size`      | `group` · `label` · `detail` · `dense` · `body` · `lead` · `part` · `section` · `title` |
 | `font-weight`    | `mark` · `active` · `strong` · `title`                                                 |
 | `line-height`    | `title` · `heading` · `tight` · `code` · `body`                                        |
@@ -76,9 +76,10 @@ order: 20
 
 ## Typography
 
-Pretendard 본문·라벨, JetBrains Mono 코드·흐름도, Architects Daughter 사이트 이름. 내장 파일 사용.
-사이트 이름은 Architects Daughter Regular `400`. 코드·사이트 이름 폰트의 미지원 글자와 한글은 본문 폰트로 fallback.
-글꼴의 출처는 [Google Fonts](https://fonts.google.com/specimen/Architects+Daughter), OFL은 자원 폴더에 포함.
+Monoplex KR 본문·라벨·코드·흐름도, Architects Daughter 사이트 이름. 내장 파일 사용.
+Monoplex KR은 Regular `400`·SemiBold `600` 두 파일. 영문 반각과 한글 전각이 정확히 1:2라 흐름도 격자와 일치.
+사이트 이름은 Architects Daughter Regular `400`. 사이트 이름 폰트의 미지원 글자와 한글은 Monoplex KR로 fallback.
+글꼴의 출처는 [Monoplex](https://github.com/y-kim/monoplex)·[Google Fonts](https://fonts.google.com/specimen/Architects+Daughter), OFL은 자원 폴더에 포함.
 
 | Size      | Use                                                 |
 |-----------|-----------------------------------------------------|
@@ -95,7 +96,7 @@ Pretendard 본문·라벨, JetBrains Mono 코드·흐름도, Architects Daughter
 본문·묶음·사이트 이름의 `mark`는 `400`, 현재 문서·TOC의 `active`, On this page·제목·강조의 `strong`과 h1 `title`은 `600`.
 문서 링크는 링크색, 목차의 절·소제목 링크는 본문 글색. 클릭할 수 없는 묶음은 회색과 작은 크기로 구분. `On this page` 제목도 같은 회색을 사용.
 TOC는 작성한 제목을 그대로 표시하고 자동 번호를 붙이지 않음.
-코드 합자 비활성: `>=`, `!=` 원문 구분.
+Monoplex KR에는 코드 합자 없음: `>=`, `!=` 원문 그대로 표시.
 본문·사이드바 링크·목차·코드는 `12px`, 사이드바 묶음은 `11px`, h1과 사이트 이름은 `16px`, h2는 `14px`, part는 `13px`.
 작은 묶음의 행 상자는 탐색 링크와 같은 `18px`.
 본문 행간은 `1.7`(20.4px), 제목·탐색은 `1.5`, 코드 블록은 `1.65`. 작은 글자의 획이 붙지 않도록 본문·라벨·코드는 기본 자간 유지.

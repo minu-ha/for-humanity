@@ -130,7 +130,6 @@
         margin: 4px 0 0;
     }
 
-    /* JetBrains Mono 합자 비활성 · >=, != 원문 구분 */
     & code {
         padding: 1px 3px;
         border-radius: var(--app-radius-inline);
@@ -138,7 +137,6 @@
         color: var(--app-color-text-strong);
         font-family: var(--app-font-mono);
         font-size: 1em;
-        font-variant-ligatures: none;
     }
 
     /* 코드 블록 · Shiki의 --app-code-* 참조 */
@@ -151,7 +149,6 @@
         background: var(--app-color-code);
         font-family: var(--app-font-mono);
         font-size: var(--app-font-size-detail);
-        font-variant-ligatures: none;
         line-height: var(--app-line-height-code);
     }
 

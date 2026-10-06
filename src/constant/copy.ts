@@ -48,11 +48,6 @@ export const copy_error_home_clash = "홈 README가 겹친다";
 export const copy_error_prefix = "for-humanity";
 
 /**
- * 내장 본문 글꼴의 공통 조각이 누락된 패키지 오류
- */
-export const copy_error_font_preload = "Missing bundled font for preload";
-
-/**
  * 미지원 명령 오류
  */
 export const copy_error_unknown_command = "모르는 명령이다";

@@ -4,11 +4,11 @@ import {tmpdir} from "node:os";
 import {join} from "node:path";
 import {test} from "node:test";
 import {asset_font_dir} from "@/constant/asset";
-import {font_brand_css, font_mono_css, font_sans_css} from "@/constant/font";
+import {font_brand_css, font_mono_css} from "@/constant/font";
 import {toFontCss} from "@/util/font/to-font-css";
 
 test("bundled fonts prevent a late swap after fallback text is visible", () => {
-    for (const css of [font_sans_css, font_mono_css, font_brand_css]) {
+    for (const css of [font_mono_css, font_brand_css]) {
         const result = toFontCss({css: join(process.cwd(), css), fontDir: asset_font_dir});
 
         assert.match(result.css, /font-display:\s*optional;/);

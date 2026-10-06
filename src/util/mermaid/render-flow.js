@@ -82,7 +82,7 @@ function widenLabelGaps(rows) {
 }
 
 function gridToSvg(ascii) {
-    const cw = 7.2, ch = 17, fs = 12;
+    const cw = 6.336, ch = 17, fs = 12;
     const rows = widenLabelGaps(ascii.replace(/\s+$/, "").split("\n"));
     const cols = Math.max.apply(null, rows.map((r) => r.length));
     const f = (n) => n.toFixed(1);
@@ -90,7 +90,7 @@ function gridToSvg(ascii) {
 
     const isText = (chr) => chr !== undefined && chr !== " " && chr !== ZW && LINES[chr] === undefined && ARROWS[chr] === undefined && chr !== "◇";
     const center = (c) => c * cw + cw / 2;
-    const textWidth = (chars) => chars.reduce((w, chr) => w + (WIDE.test(chr) ? fs : cw), 0);
+    const textWidth = (chars) => chars.reduce((w, chr) => w + (WIDE.test(chr) ? cw * 2 : cw), 0);
 
     rows.forEach((row, r) => {
         const cy = r * ch + ch / 2, y0 = r * ch, y1 = y0 + ch;

@@ -12,7 +12,7 @@
         );
     background: var(--app-color-ground);
     color: var(--app-color-text);
-    font-family: var(--app-font-sans);
+    font-family: var(--app-font-mono);
     font-size: var(--app-font-size-body);
     line-height: var(--app-line-height-body);
 

@@ -118,7 +118,6 @@ export default {
 
 테마는 읽는 사람의 시스템 설정에 따라 밝게·어둡게 자동 적용.
 
-- 본문·라벨: Pretendard Variable
-- 코드·흐름도: JetBrains Mono Variable
+- 본문·라벨·코드·흐름도: Monoplex KR
 - 폰트 파일: 빌드 결과 포함 · CDN 요청 없음
 - 색과 간격: `src/style/token.css` · [Design](design.md)

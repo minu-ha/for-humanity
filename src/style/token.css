@@ -48,12 +48,11 @@
 
     /*
      * 내장 글꼴 · CLI는 @font-face와 자원 URL 생성
-     * 본문·라벨 Pretendard · 코드·흐름도 JetBrains Mono · 사이트 이름 Architects Daughter
-     * 영문 폭 0.6em = 흐름도 12px 격자의 7.2px
+     * 본문·라벨·코드·흐름도 Monoplex KR · 사이트 이름 Architects Daughter
+     * 영문 폭 0.528em = 흐름도 12px 격자의 6.336px · 한글은 정확히 2칸
      */
-    --app-font-sans: "Pretendard Variable", system-ui, "Apple SD Gothic Neo", sans-serif;
-    --app-font-mono: "JetBrains Mono Variable", var(--app-font-sans);
-    --app-font-brand: "Architects Daughter", var(--app-font-sans);
+    --app-font-mono: "Monoplex KR", ui-monospace, monospace;
+    --app-font-brand: "Architects Daughter", var(--app-font-mono);
 
     /* 글자 크기 · 11px 비상호작용 묶음 · 12px 기본과 역할별 제목 크기 */
     --app-font-size-group: 11px;
