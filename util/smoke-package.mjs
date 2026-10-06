@@ -55,13 +55,13 @@ try {
     assert.match(await readFile(join(output, "guide/index.html"), "utf8"), /<svg/);
     const nested = await readFile(join(output, "guide/agents/index.html"), "utf8");
     const nestedNavigation = nested.match(/<nav\b[^>]*class="wg_navigationNav__root"[\s\S]*?<\/nav>/)[0];
-    assert.match(nested, /Example<\/span><button\b[^>]*aria-expanded="true"[^>]*>−<\/button><ul\b/);
-    assert.match(nested, /Guide<\/span><button\b[^>]*aria-expanded="true"[^>]*>−<\/button><ul\b/);
+    assert.match(nested, /Example<\/span><ul\b/);
+    assert.match(nested, /Guide<\/span><ul\b/);
     assert.match(nested, /href="\/guide\/agents\/"[^>]*aria-current="page"/);
     assert.equal([...nestedNavigation.matchAll(/wg_navigationNavList__link--active/g)].length, 1);
     const child = await readFile(join(output, "guide/options/index.html"), "utf8");
     const childNavigation = child.match(/<nav\b[^>]*class="wg_navigationNav__root"[\s\S]*?<\/nav>/)[0];
-    assert.match(child, /href="\/guide\/"[^>]*>Guide<\/a><button\b[^>]*aria-label="Collapse Guide"[^>]*>−<\/button><ul\b[^>]*aria-label="Guide"/);
+    assert.match(child, /href="\/guide\/"[^>]*>Guide<\/a><ul\b[^>]*aria-label="Guide"/);
     assert.match(child, /href="\/guide\/options\/"[^>]*aria-current="page"/);
     const imagePath = child.match(/src="(\/_fh\/media\/asset\.[a-f0-9]+\.svg)"/)[1];
     assert.equal(await readFile(join(output, imagePath), "utf8"), await readFile(join(consumer, "images", "local image.svg"), "utf8"));

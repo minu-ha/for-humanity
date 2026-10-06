@@ -61,7 +61,7 @@ Hono의 고정 파일·wildcard 경로를 중첩 문서의 정규식 매개변�
 
 `WgShell`은 HTML 문서·자원·본문 배치를 소유합니다. `src/component/widget/shell-controls`의 `WgShellControls`는 서버와 브라우저가 공유하는 탐색·커서 조립과 앵커 수명을 소유합니다. `browser.tsx`는 DOM과 서버 자료를 찾고 검증·스토어 생성·최초 마운트를 실행하는 진입점입니다.
 
-서버는 `WgShellControls`로 전체 펼침 링크를 출력합니다. 브라우저 진입점은 `hono/jsx/dom/client`의 `createRoot(root).render(...)`로 같은 영역을 저장 상태가 반영된 JSX로 교체합니다. 이후 접힘·드로어·현재 헤딩은 Hooks와 JSX 이벤트로 갱신합니다. 컴포넌트 해제는 같은 root의 `unmount()`가 Effect 정리를 실행합니다. 본문은 마운트 범위 밖의 서버 HTML로 유지합니다.
+서버는 `WgShellControls`로 탐색 링크를 출력합니다. 브라우저 진입점은 `hono/jsx/dom/client`의 `createRoot(root).render(...)`로 같은 영역을 브라우저 JSX로 교체합니다. 이후 드로어·현재 헤딩은 Hooks와 JSX 이벤트로 갱신합니다. 컴포넌트 해제는 같은 root의 `unmount()`가 Effect 정리를 실행합니다. 본문은 마운트 범위 밖의 서버 HTML로 유지합니다.
 
 Hono 브라우저 렌더러로 탐색·커서 영역을 첫 paint 전에 마운트합니다. 본문은 서버가 만든 HTML을 그대로 표시하고 문서 링크는 전체 페이지를 이동합니다.
 
@@ -77,11 +77,10 @@ JSX·Hooks로 동작을 소유하면서 정적 본문을 유지하는 현재 조
 문서 목록과 On this page는 각각 독립 스크롤 컨테이너입니다. 1536px 이상에서는 같은 폭의 양쪽 사이드바로 표시하고, 그 아래에서는 목차를 숨깁니다. 모바일 드로어에는 문서 목록만 포함합니다.
 
 `script/build-kit.mjs`가 esbuild API로 `src/entry/browser/browser.tsx`를 단일 IIFE로 컴파일합니다. CLI는 생성한 `dist/browser.js`를 코드 문자열로 읽고 탐색 HTML과 탐색 전용 JSON 바로 뒤, 본문 앞에 포함합니다. JSON에는 문서 이름·URL·계층·현재 목차만 담고 본문은 포함하지 않습니다. `<`와 줄 구분자는 escape하여 작성한 이름이 script 태그를 닫지 못하게 합니다. 함수의 `.toString()`이나 수동 함수 조립은 사용하지 않습니다.
-이 진입점은 첫 paint 전에 저장 상태를 읽고 `hono/jsx/dom` 런타임으로 탐색 컴포넌트를 마운트합니다. 브라우저 빌드만 `jsxImportSource=hono/jsx/dom`을 사용합니다. 외부 JS 다운로드를 기다리지 않아 버튼이 뒤늦게 나타나지 않습니다. 별도의 `client.ts`나 본문 module은 없습니다.
+이 진입점은 첫 paint 전에 저장 상태를 읽고 `hono/jsx/dom` 런타임으로 탐색 컴포넌트를 마운트합니다. 브라우저 빌드만 `jsxImportSource=hono/jsx/dom`을 사용합니다. 외부 JS 다운로드를 기다리지 않아 메뉴 버튼·스크롤 위치가 뒤늦게 바뀌지 않습니다. 별도의 `client.ts`나 본문 module은 없습니다.
 
-Hono의 최초 레이아웃 효과는 아직 연결되지 않은 fragment에서 실행됩니다. 스크롤 측정·복원은 이 경우에만 연결 직후 microtask로 미루며 첫 paint 앞에 완료합니다. 이후 반응형 전환에서는 연결된 요소를 동기 복원합니다. 외부 저장 상태 변경으로 접힌 가지 안에 포커스가 남으면 해당 가지 버튼으로 옮깁니다.
+Hono의 최초 레이아웃 효과는 아직 연결되지 않은 fragment에서 실행됩니다. 스크롤 측정·복원은 이 경우에만 연결 직후 microtask로 미루며 첫 paint 앞에 완료합니다. 이후 반응형 전환에서는 연결된 요소를 동기 복원합니다.
 
-가지 선택은 `localStorage`에 문서 ID·그룹 경로·페이지별 헤딩 키로 저장합니다. 기본값은 전체 펼침입니다.
 스크롤은 같은 탭의 `sessionStorage`에 넓은 화면·좁은 데스크톱·드로어 위치를 따로 저장합니다. 기존 배치별 저장 자료도 첫 복원에서 수용합니다.
 문서 링크 순서가 달라지면 이전 위치는 무효입니다. 목차 위치는 같은 페이지에서만 복원하고 다른 문서의 목차는 시작점에서 읽습니다. 저장소가 차단되거나 값이 손상돼도 메모리 상태와 기본 탐색은 유지합니다.
 `ResizeObserver`와 스크롤 이벤트는 실제 위·아래 넘침이 있는 끝만 흐리게 합니다. 강제 색상과 JavaScript 미사용 환경은 네이티브 손잡이를 사용합니다.
@@ -97,9 +96,9 @@ Hono의 최초 레이아웃 효과는 아직 연결되지 않은 fragment에서 
 ### Store ownership and lifetime
 
 `src/store/navigation`에 생성기·저장 키·상태 계약·저장 자료 검증을 모읍니다. JSX 이벤트·반응형 배치·스크롤 영역·현재 헤딩은 `src/component/widget/navigation`이 소유하며 구독을 설치한 효과에서 정리합니다.
-`createNavigationStores`는 브라우저의 탐색 진입점에서 페이지마다 생성하며, 서버 요청이나 정적 빌드에서는 실행하지 않습니다. 페이지 사이의 선택은 `persist`가 이어받고, BFCache 복귀에서는 최신 저장 상태를 다시 읽습니다.
+`createNavigationStores`는 브라우저의 탐색 진입점에서 페이지마다 생성하며, 서버 요청이나 정적 빌드에서는 실행하지 않습니다. 페이지 사이의 스크롤 위치는 `persist`가 이어받고, BFCache 복귀에서는 최신 저장 상태를 다시 읽습니다.
 
-vanilla 생성기는 `use-` 접두사를 붙이지 않습니다. `useNavigationTreeStore`는 Hono의 `useSyncExternalStore`로 같은 vanilla 스토어를 구독합니다. 최초 브라우저 렌더도 저장된 값을 읽으며, 사용자 상태는 서버 요청 사이에 공유하지 않습니다.
+vanilla 생성기는 `use-` 접두사를 붙이지 않습니다. 스크롤 스토어는 탐색 컴포넌트가 이벤트·Effect에서 직접 읽고 쓰며, 사용자 상태는 서버 요청 사이에 공유하지 않습니다.
 서버의 `AppOptions.store`는 읽은 문서 목록과 홈을 담는 별도 객체이며 사용자 탐색 상태를 저장하는 Zustand 스토어가 아닙니다.
 
 참조: [Zustand vanilla store](https://zustand.docs.pmnd.rs/reference/apis/create-store), [persist](https://zustand.docs.pmnd.rs/reference/middlewares/persist).

@@ -1,9 +1,4 @@
 /**
- * 문서·현재 페이지 목차의 접힘 선택 · 기본은 전체 펼침
- */
-export const navigation_tree_storage_key = "for-humanity:navigation-tree";
-
-/**
  * 저장 형태가 바뀌면 기존 자료를 기본 상태로 돌리는 persist 버전
  */
 export const navigation_storage_version = 1;

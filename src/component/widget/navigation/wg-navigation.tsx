@@ -10,10 +10,9 @@ import {WgNavigationScroll} from "@/component/widget/navigation/_wg-navigation-s
 import {WgNavigationToc} from "@/component/widget/navigation/_wg-navigation-toc";
 import {copy_nav_close, copy_nav_open, copy_nav_title} from "@/constant/copy";
 import type {createNavigationStores} from "@/store/navigation/create-navigation-stores";
-import type {NavigationLayout, NavigationPosition, NavigationTreeState} from "@/store/navigation/navigation-state";
-import {navigation_scroll_storage_key, navigation_storage_version, navigation_tree_storage_key} from "@/store/navigation/navigation-storage";
+import type {NavigationLayout, NavigationPosition} from "@/store/navigation/navigation-state";
+import {navigation_scroll_storage_key, navigation_storage_version} from "@/store/navigation/navigation-storage";
 import {toNavigationScrollState} from "@/store/navigation/to-navigation-scroll-state";
-import {useNavigationTreeStore} from "@/store/navigation/use-navigation-tree-store";
 import {revealHashTarget} from "@/util/dom/reveal-hash-target";
 import "./wg-navigation.css";
 
@@ -32,7 +31,6 @@ export interface WgNavigationProps {
 }
 
 export const WgNavigation = (props: WgNavigationProps) => {
-    const navigationTreeStore = useNavigationTreeStore(props.stores?.tree);
     const [layout, setLayout] = useState<NavigationLayout>(() => {
         if (props.stores === undefined) return "desktop";
         if (matchMedia(navigation_mobile_query).matches) return "drawer";
@@ -77,7 +75,7 @@ export const WgNavigation = (props: WgNavigationProps) => {
     };
 
     /**
-     * 접힘과 무관한 모든 링크의 URL·표시명으로 사이트 공통 문서 목록의 동일성 판정
+     * 모든 링크의 URL·표시명으로 사이트 공통 문서 목록의 동일성 판정
      */
     const getNavigationSignature = () => {
         const navigation = getNavigationPort();
@@ -142,13 +140,6 @@ export const WgNavigation = (props: WgNavigationProps) => {
         // 좌표 설정의 비동기 scroll 이벤트를 기다리지 않고 첫 paint의 넘침 표시를 맞춘다
         documents.dispatchEvent(new Event("scroll"));
         outlineRef.current.dispatchEvent(new Event("scroll"));
-    };
-
-    /**
-     * 선택 순간의 최신 스토어로 반전 · 직접 클릭과 다른 탭의 선택을 같은 자료로 유지
-     */
-    const handleBranchToggle = (key: string) => {
-        props.stores?.tree.setState((state) => ({collapsed: {...state.collapsed, [key]: state.collapsed[key] !== true}}));
     };
 
     /**
@@ -241,7 +232,6 @@ export const WgNavigation = (props: WgNavigationProps) => {
             focusRef.current = {
                 navigation: document.activeElement.closest("[data-navigation]") !== null,
                 drawer: document.activeElement === openButtonRef.current || document.activeElement.closest("[data-navigation-drawer]") !== null,
-                branch: document.activeElement.getAttribute("data-navigation-toggle"),
                 href: document.activeElement.getAttribute("href"),
             };
         }
@@ -252,40 +242,14 @@ export const WgNavigation = (props: WgNavigationProps) => {
     };
 
     /**
-     * BFCache의 이전 메모리가 다음 문서의 선택·좌표를 덮지 않도록 렌더까지 동기 갱신 후 복원
+     * BFCache의 이전 메모리가 다음 문서의 좌표를 덮지 않도록 렌더까지 동기 갱신 후 복원
      */
     const handlePageShow = (event: PageTransitionEvent) => {
         if (!event.persisted || props.stores === undefined) return;
         restorePendingRef.current = true;
-        flushSync(() => {
-            props.stores?.tree.persist.rehydrate();
-            props.stores?.scroll.persist.rehydrate();
-        });
+        flushSync(() => props.stores?.scroll.persist.rehydrate());
         handleLayoutChange();
         restoreScroll();
-    };
-
-    /**
-     * 같은 origin의 다른 탭에서 바꾼 접힘 선택과 저장소 초기화 반영
-     */
-    const handleStorageChange = (event: StorageEvent) => {
-        if (event.key === navigation_tree_storage_key || event.key === null) {
-            flushSync(() => props.stores?.tree.persist.rehydrate());
-        }
-    };
-
-    /**
-     * 다른 탭·BFCache의 선택이 현재 키보드 위치를 숨기기 전에 가장 바깥 접힘 버튼으로 복원
-     */
-    const handleTreeChange = (state: NavigationTreeState) => {
-        if (!(document.activeElement instanceof HTMLElement)) return;
-        for (const button of document.querySelectorAll<HTMLButtonElement>("[data-navigation-toggle]")) {
-            const key = button.dataset.navigationToggle;
-            const controls = button.getAttribute("aria-controls");
-            if (key === undefined || controls === null || state.collapsed[key] !== true) continue;
-            const branch = document.getElementById(controls);
-            if (branch?.contains(document.activeElement)) button.focus({preventScroll: true});
-        }
     };
 
     /**
@@ -299,8 +263,6 @@ export const WgNavigation = (props: WgNavigationProps) => {
         wideRef.current.addEventListener("change", handleLayoutChange);
         addEventListener("pagehide", saveScroll);
         addEventListener("pageshow", handlePageShow);
-        addEventListener("storage", handleStorageChange);
-        const unsubscribeTree = props.stores.tree.subscribe(handleTreeChange);
         return () => {
             mobileRef.current?.removeEventListener("change", handleLayoutChange);
             wideRef.current?.removeEventListener("change", handleLayoutChange);
@@ -308,8 +270,6 @@ export const WgNavigation = (props: WgNavigationProps) => {
             wideRef.current = null;
             removeEventListener("pagehide", saveScroll);
             removeEventListener("pageshow", handlePageShow);
-            removeEventListener("storage", handleStorageChange);
-            unsubscribeTree();
             document.body.classList.remove("wg_shell__root--drawerOpen");
         };
     }, [props.stores]);
@@ -328,12 +288,8 @@ export const WgNavigation = (props: WgNavigationProps) => {
             if (layout === "drawer") {
                 if (focusRef.current.navigation) openButtonRef.current?.focus({preventScroll: true});
             } else if (focusRef.current.navigation && navigation !== null) {
-                const target = [...navigation.querySelectorAll<HTMLElement>("a[href], button")].find((element) => {
-                    if (focusRef.current === null) return false;
-                    return focusRef.current.branch !== null
-                        ? element.getAttribute("data-navigation-toggle") === focusRef.current.branch
-                        : focusRef.current.href !== null && element.getAttribute("href") === focusRef.current.href;
-                });
+                const href = focusRef.current.href;
+                const target = [...navigation.querySelectorAll<HTMLElement>("a[href]")].find((element) => element.getAttribute("href") === href);
                 target?.focus({preventScroll: true});
             } else if (focusRef.current.drawer) {
                 brandRef.current?.focus({preventScroll: true});
@@ -393,11 +349,7 @@ export const WgNavigation = (props: WgNavigationProps) => {
                 {layout !== "drawer" && (
                     <div ref={props.stores === undefined ? undefined : navigationRef} className={clsx("wg_navigation__navigation")} data-navigation="">
                         <WgNavigationScroll portRef={documentsRef} kind="documents" ready={props.stores !== undefined} onScroll={saveScroll} onClick={handleNavigationClick}>
-                            <WgNavigationNav
-                                groups={props.data.groups}
-                                collapsed={navigationTreeStore.collapsed}
-                                onToggle={props.stores === undefined ? undefined : handleBranchToggle}
-                            />
+                            <WgNavigationNav groups={props.data.groups} />
                         </WgNavigationScroll>
                     </div>
                 )}
@@ -408,14 +360,7 @@ export const WgNavigation = (props: WgNavigationProps) => {
             <aside className={clsx("wg_navigation__tocRail")} data-navigation-rail="">
                 <div className={clsx("wg_navigation__outline")} data-navigation-outline="">
                     <WgNavigationScroll portRef={outlineRef} kind="outline" ready={props.stores !== undefined} onScroll={saveScroll} onClick={handleNavigationClick}>
-                        {props.data.outline.length > 0 && (
-                            <WgNavigationToc
-                                groups={props.data.outline}
-                                pageId={props.data.pageId}
-                                collapsed={navigationTreeStore.collapsed}
-                                onToggle={props.stores === undefined ? undefined : handleBranchToggle}
-                            />
-                        )}
+                        {props.data.outline.length > 0 && <WgNavigationToc groups={props.data.outline} />}
                     </WgNavigationScroll>
                 </div>
             </aside>
@@ -464,11 +409,7 @@ export const WgNavigation = (props: WgNavigationProps) => {
                                 onScroll={saveScroll}
                                 onClick={handleNavigationClick}
                             >
-                                <WgNavigationNav
-                                    groups={props.data.groups}
-                                    collapsed={navigationTreeStore.collapsed}
-                                    onToggle={props.stores === undefined ? undefined : handleBranchToggle}
-                                />
+                                <WgNavigationNav groups={props.data.groups} />
                             </WgNavigationScroll>
                         </div>
                     )}

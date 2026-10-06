@@ -11,10 +11,6 @@ export interface NavigationFocusSnapshot {
      */
     drawer: boolean;
     /**
-     * 하위 문서·묶음 접힘 버튼의 안정된 식별자
-     */
-    branch: string | null;
-    /**
      * 문서 이동 링크의 안정된 식별자
      */
     href: string | null;

@@ -314,8 +314,8 @@ test("nested groups follow metadata paths and keep sibling branches and document
     const html = toNavigationHtml({site, docs, current: "authoring"});
 
     assert.match(html, /href="\/authoring\/"[^>]*aria-current="page"/);
-    assert.match(html, /Atlas<\/span><button\b[^>]*aria-expanded="true"[^>]*>−<\/button><ul\b/);
-    assert.match(html, /Research<\/span><button\b[^>]*aria-expanded="true"[^>]*>−<\/button><ul\b/);
+    assert.match(html, /Atlas<\/span><ul\b/);
+    assert.match(html, /Research<\/span><ul\b/);
     assert.equal([...html.matchAll(/href="\/authoring\/"/g)].length, 1);
     assert.equal([...html.matchAll(/>Research<\/span>/g)].length, 2);
     assert.doesNotMatch(toNavigationHtml({site, docs}), /aria-current="page"/);
@@ -369,8 +369,8 @@ test("parent documents contain ordered descendants with independent URLs and one
     assert.deepEqual(toDocGroups({docs: docs.toReversed(), navigation: site.navigation}), groups);
 
     const html = toNavigationHtml({site, docs, current: "details"});
-    assert.match(html, /href="\/settings\/"[^>]*>Settings<\/a><button\b[^>]*aria-label="Collapse Settings"[^>]*>−<\/button><ul\b[^>]*aria-label="Settings"/);
-    assert.match(html, /href="\/guide\/site\/"[^>]*>Site<\/a><button\b[^>]*aria-label="Collapse Site"[^>]*>−<\/button><ul\b[^>]*aria-label="Site"/);
+    assert.match(html, /href="\/settings\/"[^>]*>Settings<\/a><ul\b[^>]*aria-label="Settings"/);
+    assert.match(html, /href="\/guide\/site\/"[^>]*>Site<\/a><ul\b[^>]*aria-label="Site"/);
     assert.match(html, /href="\/details\/"[^>]*aria-current="page"/);
     assert.equal([...html.matchAll(/aria-current="page"/g)].length, 1);
     assert.equal([...html.matchAll(/wg_navigationNavList__link--active/g)].length, 1);

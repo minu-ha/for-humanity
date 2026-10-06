@@ -1,8 +1,6 @@
 import clsx from "clsx";
 import {Fragment} from "hono/jsx";
-import {toNavigationBranchId} from "@/component/widget/navigation/_function/to-navigation-branch-id";
 import type {NavigationGroup} from "@/component/widget/navigation/_type/navigation-data";
-import {WgNavigationBranchToggle} from "@/component/widget/navigation/_wg-navigation-branch-toggle";
 import "./_wg-navigation-nav-list.css";
 
 /**
@@ -13,18 +11,6 @@ export interface WgNavigationNavListProps {
      * 현재 단계의 문서와 하위 묶음
      */
     group: NavigationGroup;
-    /**
-     * 사용자가 접은 가지
-     */
-    collapsed: Record<string, boolean>;
-    /**
-     * 브라우저에서 가지 선택 변경
-     */
-    onToggle?: (key: string) => void;
-    /**
-     * 부모 버튼과 연결할 가지 키 · 루트 묶음·문서 모두 같은 규칙 사용
-     */
-    branchKey: string;
 }
 
 export const WgNavigationNavList = (props: WgNavigationNavListProps) => {
@@ -34,12 +20,7 @@ export const WgNavigationNavList = (props: WgNavigationNavListProps) => {
     ];
 
     return (
-        <ul
-            className={clsx("wg_navigationNavList__root")}
-            aria-label={props.group.name}
-            id={toNavigationBranchId(props.branchKey)}
-            hidden={props.collapsed[props.branchKey] === true}
-        >
+        <ul className={clsx("wg_navigationNavList__root")} aria-label={props.group.name}>
             {/**
              * 문서 링크는 원래 파일 URL 사용
              */}
@@ -61,17 +42,7 @@ export const WgNavigationNavList = (props: WgNavigationNavListProps) => {
                             {/**
                              * 하위 문서 · 부모 아래에서도 기존 목록의 들여쓰기와 키보드 이동 유지
                              */}
-                            {entry.doc.children.length > 0 && (
-                                <WgNavigationBranchToggle branchKey={entry.key} label={entry.doc.name} collapsed={props.collapsed} onToggle={props.onToggle} />
-                            )}
-                            {entry.doc.children.length > 0 && (
-                                <WgNavigationNavList
-                                    group={{name: entry.doc.name, path: props.group.path, docs: entry.doc.children, groups: []}}
-                                    collapsed={props.collapsed}
-                                    onToggle={props.onToggle}
-                                    branchKey={entry.key}
-                                />
-                            )}
+                            {entry.doc.children.length > 0 && <WgNavigationNavList group={{name: entry.doc.name, path: props.group.path, docs: entry.doc.children, groups: []}} />}
                         </Fragment>
                     )}
                     {/**
@@ -80,8 +51,7 @@ export const WgNavigationNavList = (props: WgNavigationNavListProps) => {
                     {entry.kind === "group" && (
                         <Fragment>
                             <span className={clsx("wg_navigationNavList__branch")}>{entry.group.name}</span>
-                            <WgNavigationBranchToggle branchKey={entry.key} label={entry.group.name} collapsed={props.collapsed} onToggle={props.onToggle} />
-                            <WgNavigationNavList group={entry.group} collapsed={props.collapsed} onToggle={props.onToggle} branchKey={entry.key} />
+                            <WgNavigationNavList group={entry.group} />
                         </Fragment>
                     )}
                 </li>

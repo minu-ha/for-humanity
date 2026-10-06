@@ -4,16 +4,6 @@
 export type NavigationLayout = "wide" | "desktop" | "drawer";
 
 /**
- * 사용자가 명시적으로 바꾼 가지 선택 · 없는 키는 펼침
- */
-export interface NavigationTreeState {
-    /**
-     * 문서 ID·그룹 전체 경로·페이지별 heading으로 구분한 접힘 상태
-     */
-    collapsed: Record<string, boolean>;
-}
-
-/**
  * 한 화면 배치의 마지막 탐색 위치 · 목록 변경과 다른 페이지의 목차는 재사용하지 않음
  */
 export interface NavigationPosition {

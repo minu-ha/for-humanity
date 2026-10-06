@@ -42,17 +42,6 @@
 }
 
 .wg_navigationNavList__item {
-    /* 접기 버튼의 첫 행 기준 */
-    position: relative;
-
-    &:has(> .wg_navigationBranchToggle__root) > .wg_navigationNavList__link {
-        padding-inline-end: calc(var(--app-size-tree-toggle) + var(--app-space-inline));
-    }
-
-    &:has(> .wg_navigationBranchToggle__root) > .wg_navigationNavList__branch {
-        padding-inline-end: calc(var(--app-size-tree-toggle) + var(--app-space-inline));
-    }
-
     & > .wg_navigationNavList__root {
         margin-left: var(--app-space-tree-indent);
     }

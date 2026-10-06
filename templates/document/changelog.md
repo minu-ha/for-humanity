@@ -13,6 +13,7 @@ order: 10
 ## Unreleased
 
 - Remove tree lines from the document navigation and page outline, keeping nesting through indentation.
+- Remove the expand/collapse buttons and their saved branch choices; nested documents and headings are always shown.
 
 ## 0.6.0 — 2026-10-04
 

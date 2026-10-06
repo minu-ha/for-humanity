@@ -28,6 +28,5 @@ export const navigationDataSchema: ZodMiniType<NavigationData> = object({
             sections: array(object({heading: headingSchema, part: optional(string()), subs: array(object({heading: headingSchema}))})).check(minLength(1)),
         }),
     ),
-    pageId: string(),
     home: boolean(),
 });

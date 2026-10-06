@@ -13,6 +13,5 @@ export const toNavigationData = (options: {site: SiteConfig; docs: Doc[]; curren
     title: options.site.title,
     groups: toDocGroups({docs: options.docs, navigation: options.site.navigation}).map((group) => toNavigationGroup({group, current: options.current})),
     outline: options.outline === undefined ? [] : toTocGroups(options.outline),
-    pageId: options.current === undefined ? "/" : options.current,
     home: options.current === undefined,
 });

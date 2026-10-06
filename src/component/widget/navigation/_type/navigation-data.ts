@@ -65,10 +65,6 @@ export interface NavigationData {
      */
     outline: TocGroup[];
     /**
-     * 목차의 접힘 상태를 구분할 문서 id
-     */
-    pageId: string;
-    /**
      * README 홈 여부
      */
     home: boolean;

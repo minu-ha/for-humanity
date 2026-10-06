@@ -16,16 +16,9 @@
 
 .wg_navigationToc__group {
     margin: 0 0 4px;
-    padding-inline-end: calc(var(--app-size-tree-toggle) + var(--app-space-inline));
     color: var(--app-color-text-muted);
     font-size: var(--app-font-size-group);
     line-height: calc(var(--app-font-size-dense) * var(--app-line-height-tight));
-}
-
-.wg_navigationToc__groupSection {
-    /* 가름 제목과 그 하위 목록을 하나의 접힘 대상으로 연결 */
-    position: relative;
-    display: flow-root;
 }
 
 .wg_navigationToc__groupSection--named {
@@ -62,15 +55,6 @@
 .wg_navigationToc__link--active {
     color: var(--app-color-text-strong);
     font-weight: var(--app-font-weight-active);
-}
-
-.wg_navigationToc__item {
-    /* 접기 버튼의 첫 행 기준 */
-    position: relative;
-
-    &:has(> .wg_navigationBranchToggle__root) > .wg_navigationToc__link {
-        padding-inline-end: calc(var(--app-size-tree-toggle) + var(--app-space-inline));
-    }
 }
 
 .wg_navigationToc__sub {

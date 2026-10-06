@@ -40,7 +40,7 @@ try {
                 import {createNavigationStores} from '@/store/navigation/create-navigation-stores';
                 const root = document.querySelector('[data-shell-browser-root]');
                 const data = JSON.parse(document.getElementById('fh-navigation-data').textContent);
-                const stores = createNavigationStores({local: () => localStorage, session: () => sessionStorage});
+                const stores = createNavigationStores({session: () => sessionStorage});
                 window.shellFixture = {
                     mount: () => {
                         const shell = createRoot(root);
@@ -102,15 +102,8 @@ try {
             const documents = page.locator('[data-navigation-scroll="documents"]');
             if (options.javaScriptEnabled === false) {
                 assert.equal(await page.getByRole("link", {name: "Child", exact: true}).isVisible(), true);
-                assert.equal(await page.locator("[data-navigation-toggle]:not([hidden])").count(), 0);
                 assert.notEqual(await documents.evaluate((element) => getComputedStyle(element).scrollbarWidth), "none");
             } else {
-                const toggle = page.locator('[data-navigation-label="Guide"]').first();
-                await toggle.click();
-                assert.equal(await toggle.getAttribute("aria-expanded"), "false");
-                await toggle.focus();
-                await page.keyboard.press("Space");
-                assert.equal(await toggle.getAttribute("aria-expanded"), "true");
                 if (options.viewport.width >= 1536) {
                     const width = await documents.evaluate((element) => element.getBoundingClientRect().width);
                     const outlineWidth = await page.locator('[data-navigation-scroll="outline"]').evaluate((element) => element.getBoundingClientRect().width);
@@ -140,10 +133,6 @@ try {
             if (request.resourceType() === "script") scriptRequests.push(request.url());
         });
         await page.goto(`${origin}/guide/`);
-        const parent = page.locator('[data-navigation-toggle="doc:guide"]');
-        await parent.click();
-        const outlineBranch = page.locator('[data-navigation-toggle="outline:guide:heading:section-0"]');
-        await outlineBranch.click();
         await page.mouse.move(500, 200);
         await page.waitForFunction(() => getComputedStyle(document.querySelector("[data-cursor-face]")).visibility === "visible");
         await page.mouse.down();
@@ -157,23 +146,14 @@ try {
             const saved = JSON.parse(sessionStorage.getItem("for-humanity:navigation-scroll"));
             return saved?.state.positions.wide?.documents === 200 && saved.state.positions.wide.outline === 250;
         });
-        // 외부 스크립트 없이 첫 프레임부터 저장 위치와 접힘 상태를 복원해야 한다.
+        // 외부 스크립트 없이 첫 프레임부터 저장 위치를 복원해야 한다.
         await page.addInitScript(() => {
             window.navigationFrames = [];
             let frames = 0;
             const sample = () => {
                 const documents = document.querySelector('[data-navigation-scroll="documents"]');
                 const outline = document.querySelector('[data-navigation-scroll="outline"]');
-                const branch = document.querySelector('[data-navigation-toggle="doc:guide"]');
-                const outlineBranch = document.querySelector('[data-navigation-toggle="outline:guide:heading:section-0"]');
-                if (documents && outline && branch && outlineBranch) {
-                    window.navigationFrames.push({
-                        documents: documents.scrollTop,
-                        outline: outline.scrollTop,
-                        expanded: branch.getAttribute("aria-expanded"),
-                        outlineExpanded: outlineBranch.getAttribute("aria-expanded"),
-                    });
-                }
+                if (documents && outline) window.navigationFrames.push({documents: documents.scrollTop, outline: outline.scrollTop});
                 if (++frames < 45) requestAnimationFrame(sample);
             };
             requestAnimationFrame(sample);
@@ -185,21 +165,13 @@ try {
         // 소수 높이와 브라우저 scroll anchoring의 1px 반올림은 허용하되 시작점에서 튀는 프레임은 실패한다.
         const roundingTolerance = 1;
         assert.ok(
-            frames.every(
-                (frame) =>
-                    Math.abs(frame.documents - 200) <= roundingTolerance &&
-                    Math.abs(frame.outline - 250) <= roundingTolerance &&
-                    frame.expanded === "false" &&
-                    frame.outlineExpanded === "false",
-            ),
+            frames.every((frame) => Math.abs(frame.documents - 200) <= roundingTolerance && Math.abs(frame.outline - 250) <= roundingTolerance),
             JSON.stringify(frames),
         );
         await page.goto(`${origin}/page-1/`);
         assert.ok(Math.abs((await page.locator('[data-navigation-scroll="documents"]').evaluate((element) => element.scrollTop)) - 200) <= roundingTolerance);
         assert.equal(await page.locator('[data-navigation-scroll="outline"]').evaluate((element) => element.scrollTop), 0);
-        assert.equal(await page.getByRole("button", {name: "Expand Guide", exact: true}).count(), 1);
         await page.goto(`${origin}/guide/#detail-10`);
-        assert.equal(await outlineBranch.getAttribute("aria-expanded"), "false");
         await page.waitForFunction(() => document.querySelector('[aria-current="location"]')?.getAttribute("href") === "#detail-10");
         assert.equal(await page.locator('[aria-current="location"]').count(), 1);
         assert.equal(await page.locator('a[href="#section-10"]').getAttribute("aria-current"), null);
@@ -335,7 +307,6 @@ try {
                         });
                     }
                 } else {
-                    localStorage.setItem("for-humanity:navigation-tree", "{broken");
                     sessionStorage.setItem("for-humanity:navigation-scroll", "{broken");
                 }
             }, storage);
@@ -343,11 +314,9 @@ try {
             const errors = [];
             page.on("pageerror", (error) => errors.push(error.message));
             await page.goto(`${origin}/guide/`);
-            const toggle = page.locator('[data-navigation-toggle="doc:guide"]');
-            await toggle.click();
-            await page.waitForFunction(() => document.querySelector('[data-navigation-toggle="doc:guide"]')?.getAttribute("aria-expanded") === "false");
-            await toggle.click();
-            await page.waitForFunction(() => document.querySelector('[data-navigation-toggle="doc:guide"]')?.getAttribute("aria-expanded") === "true");
+            await page.evaluate(() => (document.querySelector('[data-navigation-scroll="documents"]').scrollTop = 120));
+            await page.getByRole("link", {name: "Page 10", exact: true}).click();
+            await page.waitForURL(`${origin}/page-10/`);
             assert.deepEqual(errors, []);
         } finally {
             await context.close();
