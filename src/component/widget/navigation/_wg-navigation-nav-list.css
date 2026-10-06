@@ -12,7 +12,6 @@
     padding: var(--app-space-tree-row) 0;
     color: var(--app-color-text-muted);
     font-size: var(--app-font-size-group);
-    font-style: italic;
     line-height: calc(var(--app-font-size-dense) * var(--app-line-height-tight));
     overflow-wrap: anywhere;
 }

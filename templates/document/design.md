@@ -77,13 +77,13 @@ order: 20
 ## Typography
 
 Monoplex KR 본문·라벨·코드·흐름도, Architects Daughter 사이트 이름. 내장 파일 사용.
-Monoplex KR은 Regular `400`·SemiBold `600`·Italic `400` 세 파일. 영문 반각과 한글 전각이 정확히 1:2라 흐름도 격자와 일치.
+Monoplex KR은 Regular `400`·SemiBold `600` 두 파일. 영문 반각과 한글 전각이 정확히 1:2라 흐름도 격자와 일치.
 사이트 이름은 Architects Daughter Regular `400`. 사이트 이름 폰트의 미지원 글자와 한글은 Monoplex KR로 fallback.
 글꼴의 출처는 [Monoplex](https://github.com/y-kim/monoplex)·[Google Fonts](https://fonts.google.com/specimen/Architects+Daughter), OFL은 자원 폴더에 포함.
 
 | Size      | Use                                                 |
 |-----------|-----------------------------------------------------|
-| `group`   | 클릭할 수 없는 문서·TOC 묶음 · On this page 라벨 · 11px 이탤릭 |
+| `group`   | 클릭할 수 없는 문서·TOC 묶음 · On this page 라벨 · 11px |
 | `detail`  | subsection 링크 · 코드 블록 · status badge          |
 | `dense`   | TOC · 표 · h5                           |
 | `body`    | 본문 · h4                 |
@@ -93,7 +93,7 @@ Monoplex KR은 Regular `400`·SemiBold `600`·Italic `400` 세 파일. 영문 �
 | `title`   | h1 · 사이드바 사이트 이름                            |
 
 본문·묶음·On this page·사이트 이름의 `mark`는 `400`, 현재 문서·TOC의 `active`, 제목·강조의 `strong`과 h1 `title`은 `600`.
-문서 링크는 링크색, 목차의 절·소제목 링크는 본문 글색. 클릭할 수 없는 묶음은 회색·작은 크기·이탤릭으로 구분. `On this page` 제목도 묶음 라벨과 같은 표현.
+문서 링크는 링크색, 목차의 절·소제목 링크는 본문 글색. 클릭할 수 없는 묶음은 회색과 작은 크기로 구분. `On this page` 제목도 묶음 라벨과 같은 표현.
 TOC는 작성한 제목을 그대로 표시하고 자동 번호를 붙이지 않음.
 Monoplex KR에는 코드 합자 없음: `>=`, `!=` 원문 그대로 표시.
 본문·사이드바 링크·목차·코드는 `12px`, 사이드바 묶음과 On this page는 `11px`, h1과 사이트 이름은 `16px`, h2는 `14px`, part는 `13px`.

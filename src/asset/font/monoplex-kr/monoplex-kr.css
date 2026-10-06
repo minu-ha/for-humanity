@@ -18,11 +18,3 @@
     font-weight: 600;
     src: url(./MonoplexKR-SemiBold.woff2) format("woff2");
 }
-
-@font-face {
-    font-family: "Monoplex KR";
-    font-style: italic;
-    font-display: swap;
-    font-weight: 400;
-    src: url(./MonoplexKR-Italic.woff2) format("woff2");
-}

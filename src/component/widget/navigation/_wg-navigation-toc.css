@@ -10,7 +10,6 @@
     margin: 0 0 var(--app-space-tree-label);
     color: var(--app-color-text-muted);
     font-size: var(--app-font-size-group);
-    font-style: italic;
     line-height: calc(var(--app-font-size-dense) * var(--app-line-height-tight));
     text-box: trim-start cap alphabetic;
 }
@@ -19,7 +18,6 @@
     margin: 0 0 var(--app-space-tree-label);
     color: var(--app-color-text-muted);
     font-size: var(--app-font-size-group);
-    font-style: italic;
     line-height: calc(var(--app-font-size-dense) * var(--app-line-height-tight));
     text-box: trim-start cap alphabetic;
 }

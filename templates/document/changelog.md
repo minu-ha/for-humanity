@@ -16,7 +16,6 @@ order: 10
 - Remove tree lines from the document navigation and page outline, keeping nesting through indentation.
 - Remove the expand/collapse buttons and their saved branch choices; nested documents and headings are always shown.
 - Tighten navigation and outline rows to 16.8px with a 1.4 line height and share a 16px gap between groups; style `On this page` like the group labels.
-- Set group labels and `On this page` in the bundled Monoplex KR Italic.
 
 ## 0.6.0 — 2026-10-04
 
