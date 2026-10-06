@@ -39,10 +39,10 @@ for humanity의 CLI는 빌드할 때만 Node.js에서 실행. 배포 후에는 �
 | Build command          | `pnpm build:pages`          |
 | Build output directory | `templates/document/dist`   |
 | `NODE_VERSION`          | `22`                        |
-| `PNPM_VERSION`          | `10.33.2`                   |
+| `PNPM_VERSION`          | `12.9.1`                    |
 
 빌드 이미지에서 Node.js·pnpm 버전은 환경 변수로 지정 가능.
-위 pnpm 버전은 이 저장소에서 검증한 버전 · [Build image](https://developers.cloudflare.com/pages/configuration/build-image/).
+위 pnpm 버전은 `package.json`의 `packageManager`와 같은 값 · [Build image](https://developers.cloudflare.com/pages/configuration/build-image/).
 
 ### Connect and deploy
 
