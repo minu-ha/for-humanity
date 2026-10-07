@@ -137,6 +137,9 @@
         color: var(--app-color-text-strong);
         font-family: var(--app-font-mono);
         font-size: 1em;
+
+        /* 고정폭 칸 유지 · 본문 자간 상속 차단 */
+        letter-spacing: 0;
     }
 
     /* 코드 블록 · Shiki의 --app-code-* 참조 */
@@ -150,6 +153,7 @@
         font-family: var(--app-font-mono);
         font-size: var(--app-font-size-detail);
         line-height: var(--app-line-height-code);
+        letter-spacing: 0;
     }
 
     & pre code {
@@ -319,6 +323,9 @@
     overflow-x: auto;
     margin: var(--app-space-block) 0;
     padding: var(--app-space-block) 0;
+
+    /* 라벨 위치는 자간 0의 격자로 계산 */
+    letter-spacing: 0;
 
     /* stylelint-disable-next-line selector-disallowed-list -- 외부 렌더러 생성 SVG */
     & svg {

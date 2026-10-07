@@ -15,6 +15,7 @@
     font-family: var(--app-font-body);
     font-size: var(--app-font-size-body);
     line-height: var(--app-line-height-body);
+    letter-spacing: var(--app-letter-spacing-body);
 
     /* 한국어 낱말 단위 줄바꿈 · 긴 식별자만 예외 */
     word-break: keep-all;

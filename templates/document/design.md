@@ -42,7 +42,7 @@ order: 20
 | `font-size`      | `group` · `detail` · `dense` · `body` · `lead` · `part` · `section` · `title`           |
 | `font-weight`    | `mark` · `active` · `strong` · `title`                                                 |
 | `line-height`    | `title` · `heading` · `tight` · `code` · `body`                                        |
-| `letter-spacing` | `brand` · `heading` · `title`                                                          |
+| `letter-spacing` | `body` · `brand` · `heading` · `title`                                                 |
 | `space`          | `inline` · `stack` · `block` · `group` · `section` · 페이지 틀                         |
 | `size`           | `sidebar` · `main` · `page` · `brand` · `mobile-header` · `menu-button` · `drawer`                                         |
 | `z-index`        | `sticky` 사이드바 사이트 이름 · `popper` 커서 장식                           |
@@ -99,8 +99,9 @@ TOC는 작성한 제목을 그대로 표시하고 자동 번호를 붙이지 않
 Monoplex KR에는 코드 합자 없음: `>=`, `!=` 원문 그대로 표시.
 본문·사이드바 링크·목차·코드는 `12px`, 사이드바 묶음과 On this page는 `11px`, h1과 사이트 이름은 `16px`, h2는 `14px`, part는 `13px`.
 작은 묶음의 행 상자는 탐색 링크와 같은 `16.8px`(12px × 1.4).
-본문 행간은 `1.7`(20.4px), 작은 제목·탐색은 `1.4`, 코드 블록은 `1.65`. 작은 글자의 획이 붙지 않도록 본문·라벨·코드는 기본 자간 유지.
-h1 자간은 `-0.015em`, h2·part는 `-0.01em`. 작성자가 붙인 번호도 제목과 같은 글꼴·크기 사용.
+본문 행간은 `1.7`(20.4px), 작은 제목·탐색은 `1.4`, 코드 블록은 `1.65`.
+본문·라벨 자간은 `-0.03em`. 코드·흐름도는 고정폭 칸과 격자를 위해 `0`, 사이트 이름도 `0`.
+h1 자간은 `-0.045em`, h2·part는 `-0.04em`으로 본문보다 조금 더 조임. 작성자가 붙인 번호도 제목과 같은 글꼴·크기 사용.
 h1, 문서·목차 묶음 라벨, On this page에는 `text-box: trim-start cap alphabetic` 적용. 크기가 달라도 대문자 위쪽 시작선을 맞추며, 미지원 브라우저는 기존 행 상자로 표시. [MDN text-box](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-box).
 README 홈의 소개 제목은 `24px`, 얼굴은 `72px`. Markdown 원문의 내용은 유지하고 사이트에서만 크기 조정.
 Shiki는 기존 역할색 참조: 키워드 strong, 함수 accent, 문자열 verified, 숫자 unverified, 주석 muted, 링크 link.

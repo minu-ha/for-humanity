@@ -78,10 +78,11 @@
     --app-line-height-code: 1.65;
     --app-line-height-body: 1.7;
 
-    /* 자간 · 사이트 이름은 기본 폭, 제목만 미세하게 조임 */
+    /* 자간 · 본문·라벨을 조이고 제목은 그보다 조금 더 · 사이트 이름은 기본 폭 · 코드·흐름도는 격자를 위해 0 */
+    --app-letter-spacing-body: -0.03em;
     --app-letter-spacing-brand: 0;
-    --app-letter-spacing-heading: -0.01em;
-    --app-letter-spacing-title: -0.015em;
+    --app-letter-spacing-heading: -0.04em;
+    --app-letter-spacing-title: -0.045em;
 
     /* 공통 간격 · margin·padding·gap의 리듬 · 단독 보정은 지역 값 */
     --app-space-inline: 6px;
