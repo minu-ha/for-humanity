@@ -12,6 +12,8 @@ order: 10
 
 ## Unreleased
 
+- Set Hangul in body text, labels and the site name in bundled IBM Plex Sans KR, the source of Monoplex KR's Hangul, at its natural width; Latin stays in Monoplex KR, and code and flowcharts keep two-cell Hangul for the grid.
+
 ## 0.7.0 — 2026-10-06
 
 - Replace Pretendard and JetBrains Mono with bundled Monoplex KR for body text, labels, code and flowcharts; align the flowchart grid to its 1:2 Latin–Hangul widths.

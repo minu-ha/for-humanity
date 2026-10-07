@@ -1,0 +1,22 @@
+/*
+ * IBM Plex Sans KR 1.003 · npm @ibm/plex-sans-kr 1.1.0 · https://github.com/IBM/plex
+ * 배포 WOFF2(fonts/complete/woff2/hinted) 원본 그대로 · 라이선스는 옆의 LICENSE.txt
+ * 본문의 한글 음절·호환 자모만 담당 · Monoplex KR 한글과 같은 글자의 원래 폭
+ */
+@font-face {
+    font-family: "IBM Plex Sans KR";
+    font-style: normal;
+    font-display: swap;
+    font-weight: 400;
+    src: url(./IBMPlexSansKR-Regular.woff2) format("woff2");
+    unicode-range: U+3131-318E, U+AC00-D7A3;
+}
+
+@font-face {
+    font-family: "IBM Plex Sans KR";
+    font-style: normal;
+    font-display: swap;
+    font-weight: 600;
+    src: url(./IBMPlexSansKR-SemiBold.woff2) format("woff2");
+    unicode-range: U+3131-318E, U+AC00-D7A3;
+}

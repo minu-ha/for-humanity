@@ -48,11 +48,12 @@
 
     /*
      * 내장 글꼴 · CLI는 @font-face와 자원 URL 생성
-     * 본문·라벨·코드·흐름도 Monoplex KR · 사이트 이름 Architects Daughter
-     * 영문 폭 0.528em = 흐름도 12px 격자의 6.336px · 한글은 정확히 2칸
+     * 본문·라벨 한글 IBM Plex Sans KR·영문 Monoplex KR · 코드·흐름도 Monoplex KR · 사이트 이름 Architects Daughter
+     * 영문 폭 0.528em = 흐름도 12px 격자의 6.336px · 코드·흐름도의 한글은 정확히 2칸
      */
     --app-font-mono: "Monoplex KR", ui-monospace, monospace;
-    --app-font-brand: "Architects Daughter", var(--app-font-mono);
+    --app-font-body: "IBM Plex Sans KR", var(--app-font-mono);
+    --app-font-brand: "Architects Daughter", var(--app-font-body);
 
     /* 글자 크기 · 11px 비상호작용 묶음 · 12px 기본과 역할별 제목 크기 */
     --app-font-size-group: 11px;

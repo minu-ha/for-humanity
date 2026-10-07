@@ -11,8 +11,8 @@ order: 20
 
 ## Overview
 
-- 본문: 고정폭 Monoplex KR · 넉넉한 행간 · 낱말 단위 줄바꿈
-- 라벨: 작은 회색 글자 · 본문·코드·흐름도가 같은 고정폭 글꼴
+- 본문: 영문 고정폭 Monoplex KR · 한글 IBM Plex Sans KR · 넉넉한 행간 · 낱말 단위 줄바꿈
+- 라벨: 작은 회색 글자 · 본문과 같은 글꼴 · 코드·흐름도는 한글까지 고정폭
 - 페이지 시작선: 문서 탐색의 첫 묶음·h1의 위쪽 정렬 · 사이트 이름은 그 위
 - 본문 머리: README 홈과 문서의 제목·소개·얇은 점선
 - 면의 구분: 가는 선 · 직각 모서리 · 그림자·그라데이션 없음
@@ -38,7 +38,7 @@ order: 20
 | Kind             | Roles                                                                                  |
 |------------------|----------------------------------------------------------------------------------------|
 | `color`          | 바탕 · 글 · 선 · 강조 · 링크 · 상태                                                    |
-| `font`           | `mono` 본문·라벨·코드·흐름도 · `brand` 사이트 이름                                |
+| `font`           | `body` 본문·라벨 · `mono` 코드·흐름도 · `brand` 사이트 이름                       |
 | `font-size`      | `group` · `detail` · `dense` · `body` · `lead` · `part` · `section` · `title`           |
 | `font-weight`    | `mark` · `active` · `strong` · `title`                                                 |
 | `line-height`    | `title` · `heading` · `tight` · `code` · `body`                                        |
@@ -76,10 +76,11 @@ order: 20
 
 ## Typography
 
-Monoplex KR 본문·라벨·코드·흐름도, Architects Daughter 사이트 이름. 내장 파일 사용.
+본문·라벨은 한글 IBM Plex Sans KR·영문 Monoplex KR, 코드·흐름도는 Monoplex KR, 사이트 이름은 Architects Daughter. 내장 파일 사용.
 Monoplex KR은 Regular `400`·SemiBold `600` 두 파일. 영문 반각과 한글 전각이 정확히 1:2라 흐름도 격자와 일치.
-사이트 이름은 Architects Daughter Regular `400`. 사이트 이름 폰트의 미지원 글자와 한글은 Monoplex KR로 fallback.
-글꼴의 출처는 [Monoplex](https://github.com/y-kim/monoplex)·[Google Fonts](https://fonts.google.com/specimen/Architects+Daughter), OFL은 자원 폴더에 포함.
+IBM Plex Sans KR도 Regular `400`·SemiBold `600` 두 파일. Monoplex KR 한글의 원본이라 모양·크기·높이가 같고 폭만 원래 비례폭. `unicode-range`로 한글 음절·호환 자모만 담당하고 영문·숫자·기호는 Monoplex KR. 코드·흐름도는 격자를 위해 한글도 2칸 폭.
+사이트 이름은 Architects Daughter Regular `400`. 사이트 이름 폰트의 미지원 글자와 한글은 본문 글꼴로 fallback.
+글꼴의 출처는 [Monoplex](https://github.com/y-kim/monoplex)·[IBM Plex](https://github.com/IBM/plex)·[Google Fonts](https://fonts.google.com/specimen/Architects+Daughter), OFL은 자원 폴더에 포함.
 
 | Size      | Use                                                 |
 |-----------|-----------------------------------------------------|
@@ -106,7 +107,7 @@ Shiki는 기존 역할색 참조: 키워드 strong, 함수 accent, 문자열 ver
 
 글꼴 이름과 fallback은 `token.css`에 정적 선언. CLI는 내장 `@font-face`와 내용 지문이 붙은 자원 URL 생성.
 공통 폰트 토큰의 정의를 IDE에서도 같은 소스로 확인 가능.
-사이트 이름·본문 공통 조각·코드 글꼴은 선요청. `font-display: optional`로 늦게 받은 글꼴의 화면 중간 교체 방지.
+사이트 이름·본문 한글·영문과 코드 글꼴은 선요청. `font-display: optional`로 늦게 받은 글꼴의 화면 중간 교체 방지.
 느린 첫 방문은 대체 글꼴로 읽고, 받은 파일은 다음 문서에서 재사용. dev·preview의 글꼴 응답은 장기 캐시.
 
 ::part[Layout]

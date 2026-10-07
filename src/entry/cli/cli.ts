@@ -16,7 +16,7 @@ import {Hono} from "hono";
 import {toSSG} from "hono/ssg";
 import {asset_favicon_path, asset_font_dir, asset_media_extensions, asset_style_path} from "@/constant/asset";
 import {copy_error_config, copy_error_prefix, copy_error_unknown_command} from "@/constant/copy";
-import {font_brand_css, font_cache_control, font_mono_css} from "@/constant/font";
+import {font_body_css, font_brand_css, font_cache_control, font_mono_css} from "@/constant/font";
 import {site_config_absent} from "@/constant/site";
 import {cli_config_file_name, cli_default_command, cli_default_docs_dir, cli_dev_port, cli_reload_delay_ms} from "@/entry/cli/_constant/cli";
 import {crawling_reserved_roots} from "@/entry/cli/_constant/crawling";
@@ -78,12 +78,19 @@ const main = async () => {
     const siteConfig = parsedConfig.data;
     // 내장 @font-face와 파일 수집 · font-family는 token.css 소유
     const mono = toFontCss({css: join(kitRoot, font_mono_css), fontDir: asset_font_dir});
+    const body = toFontCss({css: join(kitRoot, font_body_css), fontDir: asset_font_dir});
     const brand = toFontCss({css: join(kitRoot, font_brand_css), fontDir: asset_font_dir});
 
-    const fontCss = [mono.css, brand.css].join("\n");
+    const fontCss = [mono.css, body.css, brand.css].join("\n");
     const stylePath = toAssetPath({path: asset_style_path, file: join(kitRoot, "dist/cli.css")});
     const browserScript = readFileSync(join(kitRoot, "dist/browser.js"), "utf8");
-    const kitFiles = new Map([[stylePath, join(kitRoot, "dist/cli.css")], [asset_favicon_path, join(kitRoot, "src/asset/favicon.svg")], ...mono.files, ...brand.files]);
+    const kitFiles = new Map([
+        [stylePath, join(kitRoot, "dist/cli.css")],
+        [asset_favicon_path, join(kitRoot, "src/asset/favicon.svg")],
+        ...mono.files,
+        ...body.files,
+        ...brand.files,
+    ]);
     const files = new Map(kitFiles);
     const processor = createProcessor({site: siteConfig, root: docsRoot, files});
     const [docs, home] = await Promise.all([
@@ -95,7 +102,7 @@ const main = async () => {
     const app = createApp({
         site: siteConfig,
         store,
-        assets: {stylePath, browserScript, fontCss, preload: [...brand.files.keys(), ...mono.files.keys()], reload: command === "dev"},
+        assets: {stylePath, browserScript, fontCss, preload: [...brand.files.keys(), ...mono.files.keys(), ...body.files.keys()], reload: command === "dev"},
     });
 
     if (command === "build") {
