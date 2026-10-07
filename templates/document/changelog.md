@@ -12,8 +12,8 @@ order: 10
 
 ## Unreleased
 
-- Set Hangul in body text, labels and the site name in bundled IBM Plex Sans KR, the source of Monoplex KR's Hangul, at its natural width; Latin stays in Monoplex KR, and code and flowcharts keep two-cell Hangul for the grid.
-- Tighten letter spacing to -0.03em for body text and labels, -0.04em for h2 and parts and -0.045em for h1; code and flowcharts stay at 0 for the grid.
+- Set Hangul in body text, labels, inline code and the site name in bundled IBM Plex Sans KR, the source of Monoplex KR's Hangul, at its natural width; Latin stays in Monoplex KR, and code blocks and flowcharts keep two-cell Hangul for the grid.
+- Tighten letter spacing to -0.03em for body text, labels and inline code, -0.04em for h2 and parts and -0.045em for h1; code blocks and flowcharts stay at 0 for the grid.
 
 ## 0.7.0 — 2026-10-06
 

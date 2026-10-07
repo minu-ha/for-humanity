@@ -135,11 +135,10 @@
         border-radius: var(--app-radius-inline);
         background: var(--app-color-code);
         color: var(--app-color-text-strong);
-        font-family: var(--app-font-mono);
-        font-size: 1em;
 
-        /* 고정폭 칸 유지 · 본문 자간 상속 차단 */
-        letter-spacing: 0;
+        /* UA monospace 대신 부모 글꼴 · 문단은 본문 정책, 코드 블록은 pre의 고정폭·자간 0 */
+        font-family: inherit;
+        font-size: 1em;
     }
 
     /* 코드 블록 · Shiki의 --app-code-* 참조 */

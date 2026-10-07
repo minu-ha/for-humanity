@@ -12,7 +12,7 @@ order: 20
 ## Overview
 
 - 본문: 영문 고정폭 Monoplex KR · 한글 IBM Plex Sans KR · 넉넉한 행간 · 낱말 단위 줄바꿈
-- 라벨: 작은 회색 글자 · 본문과 같은 글꼴 · 코드·흐름도는 한글까지 고정폭
+- 라벨: 작은 회색 글자 · 본문과 같은 글꼴 · 인라인 코드도 본문 글꼴 · 코드 블록·흐름도는 한글까지 고정폭
 - 페이지 시작선: 문서 탐색의 첫 묶음·h1의 위쪽 정렬 · 사이트 이름은 그 위
 - 본문 머리: README 홈과 문서의 제목·소개·얇은 점선
 - 면의 구분: 가는 선 · 직각 모서리 · 그림자·그라데이션 없음
@@ -38,7 +38,7 @@ order: 20
 | Kind             | Roles                                                                                  |
 |------------------|----------------------------------------------------------------------------------------|
 | `color`          | 바탕 · 글 · 선 · 강조 · 링크 · 상태                                                    |
-| `font`           | `body` 본문·라벨 · `mono` 코드·흐름도 · `brand` 사이트 이름                       |
+| `font`           | `body` 본문·라벨·인라인 코드 · `mono` 코드 블록·흐름도 · `brand` 사이트 이름      |
 | `font-size`      | `group` · `detail` · `dense` · `body` · `lead` · `part` · `section` · `title`           |
 | `font-weight`    | `mark` · `active` · `strong` · `title`                                                 |
 | `line-height`    | `title` · `heading` · `tight` · `code` · `body`                                        |
@@ -76,9 +76,9 @@ order: 20
 
 ## Typography
 
-본문·라벨은 한글 IBM Plex Sans KR·영문 Monoplex KR, 코드·흐름도는 Monoplex KR, 사이트 이름은 Architects Daughter. 내장 파일 사용.
+본문·라벨·인라인 코드는 한글 IBM Plex Sans KR·영문 Monoplex KR, 코드 블록·흐름도는 Monoplex KR, 사이트 이름은 Architects Daughter. 내장 파일 사용.
 Monoplex KR은 Regular `400`·SemiBold `600` 두 파일. 영문 반각과 한글 전각이 정확히 1:2라 흐름도 격자와 일치.
-IBM Plex Sans KR도 Regular `400`·SemiBold `600` 두 파일. Monoplex KR 한글의 원본이라 모양·크기·높이가 같고 폭만 원래 비례폭. `unicode-range`로 한글 음절·호환 자모만 담당하고 영문·숫자·기호는 Monoplex KR. 코드·흐름도는 격자를 위해 한글도 2칸 폭.
+IBM Plex Sans KR도 Regular `400`·SemiBold `600` 두 파일. Monoplex KR 한글의 원본이라 모양·크기·높이가 같고 폭만 원래 비례폭. `unicode-range`로 한글 음절·호환 자모만 담당하고 영문·숫자·기호는 Monoplex KR. 코드 블록·흐름도는 격자를 위해 한글도 2칸 폭. 인라인 코드는 맞출 줄이 없어 본문과 같은 글꼴·자간.
 사이트 이름은 Architects Daughter Regular `400`. 사이트 이름 폰트의 미지원 글자와 한글은 본문 글꼴로 fallback.
 글꼴의 출처는 [Monoplex](https://github.com/y-kim/monoplex)·[IBM Plex](https://github.com/IBM/plex)·[Google Fonts](https://fonts.google.com/specimen/Architects+Daughter), OFL은 자원 폴더에 포함.
 
@@ -100,7 +100,7 @@ Monoplex KR에는 코드 합자 없음: `>=`, `!=` 원문 그대로 표시.
 본문·사이드바 링크·목차·코드는 `12px`, 사이드바 묶음과 On this page는 `11px`, h1과 사이트 이름은 `16px`, h2는 `14px`, part는 `13px`.
 작은 묶음의 행 상자는 탐색 링크와 같은 `16.8px`(12px × 1.4).
 본문 행간은 `1.7`(20.4px), 작은 제목·탐색은 `1.4`, 코드 블록은 `1.65`.
-본문·라벨 자간은 `-0.03em`. 코드·흐름도는 고정폭 칸과 격자를 위해 `0`, 사이트 이름도 `0`.
+본문·라벨·인라인 코드 자간은 `-0.03em`. 코드 블록·흐름도는 고정폭 칸과 격자를 위해 `0`, 사이트 이름도 `0`.
 h1 자간은 `-0.045em`, h2·part는 `-0.04em`으로 본문보다 조금 더 조임. 작성자가 붙인 번호도 제목과 같은 글꼴·크기 사용.
 h1, 문서·목차 묶음 라벨, On this page에는 `text-box: trim-start cap alphabetic` 적용. 크기가 달라도 대문자 위쪽 시작선을 맞추며, 미지원 브라우저는 기존 행 상자로 표시. [MDN text-box](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-box).
 README 홈의 소개 제목은 `24px`, 얼굴은 `72px`. Markdown 원문의 내용은 유지하고 사이트에서만 크기 조정.
