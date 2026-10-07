@@ -76,14 +76,14 @@ try {
 
     for (const options of [
         {viewport: {width: 1920, height: 600}},
-        {viewport: {width: 1536, height: 600}, colorScheme: "dark"},
-        {viewport: {width: 1535, height: 600}},
+        {viewport: {width: 1360, height: 600}, colorScheme: "dark"},
+        {viewport: {width: 1359, height: 600}},
         {viewport: {width: 1024, height: 600}},
         {viewport: {width: 1023, height: 600}},
         {viewport: {width: 390, height: 844}, isMobile: true, hasTouch: true},
-        {viewport: {width: 1536, height: 600}, forcedColors: "active"},
+        {viewport: {width: 1360, height: 600}, forcedColors: "active"},
         {viewport: {width: 390, height: 844}, javaScriptEnabled: false},
-        {viewport: {width: 1536, height: 600}, javaScriptEnabled: false},
+        {viewport: {width: 1360, height: 600}, javaScriptEnabled: false},
     ]) {
         const context = await browser.newContext(options);
         try {
@@ -98,17 +98,20 @@ try {
             }
             assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth), false);
             const outline = page.getByRole("navigation", {name: "On this page", exact: true});
-            assert.equal(await outline.isVisible(), options.viewport.width >= 1536);
+            assert.equal(await outline.isVisible(), options.viewport.width >= 1360);
             const documents = page.locator('[data-navigation-scroll="documents"]');
             if (options.javaScriptEnabled === false) {
                 assert.equal(await page.getByRole("link", {name: "Child", exact: true}).isVisible(), true);
                 assert.notEqual(await documents.evaluate((element) => getComputedStyle(element).scrollbarWidth), "none");
             } else {
-                if (options.viewport.width >= 1536) {
+                if (options.viewport.width >= 1360) {
                     const width = await documents.evaluate((element) => element.getBoundingClientRect().width);
                     const outlineWidth = await page.locator('[data-navigation-scroll="outline"]').evaluate((element) => element.getBoundingClientRect().width);
-                    assert.equal(width, 240);
+                    assert.equal(width, 200);
                     assert.equal(outlineWidth, width);
+                    // 본문은 1920px 페이지 안에서 양쪽 바깥 여백 28px·사이드바 200px·간격 32px을 뺀 나머지 전체
+                    const fill = await page.evaluate(() => Math.min(document.documentElement.clientWidth, 1920) - (28 + 200 + 32) * 2);
+                    assert.equal(await page.locator("main").evaluate((element) => element.getBoundingClientRect().width), fill);
                 }
                 if (options.forcedColors === "active") assert.equal(await documents.evaluate((element) => getComputedStyle(element).scrollbarWidth), "thin");
                 if (mobile) {
@@ -180,7 +183,7 @@ try {
         await page.waitForFunction(() => document.querySelector("details").open);
         await page.waitForFunction(() => document.querySelector("#hidden-detail .wg_prose__headingText")?.classList.contains("wg_prose__headingText--highlighted"));
         const body = await page.locator("main").elementHandle();
-        await page.setViewportSize({width: 1440, height: 600});
+        await page.setViewportSize({width: 1280, height: 600});
         await page.waitForFunction(() => document.querySelector("[data-navigation]").dataset.navigationLayout === "desktop");
         await page.evaluate(() => (document.querySelector('[data-navigation-scroll="documents"]').scrollTop = 80));
         await page.waitForFunction(() => JSON.parse(sessionStorage.getItem("for-humanity:navigation-scroll"))?.state.positions.desktop?.documents === 80);
@@ -193,7 +196,7 @@ try {
         await page.evaluate(() => (document.querySelector('[data-navigation-scroll="documents"]').scrollTop = 180));
         await page.waitForFunction(() => JSON.parse(sessionStorage.getItem("for-humanity:navigation-scroll"))?.state.positions.drawer?.documents === 180);
         await page.getByRole("link", {name: "Page 10", exact: true}).focus();
-        await page.setViewportSize({width: 1440, height: 600});
+        await page.setViewportSize({width: 1280, height: 600});
         await page.waitForFunction(() => document.querySelector("[data-navigation]").dataset.navigationLayout === "desktop");
         await page.waitForFunction(() => document.activeElement?.getAttribute("href") === "/page-10/");
         assert.equal(await page.locator('[data-navigation-scroll="documents"]').evaluate((element) => element.scrollTop), desktopPosition);

@@ -4,6 +4,6 @@
 export const navigation_mobile_query = "(width < 1024px)";
 
 /**
- * 양쪽 240px 탐색·본문 900px·간격 120px와 스크롤바가 들어가는 3열 기준
+ * 양쪽 200px 탐색·간격 120px·최소 800px 본문과 스크롤바가 들어가는 3열 기준
  */
-export const navigation_wide_query = "(width >= 1536px)";
+export const navigation_wide_query = "(width >= 1360px)";

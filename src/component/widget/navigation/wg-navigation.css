@@ -242,7 +242,7 @@
 }
 
 /* 와이드 화면에서만 현재 문서 목차 표시 */
-@media (width < 1536px) {
+@media (width < 1360px) {
     .wg_navigation__tocRail {
         display: none;
     }

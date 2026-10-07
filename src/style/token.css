@@ -1,7 +1,7 @@
 /*
  * 공통 토큰의 단일 출처 · --app-종류-쓰임
  * 사용 기준: templates/document/design.md · 테마 분기는 color-scheme에 한정
- * 폭 기준 1536px·1024px·640px · 양쪽 탐색과 본문 배치
+ * 폭 기준 1360px·1024px·640px · 양쪽 탐색과 본문 배치
  */
 
 :root {
@@ -103,9 +103,10 @@
     --app-space-gutter: 28px;
     --app-space-column: 32px;
     --app-space-sidebar-gap: 32px;
-    --app-size-sidebar: 240px;
-    --app-size-main: 900px;
-    --app-size-page: calc(var(--app-size-main) + (var(--app-size-sidebar) + var(--app-space-sidebar-gap) + var(--app-space-gutter)) * 2);
+    --app-size-sidebar: 200px;
+
+    /* 페이지 최대 폭 · 본문은 사이드바·간격을 뺀 나머지 전체 */
+    --app-size-page: 1920px;
     --app-size-brand: calc(var(--app-font-size-title) * var(--app-line-height-title) + var(--app-space-page-top) + var(--app-space-group));
     --app-size-mobile-header: 56px;
     --app-size-menu-button: 44px;

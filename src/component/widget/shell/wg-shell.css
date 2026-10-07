@@ -1,15 +1,12 @@
 /*
- * 넓은 화면은 같은 폭의 양쪽 탐색 · 좁은 화면은 문서 탐색만 표시
+ * 넓은 화면은 같은 폭의 양쪽 탐색 사이를 본문이 채움 · 좁은 화면은 문서 탐색만 표시
  */
 .wg_shell__root {
     display: grid;
     max-width: var(--app-size-page);
     margin: 0 auto;
     padding: 0 var(--app-space-gutter);
-    grid-template: "nav main outline" 1fr / calc(var(--app-size-sidebar) + var(--app-space-sidebar-gap)) minmax(0, var(--app-size-main)) calc(
-            var(--app-size-sidebar) +
-            var(--app-space-sidebar-gap)
-        );
+    grid-template: "nav main outline" 1fr / calc(var(--app-size-sidebar) + var(--app-space-sidebar-gap)) minmax(0, 1fr) calc(var(--app-size-sidebar) + var(--app-space-sidebar-gap));
     background: var(--app-color-ground);
     color: var(--app-color-text);
     font-family: var(--app-font-body);
@@ -36,7 +33,6 @@
 .wg_shell__main {
     grid-area: main;
     min-width: 0;
-    max-width: var(--app-size-main);
     border-inline: 1px solid var(--app-color-border-layout);
 
     /* 문서 목록의 시작선 · 마지막 절도 읽는 선까지 이동 가능한 끝 여백 */
@@ -44,17 +40,16 @@
     padding-inline: var(--app-space-column);
 }
 
-/* 오른쪽 목차를 숨기는 화면에서 본문과 문서 목록의 간격 유지 */
-@media (width < 1536px) {
+/* 본문 최소 약 800px을 남기도록 목차 숨김 · 본문이 오른쪽 여백까지 채움 */
+@media (width < 1360px) {
     .wg_shell__root {
-        grid-template: "nav main ." 1fr / calc(var(--app-size-sidebar) + var(--app-space-sidebar-gap)) minmax(0, var(--app-size-main)) minmax(0, 1fr);
+        grid-template: "nav main" 1fr / calc(var(--app-size-sidebar) + var(--app-space-sidebar-gap)) minmax(0, 1fr);
     }
 }
 
 /* 모바일의 브랜드·본문은 한 열 배치 */
 @media (width < 1024px) {
     .wg_shell__root {
-        max-width: calc(var(--app-size-main) + var(--app-space-gutter) * 2);
         grid-template:
             "nav" auto
             "main" 1fr / minmax(0, 1fr);
