@@ -43,7 +43,7 @@ order: 20
 | `font-weight`    | `mark` · `active` · `strong` · `title`                                                 |
 | `line-height`    | `title` · `heading` · `tight` · `code` · `body`                                        |
 | `letter-spacing` | `body` · `brand` · `heading` · `title`                                                 |
-| `space`          | `inline` · `stack` · `block` · `group` · `section` · 페이지 틀                         |
+| `space`          | `inline` · `stack` · `block` · `group` · `subsection` · `section` · 페이지 틀          |
 | `size`           | `sidebar` · `page` · `brand` · `mobile-header` · `menu-button` · `drawer`                                                  |
 | `z-index`        | `sticky` 사이드바 사이트 이름 · `popper` 커서 장식                           |
 | `radius`         | `pill` · `card` · `box` · `inline` · `mark`                                            |
@@ -65,6 +65,7 @@ order: 20
 | `border` / `border-soft`  | 상자·목록·점선 / 표 구분선             |
 | `border-layout`          | 본문 양쪽 경계           |
 | `accent` / `accent-soft`  | 현재 section·코드 / 행 hover 바탕 |
+| `bad` / `good` + `-soft`  | 라벨 코드의 띠·제목 / 제목 바탕     |
 | `link`                    | 본문·탐색 링크·포커스                  |
 | `link-visited`            | 방문한 본문 링크              |
 | `link-hover`              | 본문 링크 hover                        |

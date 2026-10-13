@@ -13,6 +13,7 @@ import {rehypeHead} from "@/component/widget/prose/_function/rehype-head";
 import {rehypeSections} from "@/component/widget/prose/_function/rehype-sections/rehype-sections";
 import {rehypeTables} from "@/component/widget/prose/_function/rehype-tables";
 import {remarkBlocks} from "@/component/widget/prose/_function/remark-blocks";
+import {remarkCodeLabels} from "@/component/widget/prose/_function/remark-code-labels";
 import {remarkFlow} from "@/component/widget/prose/_function/remark-flow";
 import {remarkLinks} from "@/component/widget/prose/_function/remark-links";
 import {remarkParts} from "@/component/widget/prose/_function/remark-parts";
@@ -25,7 +26,7 @@ import {remarkReport} from "@/entry/cli/_function/create-processor/_remark-repor
 import type {SiteConfig} from "@/type/site-config";
 
 /**
- * Markdown 처리 순서: remark → 코드 강조 → 머리 → 제목 id → 가름 수집 → 표
+ * Markdown 처리 순서: remark(부품·흐름도·코드 라벨) → 코드 강조 → 머리 → 제목 id → 가름 수집 → 표
  * 플러그인 HTML 조각은 마지막 rehype-raw에서 해석
  * Shiki inline style: token.css의 --app-code-* 참조
  */
@@ -39,6 +40,7 @@ export const createProcessor = (options: {site: SiteConfig; root: string; files?
         .use(remarkBlocks)
         .use(remarkParts)
         .use(remarkFlow)
+        .use(remarkCodeLabels)
         .use(remarkStatus, {status: options.site.status})
         .use(remarkSwatch)
         .use(remarkLinks, {root: options.root})

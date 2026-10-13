@@ -167,12 +167,36 @@ flowchart LR
 
 빌드 시 격자 SVG 생성. 짧은 노드 이름, 한 단어 선 라벨 권장. 긴 라벨은 `<br>`로 분리.
 
+## Code labels
+
+````markdown
+```ts bad 값이 없을 때 리터럴로 메움
+const name = user.name ?? "";
+```
+
+```ts good 선언한 기본값을 씀
+const name = user.name ?? user_name_default;
+```
+````
+
+```ts bad 값이 없을 때 리터럴로 메움
+const name = user.name ?? "";
+```
+
+```ts good 선언한 기본값을 씀
+const name = user.name ?? user_name_default;
+```
+
+펜스 언어 뒤에 `bad` 또는 `good`, 그 뒤에 선택 제목. 잘못된 예와 올바른 예, 이전과 이후를 나란히 보일 때.
+왼쪽 띠와 제목 바탕이 색으로 갈리고 코드 강조는 그대로. 다른 메타는 손대지 않음.
+
 ## Content features
 
 | Source                 | Result                     |
 | ---------------------- | -------------------------- |
 | GFM 표                 | 넓은 표의 내부 가로 스크롤 |
 | 언어 지정 코드 블록    | Shiki 코드 강조            |
+| 펜스 메타 `bad`·`good` | 색 띠와 제목이 붙은 코드 상자 |
 | 인라인 색 값 `#e80030` | swatch                     |
 | 설정의 상태 문구       | status badge               |
 

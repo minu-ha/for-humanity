@@ -73,6 +73,30 @@ test("site port defaults to 4321 and accepts only integers in the TCP range", ()
     }
 });
 
+test("code fences labelled bad or good render a captioned figure and keep highlighting", async () => {
+    const root = await mkdtemp(join(tmpdir(), "for-humanity-code-labels-"));
+
+    try {
+        await writeFile(
+            join(root, "guide.md"),
+            "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Read\n\n```ts bad 리터럴 <폴백>\nconst a = 1;\n```\n\n```ts good\nconst b = 2;\n```\n\n```ts other meta\nconst c = 3;\n```\n",
+        );
+        const site = siteConfigSchema.parse({});
+        const [doc] = await readDocs({root, processor: createProcessor({site, root})});
+
+        assert.ok(doc);
+        assert.match(
+            doc.html,
+            /<figure class="wg_prose__codeLabel wg_prose__codeLabel--bad"><figcaption class="wg_prose__codeLabelTitle">리터럴 &#x3C;폴백><\/figcaption>\s*<pre class="shiki/,
+        );
+        assert.match(doc.html, /<figure class="wg_prose__codeLabel wg_prose__codeLabel--good">\s*<pre class="shiki/);
+        assert.equal(doc.html.split("<figure").length - 1, 2, "other meta stays a plain code block");
+        assert.equal(doc.html.split("</figure>").length - 1, 2);
+    } finally {
+        await rm(root, {recursive: true, force: true});
+    }
+});
+
 test("cursor face is off unless the site turns it on", () => {
     assert.equal(siteConfigSchema.parse({}).cursorFace, false);
     assert.equal(siteConfigSchema.parse({cursorFace: true}).cursorFace, true);

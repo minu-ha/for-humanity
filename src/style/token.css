@@ -35,6 +35,12 @@
     --app-color-accent: light-dark(#555, #b5b5b5);
     --app-color-accent-soft: light-dark(#f5f5f2, #222);
 
+    /* 라벨 코드 · bad·good 띠와 제목 · soft 제목 바탕 */
+    --app-color-bad: light-dark(#b2412e, #ff9b8a);
+    --app-color-bad-soft: light-dark(#fbeeec, #3a2522);
+    --app-color-good: light-dark(#2f7a47, #8bd3a3);
+    --app-color-good-soft: light-dark(#eaf5ee, #1f3327);
+
     /* 링크 · 기본·방문·hover */
     --app-color-link: light-dark(#11a, #9db8ff);
     --app-color-link-visited: light-dark(#51a, #c5a5ed);
@@ -63,7 +69,7 @@
     --app-font-size-body: 12px;
     --app-font-size-lead: 12px;
     --app-font-size-part: 13px;
-    --app-font-size-section: 14px;
+    --app-font-size-section: 15px;
     --app-font-size-title: 16px;
 
     /* 굵기 · 기본 400 · 현재 위치·제목·강조 600 */
@@ -90,7 +96,8 @@
     --app-space-stack: 10px;
     --app-space-block: 14px;
     --app-space-group: 20px;
-    --app-space-section: 32px;
+    --app-space-subsection: 28px;
+    --app-space-section: 44px;
 
     /* 탐색 트리 · 항목 위아래 여백·묶음 사이·묶음 라벨 아래·중첩 들여쓰기 */
     --app-space-tree-row: 0px;
