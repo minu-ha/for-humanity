@@ -153,6 +153,9 @@
         font-size: var(--app-font-size-detail);
         line-height: var(--app-line-height-code);
         letter-spacing: 0;
+
+        /* 탭 들여쓰기 코드 · 브라우저 기본 8칸은 좁은 본문에서 너무 넓음 */
+        tab-size: 4;
     }
 
     & pre code {

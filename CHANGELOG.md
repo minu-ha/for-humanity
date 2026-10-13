@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Render tab-indented code blocks at four columns per tab instead of the browser default of eight.
+
 ## 0.8.0 — 2026-10-13
 
 - Add a `cursorFace` site setting for the pixel face that follows the mouse on desktop. It is off by default; this documentation site turns it on.
