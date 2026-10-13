@@ -216,26 +216,27 @@
         border-top: 1px dotted var(--app-color-border);
     }
 
-    /* 라벨 코드 · 왼쪽 띠와 제목 · 코드 상자의 여백은 figure 가 맡음 */
+    /* 라벨 코드 · 왼쪽 띠와 제목 · 코드 상자의 여백은 figure 가 맡음 · 토큰은 token.css 의 bad·good */
     & .wg_prose__codeLabel {
-        --app-color-label: var(--app-color-bad);
-        --app-color-label-soft: var(--app-color-bad-soft);
-
         margin: var(--app-space-block) 0;
-        border-left: 3px solid var(--app-color-label);
+        border-left: 3px solid var(--app-color-bad);
     }
 
     & .wg_prose__codeLabel--good {
-        --app-color-label: var(--app-color-good);
-        --app-color-label-soft: var(--app-color-good-soft);
+        border-left-color: var(--app-color-good);
     }
 
     & .wg_prose__codeLabelTitle {
         padding: var(--app-space-inline) var(--app-space-block);
-        background: var(--app-color-label-soft);
-        color: var(--app-color-label);
+        background: var(--app-color-bad-soft);
+        color: var(--app-color-bad);
         font-size: var(--app-font-size-dense);
         font-weight: var(--app-font-weight-strong);
+    }
+
+    & .wg_prose__codeLabel--good .wg_prose__codeLabelTitle {
+        background: var(--app-color-good-soft);
+        color: var(--app-color-good);
     }
 
     & .wg_prose__codeLabel pre {
