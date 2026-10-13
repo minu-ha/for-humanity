@@ -12,6 +12,8 @@ order: 10
 
 ## Unreleased
 
+## 0.11.0 — 2026-10-13
+
 - Add `<<< ./file.ext#region meta` code snippet imports: a file inside the document root becomes a code block, with optional `#region` extraction, dedent, fence meta passthrough and dev reloads when the file changes.
 - Add `bad` and `good` fence meta that tint the whole code block, with line notation drawn one step darker on top.
 
