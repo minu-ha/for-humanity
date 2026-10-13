@@ -97,7 +97,7 @@
     --app-space-block: 14px;
     --app-space-group: 20px;
     --app-space-subsection: 28px;
-    --app-space-section: 44px;
+    --app-space-section: 64px;
 
     /* 탐색 트리 · 항목 위아래 여백·묶음 사이·묶음 라벨 아래·중첩 들여쓰기 */
     --app-space-tree-row: 0px;
@@ -170,4 +170,13 @@
         --app-space-page-top: 20px;
         --app-space-gutter: 16px;
     }
+}
+
+/* 라벨 코드 · Shiki 가 pre 에 인라인으로 쓰는 코드 바탕을 figure 색으로 바꿈 */
+.wg_prose__codeLabel--bad {
+    --app-code-background: var(--app-color-bad-soft);
+}
+
+.wg_prose__codeLabel--good {
+    --app-code-background: var(--app-color-good-soft);
 }

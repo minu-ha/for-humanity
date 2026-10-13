@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Draw tables with an outer border and cell borders, box flowcharts with a border, and separate sections with a solid rule and 64px of space.
+- Tint the whole code block of a `bad` or `good` label instead of relying on the caption, so a label can carry its reason as a code comment.
+
 ## 0.9.0 — 2026-10-13
 
 - Add code labels: a fence meta of `bad` or `good` with an optional title renders the code block with a colored left stripe and a caption, keeping Shiki highlighting.
