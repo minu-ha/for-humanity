@@ -12,6 +12,8 @@ order: 10
 
 ## Unreleased
 
+## 0.8.1 — 2026-10-13
+
 - Render tab-indented code blocks at four columns per tab instead of the browser default of eight.
 
 ## 0.8.0 — 2026-10-13
