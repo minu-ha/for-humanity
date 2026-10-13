@@ -12,6 +12,8 @@ order: 10
 
 ## Unreleased
 
+## 0.12.0 — 2026-10-13
+
 - Add a `[file name]` fence meta that draws a title bar with the file name and language above the code block, sharing the `bad`/`good` tone.
 
 ## 0.11.0 — 2026-10-13
