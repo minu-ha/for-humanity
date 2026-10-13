@@ -1,6 +1,6 @@
 import {z} from "zod";
 import {copy_error_navigation_clash, copy_error_site_url, copy_site_title_default} from "@/constant/copy";
-import {site_navigation_default} from "@/constant/site";
+import {site_navigation_default, site_port_default, site_port_max, site_port_min} from "@/constant/site";
 import {status_default_phrases, status_kind} from "@/constant/status";
 import {groupPathSchema} from "@/type/group-path";
 
@@ -26,6 +26,10 @@ export const siteConfigSchema = z.object({
         .refine((value) => value.username === "" && value.password === "" && value.pathname === "/" && value.search === "" && value.hash === "", copy_error_site_url)
         .transform((value) => value.origin)
         .optional(),
+    /**
+     * dev·preview 서버 포트 · 같은 기계에서 문서 프로젝트 둘을 나란히 띄울 때 한쪽에 지정
+     */
+    port: z.int().min(site_port_min).max(site_port_max).default(site_port_default),
     /**
      * 탐색 묶음 경로의 읽는 순서 · 미지정 형제 묶음은 뒤에서 이름순
      */

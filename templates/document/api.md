@@ -33,9 +33,9 @@ for-humanity <dev|build|preview> [docs-dir]
 | command     | `dev`     | `dev` · `build` · `preview`만 지원         |
 | `docs-dir`  | 현재 폴더 | 명령을 실행한 폴더 기준 경로              |
 
-- `dev`: 포트 `4321` · 문서 변경 후 새로고침 · 잘못된 문서는 직전 정상 결과 유지
+- `dev`: 설정 `port`, 기본 `4321` · 문서 변경 후 새로고침 · 잘못된 문서는 직전 정상 결과 유지
 - `build`: `<docs-dir>/dist`를 새로 생성 · 기존 출력 전체 교체
-- `preview`: 포트 `4321` · 이미 만든 `dist` 제공
+- `preview`: 같은 `port` · 이미 만든 `dist` 제공
 - `init`: 아직 미구현
 
 ```sh
@@ -54,6 +54,7 @@ pnpm exec for-humanity preview docs
 | `title`       | string                             | `for humanity`            |
 | `description` | string · HTML 설명 메타데이터        | 생략                      |
 | `url`         | HTTP(S) 루트 URL · 0.6.0+           | 생략 · 크롤러 파일 생성하지 않음 |
+| `port`        | 1부터 65535 사이 정수 · `dev`·`preview` 서버 · 0.8.0+ | `4321` |
 | `navigation`  | 이름 또는 이름 배열로 구성한 경로 목록 · 중복 경로 금지 | 묶음 이름순 |
 | `status`      | 상태 문구 객체 배열                | 기본 상태 문구            |
 
@@ -65,6 +66,7 @@ pnpm exec for-humanity preview docs
 설정 검증은 시작 시 수행. 변경한 설정을 반영하려면 서버 재시작.
 
 `url`은 npm `0.6.0`부터 지원합니다. 사용자 정보·하위 경로·query·hash를 거부하고, 도메인 루트로 정규화합니다. 지정하면 홈과 문서의 사이트맵 및 `robots.txt`를 dev·build에서 제공합니다. [Crawling](crawling.md).
+`port`는 npm `0.8.0`부터 지원합니다. `preview`도 같은 설정 파일을 읽으므로 설정 오류는 `preview`에서도 종료 코드 `1`입니다.
 
 ## Frontmatter
 

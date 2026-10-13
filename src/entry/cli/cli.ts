@@ -18,7 +18,7 @@ import {asset_favicon_path, asset_font_dir, asset_media_extensions, asset_style_
 import {copy_error_config, copy_error_prefix, copy_error_unknown_command} from "@/constant/copy";
 import {font_body_css, font_brand_css, font_cache_control, font_mono_css} from "@/constant/font";
 import {site_config_absent} from "@/constant/site";
-import {cli_config_file_name, cli_default_command, cli_default_docs_dir, cli_dev_port, cli_reload_delay_ms} from "@/entry/cli/_constant/cli";
+import {cli_config_file_name, cli_default_command, cli_default_docs_dir, cli_reload_delay_ms} from "@/entry/cli/_constant/cli";
 import {crawling_reserved_roots} from "@/entry/cli/_constant/crawling";
 import {createApp} from "@/entry/cli/_function/create-app";
 import {createDevApp} from "@/entry/cli/_function/create-dev-app";
@@ -48,6 +48,14 @@ const main = async () => {
     const kitRoot = fileURLToPath(new URL("../", import.meta.url));
     const docsRoot = resolve(docsDir);
     const outDir = join(docsRoot, "dist");
+    const configFile = join(docsRoot, cli_config_file_name);
+    const parsedConfig = siteConfigSchema.safeParse(existsSync(configFile) ? (await import(pathToFileURL(configFile).href)).default : site_config_absent);
+
+    if (!parsedConfig.success) {
+        throw new Error(`${copy_error_config}: ${parsedConfig.error.issues.map((issue) => `${issue.path.join(".")} ${issue.message}`).join(", ")}`);
+    }
+
+    const siteConfig = parsedConfig.data;
 
     if (command === "preview") {
         const app = new Hono();
@@ -63,19 +71,11 @@ const main = async () => {
                 },
             }),
         );
-        serve({fetch: app.fetch, port: cli_dev_port}, (info) => console.log(`http://localhost:${info.port}/`));
+        serve({fetch: app.fetch, port: siteConfig.port}, (info) => console.log(`http://localhost:${info.port}/`));
 
         return;
     }
 
-    const configFile = join(docsRoot, cli_config_file_name);
-    const parsedConfig = siteConfigSchema.safeParse(existsSync(configFile) ? (await import(pathToFileURL(configFile).href)).default : site_config_absent);
-
-    if (!parsedConfig.success) {
-        throw new Error(`${copy_error_config}: ${parsedConfig.error.issues.map((issue) => `${issue.path.join(".")} ${issue.message}`).join(", ")}`);
-    }
-
-    const siteConfig = parsedConfig.data;
     // 내장 @font-face와 파일 수집 · font-family는 token.css 소유
     const mono = toFontCss({css: join(kitRoot, font_mono_css), fontDir: asset_font_dir});
     const body = toFontCss({css: join(kitRoot, font_body_css), fontDir: asset_font_dir});
@@ -136,7 +136,7 @@ const main = async () => {
     const reload = new EventEmitter();
     let generation = 0;
 
-    serve({fetch: createDevApp({pages: app, crawling, files, reload}).fetch, port: cli_dev_port}, (info) => console.log(`http://localhost:${info.port}/`));
+    serve({fetch: createDevApp({pages: app, crawling, files, reload}).fetch, port: siteConfig.port}, (info) => console.log(`http://localhost:${info.port}/`));
 
     /**
      * 갱신은 하나씩 실행 · 연속 저장 합치기 · 최신 변경만 적용

@@ -64,6 +64,15 @@ test("public site URL is opt-in and normalizes an HTTP(S) root URL", () => {
     assert.equal("url" in siteConfigSchema.parse({}), false);
 });
 
+test("site port defaults to 4321 and accepts only integers in the TCP range", () => {
+    assert.equal(siteConfigSchema.parse({}).port, 4321);
+    assert.equal(siteConfigSchema.parse({port: 4322}).port, 4322);
+
+    for (const port of [0, 65536, 4321.5, "4321"]) {
+        assert.equal(siteConfigSchema.safeParse({port}).success, false, String(port));
+    }
+});
+
 test("public site URL rejects unsupported protocols, credentials and non-root URLs", () => {
     for (const url of [
         "",

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add an optional `port` site setting for the `dev` and `preview` servers, defaulting to 4321, so two document projects can run side by side; `preview` now reads and validates the site configuration too.
+
 ## 0.7.1 — 2026-10-11
 
 - Set Hangul in body text, labels, inline code and the site name in bundled IBM Plex Sans KR, the source of Monoplex KR's Hangul, at its natural width; Latin stays in Monoplex KR, and code blocks and flowcharts keep two-cell Hangul for the grid.

@@ -77,7 +77,7 @@ pnpm exec for-humanity dev docs
 pnpm exec for-humanity dev docs
 ```
 
-- 포트: `4321`
+- 포트: 설정 `port` · 기본 `4321` · [Settings](settings.md#site)
 - Markdown 추가·수정·삭제 → 문서 재처리 → 열린 페이지 새로고침
 - 잘못된 문서 → 터미널 오류 · 직전 정상 문서 유지
 - 설정 변경 → 서버 재시작
