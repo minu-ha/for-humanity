@@ -65,7 +65,7 @@ order: 20
 | `border` / `border-soft`  | 상자·목록·점선 / 표 구분선             |
 | `border-layout`          | 본문 양쪽 경계           |
 | `accent` / `accent-soft`  | 현재 section·코드 / 행 hover 바탕 |
-| `bad` / `good` + `-soft`  | 라벨 코드의 띠·제목 / 제목 바탕     |
+| `bad` / `good` / `warn` + `-soft` | 코드 줄 표기의 오류·삭제 / 추가 / 경고 줄 바탕 |
 | `link`                    | 본문·탐색 링크·포커스                  |
 | `link-visited`            | 방문한 본문 링크              |
 | `link-hover`              | 본문 링크 hover                        |

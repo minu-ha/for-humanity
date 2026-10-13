@@ -118,7 +118,7 @@ type: document
 | Details의 `{open}`     | 처음부터 펼친 상세           |
 | Mermaid 코드 블록      | 빌드 시 흐름도 SVG           |
 | GFM 표 · 코드 블록     | 표와 코드 강조               |
-| 펜스 메타 `bad`·`good` 제목 | 색 띠와 제목이 붙은 코드 상자 · 0.9.0+ |
+| `// [!code highlight\|error\|warning\|++\|--]` · 메타 `{n}` · `line-numbers` | 코드 줄 표기와 줄 번호 · 0.10.0+ |
 | 상대 `.md` 링크        | 문서 URL로 변환              |
 
 부품의 입력·닫힘·중첩·오류 계약은 [Parts](parts.md).

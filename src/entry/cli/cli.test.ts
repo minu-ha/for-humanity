@@ -73,25 +73,24 @@ test("site port defaults to 4321 and accepts only integers in the TCP range", ()
     }
 });
 
-test("code fences labelled bad or good render a captioned figure and keep highlighting", async () => {
-    const root = await mkdtemp(join(tmpdir(), "for-humanity-code-labels-"));
+test("code notation marks lines, meta highlights lines, and line-numbers tags the block", async () => {
+    const root = await mkdtemp(join(tmpdir(), "for-humanity-code-notation-"));
 
     try {
         await writeFile(
             join(root, "guide.md"),
-            "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Read\n\n```ts bad 리터럴 <폴백>\nconst a = 1;\n```\n\n```ts good\nconst b = 2;\n```\n\n```ts other meta\nconst c = 3;\n```\n",
+            "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Read\n\n```ts line-numbers\nconst a = 1; // [!code error]\nconst b = 2; // [!code ++]\nconst c = 3;\n```\n\n```txt\n# [!code highlight]\nfirst\nsecond\n```\n\n```css {2}\n.a {\n  color: red;\n}\n```\n",
         );
         const site = siteConfigSchema.parse({});
         const [doc] = await readDocs({root, processor: createProcessor({site, root})});
 
         assert.ok(doc);
-        assert.match(
-            doc.html,
-            /<figure class="wg_prose__codeLabel wg_prose__codeLabel--bad"><figcaption class="wg_prose__codeLabelTitle">리터럴 &#x3C;폴백><\/figcaption>\s*<pre class="shiki/,
-        );
-        assert.match(doc.html, /<figure class="wg_prose__codeLabel wg_prose__codeLabel--good">\s*<pre class="shiki/);
-        assert.equal(doc.html.split("<figure").length - 1, 2, "other meta stays a plain code block");
-        assert.equal(doc.html.split("</figure>").length - 1, 2);
+        assert.match(doc.html, /<pre class="[^"]*wg_prose__lineNumbers[^"]*"/);
+        assert.match(doc.html, /<span class="line highlighted error">/);
+        assert.match(doc.html, /<span class="line diff add">/);
+        assert.match(doc.html, /<span class="line highlighted">[^\n]*first/);
+        assert.equal(doc.html.includes("[!code"), false, "notation comments are removed from the output");
+        assert.equal(doc.html.split('<span class="line highlighted">').length - 1, 2, "a standalone txt notation line and the css {2} meta each highlight one line");
     } finally {
         await rm(root, {recursive: true, force: true});
     }

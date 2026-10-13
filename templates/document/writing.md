@@ -167,28 +167,29 @@ flowchart LR
 
 빌드 시 격자 SVG 생성. 짧은 노드 이름, 한 단어 선 라벨 권장. 긴 라벨은 `<br>`로 분리.
 
-## Code labels
+## Code notation
 
 ````markdown
-```ts bad 값이 없을 때 리터럴로 메움
-const name = user.name ?? "";
-```
-
-```ts good 선언한 기본값을 씀
-const name = user.name ?? user_name_default;
+```ts line-numbers
+const name = user.name ?? ""; // [!code error]
+const name = user.name ?? user_name_default; // [!code ++]
 ```
 ````
 
-```ts bad 값이 없을 때 리터럴로 메움
-const name = user.name ?? "";
+```ts line-numbers
+const name = user.name ?? ""; // [!code error]
+const name = user.name ?? user_name_default; // [!code ++]
 ```
 
-```ts good 선언한 기본값을 씀
-const name = user.name ?? user_name_default;
-```
+| Notation | Result |
+| --- | --- |
+| `// [!code highlight]` 또는 메타 `{2,4-6}` | 강조 줄 |
+| `// [!code error]`, `// [!code warning]` | 붉은, 노란 줄 바탕 |
+| `// [!code ++]`, `// [!code --]` | 추가, 삭제 줄 |
+| `// [!code word:name]` | 그 줄의 낱말 강조 |
+| 메타 `line-numbers` | 줄 번호 |
 
-펜스 언어 뒤에 `bad` 또는 `good`, 그 뒤에 선택 제목. 잘못된 예와 올바른 예, 이전과 이후를 나란히 보일 때.
-코드 바탕과 왼쪽 띠가 색으로 갈리고 코드 강조는 그대로. 제목 없이 색만 쓰고 이유는 코드 주석으로 적어도 됨. 다른 메타는 손대지 않음.
+주석은 그 언어의 주석 문법으로 쓰고 결과에서는 사라집니다. 잘못된 줄과 고친 줄을 코드 안에서 바로 가리킬 때 씁니다.
 
 ## Content features
 
@@ -196,7 +197,7 @@ const name = user.name ?? user_name_default;
 | ---------------------- | -------------------------- |
 | GFM 표                 | 넓은 표의 내부 가로 스크롤 |
 | 언어 지정 코드 블록    | Shiki 코드 강조            |
-| 펜스 메타 `bad`·`good` | 색 띠와 제목이 붙은 코드 상자 |
+| 코드 줄 표기 `[!code …]` · 메타 `{n}` · `line-numbers` | 강조·오류·추가·삭제 줄과 줄 번호 |
 | 인라인 색 값 `#e80030` | swatch                     |
 | 설정의 상태 문구       | status badge               |
 

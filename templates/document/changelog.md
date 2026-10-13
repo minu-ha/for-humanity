@@ -12,6 +12,10 @@ order: 10
 
 ## Unreleased
 
+- Add VitePress-style code notation through Shiki transformers: `// [!code highlight|error|warning|++|--]`, `// [!code word:name]`, meta `{2,4-6}` and a `line-numbers` meta that numbers lines with CSS counters.
+- Remove the `bad`/`good` code labels added in 0.9.0; mark the lines instead.
+- Draw tables and flowchart boxes with the same border color as code blocks.
+
 ## 0.9.1 — 2026-10-13
 
 - Draw tables with an outer border and cell borders, box flowcharts with a border, and separate sections with a solid rule and 64px of space.
