@@ -34,13 +34,15 @@ export default {
 | `description` | HTML 설명 메타데이터     | 생략           |
 | `url`         | 공개 HTTP(S) 루트 URL · robots.txt와 sitemap.xml 생성 · 0.6.0+ | 생략 · 생성하지 않음 |
 | `port`        | `dev`·`preview` 서버 포트 · 0.8.0+ | `4321` |
+| `cursorFace`  | 데스크톱 커서 옆 픽셀 얼굴 · 0.8.0+ | `false` |
 
 `url`은 npm `0.6.0`부터 지원합니다. 설정·출력·Cloudflare 정책은 [Crawling](crawling.md).
 `port`는 npm `0.8.0`부터 지원합니다. 문서 프로젝트 둘을 같은 기계에서 나란히 띄울 때 한쪽에 다른 값을 지정합니다.
+`cursorFace`도 npm `0.8.0`부터 지원합니다. 기본은 꺼짐이고 `true`로 켜면 데스크톱에서 마우스를 따라다니는 픽셀 얼굴이 보입니다. 이 문서 사이트는 켜 둡니다.
 
 설정을 생략하면 기본 이름 `for humanity`.
 `title`을 지정하면 탭·사이드바에 같은 사이트 이름 적용. 홈의 제목과 소개는 `README.md`에서 작성.
-픽셀 얼굴은 탭의 favicon과 데스크톱 커서 옆 장식에 같은 파일 사용.
+픽셀 얼굴은 탭의 favicon에 쓰고, `cursorFace: true`면 데스크톱 커서 옆 장식에도 같은 파일 사용.
 사이트 이름과 문서 목록은 왼쪽 사이드바에 텍스트로 표시.
 데스크톱에서는 사이트 이름을 고정하고 아래 목록만 스크롤. 사이트 이름은 Architects Daughter Regular, 미지원 글자는 본문 폰트로 표시.
 1360px 이상에서는 문서 목록은 왼쪽, 현재 문서 목차는 오른쪽에 같은 폭 200px로 배치. 1360px 미만에서는 목차를 숨김. 와이드 화면의 두 목록은 각각 독립 스크롤.

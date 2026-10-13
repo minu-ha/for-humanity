@@ -164,7 +164,7 @@ export const WgShellControls = (props: WgShellControlsProps) => {
             <div className={clsx("wg_shellControls__navigation")}>
                 <WgNavigation data={props.data} stores={props.stores} />
             </div>
-            <WgCursorFace ready={props.stores !== undefined} />
+            {props.data.cursorFace && <WgCursorFace ready={props.stores !== undefined} />}
         </Fragment>
     );
 };

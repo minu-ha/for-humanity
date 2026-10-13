@@ -29,4 +29,5 @@ export const navigationDataSchema: ZodMiniType<NavigationData> = object({
         }),
     ),
     home: boolean(),
+    cursorFace: boolean(),
 });

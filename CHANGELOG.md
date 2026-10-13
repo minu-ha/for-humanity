@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add a `cursorFace` site setting for the pixel face that follows the mouse on desktop. It is off by default; this documentation site turns it on.
 - Add an optional `port` site setting for the `dev` and `preview` servers, defaulting to 4321, so two document projects can run side by side; `preview` now reads and validates the site configuration too.
 
 ## 0.7.1 — 2026-10-11

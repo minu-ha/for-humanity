@@ -68,4 +68,8 @@ export interface NavigationData {
      * README 홈 여부
      */
     home: boolean;
+    /**
+     * 커서 옆 픽셀 얼굴 표시 여부 · 사이트 설정 `cursorFace`
+     */
+    cursorFace: boolean;
 }

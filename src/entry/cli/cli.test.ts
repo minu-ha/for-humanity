@@ -73,6 +73,12 @@ test("site port defaults to 4321 and accepts only integers in the TCP range", ()
     }
 });
 
+test("cursor face is off unless the site turns it on", () => {
+    assert.equal(siteConfigSchema.parse({}).cursorFace, false);
+    assert.equal(siteConfigSchema.parse({cursorFace: true}).cursorFace, true);
+    assert.equal(siteConfigSchema.safeParse({cursorFace: "true"}).success, false);
+});
+
 test("public site URL rejects unsupported protocols, credentials and non-root URLs", () => {
     for (const url of [
         "",

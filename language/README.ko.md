@@ -80,7 +80,7 @@ npm의 README는 새 패키지 버전을 배포할 때 반영. 공개 절차는 
 
 ## Make it yours
 
-문서 폴더로 시작. 사이트 설정을 생략하면 사이드바에 **for humanity**. 픽셀 얼굴은 탭 아이콘과 데스크톱 마우스 옆의 장식으로 표시.
+문서 폴더로 시작. 사이트 설정을 생략하면 사이드바에 **for humanity**. 픽셀 얼굴은 탭 아이콘으로 표시하고, 설정에 `cursorFace: true`를 두면 데스크톱 마우스 옆에도 따라다님.
 문서 폴더의 `README.md`는 홈(`/`)으로 표시하며 frontmatter 불필요. 사이트 이름을 누르면 홈으로 이동.
 이 사이트의 홈은 [최상위 README](../README.md), [변경 기록](../templates/document/changelog.md)은 최상위 CHANGELOG.md와 동기화. 원본 수정 후 `pnpm sync:docs` 실행.
 `pnpm dev`와 `pnpm build`도 시작할 때 [문서 폴더 README](../templates/document/README.md)와 변경 기록 동기화.

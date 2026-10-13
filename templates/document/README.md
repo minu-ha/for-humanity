@@ -82,7 +82,7 @@ The npm README updates with each package release. See [Maintenance](maintenance.
 
 ## Make it yours
 
-A document folder is enough to get started. Without a site configuration, the sidebar shows **for humanity**. The pixel face appears in the browser tab and follows the mouse on desktop.
+A document folder is enough to get started. Without a site configuration, the sidebar shows **for humanity**. The pixel face appears in the browser tab, and follows the mouse on desktop when the site sets `cursorFace: true`.
 The folder's `README.md` becomes the home page at `/`, with no frontmatter required. Click the site name to return home.
 This repository generates [the documentation home](README.md) from its root README.md and [the site changelog](changelog.md) from CHANGELOG.md. Edit those source files, then run `pnpm sync:docs`; `pnpm dev` and `pnpm build` also sync them on startup.
 Set your own name in `for-humanity.config.mjs`:

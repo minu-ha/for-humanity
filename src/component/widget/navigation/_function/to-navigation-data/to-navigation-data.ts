@@ -14,4 +14,5 @@ export const toNavigationData = (options: {site: SiteConfig; docs: Doc[]; curren
     groups: toDocGroups({docs: options.docs, navigation: options.site.navigation}).map((group) => toNavigationGroup({group, current: options.current})),
     outline: options.outline === undefined ? [] : toTocGroups(options.outline),
     home: options.current === undefined,
+    cursorFace: options.site.cursorFace,
 });

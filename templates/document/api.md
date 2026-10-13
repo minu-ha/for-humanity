@@ -55,6 +55,7 @@ pnpm exec for-humanity preview docs
 | `description` | string · HTML 설명 메타데이터        | 생략                      |
 | `url`         | HTTP(S) 루트 URL · 0.6.0+           | 생략 · 크롤러 파일 생성하지 않음 |
 | `port`        | 1부터 65535 사이 정수 · `dev`·`preview` 서버 · 0.8.0+ | `4321` |
+| `cursorFace`  | boolean · 데스크톱 커서 옆 픽셀 얼굴 · 0.8.0+ | `false` |
 | `navigation`  | 이름 또는 이름 배열로 구성한 경로 목록 · 중복 경로 금지 | 묶음 이름순 |
 | `status`      | 상태 문구 객체 배열                | 기본 상태 문구            |
 
@@ -67,6 +68,7 @@ pnpm exec for-humanity preview docs
 
 `url`은 npm `0.6.0`부터 지원합니다. 사용자 정보·하위 경로·query·hash를 거부하고, 도메인 루트로 정규화합니다. 지정하면 홈과 문서의 사이트맵 및 `robots.txt`를 dev·build에서 제공합니다. [Crawling](crawling.md).
 `port`는 npm `0.8.0`부터 지원합니다. `preview`도 같은 설정 파일을 읽으므로 설정 오류는 `preview`에서도 종료 코드 `1`입니다.
+`cursorFace`는 npm `0.8.0`부터 지원하는 boolean입니다. 서버 HTML과 브라우저 마운트가 같은 값을 읽어, 꺼져 있으면 장식 DOM 자체를 만들지 않습니다.
 
 ## Frontmatter
 
