@@ -263,6 +263,36 @@
         background: var(--app-color-accent-soft);
     }
 
+    /* 파일 이름 띠 · 펜스 메타 [파일 이름] · 코드 상자와 한 몸, 여백은 figure 가 맡음 */
+    & .wg_prose__codeFile {
+        margin: var(--app-space-block) 0;
+    }
+
+    & .wg_prose__codeFile pre {
+        margin: 0;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+
+    & .wg_prose__codeFileTitle {
+        display: flex;
+        gap: var(--app-space-block);
+        justify-content: space-between;
+        padding: var(--app-space-inline) var(--app-space-block);
+        border: 1px solid var(--app-color-border);
+        border-bottom: 0;
+        border-radius: var(--app-radius-box) var(--app-radius-box) 0 0;
+        background: var(--app-code-background);
+        color: var(--app-color-text-muted);
+        font-family: var(--app-font-mono);
+        font-size: var(--app-font-size-dense);
+        letter-spacing: 0;
+    }
+
+    & .wg_prose__codeFileLang {
+        text-transform: uppercase;
+    }
+
     /* 줄 번호 · 펜스 메타 line-numbers · 복사에 섞이지 않게 content 로 */
     & pre.wg_prose__lineNumbers code {
         counter-reset: line;

@@ -189,6 +189,7 @@ const name = user.name ?? user_name_default; // [!code ++]
 | `// [!code word:name]` | 그 줄의 낱말 강조 |
 | 메타 `line-numbers` | 줄 번호 |
 | 메타 `bad`, `good` | 블록 바탕을 붉은, 초록 톤으로. 잘못된 예와 올바른 예 |
+| 메타 `[파일 이름]` | 코드 위에 파일 이름과 언어 띠 |
 
 주석은 그 언어의 주석 문법으로 쓰고 결과에서는 사라집니다. 잘못된 줄과 고친 줄을 코드 안에서 바로 가리킬 때 씁니다.
 블록 색 위의 줄 표기는 바탕보다 한 단계 진하게 그려져 어느 줄이 핵심인지 보입니다.
@@ -197,7 +198,7 @@ const name = user.name ?? user_name_default; // [!code ++]
 
 ```markdown
 <<< ./example/response.ts
-<<< ./example/response.ts#contract bad line-numbers
+<<< ./example/response.ts#contract bad line-numbers [example/response.ts]
 ```
 
 `<<<` 줄 하나가 파일을 코드 블록으로 불러옵니다. 경로는 문서 파일 위치 기준이고 문서 폴더 밖은 거부합니다.

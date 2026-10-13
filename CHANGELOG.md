@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add a `[file name]` fence meta that draws a title bar with the file name and language above the code block, sharing the `bad`/`good` tone.
+
 ## 0.11.0 — 2026-10-13
 
 - Add `<<< ./file.ext#region meta` code snippet imports: a file inside the document root becomes a code block, with optional `#region` extraction, dedent, fence meta passthrough and dev reloads when the file changes.

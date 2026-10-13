@@ -96,6 +96,28 @@ test("code notation marks lines, meta highlights lines, and line-numbers tags th
     }
 });
 
+test("a bracketed fence meta renders a file title bar that carries the block tone", async () => {
+    const root = await mkdtemp(join(tmpdir(), "for-humanity-code-title-"));
+
+    try {
+        await writeFile(
+            join(root, "guide.md"),
+            "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Read\n\n```ts bad [page/products.ts]\nconst a = 1;\n```\n\n```ts {1}\nconst b = 2;\n```\n",
+        );
+        const site = siteConfigSchema.parse({});
+        const [doc] = await readDocs({root, processor: createProcessor({site, root})});
+
+        assert.ok(doc);
+        assert.match(
+            doc.html,
+            /<figure class="wg_prose__codeFile wg_prose__codeFile--bad"><figcaption class="wg_prose__codeFileTitle">page\/products\.ts<span class="wg_prose__codeFileLang">ts<\/span><\/figcaption><pre class="[^"]*wg_prose__code--bad/,
+        );
+        assert.equal(doc.html.split("<figure").length - 1, 1, "braces meta is not a title");
+    } finally {
+        await rm(root, {recursive: true, force: true});
+    }
+});
+
 test("code snippets import a file or a region from inside the document root and pass fence meta", async () => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-snippets-"));
 
