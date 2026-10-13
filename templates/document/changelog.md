@@ -12,6 +12,8 @@ order: 10
 
 ## Unreleased
 
+## 0.9.0 — 2026-10-13
+
 - Add code labels: a fence meta of `bad` or `good` with an optional title renders the code block with a colored left stripe and a caption, keeping Shiki highlighting.
 - Give table header rows a soft background and a solid rule, widen the space above sections to 44px and subsections to 28px, and set section headings to 15px so long reference pages read in blocks.
 
