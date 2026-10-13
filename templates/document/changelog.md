@@ -12,6 +12,8 @@ order: 10
 
 ## Unreleased
 
+## 0.9.1 — 2026-10-13
+
 - Draw tables with an outer border and cell borders, box flowcharts with a border, and separate sections with a solid rule and 64px of space.
 - Tint the whole code block of a `bad` or `good` label instead of relying on the caption, so a label can carry its reason as a code comment.
 
