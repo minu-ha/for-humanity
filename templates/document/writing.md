@@ -188,8 +188,22 @@ const name = user.name ?? user_name_default; // [!code ++]
 | `// [!code ++]`, `// [!code --]` | 추가, 삭제 줄 |
 | `// [!code word:name]` | 그 줄의 낱말 강조 |
 | 메타 `line-numbers` | 줄 번호 |
+| 메타 `bad`, `good` | 블록 바탕을 붉은, 초록 톤으로. 잘못된 예와 올바른 예 |
 
 주석은 그 언어의 주석 문법으로 쓰고 결과에서는 사라집니다. 잘못된 줄과 고친 줄을 코드 안에서 바로 가리킬 때 씁니다.
+블록 색 위의 줄 표기는 바탕보다 한 단계 진하게 그려져 어느 줄이 핵심인지 보입니다.
+
+## Code snippets
+
+```markdown
+<<< ./example/response.ts
+<<< ./example/response.ts#contract bad line-numbers
+```
+
+`<<<` 줄 하나가 파일을 코드 블록으로 불러옵니다. 경로는 문서 파일 위치 기준이고 문서 폴더 밖은 거부합니다.
+언어는 확장자로 정합니다. `#이름`을 붙이면 파일 안의 `// #region 이름`과 `// #endregion 이름` 사이만 가져오고 공통 들여쓰기를 지웁니다.
+region 표시 줄은 항상 지웁니다. 그 뒤의 글은 펜스 메타로 넘어가 줄 표기, `line-numbers`, `bad`, `good`을 그대로 씁니다.
+dev 서버는 불러온 파일이 바뀌어도 새로고침합니다. 예제 코드를 실제 파일로 두고 lint, typecheck 를 받게 할 때 씁니다.
 
 ## Content features
 

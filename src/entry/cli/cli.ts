@@ -92,7 +92,8 @@ const main = async () => {
         ...brand.files,
     ]);
     const files = new Map(kitFiles);
-    const processor = createProcessor({site: siteConfig, root: docsRoot, files});
+    const snippets = new Set<string>();
+    const processor = createProcessor({site: siteConfig, root: docsRoot, files, snippets});
     const [docs, home] = await Promise.all([
         readDocs({root: docsRoot, processor, reserved: siteConfig.url === undefined ? undefined : crawling_reserved_roots}),
         readHome({root: docsRoot, processor}),
@@ -147,7 +148,8 @@ const main = async () => {
             run: async () => {
                 const currentGeneration = generation;
                 const nextFiles = new Map(kitFiles);
-                const nextProcessor = createProcessor({site: siteConfig, root: docsRoot, files: nextFiles});
+                const nextSnippets = new Set<string>();
+                const nextProcessor = createProcessor({site: siteConfig, root: docsRoot, files: nextFiles, snippets: nextSnippets});
                 const [docs, home] = await Promise.all([
                     readDocs({root: docsRoot, processor: nextProcessor, reserved: siteConfig.url === undefined ? undefined : crawling_reserved_roots}),
                     readHome({root: docsRoot, processor: nextProcessor}),
@@ -161,6 +163,10 @@ const main = async () => {
                 for (const entry of nextFiles) {
                     files.set(...entry);
                 }
+                snippets.clear();
+                for (const entry of nextSnippets) {
+                    snippets.add(entry);
+                }
                 store.docs = docs;
                 store.home = home;
                 reload.emit("change");
@@ -171,12 +177,17 @@ const main = async () => {
     );
 
     /**
-     * 입력 변경 감지 · 출력·설치 폴더 제외 · 누락 자원 추가도 다시 확인
+     * 입력 변경 감지 · 출력·설치 폴더 제외 · 누락 자원 추가도 다시 확인 · 불러온 스니펫 파일 변경 포함
      */
     const handleDocsChange = (_event: string, filename: string | null) => {
         if (filename !== null) {
             const segments = filename.split(sep);
-            if (segments.includes("dist") || segments.includes("node_modules") || (!/\.mdx?$/i.test(filename) && !asset_media_extensions.has(extname(filename).toLowerCase()))) {
+            const isSnippet = snippets.has(join(docsRoot, filename));
+            if (
+                segments.includes("dist") ||
+                segments.includes("node_modules") ||
+                (!isSnippet && !/\.mdx?$/i.test(filename) && !asset_media_extensions.has(extname(filename).toLowerCase()))
+            ) {
                 return;
             }
         }

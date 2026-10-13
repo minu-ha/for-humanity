@@ -96,6 +96,60 @@ test("code notation marks lines, meta highlights lines, and line-numbers tags th
     }
 });
 
+test("code snippets import a file or a region from inside the document root and pass fence meta", async () => {
+    const root = await mkdtemp(join(tmpdir(), "for-humanity-snippets-"));
+
+    try {
+        await mkdir(join(root, "snippet"));
+        await writeFile(
+            join(root, "snippet", "example.ts"),
+            "const outside = 0;\n// #region picked\n    const a = 1; // [!code error]\n    const b = 2;\n// #endregion picked\nconst after = 3;\n",
+        );
+        await writeFile(
+            join(root, "guide.md"),
+            "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Read\n\n<<< ./snippet/example.ts#picked bad line-numbers\n\n<<< ./snippet/example.ts\n",
+        );
+        const site = siteConfigSchema.parse({});
+        const snippets = new Set<string>();
+        const [doc] = await readDocs({root, processor: createProcessor({site, root, snippets})});
+
+        assert.ok(doc);
+        assert.match(doc.html, /<pre class="[^"]*wg_prose__lineNumbers[^"]*wg_prose__code--bad[^"]*"|<pre class="[^"]*wg_prose__code--bad[^"]*wg_prose__lineNumbers[^"]*"/);
+        assert.match(doc.html, /<span class="line highlighted error">[^\n]*const<\/span>[^\n]* a/);
+        assert.equal(doc.html.includes("#region"), false, "region marker lines are removed");
+        assert.equal(doc.html.split("const</span>").length - 1, 2 + 4, "the region block has two lines and the whole-file block four");
+        assert.deepEqual(
+            [...snippets].map((entry) => entry.endsWith(join("snippet", "example.ts"))),
+            [true],
+        );
+    } finally {
+        await rm(root, {recursive: true, force: true});
+    }
+});
+
+test("code snippets reject files outside the document root, missing files and missing regions", async () => {
+    const root = await mkdtemp(join(tmpdir(), "for-humanity-snippets-reject-"));
+
+    try {
+        await mkdir(join(root, "docs"));
+        await writeFile(join(root, "outside.ts"), "const x = 1;\n");
+        await writeFile(join(root, "docs", "present.ts"), "const y = 2;\n");
+        const site = siteConfigSchema.parse({});
+        const docsRoot = join(root, "docs");
+
+        for (const [reference, expected] of [
+            ["../outside.ts", /문서 폴더 밖/],
+            ["./missing.ts", /파일이 없다/],
+            ["./present.ts#nope", /region 이 없다/],
+        ] as const) {
+            await writeFile(join(docsRoot, "guide.md"), `---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n<<< ${reference}\n`);
+            await assert.rejects(readDocs({root: docsRoot, processor: createProcessor({site, root: docsRoot})}), expected, reference);
+        }
+    } finally {
+        await rm(root, {recursive: true, force: true});
+    }
+});
+
 test("cursor face is off unless the site turns it on", () => {
     assert.equal(siteConfigSchema.parse({}).cursorFace, false);
     assert.equal(siteConfigSchema.parse({cursorFace: true}).cursorFace, true);

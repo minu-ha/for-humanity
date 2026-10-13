@@ -119,6 +119,8 @@ type: document
 | Mermaid 코드 블록      | 빌드 시 흐름도 SVG           |
 | GFM 표 · 코드 블록     | 표와 코드 강조               |
 | `// [!code highlight\|error\|warning\|++\|--]` · 메타 `{n}` · `line-numbers` | 코드 줄 표기와 줄 번호 · 0.10.0+ |
+| 메타 `bad` · `good` | 블록 바탕색 · 0.11.0+ |
+| `<<< ./file.ext#region 메타` | 파일을 코드 블록으로 · 문서 폴더 안만 · 0.11.0+ |
 | 상대 `.md` 링크        | 문서 URL로 변환              |
 
 부품의 입력·닫힘·중첩·오류 계약은 [Parts](parts.md).

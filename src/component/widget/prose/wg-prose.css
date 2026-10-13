@@ -245,6 +245,18 @@
         opacity: 0.8;
     }
 
+    /* 색 블록 위의 줄 표기 · 바탕보다 한 단계 진하게 */
+    & pre.wg_prose__code--bad code .line.highlighted,
+    & pre.wg_prose__code--bad code .line.highlighted.error,
+    & pre.wg_prose__code--bad code .line.diff.remove {
+        background: var(--app-color-bad-mark);
+    }
+
+    & pre.wg_prose__code--good code .line.highlighted,
+    & pre.wg_prose__code--good code .line.diff.add {
+        background: var(--app-color-good-mark);
+    }
+
     & pre code .highlighted-word {
         padding: 0 2px;
         border-radius: var(--app-radius-inline);

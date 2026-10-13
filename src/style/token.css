@@ -35,11 +35,13 @@
     --app-color-accent: light-dark(#555, #b5b5b5);
     --app-color-accent-soft: light-dark(#f5f5f2, #222);
 
-    /* 코드 줄 표기 · error·remove 는 bad, add 는 good, warning 은 warn · soft 가 줄 바탕 */
+    /* 코드 판정 색 · soft 는 블록 바탕(메타 bad·good), mark 는 그 위의 줄 표기 · warn 은 줄 표기만 */
     --app-color-bad: light-dark(#b2412e, #ff9b8a);
-    --app-color-bad-soft: light-dark(#fbe9e6, #42241f);
+    --app-color-bad-soft: light-dark(#f9ebe8, #3a2522);
+    --app-color-bad-mark: light-dark(#f1cdc6, #5b322c);
     --app-color-good: light-dark(#2f7a47, #8bd3a3);
-    --app-color-good-soft: light-dark(#e3f3e8, #1f3a27);
+    --app-color-good-soft: light-dark(#e4f3ed, #1c342c);
+    --app-color-good-mark: light-dark(#c4e4d4, #27503f);
     --app-color-warn: light-dark(#8a6400, #e6c46a);
     --app-color-warn-soft: light-dark(#fbf3d9, #3d3418);
 
@@ -172,4 +174,13 @@
         --app-space-page-top: 20px;
         --app-space-gutter: 16px;
     }
+}
+
+/* 블록 색 · 펜스 메타 bad·good · Shiki 가 pre 에 인라인으로 쓰는 코드 바탕을 바꿈 */
+.wg_prose__code--bad {
+    --app-code-background: var(--app-color-bad-soft);
+}
+
+.wg_prose__code--good {
+    --app-code-background: var(--app-color-good-soft);
 }

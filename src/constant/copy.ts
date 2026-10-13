@@ -126,3 +126,8 @@ export const copy_warn_unknown_status = "설정에 없는 상태 문구다";
  * 문서에서 참조한 로컬 자원의 경로·형식 오류
  */
 export const copy_error_asset = "자원이 올바르지 않다";
+
+/**
+ * `<<<` 로 불러온 코드 스니펫의 경로·파일·region 오류
+ */
+export const copy_error_snippet = "코드 스니펫이 올바르지 않다";
