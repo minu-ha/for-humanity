@@ -98,11 +98,6 @@ export const copy_error_doc_parent_cycle = "문서 parent가 순환한다";
 export const copy_error_doc_parent_group = "부모 문서와 group이 다르다";
 
 /**
- * 흐름도 렌더링 실패
- */
-export const copy_error_flow = "흐름도를 그리지 못했다";
-
-/**
  * 미지원 블록 지시문 오류
  */
 export const copy_error_unknown_directive = "모르는 부품이다";

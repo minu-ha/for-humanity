@@ -415,26 +415,6 @@
     }
 }
 
-/* 빌드 시 생성한 격자 SVG 흐름도 */
-.wg_prose__flow {
-    overflow-x: auto;
-    margin: var(--app-space-block) 0;
-    padding: var(--app-space-block);
-    border: 1px solid var(--app-color-border);
-    border-radius: var(--app-radius-box);
-
-    /* 라벨 위치는 자간 0의 격자로 계산 */
-    letter-spacing: 0;
-
-    /* stylelint-disable-next-line selector-disallowed-list -- 외부 렌더러 생성 SVG */
-    & svg {
-        display: block;
-        max-width: 100%;
-        height: auto;
-        margin: 0 auto;
-    }
-}
-
 /* 보충 설명 · 본문과 분리되는 제목·왼쪽 선 */
 .wg_prose__note {
     margin: var(--app-space-block) 0;

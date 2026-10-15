@@ -18,6 +18,11 @@ export const asset_style_path = `/${asset_dir}/style.css`;
 export const asset_font_dir = `/${asset_dir}/fonts`;
 
 /**
+ * 자체 호스팅 Mermaid ESM과 지연 청크 폴더
+ */
+export const asset_mermaid_dir = `/${asset_dir}/mermaid`;
+
+/**
  * dev 문서 변경 알림 SSE URL
  */
 export const asset_reload_path = `/${asset_dir}/reload`;

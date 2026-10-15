@@ -12,9 +12,10 @@
         "allowJs": true,
         "types": ["node"],
         "paths": {
-            "@/*": ["./src/*"]
+            "@/*": ["./src/*"],
+            "@test/*": ["./test/*"]
         }
     },
-    "include": ["src"],
+    "include": ["src", "test", "vitest.config.ts", "playwright.config.ts"],
     "exclude": ["dist", "templates/*/dist"]
 }

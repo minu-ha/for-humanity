@@ -1,0 +1,32 @@
+/* 공식 SVG와 원문 대체 표시의 본문 경계 */
+.wg_mermaid__root {
+    margin: var(--app-space-block) 0;
+    padding: var(--app-space-block);
+    border: 1px solid var(--app-color-border);
+    border-radius: var(--app-radius-box);
+}
+
+.wg_mermaid__result {
+    overflow-x: auto;
+    text-align: center;
+    letter-spacing: 0;
+}
+
+.wg_mermaid__error {
+    color: var(--app-color-text-strong);
+}
+
+/* 공식 createTooltip의 고정 밝은 배경. 시스템 다크 모드의 밝은 글색 상속 제외 */
+.wg_mermaid__tooltip {
+    color: var(--app-color-mermaid-tooltip-text);
+    overflow-wrap: anywhere;
+}
+
+/* Mermaid의 DOM 측정 영역. 본문 선택자와 문서 흐름에서 격리 */
+.wg_mermaid__measurement {
+    position: absolute;
+    top: 0;
+    left: -100000px;
+    visibility: hidden;
+    letter-spacing: 0;
+}

@@ -23,6 +23,7 @@ import {crawling_reserved_roots} from "@/entry/cli/_constant/crawling";
 import {createApp} from "@/entry/cli/_function/create-app";
 import {createDevApp} from "@/entry/cli/_function/create-dev-app";
 import {createProcessor} from "@/entry/cli/_function/create-processor/create-processor";
+import {loadMermaidAssets} from "@/entry/cli/_function/load-mermaid-assets";
 import {readDocs} from "@/entry/cli/_function/read-docs";
 import {readHome} from "@/entry/cli/_function/read-home";
 import {toCrawlingApp} from "@/entry/cli/_function/to-crawling-app";
@@ -92,8 +93,9 @@ const main = async () => {
         ...brand.files,
     ]);
     const files = new Map(kitFiles);
+    const mermaid = loadMermaidAssets(kitRoot);
     const snippets = new Set<string>();
-    const processor = createProcessor({site: siteConfig, root: docsRoot, files, snippets});
+    const processor = createProcessor({site: siteConfig, root: docsRoot, files, snippets, mermaid});
     const [docs, home] = await Promise.all([
         readDocs({root: docsRoot, processor, reserved: siteConfig.url === undefined ? undefined : crawling_reserved_roots}),
         readHome({root: docsRoot, processor}),
@@ -149,7 +151,7 @@ const main = async () => {
                 const currentGeneration = generation;
                 const nextFiles = new Map(kitFiles);
                 const nextSnippets = new Set<string>();
-                const nextProcessor = createProcessor({site: siteConfig, root: docsRoot, files: nextFiles, snippets: nextSnippets});
+                const nextProcessor = createProcessor({site: siteConfig, root: docsRoot, files: nextFiles, snippets: nextSnippets, mermaid});
                 const [docs, home] = await Promise.all([
                     readDocs({root: docsRoot, processor: nextProcessor, reserved: siteConfig.url === undefined ? undefined : crawling_reserved_roots}),
                     readHome({root: docsRoot, processor: nextProcessor}),

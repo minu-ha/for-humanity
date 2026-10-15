@@ -52,7 +52,16 @@ try {
     const browserScript = await readFile(join(packageRoot, "dist/browser.js"), "utf8");
     assert.ok(home.includes(`<script>${browserScript}</script>`));
     assert.ok(home.indexOf(`<script>${browserScript}</script>`) < home.indexOf('<main class="wg_shell__main">'));
-    assert.match(await readFile(join(output, "guide/index.html"), "utf8"), /<svg/);
+    const guide = await readFile(join(output, "guide/index.html"), "utf8");
+    const mermaidPath = guide.match(/data-mermaid-module="([^"]+)"/)[1];
+    assert.match(mermaidPath, /^\/_fh\/mermaid\/mermaid-[A-Z0-9]+\.js$/);
+    assert.match(guide, /data-mermaid-source/);
+    assert.doesNotMatch(guide, /ascii-flow/);
+    assert.equal(installed.dependencies.mermaid, undefined, "the prebuilt runtime must not require a second Mermaid installation");
+    const mermaidFiles = await readdir(join(packageRoot, "dist/mermaid"));
+    for (const name of mermaidFiles) {
+        assert.equal(await readFile(join(output, "_fh/mermaid", name), "utf8"), await readFile(join(packageRoot, "dist/mermaid", name), "utf8"));
+    }
     const nested = await readFile(join(output, "guide/agents/index.html"), "utf8");
     const nestedNavigation = nested.match(/<nav\b[^>]*class="wg_navigationNav__root"[\s\S]*?<\/nav>/)[0];
     assert.match(nested, /Example<\/span><ul\b/);
@@ -89,7 +98,10 @@ try {
     const rebuiltEntries = await readdir(output, {recursive: true});
     assert.ok(!rebuiltEntries.includes("robots.txt"), "removing the public URL must also remove previous crawler files");
     assert.ok(!rebuiltEntries.includes("sitemap.xml"), "projects without a public URL must not emit a sitemap");
-    assert.ok(!rebuiltEntries.some((file) => file.endsWith(".js")), "the shell bundle must be embedded rather than copied as a second script");
+    assert.ok(!rebuiltEntries.some((file) => file.endsWith(".js") && !file.startsWith("_fh/mermaid/")), "only the lazy Mermaid graph may emit script assets");
+    await writeFile(join(consumer, "guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\nOrdinary text.\n");
+    execFileSync(process.execPath, [join(packageRoot, "dist/cli.js"), "build", "."], {cwd: consumer, stdio: "inherit"});
+    assert.ok(!(await readdir(join(output, "_fh"))).includes("mermaid"), "removing all diagrams must remove the previous runtime assets");
     console.log(
         `Installed ${pack.name}@${pack.version}: fingerprinted assets, nested groups, parent documents, local images, pages, Mermaid, README and opt-in crawler files passed`,
     );

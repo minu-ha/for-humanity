@@ -9,11 +9,11 @@ import remarkRehype from "remark-rehype";
 import remarkSmartypants from "remark-smartypants";
 import {createCssVariablesTheme} from "shiki";
 import {unified} from "unified";
+import {remarkMermaid} from "@/component/widget/mermaid/_function/remark-mermaid";
 import {rehypeHead} from "@/component/widget/prose/_function/rehype-head";
 import {rehypeSections} from "@/component/widget/prose/_function/rehype-sections/rehype-sections";
 import {rehypeTables} from "@/component/widget/prose/_function/rehype-tables";
 import {remarkBlocks} from "@/component/widget/prose/_function/remark-blocks";
-import {remarkFlow} from "@/component/widget/prose/_function/remark-flow";
 import {remarkLinks} from "@/component/widget/prose/_function/remark-links";
 import {remarkParts} from "@/component/widget/prose/_function/remark-parts";
 import {remarkStatus} from "@/component/widget/prose/_function/remark-status";
@@ -24,6 +24,7 @@ import {rehypeHeadingIds} from "@/entry/cli/_function/create-processor/_rehype-h
 import {remarkReport} from "@/entry/cli/_function/create-processor/_remark-report";
 import {remarkSnippets} from "@/entry/cli/_function/create-processor/_remark-snippets";
 import {shikiTransformers} from "@/entry/cli/_function/create-processor/_shiki-transformers";
+import type {MermaidAssets} from "@/type/mermaid-assets";
 import type {SiteConfig} from "@/type/site-config";
 
 /**
@@ -31,7 +32,7 @@ import type {SiteConfig} from "@/type/site-config";
  * 플러그인 HTML 조각은 마지막 rehype-raw에서 해석
  * Shiki inline style: token.css의 --app-code-* 참조
  */
-export const createProcessor = (options: {site: SiteConfig; root: string; files?: Map<string, string>; snippets?: Set<string>}) => {
+export const createProcessor = (options: {site: SiteConfig; root: string; files?: Map<string, string>; snippets?: Set<string>; mermaid?: MermaidAssets}) => {
     return unified()
         .use(remarkParse)
         .use(remarkFrontmatter, ["yaml"])
@@ -41,7 +42,7 @@ export const createProcessor = (options: {site: SiteConfig; root: string; files?
         .use(remarkDirective)
         .use(remarkBlocks)
         .use(remarkParts)
-        .use(remarkFlow)
+        .use(remarkMermaid, {assets: options.mermaid, files: options.files ?? new Map<string, string>()})
         .use(remarkStatus, {status: options.site.status})
         .use(remarkSwatch)
         .use(remarkLinks, {root: options.root})

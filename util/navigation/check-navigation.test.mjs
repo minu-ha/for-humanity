@@ -6,9 +6,9 @@ import {tmpdir} from "node:os";
 import {join} from "node:path";
 import {serve} from "@hono/node-server";
 import {serveStatic} from "@hono/node-server/serve-static";
+import {chromium} from "@playwright/test";
 import {build} from "esbuild";
 import {Hono} from "hono";
-import {chromium} from "playwright";
 
 // 개인 문서 대신 임시 문서를 빌드해 실제 SSR 출력과 Hono 브라우저 런타임을 함께 검증한다.
 const [channel] = process.argv.slice(2);
@@ -19,6 +19,7 @@ let server;
 try {
     const sections = Array.from({length: 24}, (_, index) => `## Section ${index}\n\n### Detail ${index}\n\n${"Readable context. ".repeat(40)}\n`).join("\n");
     await writeFile(join(root, "README.md"), "# Home\n\n## Start\n\n[Guide](guide.md)\n");
+    await writeFile(join(root, "for-humanity.config.mjs"), "export default {cursorFace: true};\n");
     await writeFile(
         join(root, "guide.md"),
         `---\nname: Guide\nlabel: Guide\ngroup: Guide\norder: 0\n---\n\n${sections}\n:::details[Folded context]\n### Hidden detail\n\nHidden context.\n:::\n`,
@@ -110,7 +111,7 @@ try {
                     assert.equal(width, 200);
                     assert.equal(outlineWidth, width);
                     // 본문은 1920px 페이지 안에서 양쪽 바깥 여백 28px·사이드바 200px·간격 32px을 뺀 나머지 전체
-                    const fill = await page.evaluate(() => Math.min(document.documentElement.clientWidth, 1920) - (28 + 200 + 32) * 2);
+                    const fill = await page.evaluate(() => Math.min(document.documentElement.getBoundingClientRect().width, 1920) - (28 + 200 + 32) * 2);
                     assert.equal(await page.locator("main").evaluate((element) => element.getBoundingClientRect().width), fill);
                 }
                 if (options.forcedColors === "active") assert.equal(await documents.evaluate((element) => getComputedStyle(element).scrollbarWidth), "thin");

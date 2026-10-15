@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import {Fragment, useEffect, useLayoutEffect, useRef} from "hono/jsx";
 import {WgCursorFace} from "@/component/widget/cursor-face/wg-cursor-face";
+import {WgMermaid} from "@/component/widget/mermaid/wg-mermaid";
 import {WgNavigation, type WgNavigationProps} from "@/component/widget/navigation/wg-navigation";
 import {heading_highlight_hold_ms} from "@/component/widget/prose/_constant/heading-highlight";
 import {asset_reload_path} from "@/constant/asset";
@@ -165,6 +166,7 @@ export const WgShellControls = (props: WgShellControlsProps) => {
                 <WgNavigation data={props.data} stores={props.stores} />
             </div>
             {props.data.cursorFace && <WgCursorFace ready={props.stores !== undefined} />}
+            <WgMermaid onRendered={handlePageLoad} />
         </Fragment>
     );
 };

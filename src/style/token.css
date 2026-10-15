@@ -19,6 +19,9 @@
     --app-color-text-strong: light-dark(#222, #eee);
     --app-color-text-muted: light-dark(#666, #aaa);
 
+    /* Mermaid 공식 툴팁의 고정 밝은 배경 위 글색 */
+    --app-color-mermaid-tooltip-text: #333;
+
     /* 앵커로 도착한 제목 · 형광펜 바탕과 테마별 읽기 대비 */
     --app-color-anchor-highlight: light-dark(#f4f58a, #666322);
 
@@ -58,8 +61,8 @@
 
     /*
      * 내장 글꼴 · CLI는 @font-face와 자원 URL 생성
-     * 본문·라벨·인라인 코드 한글 IBM Plex Sans KR·영문 Monoplex KR · 코드 블록·흐름도 Monoplex KR · 사이트 이름 Architects Daughter
-     * 영문 폭 0.528em = 흐름도 12px 격자의 6.336px · 코드 블록·흐름도의 한글은 정확히 2칸
+     * 본문·라벨·인라인 코드 한글 IBM Plex Sans KR·영문 Monoplex KR · 코드 블록 Monoplex KR · 사이트 이름 Architects Daughter
+     * 영문 폭 0.528em · 코드 블록의 한글은 정확히 2칸
      * 본문 맨 앞의 IBM Plex Sans KR은 한글 unicode-range만 담당 · 영문·숫자·기호는 다음 순서의 Monoplex KR
      */
     --app-font-mono: "Monoplex KR", ui-monospace, monospace;
@@ -89,7 +92,7 @@
     --app-line-height-code: 1.65;
     --app-line-height-body: 1.7;
 
-    /* 자간 · 본문·라벨·인라인 코드를 조이고 제목은 그보다 조금 더 · 사이트 이름은 기본 폭 · 코드 블록·흐름도는 격자를 위해 0 */
+    /* 자간 · 본문·라벨·인라인 코드를 조이고 제목은 그보다 조금 더 · 사이트 이름은 기본 폭 · 코드 블록은 고정폭 칸 기준 0 */
     --app-letter-spacing-body: -0.03em;
     --app-letter-spacing-brand: 0;
     --app-letter-spacing-heading: -0.04em;

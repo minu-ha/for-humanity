@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Run repository tests with standalone Vitest and split Mermaid browser checks into isolated Playwright scenarios with failure traces.
+
+- Replace the custom ASCII grid renderer with locally hosted Mermaid 12, loaded only on pages with diagrams, with official themes, system dark mode and isolated SVG styles.
+- Support Mermaid's built-in diagram types, including Tree View, and add a diagram writing guide with flowchart, sequence, state, ER and tree examples.
+- Keep readable diagram source when JavaScript is disabled or loading/rendering fails. Diagram syntax errors now appear in the browser instead of stopping the build.
+
 ## 0.12.0 — 2026-10-13
 
 - Add a `[file name]` fence meta that draws a title bar with the file name and language above the code block, sharing the `bad`/`good` tone.

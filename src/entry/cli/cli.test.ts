@@ -3,8 +3,8 @@ import {EventEmitter} from "node:events";
 import {mkdir, mkdtemp, readFile, rm, symlink, writeFile} from "node:fs/promises";
 import {tmpdir} from "node:os";
 import {join} from "node:path";
-import {test} from "node:test";
 import {toSSG} from "hono/ssg";
+import {onTestFinished, test} from "vitest";
 import {navigationDataSchema} from "@/component/widget/navigation/_constant/navigation-data-schema";
 import {toDocGroups} from "@/component/widget/navigation/_function/to-doc-groups/to-doc-groups";
 import {toNavigationData} from "@/component/widget/navigation/_function/to-navigation-data/to-navigation-data";
@@ -30,9 +30,9 @@ const toNavigationHtml = (options: Parameters<typeof toNavigationData>[0]) => {
     return navigation;
 };
 
-test("navigation payload excludes document bodies and safely embeds authored labels", async (t) => {
+test("navigation payload excludes document bodies and safely embeds authored labels", async () => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-navigation-"));
-    t.after(() => rm(root, {recursive: true, force: true}));
+    onTestFinished(() => rm(root, {recursive: true, force: true}));
     const title = "</script><script>window.injected=true</script>\u2028\u2029";
     const site = siteConfigSchema.parse({title});
     await writeFile(join(root, "guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Read\n\nPrivate body marker.\n");
@@ -202,9 +202,9 @@ test("crawler files are absent when the public site URL is omitted", async () =>
     assert.equal((await app.request("/sitemap.xml")).status, 404);
 });
 
-test("crawler files list home and encoded nested document URLs with the current document store", async (t) => {
+test("crawler files list home and encoded nested document URLs with the current document store", async () => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-crawling-"));
-    t.after(() => rm(root, {recursive: true, force: true}));
+    onTestFinished(() => rm(root, {recursive: true, force: true}));
     await mkdir(join(root, "guide"));
     await writeFile(join(root, "guide.md"), "---\nname: Start\nlabel: Start\ngroup: Guide\n---\n\nStart here.\n");
     await writeFile(join(root, "guide/한국어 & tools.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Read\n\nText.\n");
@@ -236,9 +236,9 @@ test("crawler files list home and encoded nested document URLs with the current 
     assert.equal([...(await (await app.request("/sitemap.xml")).text()).matchAll(/<loc>/g)].length, 1);
 });
 
-test("SSG writes crawler files and preserves ordinary and nested document pages", async (t) => {
+test("SSG writes crawler files and preserves ordinary and nested document pages", async () => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-crawling-build-"));
-    t.after(() => rm(root, {recursive: true, force: true}));
+    onTestFinished(() => rm(root, {recursive: true, force: true}));
     await mkdir(join(root, "guide"));
     await writeFile(join(root, "guide.md"), "---\nname: Start\nlabel: Start\ngroup: Guide\n---\n\nStart here.\n");
     await writeFile(join(root, "guide/details.md"), "---\nname: Details\nlabel: Details\ngroup: Guide\n---\n\nNested details.\n");
@@ -259,9 +259,9 @@ test("SSG writes crawler files and preserves ordinary and nested document pages"
     assert.match(await readFile(join(root, "sitemap.xml"), "utf8"), /<loc>https:\/\/docs\.example\.org\/<\/loc>/);
 });
 
-test("crawler filenames reject conflicting document roots only when reserved", async (t) => {
+test("crawler filenames reject conflicting document roots only when reserved", async () => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-crawling-paths-"));
-    t.after(() => rm(root, {recursive: true, force: true}));
+    onTestFinished(() => rm(root, {recursive: true, force: true}));
     await mkdir(join(root, "sitemap.xml"));
     await writeFile(join(root, "Robots.txt.md"), "---\nname: Robots\nlabel: Robots\ngroup: Guide\n---\n\nText.\n");
     await writeFile(join(root, "sitemap.xml/guide.md"), "---\nname: Sitemap\nlabel: Sitemap\ngroup: Guide\n---\n\nText.\n");
@@ -287,9 +287,9 @@ test("navigation initialization runs after its DOM and before the document body"
     assert.ok(initialization < html.indexOf('<main class="wg_shell__main">'), "navigation must be ready before the main content is parsed");
 });
 
-test("the page outline belongs only to the right rail rather than mobile navigation", async (t) => {
+test("the page outline belongs only to the right rail rather than mobile navigation", async () => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-outline-"));
-    t.after(() => rm(root, {recursive: true, force: true}));
+    onTestFinished(() => rm(root, {recursive: true, force: true}));
     await writeFile(join(root, "README.md"), "# Home\n\n## Read here\n\n### More context\n\nText.\n");
     const site = siteConfigSchema.parse({});
     const home = await readHome({root, processor: createProcessor({site, root})});
@@ -303,11 +303,11 @@ test("the page outline belongs only to the right rail rather than mobile navigat
     assert.equal([...html.matchAll(/data-navigation-scroll="outline"/g)].length, 1);
 });
 
-test("documents with the same initial retain distinct URLs", async (t) => {
+test("documents with the same initial retain distinct URLs", async () => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-docs-"));
     const site = siteConfigSchema.parse({});
 
-    t.after(() => rm(root, {recursive: true, force: true}));
+    onTestFinished(() => rm(root, {recursive: true, force: true}));
     await Promise.all([
         writeFile(join(root, "api.md"), "---\nname: API\nlabel: Public contracts\ngroup: Reference\n---\n\n## Overview\n\nAPI guide.\n"),
         writeFile(join(root, "architecture.md"), "---\nname: Architecture\nlabel: Engine\ngroup: Development\n---\n\n## Overview\n\nEngine guide.\n"),
@@ -319,11 +319,11 @@ test("documents with the same initial retain distinct URLs", async (t) => {
     assert.deepEqual(docs.map((doc) => doc.data.name).toSorted(), ["API", "Architecture"]);
 });
 
-test("normalized document URL collisions still fail", async (t) => {
+test("normalized document URL collisions still fail", async () => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-docs-"));
     const site = siteConfigSchema.parse({});
 
-    t.after(() => rm(root, {recursive: true, force: true}));
+    onTestFinished(() => rm(root, {recursive: true, force: true}));
     await Promise.all([
         writeFile(join(root, "guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\nText.\n"),
         writeFile(join(root, "guide.mdx"), "---\nname: Manual\nlabel: Manual\ngroup: Guide\n---\n\nText.\n"),
@@ -332,11 +332,11 @@ test("normalized document URL collisions still fail", async (t) => {
     await assert.rejects(readDocs({root, processor: createProcessor({site, root})}), /문서 id가 겹친다: guide/);
 });
 
-test("navigation shows every document group in reading order without document icons", async (t) => {
+test("navigation shows every document group in reading order without document icons", async () => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-docs-"));
     const site = siteConfigSchema.parse({navigation: ["Getting started", "Guide"]});
 
-    t.after(() => rm(root, {recursive: true, force: true}));
+    onTestFinished(() => rm(root, {recursive: true, force: true}));
     await Promise.all([
         writeFile(join(root, "commands.md"), "---\nname: Commands\nlabel: Commands\ngroup: Getting started\n---\n\nText.\n"),
         writeFile(join(root, "writing.md"), "---\nname: Writing\nlabel: Writing\ngroup: Guide\norder: 1\n---\n\nText.\n"),
@@ -375,11 +375,11 @@ test("group paths preserve literal names and reject empty or invalid segments", 
     assert.equal(siteConfigSchema.safeParse({navigation: []}).success, true);
 });
 
-test("nested groups follow metadata paths and keep sibling branches and document URLs distinct", async (t) => {
+test("nested groups follow metadata paths and keep sibling branches and document URLs distinct", async () => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-groups-"));
     const site = siteConfigSchema.parse({navigation: ["Guide", ["Projects", "Atlas", "Research"], ["Projects", "Atlas", "Decisions"]]});
 
-    t.after(() => rm(root, {recursive: true, force: true}));
+    onTestFinished(() => rm(root, {recursive: true, force: true}));
     await Promise.all([
         writeFile(join(root, "guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\nText.\n"),
         writeFile(join(root, "guide-two.md"), "---\nname: More guide\nlabel: Guide\ngroup: [Guide]\n---\n\nText.\n"),
@@ -447,11 +447,11 @@ test("parent is an optional nonempty document ID", () => {
     }
 });
 
-test("parent documents contain ordered descendants with independent URLs and one current page", async (t) => {
+test("parent documents contain ordered descendants with independent URLs and one current page", async () => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-parents-"));
     const site = siteConfigSchema.parse({navigation: [["Projects", "Atlas", "Guide"]]});
 
-    t.after(() => rm(root, {recursive: true, force: true}));
+    onTestFinished(() => rm(root, {recursive: true, force: true}));
     await mkdir(join(root, "guide"));
     await Promise.all([
         writeFile(join(root, "settings.md"), "---\nname: Settings\nlabel: Settings\ngroup: [Projects, Atlas, Guide]\norder: 10\n---\n\nSettings introduction.\n"),
@@ -504,10 +504,10 @@ test("parent documents contain ordered descendants with independent URLs and one
     }
 });
 
-test("relative parent IDs work with both the whole collection and a project document root", async (t) => {
+test("relative parent IDs work with both the whole collection and a project document root", async () => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-parents-"));
     const site = siteConfigSchema.parse({});
-    t.after(() => rm(root, {recursive: true, force: true}));
+    onTestFinished(() => rm(root, {recursive: true, force: true}));
 
     await mkdir(join(root, "project/research"), {recursive: true});
     await mkdir(join(root, "project/guide"));
@@ -531,10 +531,10 @@ test("relative parent IDs work with both the whole collection and a project docu
     }
 });
 
-test("missing and home document parents fail when loading documents", async (t) => {
+test("missing and home document parents fail when loading documents", async () => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-parents-"));
     const site = siteConfigSchema.parse({});
-    t.after(() => rm(root, {recursive: true, force: true}));
+    onTestFinished(() => rm(root, {recursive: true, force: true}));
 
     await writeFile(join(root, "README.md"), "# Home\n");
     for (const parent of ["missing", "readme", "guide.md", "/guide/"]) {
@@ -543,10 +543,10 @@ test("missing and home document parents fail when loading documents", async (t) 
     }
 });
 
-test("self references and cycles fail when loading documents", async (t) => {
+test("self references and cycles fail when loading documents", async () => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-parents-"));
     const site = siteConfigSchema.parse({});
-    t.after(() => rm(root, {recursive: true, force: true}));
+    onTestFinished(() => rm(root, {recursive: true, force: true}));
 
     await writeFile(join(root, "first.md"), "---\nname: First\nlabel: First\ngroup: Guide\nparent: first\n---\n\nText.\n");
     await assert.rejects(readDocs({root, processor: createProcessor({site, root})}), /문서 parent가 순환한다/);
@@ -557,21 +557,21 @@ test("self references and cycles fail when loading documents", async (t) => {
     await assert.rejects(readDocs({root, processor: createProcessor({site, root})}), /문서 parent가 순환한다/);
 });
 
-test("parent and child must use the same complete group path", async (t) => {
+test("parent and child must use the same complete group path", async () => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-parents-"));
     const site = siteConfigSchema.parse({});
-    t.after(() => rm(root, {recursive: true, force: true}));
+    onTestFinished(() => rm(root, {recursive: true, force: true}));
 
     await writeFile(join(root, "parent.md"), "---\nname: Parent\nlabel: Parent\ngroup: [Projects, Atlas, Research]\n---\n\nText.\n");
     await writeFile(join(root, "child.md"), "---\nname: Child\nlabel: Child\ngroup: [Projects, Beacon, Research]\nparent: parent\n---\n\nText.\n");
     await assert.rejects(readDocs({root, processor: createProcessor({site, root})}), /부모 문서와 group이 다르다: child/);
 });
 
-test("frontmatter supports BOM, CRLF and a closing fence at EOF", async (t) => {
+test("frontmatter supports BOM, CRLF and a closing fence at EOF", async () => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-docs-"));
     const site = siteConfigSchema.parse({});
 
-    t.after(() => rm(root, {recursive: true, force: true}));
+    onTestFinished(() => rm(root, {recursive: true, force: true}));
     await Promise.all([
         writeFile(join(root, "api.md"), "\uFEFF---\r\nname: API\r\nlabel: Public contracts\r\ngroup: Reference\r\n---\r\n\r\n예:이것\r\n"),
         writeFile(join(root, "empty.md"), "---\nname: Empty\nlabel: Empty\ngroup: Reference\n---"),
@@ -589,11 +589,11 @@ test("frontmatter supports BOM, CRLF and a closing fence at EOF", async (t) => {
     assert.ok(docs.every((doc) => !doc.html.includes("wg_prose__eyebrow")));
 });
 
-test("frontmatter preserves source lines in directive errors", async (t) => {
+test("frontmatter preserves source lines in directive errors", async () => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-docs-"));
     const site = siteConfigSchema.parse({});
 
-    t.after(() => rm(root, {recursive: true, force: true}));
+    onTestFinished(() => rm(root, {recursive: true, force: true}));
     await writeFile(join(root, "bad.md"), "---\nname: Broken\nlabel: Broken\ngroup: Guide\n---\n\n::unknown[Bad]\n");
 
     await assert.rejects(readDocs({root, processor: createProcessor({site, root})}), (error: unknown) => {
@@ -604,12 +604,12 @@ test("frontmatter preserves source lines in directive errors", async (t) => {
     });
 });
 
-test("a plain root README renders at home and relative home links resolve from nested docs", async (t) => {
+test("a plain root README renders at home and relative home links resolve from nested docs", async () => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-home-"));
     const site = siteConfigSchema.parse({});
     const processor = createProcessor({site, root});
 
-    t.after(() => rm(root, {recursive: true, force: true}));
+    onTestFinished(() => rm(root, {recursive: true, force: true}));
     await mkdir(join(root, "guide"));
     await Promise.all([
         writeFile(
@@ -647,11 +647,11 @@ test("a plain root README renders at home and relative home links resolve from n
     assert.equal((await app.request("/readme/")).status, 404);
 });
 
-test("a missing README provides a creation hint without generated overview cards", async (t) => {
+test("a missing README provides a creation hint without generated overview cards", async () => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-home-"));
     const site = siteConfigSchema.parse({});
 
-    t.after(() => rm(root, {recursive: true, force: true}));
+    onTestFinished(() => rm(root, {recursive: true, force: true}));
     const home = await readHome({root, processor: createProcessor({site, root})});
     const app = createApp({
         site,
@@ -665,11 +665,11 @@ test("a missing README provides a creation hint without generated overview cards
     assert.doesNotMatch(html, /pg_home__card|>Overview<|>Documents</);
 });
 
-test("root agent instructions stay out of the rendered documents", async (t) => {
+test("root agent instructions stay out of the rendered documents", async () => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-instructions-"));
     const site = siteConfigSchema.parse({});
 
-    t.after(() => rm(root, {recursive: true, force: true}));
+    onTestFinished(() => rm(root, {recursive: true, force: true}));
     await mkdir(join(root, "guide"));
     await Promise.all([
         writeFile(join(root, "README.md"), "# Home\n"),
@@ -684,11 +684,11 @@ test("root agent instructions stay out of the rendered documents", async (t) => 
     assert.deepEqual(new Set(docs.map((doc) => doc.id)), new Set(["guide/agents", "guide/claude"]));
 });
 
-test("relative Markdown links preserve query strings and fragments", async (t) => {
+test("relative Markdown links preserve query strings and fragments", async () => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-links-"));
     const site = siteConfigSchema.parse({});
 
-    t.after(() => rm(root, {recursive: true, force: true}));
+    onTestFinished(() => rm(root, {recursive: true, force: true}));
     await mkdir(join(root, "guide"));
     await Promise.all([
         writeFile(join(root, "README.md"), "# Home\n\n## Start\n"),
@@ -725,11 +725,11 @@ test("relative Markdown links preserve query strings and fragments", async (t) =
     assert.match(setup.html, /href="#details\?literal=yes"/);
 });
 
-test("headings and contents preserve authored text without automatic numbering", async (t) => {
+test("headings and contents preserve authored text without automatic numbering", async () => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-headings-"));
     const site = siteConfigSchema.parse({});
 
-    t.after(() => rm(root, {recursive: true, force: true}));
+    onTestFinished(() => rm(root, {recursive: true, force: true}));
     await writeFile(
         join(root, "guide.md"),
         "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n### Before the first section\n\n::part[Setup]\n\n## Overview\n\n### 01. Keep this number\n\n:::details[More]\n### Nested heading\n\nBody.\n:::\n\n## Overview\n",
@@ -753,9 +753,9 @@ test("headings and contents preserve authored text without automatic numbering",
     assert.doesNotMatch(html, /wg_prose__num|wg_navigationToc__mark/);
 });
 
-test("local Markdown and raw HTML images share fingerprinted assets with attachments", async (t) => {
+test("local Markdown and raw HTML images share fingerprinted assets with attachments", async () => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-media-"));
-    t.after(() => rm(root, {recursive: true, force: true}));
+    onTestFinished(() => rm(root, {recursive: true, force: true}));
     await mkdir(join(root, "guide"));
     await mkdir(join(root, "img"));
     await writeFile(join(root, "img", "sample.svg"), '<svg xmlns="http://www.w3.org/2000/svg"/>');
@@ -772,19 +772,21 @@ test("local Markdown and raw HTML images share fingerprinted assets with attachm
     assert.match(docs[0].html, /src="https:\/\/example.com\/image.png"/);
 });
 
-test("missing local images and paths outside the document root fail instead of producing broken output", async (t) => {
+test("missing local images and paths outside the document root fail instead of producing broken output", async () => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-media-"));
-    t.after(() => rm(root, {recursive: true, force: true}));
+    onTestFinished(() => rm(root, {recursive: true, force: true}));
     await writeFile(join(root, "page.md"), "---\nname: Media\nlabel: Media\ngroup: Guide\n---\n\n![Missing](missing.png)\n");
     await assert.rejects(readDocs({root, processor: createProcessor({site: siteConfigSchema.parse({}), root})}), /자원/);
     await writeFile(join(root, "page.md"), "---\nname: Media\nlabel: Media\ngroup: Guide\n---\n\n![Outside](../outside.png)\n");
     await assert.rejects(readDocs({root, processor: createProcessor({site: siteConfigSchema.parse({}), root})}), /문서 폴더 밖/);
 });
 
-test("home images use the chosen root and symlink escapes cannot publish outside files", async (t) => {
+test("home images use the chosen root and symlink escapes cannot publish outside files", async () => {
     const root = await mkdtemp(join(tmpdir(), "for-humanity-media-"));
     const outside = await mkdtemp(join(tmpdir(), "for-humanity-outside-"));
-    t.after(() => Promise.all([rm(root, {recursive: true, force: true}), rm(outside, {recursive: true, force: true})]));
+    onTestFinished(async () => {
+        await Promise.all([rm(root, {recursive: true, force: true}), rm(outside, {recursive: true, force: true})]);
+    });
     await writeFile(join(root, "local image.png"), "first");
     await writeFile(join(root, "README.md"), "# Home\n\n![Home](local%20image.png)\n");
     const files = new Map<string, string>();

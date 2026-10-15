@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import {test} from "node:test";
+import {test} from "vitest";
 import {toChangeQueue} from "@/util/async/to-change-queue";
 
 test("coalesces changes during an active render and never overlaps work", async () => {

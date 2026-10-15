@@ -7,7 +7,7 @@
     },
     "files": {
         "ignoreUnknown": true,
-        "includes": ["**", "!src/util/mermaid/render-flow.js"]
+        "includes": ["**"]
     },
     "formatter": {
         "enabled": true,
@@ -130,7 +130,7 @@
     },
     "overrides": [
         {
-            "includes": ["**/*.test.ts", "**/*.test.mjs"],
+            "includes": ["**/*.test.ts", "**/*.test.mjs", "test/**/*.ts"],
             "linter": {
                 "rules": {
                     "style": {

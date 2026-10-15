@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import {test} from "node:test";
+import {test} from "vitest";
 import {createNavigationStores} from "@/store/navigation/create-navigation-stores";
 import {navigation_scroll_storage_key} from "@/store/navigation/navigation-storage";
 
