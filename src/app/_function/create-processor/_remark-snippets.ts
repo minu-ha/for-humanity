@@ -3,8 +3,8 @@ import {dirname, extname, isAbsolute, relative, resolve, sep} from "node:path";
 import type {Root} from "mdast";
 import {visit} from "unist-util-visit";
 import type {VFile} from "vfile";
+import {snippet_language_by_extension, snippet_pattern, snippet_region_pattern} from "@/app/_constant/snippet";
 import {copy_error_snippet} from "@/constant/copy";
-import {snippet_language_by_extension, snippet_pattern, snippet_region_pattern} from "@/entry/cli/_constant/snippet";
 
 /**
  * 스니펫 수집 계약
@@ -14,10 +14,6 @@ export interface SnippetOptions {
      * 스니펫을 읽을 수 있는 문서 루트
      */
     root: string;
-    /**
-     * dev 새로고침이 지켜볼 불러온 파일 경로
-     */
-    snippets: Set<string>;
 }
 
 /**
@@ -66,7 +62,6 @@ const toSnippetBody = (source: string, region: string | undefined): string | und
 
 /**
  * `<<< ./path.ext#region 메타` 문단 → 코드 펜스 · 파일 위치 기준 경로 · 문서 폴더 밖과 없는 파일은 빌드 실패
- * 불러온 파일은 dev 감시 목록에 올림
  */
 export const remarkSnippets = (options: SnippetOptions) => (tree: Root, file: VFile) => {
     visit(tree, "paragraph", (node, index, parent) => {
@@ -111,7 +106,6 @@ export const remarkSnippets = (options: SnippetOptions) => (tree: Root, file: VF
         const extension = extname(actual).toLowerCase();
         const lang = snippet_language_by_extension[extension] === undefined ? extension.slice(1) : snippet_language_by_extension[extension];
 
-        options.snippets.add(actual);
         parent.children.splice(index, 1, {type: "code", lang, meta: meta === undefined ? null : meta, value: body});
     });
 };

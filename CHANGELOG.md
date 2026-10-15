@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Share document preparation and Hono routes between static builds and a single Vite development server; replace custom file watching and SSE with Vite updates, preserve the last valid document snapshot, and support source TSX reloads and CSS HMR.
+
 - Replace direct esbuild package and browser fixture builds with Vite 8 and shared typed build configuration; preserve synchronous browser initialization and Mermaid license notices.
 - Raise the upcoming package minimum Node.js version to 22.12.0 and include Vite for the development command.
 

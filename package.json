@@ -36,7 +36,7 @@
         "build:kit": "vite build --mode node && vite build --mode browser && vite build --mode mermaid && tsc -p tsconfig.package.json",
         "sync:readme": "tsx util/sync-readme.ts",
         "sync:docs": "pnpm sync:readme && tsx util/sync-changelog.ts",
-        "dev": "pnpm sync:docs && pnpm build:kit && node dist/cli.js dev templates/document",
+        "dev": "pnpm sync:docs && pnpm build:kit && tsx src/entry/dev/dev.ts",
         "build": "pnpm sync:docs && pnpm build:kit && node dist/cli.js build templates/document",
         "build:pages": "pnpm build && tsx util/prepare-pages.ts",
         "preview": "node dist/cli.js preview templates/document",

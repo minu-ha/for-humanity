@@ -1,8 +1,8 @@
 import {readdir, readFile} from "node:fs/promises";
 import {join} from "node:path";
 import {VFile} from "vfile";
+import type {Processor} from "@/app/_function/create-processor/create-processor";
 import {copy_error_home_clash} from "@/constant/copy";
-import type {Processor} from "@/entry/cli/_function/create-processor/create-processor";
 import type {DocContent} from "@/type/doc-content";
 import type {DocFileData} from "@/type/doc-file-data";
 

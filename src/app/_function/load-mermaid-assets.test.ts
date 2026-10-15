@@ -2,7 +2,7 @@ import {mkdir, writeFile} from "node:fs/promises";
 import {join} from "node:path";
 import {test} from "@test/_fixture/unit";
 import {describe, expect} from "vitest";
-import {loadMermaidAssets} from "@/entry/cli/_function/load-mermaid-assets";
+import {loadMermaidAssets} from "@/app/_function/load-mermaid-assets";
 
 describe("다이어그램", () => {
     describe("패키지 자원", () => {

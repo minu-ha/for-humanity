@@ -44,8 +44,4 @@ interface Window {
      * 전역 구독의 수명 기록
      */
     shellListeners: ShellListener[];
-    /**
-     * 열린 개발 서버 연결 수
-     */
-    shellReloadConnections: number;
 }

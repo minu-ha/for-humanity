@@ -2,10 +2,10 @@ import {mkdir, writeFile} from "node:fs/promises";
 import {join} from "node:path";
 import {test} from "@test/_fixture/unit";
 import {describe, expect} from "vitest";
+import {createProcessor} from "@/app/_function/create-processor/create-processor";
+import {readDocs} from "@/app/_function/read-docs";
+import {toPageApp} from "@/app/_function/to-page-app";
 import {asset_style_path} from "@/constant/asset";
-import {createApp} from "@/entry/cli/_function/create-app";
-import {createProcessor} from "@/entry/cli/_function/create-processor/create-processor";
-import {readDocs} from "@/entry/cli/_function/read-docs";
 import {siteConfigSchema} from "@/type/site-config";
 
 describe("문서 링크와 목차", () => {
@@ -76,10 +76,10 @@ describe("문서 링크와 목차", () => {
          * 문서 링크와 목차 생성
          */
         const docs = await readDocs({root, processor: createProcessor({site, root})});
-        const app = createApp({
+        const app = toPageApp({
             site,
             store: {docs},
-            assets: {stylePath: asset_style_path, browserScript: "", fontCss: "", preload: [], reload: false},
+            assets: {stylePath: asset_style_path, browser: {kind: "inline" as const, code: ""}, fontCss: "", preload: []},
         });
         const html = await (await app.request("/guide/")).text();
 

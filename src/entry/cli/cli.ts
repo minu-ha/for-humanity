@@ -4,33 +4,20 @@
  * 기본 문서 폴더: 현재 폴더 · 출력: <문서 폴더>/dist
  */
 
-import {EventEmitter} from "node:events";
-import {readFileSync, watch} from "node:fs";
 import {copyFile, mkdir, rm, writeFile} from "node:fs/promises";
-import {dirname, extname, join, relative, resolve, sep} from "node:path";
+import {dirname, join, relative, resolve} from "node:path";
 import {fileURLToPath} from "node:url";
 import {serve} from "@hono/node-server";
 import {serveStatic} from "@hono/node-server/serve-static";
-import {debounce} from "es-toolkit";
 import {Hono} from "hono";
 import {toSSG} from "hono/ssg";
-import {asset_favicon_path, asset_font_dir, asset_media_extensions, asset_style_path} from "@/constant/asset";
+import {readSiteConfig} from "@/app/_function/read-site-config";
+import {loadSite} from "@/app/load-site";
+import {asset_font_dir} from "@/constant/asset";
 import {copy_error_prefix, copy_error_unknown_command} from "@/constant/copy";
-import {font_body_css, font_brand_css, font_cache_control, font_mono_css} from "@/constant/font";
-import {cli_default_command, cli_default_docs_dir, cli_reload_delay_ms} from "@/entry/cli/_constant/cli";
-import {crawling_reserved_roots} from "@/entry/cli/_constant/crawling";
-import {createApp} from "@/entry/cli/_function/create-app";
-import {createDevApp} from "@/entry/cli/_function/create-dev-app";
-import {createProcessor} from "@/entry/cli/_function/create-processor/create-processor";
-import {loadMermaidAssets} from "@/entry/cli/_function/load-mermaid-assets";
-import {readDocs} from "@/entry/cli/_function/read-docs";
-import {readHome} from "@/entry/cli/_function/read-home";
-import {readSiteConfig} from "@/entry/cli/_function/read-site-config";
-import {toCrawlingApp} from "@/entry/cli/_function/to-crawling-app";
-import {toChangeQueue} from "@/util/async/to-change-queue";
+import {font_cache_control} from "@/constant/font";
+import {cli_default_command, cli_default_docs_dir} from "@/entry/cli/_constant/cli";
 import {toErrorMessage} from "@/util/error/to-error-message";
-import {toAssetPath} from "@/util/file/to-asset-path";
-import {toFontCss} from "@/util/font/to-font-css";
 
 const commands = ["dev", "build", "preview"];
 const [command = cli_default_command, docsDir = cli_default_docs_dir] = process.argv.slice(2);
@@ -69,127 +56,28 @@ const main = async () => {
         return;
     }
 
-    // 내장 @font-face와 파일 수집 · font-family는 token.css 소유
-    const mono = toFontCss({css: join(kitRoot, font_mono_css), fontDir: asset_font_dir});
-    const body = toFontCss({css: join(kitRoot, font_body_css), fontDir: asset_font_dir});
-    const brand = toFontCss({css: join(kitRoot, font_brand_css), fontDir: asset_font_dir});
-
-    const fontCss = [mono.css, body.css, brand.css].join("\n");
-    const stylePath = toAssetPath({path: asset_style_path, file: join(kitRoot, "dist/cli.css")});
-    const browserScript = readFileSync(join(kitRoot, "dist/browser.js"), "utf8");
-    const kitFiles = new Map([
-        [stylePath, join(kitRoot, "dist/cli.css")],
-        [asset_favicon_path, join(kitRoot, "src/asset/favicon.svg")],
-        ...mono.files,
-        ...body.files,
-        ...brand.files,
-    ]);
-    const files = new Map(kitFiles);
-    const mermaid = loadMermaidAssets(kitRoot);
-    const snippets = new Set<string>();
-    const processor = createProcessor({site: siteConfig, root: docsRoot, files, snippets, mermaid});
-    const [docs, home] = await Promise.all([
-        readDocs({root: docsRoot, processor, reserved: siteConfig.url === undefined ? undefined : crawling_reserved_roots}),
-        readHome({root: docsRoot, processor}),
-    ]);
-    const store = {docs, home};
-    const crawling = siteConfig.url === undefined ? undefined : toCrawlingApp({url: siteConfig.url, store});
-    const app = createApp({
-        site: siteConfig,
-        store,
-        assets: {stylePath, browserScript, fontCss, preload: [...brand.files.keys(), ...mono.files.keys(), ...body.files.keys()], reload: command === "dev"},
-    });
-
-    if (command === "build") {
-        // 삭제된 문서·자원의 잔여 파일 방지
-        await rm(outDir, {recursive: true, force: true});
-
-        const result = await toSSG(app, {writeFile, mkdir}, {dir: outDir});
-
-        if (!result.success) {
-            throw result.error;
-        }
-
-        const crawlerResult = crawling === undefined ? undefined : await toSSG(crawling, {writeFile, mkdir}, {dir: outDir});
-
-        if (crawlerResult?.success === false) {
-            throw crawlerResult.error;
-        }
-
-        for (const [url, file] of files) {
-            await mkdir(dirname(join(outDir, url)), {recursive: true});
-            await copyFile(file, join(outDir, url));
-        }
-
-        console.log(
-            `${crawlerResult === undefined ? result.files.length : result.files.length + crawlerResult.files.length} files, ${files.size} assets → ${relative(process.cwd(), outDir)}`,
-        );
-
+    if (command === "dev") {
+        const dev = await import("@/entry/dev/start-dev-server");
+        await dev.startDevServer({root: docsRoot, kitRoot, site: siteConfig, source: false});
         return;
     }
 
-    const reload = new EventEmitter();
-    let generation = 0;
+    const snapshot = await loadSite({root: docsRoot, kitRoot, site: siteConfig});
 
-    serve({fetch: createDevApp({pages: app, crawling, files, reload}).fetch, port: siteConfig.port}, (info) => console.log(`http://localhost:${info.port}/`));
+    // 삭제된 문서와 자원의 잔여 파일 방지
+    await rm(outDir, {recursive: true, force: true});
+    const result = await toSSG(snapshot.pages, {writeFile, mkdir}, {dir: outDir});
+    if (!result.success) throw result.error;
+    const crawling = snapshot.crawling === undefined ? undefined : await toSSG(snapshot.crawling, {writeFile, mkdir}, {dir: outDir});
+    if (crawling?.success === false) throw crawling.error;
 
-    /**
-     * 갱신은 하나씩 실행 · 연속 저장 합치기 · 최신 변경만 적용
-     * 문서 수가 많아도 파일 이벤트마다 전체 렌더링이 동시에 쌓이지 않음
-     */
-    const reloadDocs = debounce(
-        toChangeQueue({
-            run: async () => {
-                const currentGeneration = generation;
-                const nextFiles = new Map(kitFiles);
-                const nextSnippets = new Set<string>();
-                const nextProcessor = createProcessor({site: siteConfig, root: docsRoot, files: nextFiles, snippets: nextSnippets, mermaid});
-                const [docs, home] = await Promise.all([
-                    readDocs({root: docsRoot, processor: nextProcessor, reserved: siteConfig.url === undefined ? undefined : crawling_reserved_roots}),
-                    readHome({root: docsRoot, processor: nextProcessor}),
-                ]);
-
-                if (currentGeneration !== generation) {
-                    return;
-                }
-
-                files.clear();
-                for (const entry of nextFiles) {
-                    files.set(...entry);
-                }
-                snippets.clear();
-                for (const entry of nextSnippets) {
-                    snippets.add(entry);
-                }
-                store.docs = docs;
-                store.home = home;
-                reload.emit("change");
-            },
-            onError: (error) => console.error(`${copy_error_prefix}: ${toErrorMessage(error)}`),
-        }),
-        cli_reload_delay_ms,
+    for (const [url, file] of snapshot.files) {
+        await mkdir(dirname(join(outDir, url)), {recursive: true});
+        await copyFile(file, join(outDir, url));
+    }
+    console.log(
+        `${crawling === undefined ? result.files.length : result.files.length + crawling.files.length} files, ${snapshot.files.size} assets → ${relative(process.cwd(), outDir)}`,
     );
-
-    /**
-     * 입력 변경 감지 · 출력·설치 폴더 제외 · 누락 자원 추가도 다시 확인 · 불러온 스니펫 파일 변경 포함
-     */
-    const handleDocsChange = (_event: string, filename: string | null) => {
-        if (filename !== null) {
-            const segments = filename.split(sep);
-            const isSnippet = snippets.has(join(docsRoot, filename));
-            if (
-                segments.includes("dist") ||
-                segments.includes("node_modules") ||
-                (!isSnippet && !/\.mdx?$/i.test(filename) && !asset_media_extensions.has(extname(filename).toLowerCase()))
-            ) {
-                return;
-            }
-        }
-        generation += 1;
-        reloadDocs();
-    };
-
-    watch(docsRoot, {recursive: true}, handleDocsChange);
 };
 
 try {

@@ -3,6 +3,7 @@ import {execFileSync, spawnSync} from "node:child_process";
 import {mkdir, mkdtemp, readdir, readFile, rm, writeFile} from "node:fs/promises";
 import {tmpdir} from "node:os";
 import {join, resolve} from "node:path";
+import {checkPackageServer} from "@test/_fixture/check-package-server";
 import {packReportSchema} from "@tool/_type/pack-report";
 import {packageMetadataSchema} from "@tool/_type/package-metadata";
 
@@ -30,7 +31,8 @@ try {
     );
     await writeFile(join(consumer, "guide/agents.md"), `---\nname: Nested guide\nlabel: Nested guide\ngroup: ${JSON.stringify(nestedGroup)}\n---\n\n# Nested guide\n`);
     const configPath = join(consumer, "for-humanity.config.ts");
-    const config = `import type {SiteConfig} from "for-humanity";\nexport default ${JSON.stringify({url: "https://docs.example.org", navigation: [nestedGroup, "Guide"]})} satisfies SiteConfig;\n`;
+    const site = {url: "https://docs.example.org", navigation: [nestedGroup, "Guide"]};
+    const config = `import type {SiteConfig} from "for-humanity";\nexport default ${JSON.stringify(site)} satisfies SiteConfig;\n`;
     await writeFile(configPath, config);
     execFileSync("npm", ["install", "--ignore-scripts", "--no-audit", "--no-fund", join(artifactDirectory, pack.filename)], {cwd: consumer, stdio: "inherit"});
 
@@ -115,6 +117,9 @@ try {
             `Missing ${extension} assets`,
         );
     }
+    for (const command of ["dev", "preview"] as const) {
+        await checkPackageServer({root: consumer, cli: join(packageRoot, "dist/cli.js"), command, site});
+    }
     const changedBrowserScript = `${browserScript}\n/* changed package bytes */\n`;
     await writeFile(join(packageRoot, "dist/browser.js"), changedBrowserScript);
     // 같은 설치에서 기존 ESM 설정도 계속 지원
@@ -132,7 +137,7 @@ try {
     execFileSync(process.execPath, [join(packageRoot, "dist/cli.js"), "build", "."], {cwd: consumer, stdio: "inherit"});
     assert.ok(!(await readdir(join(output, "_fh"))).includes("mermaid"), "removing all diagrams must remove the previous runtime assets");
     console.log(
-        `Installed ${pack.name}@${pack.version}: public config types, TypeScript/ESM settings, fingerprinted assets, navigation, images, Mermaid, README and crawler files passed`,
+        `Installed ${pack.name}@${pack.version} on ${process.version}: dev/preview browsers, public config types, TypeScript/ESM settings, fingerprinted assets, navigation, images, Mermaid, README and crawler files passed`,
     );
 } finally {
     await rm(consumer, {recursive: true, force: true});

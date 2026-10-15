@@ -41,6 +41,7 @@ jobs:
       - run: pnpm test
       - run: pnpm check
       - run: pnpm build
+      - run: pnpm exec playwright install --with-deps chromium
       - name: Check generated files
         run: |
           git diff --check

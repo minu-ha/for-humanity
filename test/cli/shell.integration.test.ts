@@ -1,7 +1,7 @@
 import {test} from "@test/_fixture/unit";
 import {describe, expect} from "vitest";
+import {toPageApp} from "@/app/_function/to-page-app";
 import {asset_style_path} from "@/constant/asset";
-import {createApp} from "@/entry/cli/_function/create-app";
 import {siteConfigSchema} from "@/type/site-config";
 
 describe("페이지 셸", () => {
@@ -11,8 +11,8 @@ describe("페이지 셸", () => {
          * 페이지 설정과 자원 입력
          */
         const site = siteConfigSchema.parse({});
-        const assets = {fontCss: "", preload: [], reload: false, browserScript: "window.shellReady = true;", stylePath: "/_fh/style.abc123.css"};
-        const app = createApp({site, store: {docs: []}, assets});
+        const assets = {fontCss: "", preload: [], browser: {kind: "inline" as const, code: "window.shellReady = true;"}, stylePath: "/_fh/style.abc123.css"};
+        const app = toPageApp({site, store: {docs: []}, assets});
         /**
          * WHEN
          * 페이지 렌더
@@ -36,12 +36,12 @@ describe("페이지 셸", () => {
          */
         const site = siteConfigSchema.parse({cursorFace: true});
         const browserScript = "window.navigationFixture = true;";
-        const assets = {fontCss: "", preload: [], reload: false, stylePath: asset_style_path, browserScript};
+        const assets = {fontCss: "", preload: [], stylePath: asset_style_path, browser: {kind: "inline" as const, code: browserScript}};
         /**
          * WHEN
          * 페이지 렌더
          */
-        const html = await (await createApp({site, store: {docs: []}, assets}).request("/")).text();
+        const html = await (await toPageApp({site, store: {docs: []}, assets}).request("/")).text();
         const initialization = html.indexOf(`<script>${browserScript}</script>`);
 
         /**

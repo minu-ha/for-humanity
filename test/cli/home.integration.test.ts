@@ -2,11 +2,11 @@ import {mkdir, writeFile} from "node:fs/promises";
 import {join} from "node:path";
 import {test} from "@test/_fixture/unit";
 import {describe, expect} from "vitest";
+import {createProcessor} from "@/app/_function/create-processor/create-processor";
+import {readDocs} from "@/app/_function/read-docs";
+import {readHome} from "@/app/_function/read-home";
+import {toPageApp} from "@/app/_function/to-page-app";
 import {asset_style_path} from "@/constant/asset";
-import {createApp} from "@/entry/cli/_function/create-app";
-import {createProcessor} from "@/entry/cli/_function/create-processor/create-processor";
-import {readDocs} from "@/entry/cli/_function/read-docs";
-import {readHome} from "@/entry/cli/_function/read-home";
 import {siteConfigSchema} from "@/type/site-config";
 
 describe("홈페이지", () => {
@@ -32,10 +32,10 @@ describe("홈페이지", () => {
          * 홈페이지 렌더
          */
         const [docs, home] = await Promise.all([readDocs({root, processor}), readHome({root, processor})]);
-        const app = createApp({
+        const app = toPageApp({
             site,
             store: {docs, home},
-            assets: {stylePath: asset_style_path, browserScript: "", fontCss: "", preload: [], reload: false},
+            assets: {stylePath: asset_style_path, browser: {kind: "inline" as const, code: ""}, fontCss: "", preload: []},
         });
         const response = await app.request("/");
         const html = await response.text();
@@ -72,10 +72,10 @@ describe("홈페이지", () => {
          * 홈페이지 렌더
          */
         const home = await readHome({root, processor: createProcessor({site, root})});
-        const app = createApp({
+        const app = toPageApp({
             site,
             store: {docs: [], home},
-            assets: {stylePath: asset_style_path, browserScript: "", fontCss: "", preload: [], reload: false},
+            assets: {stylePath: asset_style_path, browser: {kind: "inline" as const, code: ""}, fontCss: "", preload: []},
         });
         const html = await (await app.request("/")).text();
 

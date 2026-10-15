@@ -1,7 +1,7 @@
 import {Hono} from "hono";
 import {html} from "hono/html";
-import {crawling_robots_path, crawling_sitemap_path} from "@/entry/cli/_constant/crawling";
-import type {AppOptions} from "@/entry/cli/_function/create-app";
+import {crawling_robots_path, crawling_sitemap_path} from "@/app/_constant/crawling";
+import type {PageParams} from "@/app/_function/to-page-app";
 import type {ResolvedSiteConfig} from "@/type/site-config";
 
 /**
@@ -15,7 +15,7 @@ export interface CrawlingParams {
     /**
      * dev 파일 변경 시 교체되는 현재 문서 목록 · 본문은 사이트맵에 포함하지 않음
      */
-    store: AppOptions["store"];
+    store: PageParams["store"];
 }
 
 /**

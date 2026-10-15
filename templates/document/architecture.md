@@ -7,7 +7,7 @@ order: 10
 
 라이브러리 내부 구현을 수정하는 사람을 위한 참고 문서.
 Hono 라우팅과 정적 출력, Hono JSX 서버 렌더링, unified Markdown processor.
-브라우저 탐색·앵커·커서는 `hono/jsx/dom` 위젯이 소유하고, CLI가 문서를 읽어 본문 HTML을 준비합니다.
+브라우저 탐색·앵커·커서는 `hono/jsx/dom` 위젯이 소유하고, 공통 문서 앱이 파일을 읽어 본문 HTML을 준비합니다.
 
 ## Overview
 
@@ -20,17 +20,19 @@ flowchart LR
 
 | Entry       | Responsibility                               | Runtime       |
 | ----------- | -------------------------------------------- | ------------- |
-| `src/entry/cli/cli.ts`    | 인자 · 설정 · 문서 · 폰트 · 빌드·서버 시작   | Node.js       |
-| `src/entry/cli/_function/create-app.tsx` | 첫 화면과 문서 라우트 · Hono JSX → HTML | Node.js |
-| `src/entry/cli/_function/create-dev-app.ts` | 자원 · SSE 새로고침 · 페이지와 크롤러 앱 위임 | Node.js · dev |
-| `src/entry/cli/_function/to-crawling-app.ts` | 공개 URL을 설정한 사이트의 robots.txt · 사이트맵 응답 | Node.js |
+| `src/entry/cli/cli.ts` | 인자 · 설정 · 정적 출력 · 실행기 선택 | Node.js |
+| `src/app/load-site.ts` | 문서·폰트·자원 준비 · 공통 Hono 앱 조립 | Node.js |
+| `src/entry/dev/to-dev-config.ts` | Vite 서버 · Hono 연결 · 문서 갱신 | Node.js · dev |
+| `src/app/_function/to-page-app.tsx` | 첫 화면과 문서 라우트 · Hono JSX → HTML | Node.js |
+| `src/app/_function/to-http-app.ts` | 등록 자원 · 페이지와 크롤러 앱 위임 | Node.js · dev |
+| `src/app/_function/to-crawling-app.ts` | 공개 URL을 설정한 사이트의 robots.txt · 사이트맵 응답 | Node.js |
 | `src/entry/browser/browser.tsx` | 입력 검증 · 저장소 생성 · 브라우저 셸 마운트 | Browser · 동기 |
 
 ::part[Engine]
 
 ## Runtime direction
 
-Vite 전환과 이후 서버 기능의 설계 기준. 아래 전환은 진행 중이며 현재 실행 경로는 이 문서의 나머지 절을 따릅니다.
+Vite 개발·빌드와 이후 서버 기능의 설계 기준. API·인증·DB는 별도 로드맵입니다.
 
 | 구성 | 책임 |
 | --- | --- |
@@ -79,25 +81,29 @@ HTTP API 명세는 브라우저나 외부 앱이 Hono 기능을 호출하는 계
 페이지 앱의 라우트: `/`, `/:slug{.+}/`. 문서 id에는 하위 폴더 포함.
 `/`는 문서 폴더의 `README.md`. 일반 문서 목록과 별도로 읽고, 개발 중 함께 갱신.
 
-공개 `url`이 설정됐으면 CLI의 `toCrawlingApp`에서 `/robots.txt`·`/sitemap.xml` 응답을 만듭니다. 크롤러 앱은 페이지 앱과 별도로 유지합니다. dev 앱은 두 파일 요청만 크롤러 앱에 위임하고, build는 각 앱을 `toSSG`로 출력합니다. 사이트맵은 같은 문서 store의 URL만 읽습니다. URL 미지정 프로젝트에는 크롤러 앱과 생성 파일이 없습니다.
+공개 `url`이 설정됐으면 공통 앱의 `toCrawlingApp`에서 `/robots.txt`·`/sitemap.xml` 응답을 만듭니다. 크롤러 앱은 페이지 앱과 별도로 유지합니다. dev 앱은 두 파일 요청만 크롤러 앱에 위임하고, build는 각 앱을 `toSSG`로 출력합니다. 사이트맵은 같은 문서 store의 URL만 읽습니다. URL 미지정 프로젝트에는 크롤러 앱과 생성 파일이 없습니다.
 
 - Hono JSX: `c.html`에 컴포넌트를 전달해 HTML 문서 생성
 - build: Hono `ssgParams`와 `toSSG`로 같은 라우트 출력
-- dev: `@hono/node-server`로 같은 페이지 앱 제공
+- dev: Vite의 `@hono/vite-dev-server`가 공통 Hono 앱 호출
 - preview: `serveStatic`으로 빌드 결과 제공
 
-페이지 앱과 dev 앱의 분리는 SSG 대상과 개발 전용 자원의 경계.
+페이지 앱과 HTTP 앱의 분리는 SSG 대상과 파일 응답의 경계.
 Hono의 고정 파일·wildcard 경로를 중첩 문서의 정규식 매개변수와 합치면 기본 라우터가 바뀌면서 문서 요청이 누락될 수 있으므로, 페이지 라우팅과 파일 응답도 이 경계에서 격리합니다.
 
 ### Document processing lifetime
 
-`src/entry/cli/_function`이 파일 읽기·frontmatter 검증·Markdown 처리·서버 구성을 소유합니다. `create-processor`의 전용 플러그인은 그 함수 폴더의 `_` 파일에 둡니다. 본문의 표현을 만드는 플러그인은 `prose` 위젯이 계속 소유합니다.
+`src/app/_function`이 파일 읽기·frontmatter 검증·Markdown 처리·서버 구성을 소유합니다. `create-processor`의 전용 플러그인은 그 함수 폴더의 `_` 파일에 둡니다. 본문의 표현을 만드는 플러그인은 `prose` 위젯이 계속 소유합니다.
 
 - `build`: Markdown을 한 번 처리하고 페이지 앱의 라우트를 정적 HTML로 출력합니다.
-- `dev` 시작: 전체 문서와 README를 읽어 본문 HTML을 메모리에 준비합니다.
-- `dev` 문서·자원 변경: 처리기를 새로 만들고 문서·자원 목록을 함께 교체한 뒤 브라우저에 갱신을 알립니다.
+- `dev` 첫 요청: Vite 초기화 이후 전체 문서와 README를 읽어 본문 HTML을 메모리에 준비합니다.
+- `dev` 문서·README·자원·스니펫 변경: Vite watcher가 문서 루트를 감시합니다. 처리기를 새로 만들고 정상 문서·자원 목록을 함께 교체한 뒤 Vite WebSocket으로 전체 갱신을 알립니다. 실패하면 직전 정상 목록을 유지하고, 새 변경이 들어오거나 서버가 종료되면 이전 준비 결과를 버립니다.
 - `dev` 페이지 요청: 준비한 본문을 Hono JSX 셸과 조립합니다. 요청마다 Markdown을 다시 읽거나 변환하지 않습니다.
 - `preview`와 배포 사이트: 이미 생성한 HTML·CSS·자원을 제공합니다.
+
+저장소 `pnpm dev`는 `src/app`을 Vite SSR 모듈로 읽고 브라우저 TSX를 변환합니다. 서버·브라우저 TSX는 전체 갱신, CSS는 HMR로 반영합니다. 설치 패키지의 `for-humanity dev`는 `dist/site.js`와 배포 브라우저 번들을 사용합니다. 두 실행기는 같은 개발 설정과 문서 처리 함수를 공유하며 별도 HTTP 포트를 열지 않습니다.
+
+문서 루트의 `dist`·`node_modules`·`.git`·`.cache`는 감시에서 제외합니다. 설정 파일 변경은 재시작이 필요하며 사용자 프로젝트의 Vite 설정·환경 파일은 자동으로 읽지 않습니다. 등록 자원만 Hono가 제공하고 문서 원본·서버 설정 파일은 직접 제공하지 않습니다. 종료 시 Vite가 HTTP·WebSocket·watcher를 닫고 문서 갱신 예약을 취소합니다.
 
 ### JSX and browser runtime
 
@@ -109,7 +115,7 @@ Hono의 고정 파일·wildcard 경로를 중첩 문서의 정규식 매개변�
 
 서버는 `WgShellControls`로 탐색 링크를 출력합니다. 브라우저 진입점은 `hono/jsx/dom/client`의 `createRoot(root).render(...)`로 같은 영역을 브라우저 JSX로 교체합니다. 이후 드로어·현재 헤딩은 Hooks와 JSX 이벤트로 갱신합니다. 컴포넌트 해제는 같은 root의 `unmount()`가 Effect 정리를 실행합니다. 본문은 마운트 범위 밖의 서버 HTML로 유지합니다.
 
-Hono 브라우저 렌더러로 탐색·커서 영역을 첫 paint 전에 마운트합니다. 본문은 서버가 만든 HTML을 그대로 표시하고 문서 링크는 전체 페이지를 이동합니다.
+정적 출력과 설치 패키지는 Hono 브라우저 렌더러로 탐색·커서 영역을 첫 paint 전에 마운트합니다. 저장소 소스 개발만 Vite module 진입점을 비동기로 로드합니다. 본문은 서버가 만든 HTML을 그대로 표시하고 문서 링크는 전체 페이지를 이동합니다.
 
 현재 Hono의 `hydrateRoot`는 내부에서 `createRoot`와 `render`를 호출합니다. React의 hydration처럼 기존 DOM을 재사용하는 의미가 아닙니다. `createRoot`는 갱신·해제할 수 있는 root 수명을 제공하며 최초 DOM 교체 방식은 같습니다. [Hono 구현](https://github.com/honojs/hono/blob/main/src/jsx/dom/client.ts)
 
@@ -122,8 +128,8 @@ JSX·Hooks로 동작을 소유하면서 정적 본문을 유지하는 현재 조
 문서 링크는 전체 HTML 페이지를 이동합니다.  탐색의 클라이언트 상태는 Zustand vanilla 스토어가 소유합니다.
 문서 목록과 On this page는 각각 독립 스크롤 컨테이너입니다. 1360px 이상에서는 같은 폭의 양쪽 사이드바로 표시하고, 그 아래에서는 목차를 숨깁니다. 모바일 드로어에는 문서 목록만 포함합니다.
 
-`vite.config.ts`의 browser 모드가 Vite로 `src/entry/browser/browser.tsx`를 단일 IIFE로 컴파일합니다. CLI는 생성한 `dist/browser.js`를 코드 문자열로 읽고 탐색 HTML과 탐색 전용 JSON 바로 뒤, 본문 앞에 포함합니다. JSON에는 문서 이름·URL·계층·현재 목차만 담고 본문은 포함하지 않습니다. `<`와 줄 구분자는 escape하여 작성한 이름이 script 태그를 닫지 못하게 합니다. 함수의 `.toString()`이나 수동 함수 조립은 사용하지 않습니다.
-이 진입점은 첫 paint 전에 저장 상태를 읽고 `hono/jsx/dom` 런타임으로 탐색 컴포넌트를 마운트합니다. 브라우저 빌드만 `jsxImportSource=hono/jsx/dom`을 사용합니다. 외부 JS 다운로드를 기다리지 않아 메뉴 버튼·스크롤 위치가 뒤늦게 바뀌지 않습니다. 별도의 `client.ts`나 본문 module은 없습니다.
+`vite.config.ts`의 browser 모드가 Vite로 `src/entry/browser/browser.tsx`를 단일 IIFE로 컴파일합니다. 문서 앱은 생성한 `dist/browser.js`를 코드 문자열로 읽고 탐색 HTML과 탐색 전용 JSON 바로 뒤, 본문 앞에 포함합니다. JSON에는 문서 이름·URL·계층·현재 목차만 담고 본문은 포함하지 않습니다. `<`와 줄 구분자는 escape하여 작성한 이름이 script 태그를 닫지 못하게 합니다. 함수의 `.toString()`이나 수동 함수 조립은 사용하지 않습니다.
+이 진입점은 첫 paint 전에 저장 상태를 읽고 `hono/jsx/dom` 런타임으로 탐색 컴포넌트를 마운트합니다. 브라우저 빌드만 `jsxImportSource=hono/jsx/dom`을 사용합니다. 외부 JS 다운로드를 기다리지 않아 메뉴 버튼·스크롤 위치가 뒤늦게 바뀌지 않습니다. 저장소 소스 개발에서는 `src/entry/dev/browser.ts`가 같은 브라우저 진입점과 컴포넌트 CSS를 로드하며 JSX 런타임은 서버와 브라우저별로 구분합니다.
 
 Hono의 최초 레이아웃 효과는 아직 연결되지 않은 fragment에서 실행됩니다. 스크롤 측정·복원은 이 경우에만 연결 직후 microtask로 미루며 첫 paint 앞에 완료합니다. 이후 반응형 전환에서는 연결된 요소를 동기 복원합니다.
 
@@ -133,7 +139,7 @@ Hono의 최초 레이아웃 효과는 아직 연결되지 않은 fragment에서 
 
 ### Shell and cursor lifecycle
 
-`WgShellControls`가 앵커 클릭·hash 변경·Details 공개·3초 헤딩 강조·초기 글꼴 보정과 dev SSE 연결을 소유합니다. 초기화는 본문 앞에서 실행되므로 본문 대상 조회는 `DOMContentLoaded` 이후로 미룹니다. 새로 생성한 `AbortController`로 DOM 이벤트를 묶고, 해제 시 이벤트·강조 타이머·도착 감시·SSE를 정리합니다. 글꼴 완료를 기다리는 비동기 보정도 해제된 인스턴스에서는 실행하지 않습니다.
+`WgShellControls`가 앵커 클릭·hash 변경·Details 공개·3초 헤딩 강조·초기 글꼴 보정을 소유합니다. 초기화는 본문 앞에서 실행되므로 본문 대상 조회는 `DOMContentLoaded` 이후로 미룹니다. 새로 생성한 `AbortController`로 DOM 이벤트를 묶고, 해제 시 이벤트·강조 타이머·도착 감시를 정리합니다. 개발 갱신 통신은 Vite가 소유합니다. 글꼴 완료를 기다리는 비동기 보정도 해제된 인스턴스에서는 실행하지 않습니다.
 
 커서 장식은 `src/component/widget/cursor-face`의 `WgCursorFace`가 DOM ref·좌표·미디어 조건·전역 이벤트·예약 frame을 소유합니다. 마지막 좌표는 같은 탭의 페이지 이동에서만 이어받으며 터치·reduced motion에서는 숨깁니다. 본문과 커서 동작을 모듈 최상위에서 바로 실행하지 않고 컴포넌트의 Effect에서 설치·정리합니다.
 
@@ -145,7 +151,7 @@ Hono의 최초 레이아웃 효과는 아직 연결되지 않은 fragment에서 
 `createNavigationStores`는 브라우저의 탐색 진입점에서 페이지마다 생성하며, 서버 요청이나 정적 빌드에서는 실행하지 않습니다. 페이지 사이의 스크롤 위치는 `persist`가 이어받고, BFCache 복귀에서는 최신 저장 상태를 다시 읽습니다.
 
 vanilla 생성기는 `use-` 접두사를 붙이지 않습니다. 스크롤 스토어는 탐색 컴포넌트가 이벤트·Effect에서 직접 읽고 쓰며, 사용자 상태는 서버 요청 사이에 공유하지 않습니다.
-서버의 `AppOptions.store`는 읽은 문서 목록과 홈을 담는 별도 객체이며 사용자 탐색 상태를 저장하는 Zustand 스토어가 아닙니다.
+서버의 `PageParams.store`는 읽은 문서 목록과 홈을 담는 별도 객체이며 사용자 탐색 상태를 저장하는 Zustand 스토어가 아닙니다.
 
 참조: [Zustand vanilla store](https://zustand.docs.pmnd.rs/reference/apis/create-store), [persist](https://zustand.docs.pmnd.rs/reference/middlewares/persist).
 
@@ -191,7 +197,8 @@ gray-matter는 frontmatter를 분리·해석하는 다른 선택지. 여기서�
 | 탐색 저장 상태 · 검증         | `src/store/navigation`       |
 | 본문 · remark·rehype 플러그인 | `src/component/widget/prose` |
 | Mermaid 원문 · 공식 SVG 렌더 수명 | `src/component/widget/mermaid` |
-| processor · 문서 읽기 · 서버 구성 | `src/entry/cli/_function` |
+| processor · 문서 읽기 · 공통 앱 | `src/app` |
+| 개발 HTTP · 감시 · 갱신 통신 연결 | `src/entry/dev` |
 | 최초 브라우저 마운트          | `src/entry/browser` |
 | 상수 · 문구 · 스키마          | `src/constant` · `src/type`  |
 | 색 · 폰트 · 간격              | `src/style/token.css`        |
@@ -206,6 +213,7 @@ gray-matter는 frontmatter를 분리·해석하는 다른 선택지. 여기서�
 폰트와 favicon 원본은 패키지에 포함, 사이트 빌드 시 결과 폴더로 복사.
 
 - `dist/cli.js`: npm bin 진입점
+- `dist/site.js`: 설치 개발 서버가 읽는 공통 문서 앱
 - `dist/cli.css`: 컴포넌트 CSS 묶음
 - `dist/browser.js`: HTML에 포함하는 셸·탐색·커서의 Hono JSX 런타임
 - `dist/mermaid/`: 필요한 페이지에서 불러오는 Mermaid 진입 모듈·지연 청크·배포 고지

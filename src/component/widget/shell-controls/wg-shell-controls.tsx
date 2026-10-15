@@ -1,24 +1,13 @@
 import clsx from "clsx";
-import {Fragment, useEffect, useLayoutEffect, useRef} from "hono/jsx";
+import {Fragment, useLayoutEffect, useRef} from "hono/jsx";
 import {WgCursorFace} from "@/component/widget/cursor-face/wg-cursor-face";
 import {WgMermaid} from "@/component/widget/mermaid/wg-mermaid";
 import {WgNavigation, type WgNavigationProps} from "@/component/widget/navigation/wg-navigation";
 import {heading_highlight_hold_ms} from "@/component/widget/prose/_constant/heading-highlight";
-import {asset_reload_path} from "@/constant/asset";
 import {revealHashTarget} from "@/util/dom/reveal-hash-target";
 import "./wg-shell-controls.css";
 
-/**
- * 셸의 서버·브라우저 공통 입력 · 탐색 계약을 그대로 사용하고 dev 갱신만 추가
- */
-export interface WgShellControlsProps extends WgNavigationProps {
-    /**
-     * 문서 변경 알림에 따른 dev 새로고침 활성화
-     */
-    reload: boolean;
-}
-
-export const WgShellControls = (props: WgShellControlsProps) => {
+export const WgShellControls = (props: WgNavigationProps) => {
     const headingRef = useRef<HTMLElement | null>(null);
     const timerRef = useRef(0);
     const arrivalRef = useRef<AbortController | null>(null);
@@ -146,16 +135,6 @@ export const WgShellControls = (props: WgShellControlsProps) => {
             document.documentElement.style.removeProperty("scroll-behavior");
         };
     }, []);
-
-    /**
-     * dev 새로고침 연결도 브라우저 셸의 수명에 맞춰 닫음
-     */
-    useEffect(() => {
-        if (!props.reload || lifetimeRef.current === null) return;
-        const source = new EventSource(asset_reload_path);
-        source.onmessage = () => location.reload();
-        return () => source.close();
-    }, [props.reload]);
 
     return (
         <Fragment>

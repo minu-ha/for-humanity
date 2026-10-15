@@ -64,7 +64,7 @@ export const WgShell = (props: WgShellProps) => {
                 {props.assets.preload.map((href) => (
                     <link key={href} rel="preload" href={href} as="font" type="font/woff2" crossOrigin="" />
                 ))}
-                <link rel="stylesheet" href={props.assets.stylePath} />
+                {props.assets.stylePath !== undefined && <link rel="stylesheet" href={props.assets.stylePath} />}
             </head>
             {/**
              * 문서 탐색·현재 목차·본문 · 브라우저 동작 연결
@@ -73,14 +73,15 @@ export const WgShell = (props: WgShellProps) => {
                 {/**
                  * 서버·브라우저의 공통 셸 조립 · 본문 HTML은 마운트 범위에서 제외
                  */}
-                <div className={clsx("wg_shell__browserRoot")} data-shell-browser-root="" data-shell-reload={props.assets.reload ? "" : undefined}>
-                    <WgShellControls data={navigationData} reload={props.assets.reload} />
+                <div className={clsx("wg_shell__browserRoot")} data-shell-browser-root="">
+                    <WgShellControls data={navigationData} />
                 </div>
                 {/**
                  * 최소 탐색 자료와 단일 JSX 번들 · 본문 전 상태·스크롤 복원
                  */}
                 <script type="application/json" id="fh-navigation-data" dangerouslySetInnerHTML={{__html: toNavigationJson(navigationData)}} />
-                <script dangerouslySetInnerHTML={{__html: props.assets.browserScript}} />
+                {props.assets.browser.kind === "inline" && <script dangerouslySetInnerHTML={{__html: props.assets.browser.code}} />}
+                {props.assets.browser.kind === "module" && <script type="module" src={props.assets.browser.path} />}
                 <main className={clsx("wg_shell__main")}>{props.children}</main>
             </body>
         </html>

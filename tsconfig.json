@@ -10,7 +10,7 @@
         "noEmit": true,
         "skipLibCheck": true,
         "allowJs": false,
-        "types": ["node"],
+        "types": ["node", "vite/client"],
         "paths": {
             "@/*": ["./src/*"],
             "@test/*": ["./test/*"],

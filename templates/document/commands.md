@@ -78,10 +78,12 @@ pnpm exec for-humanity dev docs
 ```
 
 - 포트: 설정 `port` · 기본 `4321` · [Settings](settings.md#site)
-- Markdown 추가·수정·삭제 → 문서 재처리 → 열린 페이지 새로고침
+- Markdown·README·로컬 그림·스니펫 추가·수정·삭제 → 문서 재처리 → Vite 통신으로 열린 페이지 새로고침
 - 잘못된 문서 → 터미널 오류 · 직전 정상 문서 유지
 - 설정 변경 → 서버 재시작
-- 패키지 소스 변경 → `pnpm dev` 재실행
+- 저장소 `pnpm dev`: TS·TSX 변경은 페이지 갱신, CSS는 HMR로 반영
+- 설치 패키지 변경 → 다시 설치한 뒤 서버 재시작
+- 미공개 Vite 전환부터 Node 22.12.0 이상 필요. 별도 Vite 설정 파일은 만들지 않아도 됨
 
 ## build
 

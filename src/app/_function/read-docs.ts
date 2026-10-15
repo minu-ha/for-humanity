@@ -2,6 +2,7 @@ import {readdir, readFile} from "node:fs/promises";
 import {join, posix, sep} from "node:path";
 import {VFile} from "vfile";
 import {parse as parseYaml} from "yaml";
+import type {Processor} from "@/app/_function/create-processor/create-processor";
 import {asset_dir, asset_favicon_path} from "@/constant/asset";
 import {
     copy_error_doc_id,
@@ -11,7 +12,6 @@ import {
     copy_error_doc_parent_missing,
     copy_error_frontmatter,
 } from "@/constant/copy";
-import type {Processor} from "@/entry/cli/_function/create-processor/create-processor";
 import type {Doc} from "@/type/doc";
 import {docDataSchema} from "@/type/doc-data";
 import type {DocFileData} from "@/type/doc-file-data";

@@ -2,7 +2,7 @@ import {readFile, writeFile} from "node:fs/promises";
 import {join} from "node:path";
 import {test} from "@test/_fixture/unit";
 import {describe, expect} from "vitest";
-import {readSiteConfig} from "@/entry/cli/_function/read-site-config";
+import {readSiteConfig} from "@/app/_function/read-site-config";
 
 describe("설정 파일 조회", () => {
     test("파일이 없으면 기본 설정을 반환한다", async ({root}) => {

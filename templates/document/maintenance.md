@@ -56,14 +56,14 @@ Biome와 Grit의 커스텀 진단 메시지는 영어.
 
 의미·소유권·주석·접근성은 수동 리뷰 대상. 린트만으로 컨벤션 충족 판정 불가.
 
-CLI의 파일 읽기·Markdown 조립·서버 구성은 `src/entry/cli`가 소유합니다. 문서 그룹과 부모 트리 계산은 `navigation` 위젯, 서버와 브라우저가 공유하는 제어 UI는 `shell-controls` 위젯이 소유합니다. `src/entry/browser`는 자료 검증·스토어 생성·root 마운트를 연결하며 위젯의 생명주기를 복제하지 않습니다. 실행 시점과 폴더 경계는 [Architecture](architecture.md#document-processing-lifetime)를 참고합니다.
+공통 문서 읽기·Markdown 조립·Hono 앱은 `src/app`, 인자·정적 출력·미리보기는 `src/entry/cli`, Vite 개발 서버 연결은 `src/entry/dev`가 소유합니다. 문서 그룹과 부모 트리 계산은 `navigation` 위젯, 서버와 브라우저가 공유하는 제어 UI는 `shell-controls` 위젯이 소유합니다. `src/entry/browser`는 자료 검증·스토어 생성·root 마운트를 연결하며 위젯의 생명주기를 복제하지 않습니다. 실행 시점과 폴더 경계는 [Architecture](architecture.md#document-processing-lifetime)를 참고합니다.
 
 ### Mermaid renderer
 
 `src/component/widget/mermaid`가 원문 마크업·브라우저 렌더·스타일 격리·수명 정리를 소유합니다.
 Mermaid는 개발 의존성이며 `build:kit`이 패키지에 포함할 ESM 그래프를 생성합니다. 패키지 소비자는 Mermaid나 Chromium을 별도 설치하지 않습니다.
 번들에 실제 포함한 패키지의 라이선스와 고지는 `dist/mermaid/THIRD-PARTY-NOTICES.txt`에 함께 생성합니다.
-CLI의 `load-mermaid-assets`가 내용 지문이 붙은 진입 파일과 청크를 조회하고, Markdown 처리기가 실제 다이어그램을 발견했을 때 자원 목록에 등록합니다.
+공통 앱의 `load-mermaid-assets`가 내용 지문이 붙은 진입 파일과 청크를 조회하고, Markdown 처리기가 실제 다이어그램을 발견했을 때 자원 목록에 등록합니다.
 다이어그램이 하나라도 있으면 전체 모듈 그래프를 사이트 출력에 복사합니다. 브라우저에서는 펼쳐진 다이어그램이 있을 때만 진입 모듈을 `import()`하고, Mermaid 내부의 동적 import가 문법별 렌더러를 추가로 요청합니다. 진입 모듈의 정적 공유 의존성은 처음 import할 때 함께 요청되므로 청크 하나와 문법 하나가 대응하지는 않습니다. 화면 아래쪽의 펼쳐진 다이어그램도 렌더하며, 접힌 Details는 공개할 때 렌더합니다.
 Vite의 Mermaid library 빌드는 ESM 형식과 동적 import 경계를 유지합니다. 파일명의 `[hash]`는 내용이 바뀔 때 URL도 바꾸며 Oxc 압축으로 전송할 코드를 줄입니다. `to-notices-plugin`은 실제 출력 청크의 모듈 목록에서 추가 라이선스와 NOTICE까지 수집합니다.
 버전 갱신 때 `pnpm test:mermaid`로 공식 유형·한글·테마·실패 대체 표시를 확인하고 설치 패키지도 검증합니다.
@@ -71,6 +71,8 @@ Vite의 Mermaid library 빌드는 ESM 형식과 동적 import 경계를 유지�
 ### Repository utilities
 
 `vite.config.ts`는 CLI·CSS, 동기 브라우저 번들, Mermaid ESM의 세 빌드 모드를 관리합니다. `tsconfig.package.json`으로 공개 타입 선언을 별도 생성합니다. 저장소 도구는 `tsx`로 실행하며 모두 `pnpm typecheck`에 포함합니다. `vitest.config.ts`는 제품 Vite 설정과 분리해 Node 테스트를 실행하며 `playwright.config.ts`는 Chromium 검사를 실행합니다. 제품과 브라우저 fixture는 같은 `to-browser-config.ts`의 Hono DOM 설정을 사용합니다. 직접 esbuild 의존성은 없으며 `tsx` 같은 도구의 전이 의존성은 남을 수 있습니다. 미공개 Vite 전환부터 개발·설치 패키지 모두 Node 22.12.0 이상이 필요합니다.
+
+`smoke-package.ts`는 설치한 CLI를 `dev .`와 `preview .`로 실행하고 Chromium에서 갱신 연결·문서 수정·Mermaid·이미지를 확인합니다. 실행 전에 `pnpm exec playwright install chromium`으로 브라우저를 준비합니다.
 
 루트 `util/`은 저장소 개발·문서 동기화·배포 검증용. npm 패키지에는 포함하지 않음.
 CSS 규칙 본문은 타입 검사하는 `util/stylelint.config.ts`에 둡니다. 루트 `stylelint.config.mjs`는 현재 cosmiconfig의 TypeScript 5 API 의존을 피하기 위한 Jiti 로더만 제공합니다.
@@ -82,9 +84,9 @@ CSS 규칙 본문은 타입 검사하는 `util/stylelint.config.ts`에 둡니다
 | `prepare-pages.ts` | Pages용 캐시 헤더와 404 페이지를 배포 폴더에 복사 |
 | `prepare-release.ts` | 태그·버전·README·변경 기록·배포 파일 확인 · Release 본문 생성 |
 | `prepare-release.test.ts` | 버전 불일치·변경 기록 누락·이전 설치 버전·필수 파일 누락 검사 |
-| `smoke-package.ts` | 패키지를 별도 프로젝트에 설치 · 공개 타입의 정상·오류 입력, TS·ESM 설정, 페이지·Mermaid·자원·README·크롤러 파일 확인 |
+| `smoke-package.ts` | 패키지를 별도 프로젝트에 설치 · 실제 dev·preview 브라우저와 종료, 공개 타입의 정상·오류 입력, TS·ESM 설정, 페이지·Mermaid·자원·README·크롤러 파일 확인 |
 
-`test/`의 구조와 작성 기준은 [테스트 안내](https://github.com/minu-ha/for-humanity/blob/main/test/README.md)를 따릅니다. 함수 검증은 소스 옆 `*.test.ts`, 파일 시스템을 연결하는 검사는 `test/cli/*.integration.test.ts`, 브라우저 검사는 `test/mermaid/*.spec.ts`와 `test/navigation/*.spec.ts`에 둡니다. 한글 시나리오·GIVEN/WHEN/THEN·독립 fixture를 사용하며, 브라우저에는 케이스 번호와 우선순위 태그를 붙입니다.
+`test/`의 구조와 작성 기준은 [테스트 안내](https://github.com/minu-ha/for-humanity/blob/main/test/README.md)를 따릅니다. 함수 검증은 소스 옆 `*.test.ts`, 파일 시스템을 연결하는 검사는 `test/cli/*.integration.test.ts`, 브라우저 검사는 `test/mermaid/*.spec.ts`와 `test/navigation/*.spec.ts`, 개발 서버 검사는 `test/dev/*.spec.ts`에 둡니다. 한글 시나리오·GIVEN/WHEN/THEN·독립 fixture를 사용하며, 브라우저에는 케이스 번호와 우선순위 태그를 붙입니다.
 
 ::part[Verification]
 

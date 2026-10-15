@@ -1,9 +1,9 @@
-import {mkdir, realpath, writeFile} from "node:fs/promises";
+import {mkdir, writeFile} from "node:fs/promises";
 import {join} from "node:path";
 import {test} from "@test/_fixture/unit";
 import {describe, expect} from "vitest";
-import {createProcessor} from "@/entry/cli/_function/create-processor/create-processor";
-import {readDocs} from "@/entry/cli/_function/read-docs";
+import {createProcessor} from "@/app/_function/create-processor/create-processor";
+import {readDocs} from "@/app/_function/read-docs";
 import {siteConfigSchema} from "@/type/site-config";
 
 describe("코드 블록", () => {
@@ -79,13 +79,11 @@ describe("코드 블록", () => {
             "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Read\n\n<<< ./snippet/example.ts#picked bad line-numbers\n\n<<< ./snippet/example.ts\n",
         );
         const site = siteConfigSchema.parse({});
-        const snippets = new Set<string>();
-        const snippetPath = await realpath(join(root, "snippet", "example.ts"));
         /**
          * WHEN
          * Markdown 처리
          */
-        const [doc] = await readDocs({root, processor: createProcessor({site, root, snippets})});
+        const [doc] = await readDocs({root, processor: createProcessor({site, root})});
 
         /**
          * THEN
@@ -95,7 +93,6 @@ describe("코드 블록", () => {
         expect(doc.html).toMatch(/<span class="line highlighted error">[^\n]*const<\/span>[^\n]* a/);
         expect(doc.html).not.toContain("#region");
         expect(doc.html.split("const</span>").length - 1, "the region block has two lines and the whole-file block four").toBe(2 + 4);
-        expect([...snippets]).toStrictEqual([snippetPath]);
     });
 
     test.for([

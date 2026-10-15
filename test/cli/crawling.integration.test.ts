@@ -1,15 +1,14 @@
-import {EventEmitter} from "node:events";
 import {mkdir, readFile, writeFile} from "node:fs/promises";
 import {join} from "node:path";
 import {test} from "@test/_fixture/unit";
 import {toSSG} from "hono/ssg";
 import {describe, expect} from "vitest";
+import {createProcessor} from "@/app/_function/create-processor/create-processor";
+import {readDocs} from "@/app/_function/read-docs";
+import {toCrawlingApp} from "@/app/_function/to-crawling-app";
+import {toHttpApp} from "@/app/_function/to-http-app";
+import {toPageApp} from "@/app/_function/to-page-app";
 import {asset_style_path} from "@/constant/asset";
-import {createApp} from "@/entry/cli/_function/create-app";
-import {createDevApp} from "@/entry/cli/_function/create-dev-app";
-import {createProcessor} from "@/entry/cli/_function/create-processor/create-processor";
-import {readDocs} from "@/entry/cli/_function/read-docs";
-import {toCrawlingApp} from "@/entry/cli/_function/to-crawling-app";
 import {siteConfigSchema} from "@/type/site-config";
 
 describe("크롤러 파일", () => {
@@ -19,8 +18,8 @@ describe("크롤러 파일", () => {
          * 사이트 주소와 크롤러 문서 입력
          */
         const site = siteConfigSchema.parse({});
-        const assets = {fontCss: "", preload: [], reload: false, browserScript: "", stylePath: asset_style_path};
-        const app = createDevApp({pages: createApp({site, store: {docs: []}, assets}), files: new Map(), reload: new EventEmitter()});
+        const assets = {fontCss: "", preload: [], browser: {kind: "inline" as const, code: ""}, stylePath: asset_style_path};
+        const app = toHttpApp({pages: toPageApp({site, store: {docs: []}, assets}), files: new Map()});
 
         /**
          * WHEN
@@ -53,8 +52,8 @@ describe("크롤러 파일", () => {
          */
         const docs = await readDocs({root, processor: createProcessor({site, root})});
         const store = {docs};
-        const assets = {fontCss: "", preload: [], reload: false, browserScript: "", stylePath: asset_style_path};
-        const app = createDevApp({pages: createApp({site, store, assets}), crawling: toCrawlingApp({url, store}), files: new Map(), reload: new EventEmitter()});
+        const assets = {fontCss: "", preload: [], browser: {kind: "inline" as const, code: ""}, stylePath: asset_style_path};
+        const app = toHttpApp({pages: toPageApp({site, store, assets}), crawling: toCrawlingApp({url, store}), files: new Map()});
         const robots = await app.request("/robots.txt");
         const sitemap = await app.request("/sitemap.xml");
         const xml = await sitemap.text();
@@ -105,8 +104,8 @@ describe("크롤러 파일", () => {
          * 페이지와 크롤러 응답 생성
          */
         const docs = await readDocs({root, processor: createProcessor({site, root})});
-        const assets = {fontCss: "", preload: [], reload: false, browserScript: "", stylePath: asset_style_path};
-        const app = createApp({site, store: {docs}, assets});
+        const assets = {fontCss: "", preload: [], browser: {kind: "inline" as const, code: ""}, stylePath: asset_style_path};
+        const app = toPageApp({site, store: {docs}, assets});
         const result = await toSSG(app, {writeFile, mkdir}, {dir: root});
         const crawlerResult = await toSSG(toCrawlingApp({url, store: {docs}}), {writeFile, mkdir}, {dir: root});
         /**

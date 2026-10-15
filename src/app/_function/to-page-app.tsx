@@ -12,7 +12,7 @@ import type {ResolvedSiteConfig} from "@/type/site-config";
 /**
  * 페이지 앱 입력 계약
  */
-export interface AppOptions {
+export interface PageParams {
     /**
      * 검증된 사이트 설정
      */
@@ -37,9 +37,9 @@ const toHtml = (page: Child) => {
 /**
  * 첫 화면 / · 문서 /:slug{.+}/ · 하위 폴더 id 지원
  * 자원 wildcard와 정규식 매개변수 혼합 시 TrieRouter fallback으로 중첩 경로 불일치
- * 자원·SSE는 createDevApp의 별도 앱 소유
+ * 자원 응답은 toHttpApp의 별도 앱 소유
  */
-export const createApp = (options: AppOptions) => {
+export const toPageApp = (options: PageParams) => {
     const app = new Hono();
 
     app.get("/", (c) => c.html(toHtml(<PgHome site={options.site} docs={options.store.docs} assets={options.assets} home={options.store.home} />)));

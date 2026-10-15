@@ -2,8 +2,8 @@ import {mkdir, writeFile} from "node:fs/promises";
 import {join} from "node:path";
 import {test} from "@test/_fixture/unit";
 import {describe, expect} from "vitest";
-import {createProcessor} from "@/entry/cli/_function/create-processor/create-processor";
-import {readDocs} from "@/entry/cli/_function/read-docs";
+import {createProcessor} from "@/app/_function/create-processor/create-processor";
+import {readDocs} from "@/app/_function/read-docs";
 import {siteConfigSchema} from "@/type/site-config";
 
 describe("문서 로드", () => {

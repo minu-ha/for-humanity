@@ -34,7 +34,7 @@ export default defineConfig((environment) => {
             emitAssets: true,
             emptyOutDir: true,
             cssCodeSplit: false,
-            lib: {entry: {cli: "src/entry/cli/cli.ts", config: "src/type/site-config.ts"}, formats: ["es"], cssFileName: "cli"},
+            lib: {entry: {cli: "src/entry/cli/cli.ts", config: "src/type/site-config.ts", site: "src/app/load-site.ts"}, formats: ["es"], cssFileName: "cli"},
         },
     };
 });

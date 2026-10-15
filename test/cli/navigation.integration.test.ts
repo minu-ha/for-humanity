@@ -3,15 +3,15 @@ import {join} from "node:path";
 import {toNavigationHtml} from "@test/_fixture/to-navigation-html";
 import {test} from "@test/_fixture/unit";
 import {describe, expect} from "vitest";
+import {createProcessor} from "@/app/_function/create-processor/create-processor";
+import {readDocs} from "@/app/_function/read-docs";
+import {readHome} from "@/app/_function/read-home";
+import {toPageApp} from "@/app/_function/to-page-app";
 import {navigationDataSchema} from "@/component/widget/navigation/_constant/navigation-data-schema";
 import {toDocGroups} from "@/component/widget/navigation/_function/to-doc-groups/to-doc-groups";
 import {toNavigationData} from "@/component/widget/navigation/_function/to-navigation-data/to-navigation-data";
 import {toNavigationJson} from "@/component/widget/navigation/_function/to-navigation-json";
 import {asset_style_path} from "@/constant/asset";
-import {createApp} from "@/entry/cli/_function/create-app";
-import {createProcessor} from "@/entry/cli/_function/create-processor/create-processor";
-import {readDocs} from "@/entry/cli/_function/read-docs";
-import {readHome} from "@/entry/cli/_function/read-home";
 import {siteConfigSchema} from "@/type/site-config";
 
 describe("문서 탐색", () => {
@@ -54,8 +54,8 @@ describe("문서 탐색", () => {
          * 탐색 데이터와 마크업 생성
          */
         const home = await readHome({root, processor: createProcessor({site, root})});
-        const assets = {fontCss: "", preload: [], reload: false, browserScript: "", stylePath: asset_style_path};
-        const html = await (await createApp({site, store: {docs: [], home}, assets}).request("/")).text();
+        const assets = {fontCss: "", preload: [], browser: {kind: "inline" as const, code: ""}, stylePath: asset_style_path};
+        const html = await (await toPageApp({site, store: {docs: [], home}, assets}).request("/")).text();
         const rail = html.match(/<aside\b[^>]*data-navigation-rail=""[^>]*>([\s\S]*?)<\/aside>/)?.[1];
 
         /**
@@ -198,10 +198,10 @@ describe("문서 탐색", () => {
         expect(html.indexOf('href="/themes/"')).toBeLessThan(html.indexOf('href="/guide/site/"'));
         expect(toNavigationHtml({site, docs})).not.toMatch(/aria-current="page"/);
 
-        const app = createApp({
+        const app = toPageApp({
             site,
             store: {docs},
-            assets: {stylePath: asset_style_path, browserScript: "", fontCss: "", preload: [], reload: false},
+            assets: {stylePath: asset_style_path, browser: {kind: "inline" as const, code: ""}, fontCss: "", preload: []},
         });
         for (const doc of docs) {
             expect((await app.request(`/${doc.id}/`)).status).toBe(200);

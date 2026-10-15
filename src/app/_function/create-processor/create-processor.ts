@@ -9,6 +9,11 @@ import remarkRehype from "remark-rehype";
 import remarkSmartypants from "remark-smartypants";
 import {createCssVariablesTheme} from "shiki";
 import {unified} from "unified";
+import {rehypeAssets} from "@/app/_function/create-processor/_rehype-assets";
+import {rehypeHeadingIds} from "@/app/_function/create-processor/_rehype-heading-ids";
+import {remarkReport} from "@/app/_function/create-processor/_remark-report";
+import {remarkSnippets} from "@/app/_function/create-processor/_remark-snippets";
+import {shikiTransformers} from "@/app/_function/create-processor/_shiki-transformers";
 import {remarkMermaid} from "@/component/widget/mermaid/_function/remark-mermaid";
 import {rehypeHead} from "@/component/widget/prose/_function/rehype-head";
 import {rehypeSections} from "@/component/widget/prose/_function/rehype-sections/rehype-sections";
@@ -19,11 +24,6 @@ import {remarkParts} from "@/component/widget/prose/_function/remark-parts";
 import {remarkStatus} from "@/component/widget/prose/_function/remark-status";
 import {remarkSwatch} from "@/component/widget/prose/_function/remark-swatch";
 import {remarkUnknownDirectives} from "@/component/widget/prose/_function/remark-unknown-directives";
-import {rehypeAssets} from "@/entry/cli/_function/create-processor/_rehype-assets";
-import {rehypeHeadingIds} from "@/entry/cli/_function/create-processor/_rehype-heading-ids";
-import {remarkReport} from "@/entry/cli/_function/create-processor/_remark-report";
-import {remarkSnippets} from "@/entry/cli/_function/create-processor/_remark-snippets";
-import {shikiTransformers} from "@/entry/cli/_function/create-processor/_shiki-transformers";
 import type {MermaidAssets} from "@/type/mermaid-assets";
 import type {ResolvedSiteConfig} from "@/type/site-config";
 
@@ -44,10 +44,6 @@ interface ProcessorOptions {
      */
     files?: Map<string, string>;
     /**
-     * 개발 서버에서 변경을 감지할 스니펫 경로 수집
-     */
-    snippets?: Set<string>;
-    /**
      * 지연 수신할 로컬 Mermaid 런타임
      */
     mermaid?: MermaidAssets;
@@ -63,7 +59,7 @@ export const createProcessor = (options: ProcessorOptions) => {
         .use(remarkParse)
         .use(remarkFrontmatter, ["yaml"])
         .use(remarkGfm)
-        .use(remarkSnippets, {root: options.root, snippets: options.snippets ?? new Set<string>()})
+        .use(remarkSnippets, {root: options.root})
         .use(remarkSmartypants)
         .use(remarkDirective)
         .use(remarkBlocks)
