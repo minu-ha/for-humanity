@@ -21,6 +21,8 @@ order: 40
 | 6     | [Search](#search)                         | Planned | 문서·section 탐색                     |
 | 7     | [Writing skill](#writing-skill)           | Planned | 검토 가능한 문서를 쓰는 에이전트 스킬 |
 | 8     | [Subpath deployment](#subpath-deployment) | Planned | 하위 URL 경로의 정적 배포             |
+| 9     | [Vite integration](#vite-integration) | In progress | 패키지 빌드·사용자 dev 통합 |
+| 10    | [Server features](#server-features) | Planned | API·인증·사용자 저장소 연결 |
 
 각 단계의 체크박스는 작업 완료와 검증 후 Markdown 원본에서 갱신.
 일정은 부품·문법과 배포 대상이 정해질 때 추가.
@@ -64,6 +66,29 @@ order: 40
 완료 기준: 작성자가 소스를 보지 않고 예시만으로 같은 결과를 만들 수 있고, 두 테마·좁은 화면에서 내용이 읽힘.
 
 ::part[Next]
+
+## Vite integration
+
+현재 우선 작업. 저장소 개발과 설치 패키지의 `for-humanity dev`까지 Vite로 통합합니다. 설계 기준은 [Runtime direction](architecture.md#runtime-direction).
+Vite를 런타임 의존성에 포함하고 Node 최소 버전을 22.12.0으로 올리는 변경을 허용합니다. 공개 버전은 릴리스 준비 때 결정합니다.
+
+1. 설계 문서: 개발·운영 역할, 정적 생성 범위, 향후 DB·인증 책임 기록
+2. 패키지 빌드: `vite.config.ts`의 서버·브라우저·Mermaid 빌드와 `tsc` 선언 생성으로 `script/build-kit.ts` 대체. 브라우저 fixture의 esbuild 호출도 전환
+3. 개발 서버: CLI 밖의 Hono 앱과 문서 준비 단계 분리. Vite watcher·갱신 통신으로 파일 감시·SSE 대체. 저장소 소스와 설치 번들의 개발 경로 검증
+4. 배포 계약: 설치 패키지의 dev·build·preview, 공개 설정 타입, Node 최소 버전, Windows CI, 문서·변경 기록 검증
+
+- [x] 개발·운영 구조와 향후 API·검색·로그인·DB 책임 문서화
+- [ ] Vite 패키지 빌드와 실제 포함 모듈의 라이선스 고지 검증
+- [ ] 직접 esbuild 의존성과 브라우저 fixture의 별도 빌드 설정 제거
+- [ ] 공통 Hono 앱과 CLI·Vite 진입점 분리
+- [ ] Vite 개발 서버·문서 감시·갱신 통신 통합
+- [ ] 문서·README·이미지·스니펫 추가·수정·삭제와 실패 후 복구 검증
+- [ ] 저장소 TSX·CSS 변경 반영과 개발 서버 종료 시 자원 정리 검증
+- [ ] 첫 화면의 동기 브라우저 초기화·Mermaid 지연 수신·로컬 자원 출력 유지
+- [ ] 설치 패키지·공개 타입·Node 최소 버전 검증과 Windows CI 구성
+
+각 단계는 `pnpm test`, `pnpm check`, `pnpm build`, `git diff --check` 통과 후 별도 커밋으로 남깁니다. 번들·브라우저·개발 서버 변경 단계에서는 관련 Playwright 검사와 설치 패키지 검사도 실행합니다.
+완료 기준: 기존 정적 출력 계약을 유지하면서 저장소 개발과 설치 패키지 개발 모두 Vite로 실행되고, 별도 파일 감시·SSE·esbuild 실행 코드가 제거된 상태.
 
 ## Visualization modules
 
@@ -113,6 +138,21 @@ prototype의 첫 버전 `0.1.0`은 `dev`, `build`, `preview`를 지원. `init`�
 완료 기준: npm에 공개한 패키지를 저장소를 복제하지 않은 환경에 설치하고, 작성한 문서의 개발·빌드·미리보기가 동작.
 
 ::part[Later]
+
+## Server features
+
+검색·로그인·사용자별 데이터가 필요한 프로젝트를 위한 선택적 확장. 현재 패키지는 공개 정적 문서 도구이며 운영 API·인증·DB 어댑터는 아직 제공하지 않습니다.
+
+- [ ] 공개 검색과 권한별 검색의 데이터·응답 계약 구분
+- [ ] 로그인·세션·권한의 요구사항과 인증 서비스 연결 방식 결정
+- [ ] 첫 지원 저장소 선정과 연결 설정·어댑터 타입·스키마·마이그레이션 계약 제공
+- [ ] 기존 사내 API를 쓰는 경우의 서버 어댑터 범위 결정
+- [ ] 문서 URL과 충돌하지 않는 API 경로·요청·응답·오류 명세 제공
+- [ ] 공통 Hono 앱의 운영 진입점과 배포 플랫폼 검증
+- [ ] 비공개 문서·첨부·검색 인덱스의 권한 검사와 정적 출력 제외 검증
+
+사용자가 DB·인증 서비스·배포 환경을 소유하고 운영합니다. 패키지의 HTTP API 명세와 서버 내부의 저장소 연결 계약은 별개입니다. 공개 정적 문서 사용자는 DB를 설치하지 않아도 됩니다.
+완료 기준: 지원하는 환경에 패키지를 설치하고 사용자 소유 서비스에 연결한 뒤, 인증·권한·저장·검색을 실제 요청으로 검증할 수 있음.
 
 ## Search
 
