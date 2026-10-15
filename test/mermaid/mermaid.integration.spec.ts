@@ -79,6 +79,96 @@ test.describe("다이어그램", () => {
     });
 
     test.describe("컴포넌트 수명", () => {
+        test("[MRM-023] 렌더 응답 대기 중 재마운트하면 이전 결과가 새 SVG를 덮지 않는다", {tag: "@high"}, async ({page}) => {
+            /**
+             * GIVEN
+             * 실제 Mermaid 렌더의 첫 응답을 지연하는 위젯
+             */
+            await page.goto("/lifecycle/");
+            await page.evaluate(async () => {
+                const path = document.querySelector<HTMLElement>("[data-mermaid-module]")?.dataset.mermaidModule;
+                if (path === undefined) throw new Error("테스트 Mermaid 모듈이 없습니다");
+                const library: typeof import("mermaid") = await import(path);
+                const original = library.default.render;
+                const gate = Promise.withResolvers<void>();
+                const completion = Promise.withResolvers<void>();
+                let held = false;
+                window.diagramRender = {waiting: false, release: gate.resolve, completion: completion.promise};
+                library.default.render = async (...args: Parameters<typeof original>) => {
+                    const rendered = await original(...args);
+                    if (!held) {
+                        held = true;
+                        window.diagramRender.waiting = true;
+                        await gate.promise;
+                        library.default.render = original;
+                        completion.resolve();
+                    }
+                    return rendered;
+                };
+            });
+            await page.evaluate(() => window.diagramFixture.mount());
+            await expect.poll(() => page.evaluate(() => window.diagramRender.waiting)).toBe(true);
+
+            /**
+             * WHEN
+             * 이전 응답 전에 해제하고 다시 마운트한 뒤 지연 응답 완료
+             */
+            try {
+                await page.evaluate(() => {
+                    window.diagramFixture.unmount();
+                    window.diagramFixture.mount();
+                });
+                await expect(page.locator('[data-mermaid-status="rendered"]')).toHaveCount(diagram_cases.length);
+                const currentId = await page.locator(".wg_mermaid__result svg").first().getAttribute("id");
+                if (currentId === null) throw new Error("새 SVG의 식별자가 없습니다");
+                await page.evaluate(() => window.diagramRender.release());
+                await page.evaluate(async () => {
+                    await window.diagramRender.completion;
+                    await new Promise(requestAnimationFrame);
+                });
+
+                /**
+                 * THEN
+                 * 새 위젯의 다이어그램과 툴팁 유지, 이전 측정 영역 제거
+                 */
+                await expect(page.locator(".wg_mermaid__result svg").first()).toHaveAttribute("id", currentId);
+                await expect(page.locator('[data-mermaid-status="rendered"]')).toHaveCount(diagram_cases.length);
+                await expect(page.locator(".wg_mermaid__measurement")).toHaveCount(0);
+                await page.locator(".wg_mermaid__result").first().locator(".node").first().hover();
+                await expect(page.locator(".mermaidTooltip")).toHaveText("Tooltip text");
+                await page.evaluate(() => window.diagramFixture.unmount());
+                await expect(page.locator(".wg_mermaid__result svg")).toHaveCount(0);
+                await expect(page.locator(".mermaidTooltip")).toHaveCount(0);
+            } finally {
+                await page.evaluate(() => window.diagramRender.release());
+            }
+        });
+
+        test("[MRM-022] 모듈 수신에 실패한 위젯을 해제하면 오류 안내도 정리한다", {tag: ["@high", "@negative"]}, async ({page}) => {
+            /**
+             * GIVEN
+             * 모듈 수신이 차단된 위젯
+             */
+            await page.route("**/_fh/mermaid/mermaid-*.js", (route) => route.abort());
+            await page.goto("/lifecycle/");
+            await page.evaluate(() => window.diagramFixture.mount());
+            await expect(page.locator(".wg_mermaid__error").first()).toBeVisible();
+
+            /**
+             * WHEN
+             * 실패한 위젯 해제
+             */
+            await page.evaluate(() => window.diagramFixture.unmount());
+
+            /**
+             * THEN
+             * 오류 안내 정리와 원문 유지
+             */
+            await expect(page.locator(".wg_mermaid__error").first()).toBeHidden();
+            await expect(page.locator(".wg_mermaid__source").first()).toBeVisible();
+            await expect(page.locator(".wg_mermaid__result svg")).toHaveCount(0);
+        });
+
         test("[MRM-019] 모듈 수신 중 해제한 위젯은 늦게 도착한 결과를 적용하지 않는다", {tag: ["@high", "@negative"]}, async ({page}) => {
             /**
              * GIVEN

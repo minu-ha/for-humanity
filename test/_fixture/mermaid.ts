@@ -61,7 +61,7 @@ export const test = base.extend<{runtime: BrowserRuntime}, {mermaidSite: string}
                 const shell = await readFile("dist/browser.js", "utf8");
                 const html = (await readFile(join(root, "dist/guide/index.html"), "utf8"))
                     .replace(`<script>${shell}</script>`, "")
-                    .replace("</body>", `<script>${fixture.outputFiles[0].text}</script></body>`);
+                    .replace("</body>", () => `<script>${fixture.outputFiles[0].text}</script></body>`);
                 const app = new Hono();
                 app.get("/lifecycle/", (context) => context.html(html));
                 app.use("/*", serveStatic({root: join(root, "dist")}));

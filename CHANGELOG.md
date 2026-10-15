@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Fix relative links from nested documents on Windows and clean up Mermaid load errors when their widget unmounts.
 - Run repository tests with standalone Vitest and split Mermaid browser checks into isolated Playwright scenarios with failure traces.
 
 - Replace the custom ASCII grid renderer with locally hosted Mermaid 12, loaded only on pages with diagrams, with official themes, system dark mode and isolated SVG styles.

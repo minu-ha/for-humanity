@@ -127,6 +127,7 @@ export const WgMermaid = (props: WgMermaidProps) => {
                 for (const element of document.querySelectorAll<HTMLElement>(".wg_mermaid__root[data-mermaid]")) {
                     const error = element.querySelector<HTMLElement>(".wg_mermaid__error");
                     if (error !== null) {
+                        owned.add(element);
                         error.textContent = copy_error_load;
                         error.hidden = false;
                     }

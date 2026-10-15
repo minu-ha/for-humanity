@@ -1,5 +1,5 @@
 import {existsSync} from "node:fs";
-import {dirname, posix, relative, resolve} from "node:path";
+import {dirname, posix, relative, resolve, sep} from "node:path";
 import type {Root} from "mdast";
 import {visit} from "unist-util-visit";
 import type {VFile} from "vfile";
@@ -10,7 +10,7 @@ import {copy_warn_broken_link} from "@/constant/copy";
  * 외부·절대 URL과 같은 페이지 hash 유지 · 없는 파일은 터미널 경고
  */
 export const remarkLinks = (options: {root: string}) => (tree: Root, file: VFile) => {
-    const here = dirname(relative(options.root, file.path));
+    const here = posix.dirname(relative(options.root, file.path).split(sep).join("/"));
 
     visit(tree, (node) => {
         if (node.type !== "link" && node.type !== "definition") {
@@ -27,7 +27,7 @@ export const remarkLinks = (options: {root: string}) => (tree: Root, file: VFile
 
             const target = posix.join(here, `${match[1]}${match[2]}`).toLowerCase();
 
-            node.url = target === "readme.md" ? `/${match[3]}` : `/${posix.join(here, match[1]).toLowerCase()}/${match[3]}`;
+            node.url = target === "readme.md" ? `/${match[3]}` : `/${target.slice(0, -match[2].length)}/${match[3]}`;
         }
     });
 };
