@@ -1,0 +1,116 @@
+import {mkdir, symlink, writeFile} from "node:fs/promises";
+import {join} from "node:path";
+import {test} from "@test/_fixture/unit";
+import {describe, expect} from "vitest";
+import {createProcessor} from "@/entry/cli/_function/create-processor/create-processor";
+import {readDocs} from "@/entry/cli/_function/read-docs";
+import {readHome} from "@/entry/cli/_function/read-home";
+import {siteConfigSchema} from "@/type/site-config";
+
+describe("문서 자원", () => {
+    test("Markdown과 HTML 이미지는 첨부 파일과 내용 지문 자원을 공유한다", async ({root}) => {
+        /**
+         * GIVEN
+         * 지역 자원과 문서 입력
+         */
+        await mkdir(join(root, "guide"));
+        await mkdir(join(root, "img"));
+        await writeFile(join(root, "img", "sample.svg"), '<svg xmlns="http://www.w3.org/2000/svg"/>');
+        await writeFile(join(root, "guide", "report.csv"), "name,value\nsample,1\n");
+        await writeFile(
+            join(root, "guide", "page.md"),
+            '---\nname: Media\nlabel: Media\ngroup: Guide\n---\n\n![Image](../img/sample.svg)\n\n![Reference][shot]\n\n[shot]: ../img/sample.svg\n\n<img src="../img/sample.svg" alt="Raw" />\n\n[Download](report.csv?download=1#rows)\n\n![External](https://example.com/image.png)\n',
+        );
+        const files = new Map<string, string>();
+        /**
+         * WHEN
+         * 문서 자원 처리
+         */
+        const docs = await readDocs({root, processor: createProcessor({site: siteConfigSchema.parse({}), root, files})});
+        /**
+         * THEN
+         * Markdown과 HTML 이미지는 첨부 파일과 내용 지문 자원을 공유한 결과
+         */
+        expect(files.size).toBe(2);
+        expect(docs[0].html.match(/src="\/_fh\/media\/asset\.[a-f0-9]+\.svg"/g)?.length).toBe(3);
+        expect(docs[0].html).toMatch(/href="\/_fh\/media\/asset\.[a-f0-9]+\.csv\?download=1#rows"/);
+        expect(docs[0].html).toMatch(/src="https:\/\/example.com\/image.png"/);
+    });
+
+    test.for([
+        {path: "missing.png", error: /자원/},
+        {path: "../outside.png", error: /문서 폴더 밖/},
+    ])("유효하지 않은 이미지 $path 경로를 거부한다", async ({path, error}, {root}) => {
+        /**
+         * GIVEN
+         * 지역 자원과 문서 입력
+         */
+        await writeFile(join(root, "page.md"), `---\nname: Media\nlabel: Media\ngroup: Guide\n---\n\n![Invalid](${path})\n`);
+        /**
+         * WHEN
+         * 문서 자원 처리
+         */
+        const result = readDocs({root, processor: createProcessor({site: siteConfigSchema.parse({}), root})});
+
+        /**
+         * THEN
+         * 누락 이미지와 문서 루트 밖의 경로를 거부한 결과
+         */
+        await expect(result).rejects.toThrow(error);
+    });
+
+    test("홈 이미지의 내용이 바뀌면 렌더한 주소와 자원 지문을 함께 갱신한다", async ({root}) => {
+        /**
+         * GIVEN
+         * 지역 자원과 문서 입력
+         */
+        await writeFile(join(root, "local image.png"), "first");
+        await writeFile(join(root, "README.md"), "# Home\n\n![Home](local%20image.png)\n");
+        const files = new Map<string, string>();
+        const site = siteConfigSchema.parse({});
+        const home = await readHome({root, processor: createProcessor({site, root, files})});
+        const before = [...files.keys()][0];
+        /**
+         * WHEN
+         * 이미지 바이트 변경 후 홈 재처리
+         */
+        await writeFile(join(root, "local image.png"), "changed");
+        const updated = new Map<string, string>();
+        const changed = await readHome({root, processor: createProcessor({site, root, files: updated})});
+        const after = [...updated.keys()][0];
+        /**
+         * THEN
+         * 내용 지문과 HTML 주소 동시 갱신
+         */
+        expect(files.size).toBe(1);
+        expect(updated.size).toBe(1);
+        expect(home?.html).toContain(before);
+        expect(after).not.toBe(before);
+        expect(changed?.html).toContain(after);
+        expect(changed?.html).not.toContain(before);
+    });
+
+    test("심볼릭 링크가 문서 루트 밖의 이미지를 가리키면 거부한다", async ({root}) => {
+        /**
+         * GIVEN
+         * 문서 밖의 파일에 연결된 이미지
+         */
+        const outside = join(root, "outside");
+        const docsRoot = join(root, "docs");
+        await mkdir(outside);
+        await mkdir(docsRoot);
+        await writeFile(join(outside, "private.png"), "private");
+        await symlink(join(outside, "private.png"), join(docsRoot, "linked.png"));
+        await writeFile(join(docsRoot, "README.md"), "# Home\n\n![Private](linked.png)\n");
+        /**
+         * WHEN
+         * 링크된 이미지를 포함한 홈 처리
+         */
+        const result = readHome({root: docsRoot, processor: createProcessor({site: siteConfigSchema.parse({}), root: docsRoot})});
+        /**
+         * THEN
+         * 루트 이탈 오류
+         */
+        await expect(result).rejects.toThrow(/문서 폴더 밖/);
+    });
+});

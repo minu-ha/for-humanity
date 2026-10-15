@@ -83,9 +83,8 @@ CSS 규칙 본문은 타입 검사하는 `util/stylelint.config.ts`에 둡니다
 | `prepare-release.ts` | 태그·버전·README·변경 기록·배포 파일 확인 · Release 본문 생성 |
 | `prepare-release.test.ts` | 버전 불일치·변경 기록 누락·이전 설치 버전·필수 파일 누락 검사 |
 | `smoke-package.ts` | 패키지를 별도 프로젝트에 설치 · 공개 타입의 정상·오류 입력, TS·ESM 설정, 페이지·Mermaid·자원·README·크롤러 파일 확인 |
-| `navigation/check-navigation.test.mjs` | 임시 문서 사이트로 Hono JSX 탐색 검사 · 개인 문서와 실행 중인 서버를 사용하지 않음 |
 
-`test/`의 구조와 작성 기준은 [테스트 안내](https://github.com/minu-ha/for-humanity/blob/main/test/README.md)를 따릅니다. 함수 검증은 소스 옆 `*.test.ts`, 파일 시스템을 연결하는 검사는 `test/cli/*.integration.test.ts`, 브라우저 검사는 `test/mermaid/*.spec.ts`에 둡니다. 한글 시나리오·GIVEN/WHEN/THEN·독립 fixture를 사용하며, 브라우저에는 케이스 번호와 우선순위 태그를 붙입니다.
+`test/`의 구조와 작성 기준은 [테스트 안내](https://github.com/minu-ha/for-humanity/blob/main/test/README.md)를 따릅니다. 함수 검증은 소스 옆 `*.test.ts`, 파일 시스템을 연결하는 검사는 `test/cli/*.integration.test.ts`, 브라우저 검사는 `test/mermaid/*.spec.ts`와 `test/navigation/*.spec.ts`에 둡니다. 한글 시나리오·GIVEN/WHEN/THEN·독립 fixture를 사용하며, 브라우저에는 케이스 번호와 우선순위 태그를 붙입니다.
 
 ::part[Verification]
 
@@ -100,7 +99,7 @@ pnpm test:mermaid
 pnpm test:browser
 
 # 설치된 Chrome 사용
-pnpm test:navigation chrome
+FH_TEST_BROWSER_CHANNEL=chrome pnpm test:navigation
 FH_TEST_BROWSER_CHANNEL=chrome pnpm test:mermaid
 
 # 한 케이스 실행 · 실패 trace와 보고서

@@ -1,9 +1,11 @@
-import assert from "node:assert/strict";
-import {test} from "vitest";
+import {describe, expect, test} from "vitest";
 import {createNavigationStores} from "@/store/navigation/create-navigation-stores";
 import {navigation_scroll_storage_key} from "@/store/navigation/navigation-storage";
 
-const fixture = () => {
+/**
+ * 세션 저장소의 읽기와 쓰기를 메모리에서 제공하는 테스트 준비
+ */
+const createStorage = () => {
     const session = new Map<string, string>();
     const storage = {
         getItem: (key: string) => {
@@ -20,55 +22,107 @@ const fixture = () => {
     return {session, options: {session: () => storage}};
 };
 
-test("retains independent wide, desktop and drawer scroll positions within a tab", () => {
-    const setup = fixture();
-    const stores = createNavigationStores(setup.options);
-    stores.scroll.setState({
-        positions: {
-            wide: {navigation: "docs", pathname: "/one/", documents: 450, outline: 300},
-            desktop: {navigation: "docs", pathname: "/two/", documents: 750, outline: 100},
-            drawer: {navigation: "docs", pathname: "/one/", documents: 200, outline: 800},
-        },
-    });
-    assert.deepEqual(createNavigationStores(setup.options).scroll.getState(), stores.scroll.getState());
-});
-
-test("rejects malformed and unknown-version persistence without losing defaults", () => {
-    for (const value of ["{", "null", '{"state":null,"version":1}', '{"state":{"positions":{}},"version":999}']) {
-        const setup = fixture();
-        setup.session.set(navigation_scroll_storage_key, value);
+describe("탐색 스크롤 저장", () => {
+    test("와이드와 데스크톱과 드로어의 스크롤 위치를 독립적으로 복원한다", () => {
+        /**
+         * GIVEN
+         * 격리된 세션 저장소
+         */
+        const setup = createStorage();
+        /**
+         * WHEN
+         * 탐색 스토어 생성과 저장 상태 복원
+         */
         const stores = createNavigationStores(setup.options);
-        assert.deepEqual(stores.scroll.getState(), {positions: {}});
-    }
-});
-
-test("rejects invalid scroll coordinates", () => {
-    const setup = fixture();
-    setup.session.set(
-        navigation_scroll_storage_key,
-        JSON.stringify({
-            version: 1,
-            state: {
-                positions: {
-                    desktop: {navigation: "docs", pathname: "/one/", documents: -1, outline: 0},
-                    wide: {navigation: "docs", pathname: "/one/", documents: 100, outline: 20},
-                    drawer: {navigation: "docs", pathname: "/one/", documents: 100, outline: "20"},
-                },
+        stores.scroll.setState({
+            positions: {
+                wide: {navigation: "docs", pathname: "/one/", documents: 450, outline: 300},
+                desktop: {navigation: "docs", pathname: "/two/", documents: 750, outline: 100},
+                drawer: {navigation: "docs", pathname: "/one/", documents: 200, outline: 800},
             },
-        }),
-    );
-    const stores = createNavigationStores(setup.options);
-    assert.deepEqual(stores.scroll.getState().positions.wide, {navigation: "docs", pathname: "/one/", documents: 100, outline: 20});
-    assert.equal(stores.scroll.getState().positions.desktop, undefined);
-    assert.equal(stores.scroll.getState().positions.drawer, undefined);
-});
+        });
+        const restored = createNavigationStores(setup.options).scroll.getState();
+        /**
+         * THEN
+         * 복원 상태 확인
+         */
+        expect(restored).toStrictEqual(stores.scroll.getState());
+    });
 
-test("keeps in-memory interaction working when storage reads and writes are blocked", () => {
-    const blocked = () => {
-        throw new Error("Storage blocked");
-    };
-    const stores = createNavigationStores({session: blocked});
-    stores.scroll.setState({positions: {desktop: {navigation: "docs", pathname: "/", documents: 100, outline: 200}}});
-    stores.scroll.persist.rehydrate();
-    assert.equal(stores.scroll.getState().positions.desktop?.documents, 100);
+    test.each(["{", "null", '{"state":null,"version":1}', '{"state":{"positions":{}},"version":999}'])("손상되거나 버전이 다른 저장값 %s는 기본 상태로 복원한다", (value) => {
+        /**
+         * GIVEN
+         * 격리된 세션 저장소
+         */
+        const setup = createStorage();
+        setup.session.set(navigation_scroll_storage_key, value);
+        /**
+         * WHEN
+         * 탐색 스토어 생성과 저장 상태 복원
+         */
+        const stores = createNavigationStores(setup.options);
+        /**
+         * THEN
+         * 기본 탐색 위치
+         */
+        expect(stores.scroll.getState()).toStrictEqual({positions: {}});
+    });
+
+    test("잘못된 스크롤 좌표만 제외하고 유효한 좌표를 유지한다", () => {
+        /**
+         * GIVEN
+         * 격리된 세션 저장소
+         */
+        const setup = createStorage();
+        setup.session.set(
+            navigation_scroll_storage_key,
+            JSON.stringify({
+                version: 1,
+                state: {
+                    positions: {
+                        desktop: {navigation: "docs", pathname: "/one/", documents: -1, outline: 0},
+                        wide: {navigation: "docs", pathname: "/one/", documents: 100, outline: 20},
+                        drawer: {navigation: "docs", pathname: "/one/", documents: 100, outline: "20"},
+                    },
+                },
+            }),
+        );
+        /**
+         * WHEN
+         * 탐색 스토어 생성과 저장 상태 복원
+         */
+        const stores = createNavigationStores(setup.options);
+        /**
+         * THEN
+         * 유효한 와이드 좌표만 복원
+         */
+        expect(stores.scroll.getState().positions.wide).toStrictEqual({navigation: "docs", pathname: "/one/", documents: 100, outline: 20});
+        expect(stores.scroll.getState().positions.desktop).toBe(undefined);
+        expect(stores.scroll.getState().positions.drawer).toBe(undefined);
+    });
+
+    test("저장소 접근이 차단되어도 메모리의 탐색 상태를 유지한다", () => {
+        /**
+         * GIVEN
+         * 접근할 때 예외를 발생시키는 저장소
+         */
+        /**
+         * 브라우저 저장소 접근 차단 재현
+         */
+        const blocked = () => {
+            throw new Error("Storage blocked");
+        };
+        const stores = createNavigationStores({session: blocked});
+        stores.scroll.setState({positions: {desktop: {navigation: "docs", pathname: "/", documents: 100, outline: 200}}});
+        /**
+         * WHEN
+         * 저장된 상태 다시 조회
+         */
+        stores.scroll.persist.rehydrate();
+        /**
+         * THEN
+         * 저장소 오류에도 기존 메모리 상태 유지
+         */
+        expect(stores.scroll.getState().positions.desktop).toStrictEqual({navigation: "docs", pathname: "/", documents: 100, outline: 200});
+    });
 });

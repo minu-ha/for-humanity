@@ -32,9 +32,7 @@ jobs:
       - run: pnpm build:pages
       - run: pnpm exec playwright install --with-deps chromium
       - name: Check browser diagrams and navigation
-        run: |
-          pnpm exec playwright test
-          node util/navigation/check-navigation.test.mjs
+        run: pnpm exec playwright test
       - name: Check generated files
         run: |
           git diff --check
