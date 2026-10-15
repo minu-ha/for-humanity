@@ -165,7 +165,9 @@ flowchart LR
     b --> c("배포")
 ```
 
-빌드 시 격자 SVG 생성. 짧은 노드 이름, 한 단어 선 라벨 권장. 긴 라벨은 `<br>`로 분리.
+공식 Mermaid가 브라우저에서 SVG를 생성합니다. 기존 `mermaid` 펜스는 그대로 사용합니다.
+순서·분기는 flowchart, 요청 왕복은 sequence, 상태 전이는 state, 데이터 관계는 ER, 폴더 구조는 Tree View가 적합합니다.
+유형별 소스·결과, 테마와 오류 표시는 [Diagrams](diagrams.md).
 
 ## Code notation
 

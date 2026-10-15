@@ -19,8 +19,11 @@ git diff --check
 
 | Command          | Scope                              |
 | ---------------- | ---------------------------------- |
-| `pnpm test`      | 문서 경로·묶음·순서 · 글꼴 정책     |
+| `pnpm test`      | Vitest · 문서 조립·자원 등록·탐색 상태·글꼴·릴리스 검사 |
+| `pnpm test:watch` | 변경한 테스트의 Vitest 반복 실행 |
+| `pnpm test:browser` | Playwright · 실제 브라우저 검사 전체 |
 | `pnpm test:navigation` | 실제 브라우저의 탐색·저장 복원·드로어·포커스 |
+| `pnpm test:mermaid` | 실제 브라우저의 다이어그램·테마·Details·실패·수명 정리 |
 | `pnpm lint`      | Biome · Stylelint                  |
 | `pnpm typecheck` | TypeScript                         |
 | `pnpm build:kit` | 서버·브라우저 번들                 |
@@ -55,15 +58,19 @@ Biome와 Grit의 커스텀 진단 메시지는 영어.
 
 CLI의 파일 읽기·Markdown 조립·서버 구성은 `src/entry/cli`가 소유합니다. 문서 그룹과 부모 트리 계산은 `navigation` 위젯, 서버와 브라우저가 공유하는 제어 UI는 `shell-controls` 위젯이 소유합니다. `src/entry/browser`는 자료 검증·스토어 생성·root 마운트를 연결하며 위젯의 생명주기를 복제하지 않습니다. 실행 시점과 폴더 경계는 [Architecture](architecture.md#document-processing-lifetime)를 참고합니다.
 
-### Grid renderer
+### Mermaid renderer
 
-`src/util/mermaid/render-flow.js`: blueprint 계열과 공유한 JS 구현.
-Biome 제외 이유: 기존 렌더링 알고리즘과 diff 대조.
-주석은 프로젝트 문체 사용 · 실행 로직 변경 시 별도 확인.
+`src/component/widget/mermaid`가 원문 마크업·브라우저 렌더·스타일 격리·수명 정리를 소유합니다.
+Mermaid는 개발 의존성이며 `build:kit`이 패키지에 포함할 ESM 그래프를 생성합니다. 패키지 소비자는 Mermaid나 Chromium을 별도 설치하지 않습니다.
+번들에 실제 포함한 패키지의 라이선스와 고지는 `dist/mermaid/THIRD-PARTY-NOTICES.txt`에 함께 생성합니다.
+CLI의 `load-mermaid-assets`가 내용 지문이 붙은 진입 파일과 청크를 조회하고, Markdown 처리기가 실제 다이어그램을 발견했을 때 자원 목록에 등록합니다.
+다이어그램이 하나라도 있으면 전체 모듈 그래프를 사이트 출력에 복사합니다. 브라우저에서는 펼쳐진 다이어그램이 있을 때만 진입 모듈을 `import()`하고, Mermaid 내부의 동적 import가 문법별 렌더러를 추가로 요청합니다. 진입 모듈의 정적 공유 의존성은 처음 import할 때 함께 요청되므로 청크 하나와 문법 하나가 대응하지는 않습니다. 화면 아래쪽의 펼쳐진 다이어그램도 렌더하며, 접힌 Details는 공개할 때 렌더합니다.
+`splitting: true`는 Mermaid의 동적 import 경계를 유지하고, `format: "esm"`은 브라우저 모듈 수신을 가능하게 합니다. 파일명의 `[hash]`는 내용이 바뀔 때 URL도 바꾸며, `minify: true`는 전송할 코드를 줄입니다. esbuild는 패키지 빌드에서만 실행합니다.
+버전 갱신 때 `pnpm test:mermaid`로 공식 유형·한글·테마·실패 대체 표시를 확인하고 설치 패키지도 검증합니다.
 
 ### Repository utilities
 
-루트 `script/`는 패키지 명령의 실행 절차를 관리합니다. `build-kit.mjs`는 esbuild API로 CLI·CSS·브라우저 번들을 생성하고, `test.mjs`는 TypeScript 테스트를 컴파일한 뒤 Node 테스트 러너를 실행합니다. `package.json`에는 진입 명령만 두며 두 스크립트 모두 npm 실행용 의존성이 아닙니다.
+루트 `script/`는 패키지 명령의 실행 절차를 관리합니다. `build-kit.mjs`는 esbuild API로 CLI·CSS·브라우저 번들을 생성합니다. `vitest.config.ts`는 Vite 앱 설정 없이 Node 환경의 테스트를 실행하며, `playwright.config.ts`는 Chromium 검사를 실행합니다. 제품 빌드는 esbuild를 유지합니다. 테스트 도구는 개발 의존성이며 패키지 소비자에게 필요하지 않습니다. Vitest 5 개발 환경에는 Node 22.12 이상인 22.x 또는 공식 지원 상위 버전이 필요합니다.
 
 루트 `util/`은 저장소 개발·문서 동기화·배포 검증용. npm 패키지에는 포함하지 않음.
 
@@ -77,6 +84,8 @@ Biome 제외 이유: 기존 렌더링 알고리즘과 diff 대조.
 | `smoke-package.mjs` | 패키지를 별도 프로젝트에 설치 · 페이지·Mermaid·자원·README·공개 URL 지정과 생략 시 크롤러 파일 확인 |
 | `navigation/check-navigation.test.mjs` | 임시 문서 사이트로 Hono JSX 탐색 검사 · 개인 문서와 실행 중인 서버를 사용하지 않음 |
 
+`test/`의 구조와 작성 기준은 [테스트 안내](https://github.com/minu-ha/for-humanity/blob/main/test/README.md)를 따릅니다. 함수 검증은 소스 옆 `*.test.ts`, 파일 시스템을 연결하는 검사는 `test/cli/*.integration.test.ts`, 브라우저 검사는 `test/mermaid/*.spec.ts`에 둡니다. 한글 시나리오·GIVEN/WHEN/THEN·독립 fixture를 사용하며, 브라우저에는 케이스 번호와 우선순위 태그를 붙입니다.
+
 ::part[Verification]
 
 ## Browser checks
@@ -86,9 +95,16 @@ Hono 브라우저 셸·탐색·커서를 변경하면 자동 브라우저 검사
 ```sh
 pnpm exec playwright install chromium
 pnpm test:navigation
+pnpm test:mermaid
+pnpm test:browser
 
 # 설치된 Chrome 사용
 pnpm test:navigation chrome
+FH_TEST_BROWSER_CHANNEL=chrome pnpm test:mermaid
+
+# 한 케이스 실행 · 실패 trace와 보고서
+pnpm test:mermaid --grep MRM-019
+pnpm exec playwright show-report .cache/playwright/report
 ```
 
 검사는 임시 문서를 빌드하고 빈 포트의 로컬 서버를 시작합니다. 넓고 좁은 데스크톱·모바일, Dark·강제 색상·JavaScript 비활성, 스크롤 저장, 외부 스크립트 없는 첫 프레임, 정확한 앵커·Details 공개, 드로어의 모달 상태·포커스와 본문 DOM 유지, 커서 입력·좌표 복원·reduced motion, Effect 해제 시 이벤트·타이머·dev 연결 정리를 확인합니다. 실행 후 임시 파일·서버·브라우저를 정리합니다. 브라우저 설치가 필요하므로 기본 `pnpm test`와 분리합니다.

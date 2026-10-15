@@ -108,12 +108,19 @@ vanilla 생성기는 `use-` 접두사를 붙이지 않습니다. 스크롤 스�
 | Stage  | Work                                                                 |
 | ------ | -------------------------------------------------------------------- |
 | Read   | 파일 탐색 · remark-frontmatter의 YAML 노드 · yaml 값 해석 · Zod 검증 |
-| remark | GFM · 문장부호 · Note·Details · part · 흐름도 · status badge · swatch · 링크 · 경고 |
+| remark | GFM · 문장부호 · Note·Details · part · Mermaid 원문 · status badge · swatch · 링크 · 경고 |
 | rehype | 코드 강조 · 문서 header · 제목 id · 가름 수집 · 표 상자           |
 | Output | raw HTML 해석 · HTML 문자열                                          |
 
 제목 원문에서 id와 TOC 텍스트를 수집하고 가름별로 묶음. 제목 번호는 자동 생성하지 않음.
 중간 계약은 `file.data.fh`. 제목과 section 정보는 문서 순서 유지.
+
+Mermaid 펜스는 이스케이프한 원문과 렌더 영역으로 변환합니다. `WgMermaid`가 본문 파싱 후 자체 호스팅 ESM을 불러와 공식 SVG를 생성합니다.
+Mermaid는 별도 ESM 그래프로 번들링하며 유형별 청크는 필요할 때 수신합니다. 프로젝트에 Mermaid 펜스가 있으면 해당 그래프를 정적 출력·dev 자원 목록에 등록합니다.
+SVG는 Shadow DOM 안에 삽입해 본문의 `p`·`code`·`a` 스타일과 격리합니다. 측정용 DOM은 본문 밖에서 만들고 렌더 완료·실패·컴포넌트 해제 때 제거합니다.
+테마 변경과 Details 공개 요청은 직렬 처리하고 해제 뒤의 비동기 결과는 적용하지 않습니다. 브라우저 오류와 JavaScript 비활성 환경에서는 원문을 유지합니다.
+공식 `bindFunctions`에는 Shadow DOM 내부의 SVG 부모를 전달합니다. 해제 시 생성 SVG와 툴팁을 제거하고 원문으로 복원합니다.
+렌더 완료는 셸에 통지하며, 초기 hash와 사용자 이동 여부를 소유한 셸이 비동기 배치 변경 후 앵커 위치를 보정합니다.
 frontmatter는 정규식으로 잘라내지 않고 AST 노드로 읽음. 본문 노드의 원본 줄·열은 유지.
 Note·Details의 검증은 Markdown 부품 변환 전. 제목은 native label, 본문은 기존 처리 흐름.
 접힌 본문의 `###`도 같은 제목 id·TOC. 부품의 작성 계약은 [Parts](parts.md).
@@ -137,22 +144,24 @@ gray-matter는 frontmatter를 분리·해석하는 다른 선택지. 여기서�
 | 문서 트리 계산 · 탐색 · 목차 · 드로어 | `src/component/widget/navigation` |
 | 탐색 저장 상태 · 검증         | `src/store/navigation`       |
 | 본문 · remark·rehype 플러그인 | `src/component/widget/prose` |
+| Mermaid 원문 · 공식 SVG 렌더 수명 | `src/component/widget/mermaid` |
 | processor · 문서 읽기 · 서버 구성 | `src/entry/cli/_function` |
 | 최초 브라우저 마운트          | `src/entry/browser` |
 | 상수 · 문구 · 스키마          | `src/constant` · `src/type`  |
 | 색 · 폰트 · 간격              | `src/style/token.css`        |
-| 격자 렌더러 · 폰트 변환       | `src/util`                   |
+| 폰트 변환 · 공용 순수 함수   | `src/util`                   |
 
 문서 렌더 결과의 공통 계약(`DocContent`, `DocOutline`, `DocSection`)은 `src/type`에 둡니다. CLI와 본문·탐색 위젯이 같은 계약을 소비하며 루트 타입이 위젯 내부 타입에 의존하지 않습니다. 문서 트리 표현 계약(`DocGroup`, `DocBranch`)은 탐색 위젯의 `_type`에 둡니다.
 
 ## Package output
 
-`build:kit`: `script/build-kit.mjs`에서 esbuild API로 CLI·CSS·단일 브라우저 번들을 생성합니다. 이전 번들이 npm 패키지에 남지 않도록 `dist` 생성물을 먼저 비웁니다.
+`build:kit`: `script/build-kit.mjs`에서 esbuild API로 CLI·CSS·동기 셸 번들과 별도 Mermaid ESM 그래프를 생성합니다. 이전 번들이 npm 패키지에 남지 않도록 `dist` 생성물을 먼저 비웁니다.
 폰트와 favicon 원본은 패키지에 포함, 사이트 빌드 시 결과 폴더로 복사.
 
 - `dist/cli.js`: npm bin 진입점
 - `dist/cli.css`: 컴포넌트 CSS 묶음
 - `dist/browser.js`: HTML에 포함하는 셸·탐색·커서의 Hono JSX 런타임
+- `dist/mermaid/`: 필요한 페이지에서 불러오는 Mermaid 진입 모듈·지연 청크·배포 고지
 - 자원 URL: `/_fh/` · favicon: `/favicon.svg`
 
 패키지 빌드와 문서 사이트 빌드는 별도 단계. 절차는 [Maintenance](maintenance.md).

@@ -11,7 +11,8 @@ order: 20
 
 ## Relative paths
 
-```text
+```mermaid
+treeView-beta
 docs/
 ├── README.md
 ├── images/
