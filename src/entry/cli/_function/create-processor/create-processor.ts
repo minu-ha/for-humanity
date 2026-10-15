@@ -28,11 +28,37 @@ import type {MermaidAssets} from "@/type/mermaid-assets";
 import type {ResolvedSiteConfig} from "@/type/site-config";
 
 /**
+ * Markdown 처리기 조립 입력
+ */
+interface ProcessorOptions {
+    /**
+     * 기본값을 적용한 사이트 설정
+     */
+    site: ResolvedSiteConfig;
+    /**
+     * 상대 링크와 자원을 해석할 문서 루트
+     */
+    root: string;
+    /**
+     * 사용한 자원의 URL과 원본 경로 수집
+     */
+    files?: Map<string, string>;
+    /**
+     * 개발 서버에서 변경을 감지할 스니펫 경로 수집
+     */
+    snippets?: Set<string>;
+    /**
+     * 지연 수신할 로컬 Mermaid 런타임
+     */
+    mermaid?: MermaidAssets;
+}
+
+/**
  * Markdown 처리 순서: remark(스니펫·부품·흐름도) → 코드 강조(줄 표기·블록 색 transformer) → 머리 → 제목 id → 가름 수집 → 표
  * 플러그인 HTML 조각은 마지막 rehype-raw에서 해석
  * Shiki inline style: token.css의 --app-code-* 참조
  */
-export const createProcessor = (options: {site: ResolvedSiteConfig; root: string; files?: Map<string, string>; snippets?: Set<string>; mermaid?: MermaidAssets}) => {
+export const createProcessor = (options: ProcessorOptions) => {
     return unified()
         .use(remarkParse)
         .use(remarkFrontmatter, ["yaml"])

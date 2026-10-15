@@ -162,6 +162,23 @@
     --app-code-token-link: var(--app-color-link);
 }
 
+/* 블록 색 · 펜스 메타 bad·good · Shiki 가 pre 에 인라인으로 쓰는 코드 바탕과 제목 띠의 바탕을 바꿈 */
+.wg_prose__code--bad {
+    --app-code-background: var(--app-color-bad-soft);
+}
+
+.wg_prose__codeFile--bad {
+    --app-code-background: var(--app-color-bad-soft);
+}
+
+.wg_prose__code--good {
+    --app-code-background: var(--app-color-good-soft);
+}
+
+.wg_prose__codeFile--good {
+    --app-code-background: var(--app-color-good-soft);
+}
+
 /* 폭 조건 · shell의 breakpoint와 일치 */
 @media (width < 1024px) {
     :root {
@@ -177,15 +194,4 @@
         --app-space-page-top: 20px;
         --app-space-gutter: 16px;
     }
-}
-
-/* 블록 색 · 펜스 메타 bad·good · Shiki 가 pre 에 인라인으로 쓰는 코드 바탕과 제목 띠의 바탕을 바꿈 */
-.wg_prose__code--bad,
-.wg_prose__codeFile--bad {
-    --app-code-background: var(--app-color-bad-soft);
-}
-
-.wg_prose__code--good,
-.wg_prose__codeFile--good {
-    --app-code-background: var(--app-color-good-soft);
 }

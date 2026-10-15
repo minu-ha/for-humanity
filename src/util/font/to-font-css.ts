@@ -4,10 +4,24 @@ import {basename, dirname, extname, join} from "node:path";
 import {font_display_strategy, font_hash_length} from "@/constant/font";
 
 /**
+ * 글꼴 스타일 변환 입력
+ */
+interface FontCssOptions {
+    /**
+     * 원본 font-face CSS 파일 경로
+     */
+    css: string;
+    /**
+     * 생성할 글꼴 URL의 디렉터리
+     */
+    fontDir: string;
+}
+
+/**
  * 내장 @font-face의 표시 정책과 내용 지문 URL 적용 · 원본 파일 수집
  * 늦은 글꼴 교체와 문서 이동마다 같은 글꼴을 다시 받는 현상 방지
  */
-export const toFontCss = (options: {css: string; fontDir: string}) => {
+export const toFontCss = (options: FontCssOptions) => {
     const files = new Map<string, string>();
     const css = [...readFileSync(options.css, "utf8").matchAll(/@font-face\s*\{[^}]*\}/g)]
         .map((match) =>

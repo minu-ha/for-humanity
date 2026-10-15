@@ -6,10 +6,20 @@ import type {VFile} from "vfile";
 import {copy_warn_broken_link} from "@/constant/copy";
 
 /**
+ * 상대 문서 링크 해석 기준
+ */
+interface LinkOptions {
+    /**
+     * 문서 루트의 절대 경로
+     */
+    root: string;
+}
+
+/**
  * 상대 Markdown 링크 → 사이트 URL · query·hash 원문 유지
  * 외부·절대 URL과 같은 페이지 hash 유지 · 없는 파일은 터미널 경고
  */
-export const remarkLinks = (options: {root: string}) => (tree: Root, file: VFile) => {
+export const remarkLinks = (options: LinkOptions) => (tree: Root, file: VFile) => {
     const here = posix.dirname(relative(options.root, file.path).split(sep).join("/"));
 
     visit(tree, (node) => {
