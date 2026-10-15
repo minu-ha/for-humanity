@@ -7,7 +7,7 @@ import {asset_favicon_path} from "@/constant/asset";
 import type {Doc} from "@/type/doc";
 import type {DocOutline} from "@/type/doc-outline";
 import type {SiteAssets} from "@/type/site-assets";
-import type {SiteConfig} from "@/type/site-config";
+import type {ResolvedSiteConfig} from "@/type/site-config";
 import "@/style/base.css";
 import "@/style/token.css";
 import "./wg-shell.css";
@@ -19,7 +19,7 @@ export interface WgShellProps {
     /**
      * 사이트 이름 · 탭과 사이드바
      */
-    site: SiteConfig;
+    site: ResolvedSiteConfig;
     /**
      * 사이드바 전체 문서 목록
      */

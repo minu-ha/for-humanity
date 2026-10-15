@@ -4,7 +4,7 @@ import {copy_home_missing} from "@/constant/copy";
 import type {Doc} from "@/type/doc";
 import type {DocContent} from "@/type/doc-content";
 import type {SiteAssets} from "@/type/site-assets";
-import type {SiteConfig} from "@/type/site-config";
+import type {ResolvedSiteConfig} from "@/type/site-config";
 
 /**
  * / 첫 화면 입력 · 문서 폴더 README의 본문과 목차
@@ -13,7 +13,7 @@ export interface PgHomeProps {
     /**
      * 검증된 사이트 설정
      */
-    site: SiteConfig;
+    site: ResolvedSiteConfig;
     /**
      * 사이드바의 전체 문서
      */

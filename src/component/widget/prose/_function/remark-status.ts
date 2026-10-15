@@ -4,13 +4,13 @@ import {findAndReplace, type RegExpMatchObject} from "mdast-util-find-and-replac
 import type {VFile} from "vfile";
 import {status_candidate_pattern, status_date_pattern} from "@/component/widget/prose/_constant/status";
 import {copy_warn_unknown_status} from "@/constant/copy";
-import type {SiteConfig} from "@/type/site-config";
+import type {ResolvedSiteConfig} from "@/type/site-config";
 
 /**
  * 설정 문구의 상태 표지 변환 · 괄호 제거 · 제목·링크 제외
  * 미등록 날짜 문구는 파일 경고 · remark-report에서 출력
  */
-export const remarkStatus = (options: {status: SiteConfig["status"]}) => {
+export const remarkStatus = (options: {status: ResolvedSiteConfig["status"]}) => {
     const statuses = options.status.toSorted((a, b) => b.phrase.length - a.phrase.length);
     const phrases = statuses.map((item) => [escapeRegExp(item.phrase), ...(item.date ? [`(?: ${status_date_pattern})?`] : [])].join("")).join("|");
     const pattern = new RegExp(String.raw`\((${phrases})\)|(${phrases})`, "g");

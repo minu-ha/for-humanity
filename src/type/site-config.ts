@@ -5,8 +5,7 @@ import {status_default_phrases, status_kind} from "@/constant/status";
 import {groupPathSchema} from "@/type/group-path";
 
 /**
- * for-humanity.config.mjs 설정 스키마
- * 명령 시작 시 검증과 기본값 적용 · 앱은 검증 결과만 사용
+ * 사이트 설정의 입력 검증과 기본값 적용
  */
 export const siteConfigSchema = z.object({
     /**
@@ -70,4 +69,38 @@ export const siteConfigSchema = z.object({
 /**
  * 기본값을 적용한 사이트 설정
  */
-export type SiteConfig = z.infer<typeof siteConfigSchema>;
+export type ResolvedSiteConfig = z.infer<typeof siteConfigSchema>;
+
+/**
+ * 작성자가 지정하는 사이트 설정, 기본값 적용 전 입력
+ */
+export interface SiteConfig {
+    /**
+     * 사이드바 이름과 탭 제목, 생략 시 for humanity
+     */
+    title?: z.input<typeof siteConfigSchema>["title"];
+    /**
+     * 검색 결과에 표시할 사이트 설명
+     */
+    description?: z.input<typeof siteConfigSchema>["description"];
+    /**
+     * 공개 HTTP(S) 루트 주소, 지정 시 robots.txt와 sitemap.xml 생성
+     */
+    url?: z.input<typeof siteConfigSchema>["url"];
+    /**
+     * dev와 preview 포트, 1부터 65535까지 정수, 기본값 4321
+     */
+    port?: z.input<typeof siteConfigSchema>["port"];
+    /**
+     * 데스크톱 커서 얼굴 표시, 기본값 false
+     */
+    cursorFace?: z.input<typeof siteConfigSchema>["cursorFace"];
+    /**
+     * 탐색 묶음의 표시 순서, 문자열 또는 중첩 이름 경로
+     */
+    navigation?: z.input<typeof siteConfigSchema>["navigation"];
+    /**
+     * 상태 표지 목록, 빈 배열 지정 시 상태 표지 미표시
+     */
+    status?: z.input<typeof siteConfigSchema>["status"];
+}

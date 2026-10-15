@@ -13,7 +13,7 @@ JavaScript용 공식 진입점은 아직 제공하지 않음. 내부 렌더러 �
 | Interface   | Entry                     | Guide                            |
 | ----------- | ------------------------- | -------------------------------- |
 | CLI         | `for-humanity`            | [Commands](commands.md)          |
-| 사이트 설정 | `for-humanity.config.mjs`  | [Settings](settings.md)          |
+| 사이트 설정 | `for-humanity.config.ts` · `.mjs` 호환  | [Settings](settings.md)          |
 | 문서 형식   | `.md` · `.mdx`            | [Writing](writing.md)            |
 | 본문 부품   | Note · Details            | [Parts](parts.md)                |
 | 사이트 배포 | 문서 폴더의 `dist`        | [Deployment](deployment.md)      |

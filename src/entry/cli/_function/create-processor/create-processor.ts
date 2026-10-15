@@ -25,14 +25,14 @@ import {remarkReport} from "@/entry/cli/_function/create-processor/_remark-repor
 import {remarkSnippets} from "@/entry/cli/_function/create-processor/_remark-snippets";
 import {shikiTransformers} from "@/entry/cli/_function/create-processor/_shiki-transformers";
 import type {MermaidAssets} from "@/type/mermaid-assets";
-import type {SiteConfig} from "@/type/site-config";
+import type {ResolvedSiteConfig} from "@/type/site-config";
 
 /**
  * Markdown 처리 순서: remark(스니펫·부품·흐름도) → 코드 강조(줄 표기·블록 색 transformer) → 머리 → 제목 id → 가름 수집 → 표
  * 플러그인 HTML 조각은 마지막 rehype-raw에서 해석
  * Shiki inline style: token.css의 --app-code-* 참조
  */
-export const createProcessor = (options: {site: SiteConfig; root: string; files?: Map<string, string>; snippets?: Set<string>; mermaid?: MermaidAssets}) => {
+export const createProcessor = (options: {site: ResolvedSiteConfig; root: string; files?: Map<string, string>; snippets?: Set<string>; mermaid?: MermaidAssets}) => {
     return unified()
         .use(remarkParse)
         .use(remarkFrontmatter, ["yaml"])

@@ -5,20 +5,19 @@
  */
 
 import {EventEmitter} from "node:events";
-import {existsSync, readFileSync, watch} from "node:fs";
+import {readFileSync, watch} from "node:fs";
 import {copyFile, mkdir, rm, writeFile} from "node:fs/promises";
 import {dirname, extname, join, relative, resolve, sep} from "node:path";
-import {fileURLToPath, pathToFileURL} from "node:url";
+import {fileURLToPath} from "node:url";
 import {serve} from "@hono/node-server";
 import {serveStatic} from "@hono/node-server/serve-static";
 import {debounce} from "es-toolkit";
 import {Hono} from "hono";
 import {toSSG} from "hono/ssg";
 import {asset_favicon_path, asset_font_dir, asset_media_extensions, asset_style_path} from "@/constant/asset";
-import {copy_error_config, copy_error_prefix, copy_error_unknown_command} from "@/constant/copy";
+import {copy_error_prefix, copy_error_unknown_command} from "@/constant/copy";
 import {font_body_css, font_brand_css, font_cache_control, font_mono_css} from "@/constant/font";
-import {site_config_absent} from "@/constant/site";
-import {cli_config_file_name, cli_default_command, cli_default_docs_dir, cli_reload_delay_ms} from "@/entry/cli/_constant/cli";
+import {cli_default_command, cli_default_docs_dir, cli_reload_delay_ms} from "@/entry/cli/_constant/cli";
 import {crawling_reserved_roots} from "@/entry/cli/_constant/crawling";
 import {createApp} from "@/entry/cli/_function/create-app";
 import {createDevApp} from "@/entry/cli/_function/create-dev-app";
@@ -26,8 +25,8 @@ import {createProcessor} from "@/entry/cli/_function/create-processor/create-pro
 import {loadMermaidAssets} from "@/entry/cli/_function/load-mermaid-assets";
 import {readDocs} from "@/entry/cli/_function/read-docs";
 import {readHome} from "@/entry/cli/_function/read-home";
+import {readSiteConfig} from "@/entry/cli/_function/read-site-config";
 import {toCrawlingApp} from "@/entry/cli/_function/to-crawling-app";
-import {siteConfigSchema} from "@/type/site-config";
 import {toChangeQueue} from "@/util/async/to-change-queue";
 import {toErrorMessage} from "@/util/error/to-error-message";
 import {toAssetPath} from "@/util/file/to-asset-path";
@@ -49,14 +48,7 @@ const main = async () => {
     const kitRoot = fileURLToPath(new URL("../", import.meta.url));
     const docsRoot = resolve(docsDir);
     const outDir = join(docsRoot, "dist");
-    const configFile = join(docsRoot, cli_config_file_name);
-    const parsedConfig = siteConfigSchema.safeParse(existsSync(configFile) ? (await import(pathToFileURL(configFile).href)).default : site_config_absent);
-
-    if (!parsedConfig.success) {
-        throw new Error(`${copy_error_config}: ${parsedConfig.error.issues.map((issue) => `${issue.path.join(".")} ${issue.message}`).join(", ")}`);
-    }
-
-    const siteConfig = parsedConfig.data;
+    const siteConfig = await readSiteConfig(docsRoot);
 
     if (command === "preview") {
         const app = new Hono();

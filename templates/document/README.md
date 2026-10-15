@@ -95,6 +95,19 @@ export default {
 };
 ```
 
+The source build also supports `for-humanity.config.ts` with a documented public input type. This is **unreleased**; npm `0.12.0` uses the `.mjs` example above. After installing a package containing this change, use:
+
+```ts
+import type {SiteConfig} from "for-humanity";
+
+export default {
+    title: "Project notes",
+    navigation: ["Guide", ["Projects", "Research"]],
+} satisfies SiteConfig;
+```
+
+Use one configuration file per document folder. The CLI validates values at startup; run `tsc --noEmit` in your project for static type checking.
+
 See [Commands](commands.md) for using another document folder, and [Settings](settings.md) for configuration.
 Each document other than the root README chooses a `group` and optional `order`. Pages stay independent; groups do not need parent documents or nested folders. Document names may share the same first letter.
 Use `group: Guide` for one group or `group: [Projects, Example project, Research]` for nested navigation. Group paths do not change document URLs.

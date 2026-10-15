@@ -9,13 +9,15 @@
         "verbatimModuleSyntax": true,
         "noEmit": true,
         "skipLibCheck": true,
-        "allowJs": true,
+        "allowJs": false,
         "types": ["node"],
         "paths": {
             "@/*": ["./src/*"],
-            "@test/*": ["./test/*"]
+            "@test/*": ["./test/*"],
+            "@tool/*": ["./util/*"],
+            "for-humanity": ["./src/type/site-config.ts"]
         }
     },
-    "include": ["src", "test", "vitest.config.ts", "playwright.config.ts"],
+    "include": ["src", "test", "vitest.config.ts", "playwright.config.ts", "script", "util", "templates/document/for-humanity.config.ts"],
     "exclude": ["dist", "templates/*/dist"]
 }

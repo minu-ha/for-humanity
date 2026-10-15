@@ -5,12 +5,16 @@ group: Guide
 order: 30
 ---
 
-문서 폴더의 `for-humanity.config.mjs`. 제목, 소개, 공개 URL, 문서 묶음 순서, status badge 설정.
+문서 폴더의 `for-humanity.config.ts`. 제목, 소개, 공개 URL, 문서 묶음 순서, status badge 설정.
 설정 파일과 각 항목 모두 선택. 생략한 값은 기본값 적용.
+
+TypeScript 설정과 공개 `SiteConfig` 타입은 **미공개 변경**입니다. npm `0.12.0`에서는 기존 `for-humanity.config.mjs`를 사용합니다. 소스 빌드는 두 확장자를 지원하며, 같은 폴더에 두 설정이 있으면 실행 전에 중복 오류를 표시합니다.
 
 ## Overview
 
-```js
+```ts
+import type {SiteConfig} from "for-humanity";
+
 export default {
     title: "for humanity",
     description: "사람이 읽는 문서를 위한 Markdown 문서 도구",
@@ -19,10 +23,19 @@ export default {
         {phrase: "확인됨", kind: "verified", date: true},
         {phrase: "확인되지 않았다", kind: "unverified"},
     ],
-};
+} satisfies SiteConfig;
 ```
 
 검증은 명령 시작 시 한 번. 개발 중 설정 변경은 서버 재시작 필요.
+`SiteConfig`는 기본값 적용 전 입력 타입이므로 모든 최상위 필드를 생략할 수 있습니다. `satisfies`를 사용하면 편집기에서 필드 설명과 자동완성을 확인하고 잘못된 포트 타입·상태 종류·필드 이름을 찾을 수 있습니다. CLI는 타입 문법을 제거한 뒤 실행하며, 포트 범위·URL·중복 묶음 같은 값 조건은 런타임 스키마로 검증합니다. 프로젝트 전체의 정적 검사는 별도로 `tsc --noEmit`을 실행합니다.
+
+JavaScript 설정을 유지하면서 타입을 확인하려면 다음처럼 작성합니다.
+
+```js
+// @ts-check
+/** @satisfies {import("for-humanity").SiteConfig} */
+export default {title: "Project notes"};
+```
 
 ::part[Configuration]
 

@@ -76,7 +76,7 @@ JSX·Hooks로 동작을 소유하면서 정적 본문을 유지하는 현재 조
 문서 링크는 전체 HTML 페이지를 이동합니다.  탐색의 클라이언트 상태는 Zustand vanilla 스토어가 소유합니다.
 문서 목록과 On this page는 각각 독립 스크롤 컨테이너입니다. 1360px 이상에서는 같은 폭의 양쪽 사이드바로 표시하고, 그 아래에서는 목차를 숨깁니다. 모바일 드로어에는 문서 목록만 포함합니다.
 
-`script/build-kit.mjs`가 esbuild API로 `src/entry/browser/browser.tsx`를 단일 IIFE로 컴파일합니다. CLI는 생성한 `dist/browser.js`를 코드 문자열로 읽고 탐색 HTML과 탐색 전용 JSON 바로 뒤, 본문 앞에 포함합니다. JSON에는 문서 이름·URL·계층·현재 목차만 담고 본문은 포함하지 않습니다. `<`와 줄 구분자는 escape하여 작성한 이름이 script 태그를 닫지 못하게 합니다. 함수의 `.toString()`이나 수동 함수 조립은 사용하지 않습니다.
+`script/build-kit.ts`가 esbuild API로 `src/entry/browser/browser.tsx`를 단일 IIFE로 컴파일합니다. CLI는 생성한 `dist/browser.js`를 코드 문자열로 읽고 탐색 HTML과 탐색 전용 JSON 바로 뒤, 본문 앞에 포함합니다. JSON에는 문서 이름·URL·계층·현재 목차만 담고 본문은 포함하지 않습니다. `<`와 줄 구분자는 escape하여 작성한 이름이 script 태그를 닫지 못하게 합니다. 함수의 `.toString()`이나 수동 함수 조립은 사용하지 않습니다.
 이 진입점은 첫 paint 전에 저장 상태를 읽고 `hono/jsx/dom` 런타임으로 탐색 컴포넌트를 마운트합니다. 브라우저 빌드만 `jsxImportSource=hono/jsx/dom`을 사용합니다. 외부 JS 다운로드를 기다리지 않아 메뉴 버튼·스크롤 위치가 뒤늦게 바뀌지 않습니다. 별도의 `client.ts`나 본문 module은 없습니다.
 
 Hono의 최초 레이아웃 효과는 아직 연결되지 않은 fragment에서 실행됩니다. 스크롤 측정·복원은 이 경우에만 연결 직후 microtask로 미루며 첫 paint 앞에 완료합니다. 이후 반응형 전환에서는 연결된 요소를 동기 복원합니다.
@@ -155,7 +155,7 @@ gray-matter는 frontmatter를 분리·해석하는 다른 선택지. 여기서�
 
 ## Package output
 
-`build:kit`: `script/build-kit.mjs`에서 esbuild API로 CLI·CSS·동기 셸 번들과 별도 Mermaid ESM 그래프를 생성합니다. 이전 번들이 npm 패키지에 남지 않도록 `dist` 생성물을 먼저 비웁니다.
+`build:kit`: `script/build-kit.ts`에서 esbuild API로 CLI·CSS·동기 셸 번들과 별도 Mermaid ESM 그래프를 생성합니다. 이전 번들이 npm 패키지에 남지 않도록 `dist` 생성물을 먼저 비웁니다.
 폰트와 favicon 원본은 패키지에 포함, 사이트 빌드 시 결과 폴더로 복사.
 
 - `dist/cli.js`: npm bin 진입점

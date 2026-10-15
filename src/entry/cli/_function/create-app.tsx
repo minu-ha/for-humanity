@@ -7,7 +7,7 @@ import {PgHome} from "@/page/home/pg-home";
 import type {Doc} from "@/type/doc";
 import type {DocContent} from "@/type/doc-content";
 import type {SiteAssets} from "@/type/site-assets";
-import type {SiteConfig} from "@/type/site-config";
+import type {ResolvedSiteConfig} from "@/type/site-config";
 
 /**
  * 페이지 앱 입력 계약
@@ -16,7 +16,7 @@ export interface AppOptions {
     /**
      * 검증된 사이트 설정
      */
-    site: SiteConfig;
+    site: ResolvedSiteConfig;
     /**
      * 렌더링 대상 홈과 문서 · dev 재처리 시 함께 교체
      */

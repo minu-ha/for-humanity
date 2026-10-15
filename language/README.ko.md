@@ -94,6 +94,19 @@ export default {
 };
 ```
 
+소스 빌드는 공개 입력 타입을 제공하는 `for-humanity.config.ts`도 지원합니다. **미공개 변경**이며 npm `0.12.0`에서는 위 `.mjs` 예제를 사용합니다. 이 변경을 포함한 패키지를 설치하면 다음처럼 작성합니다.
+
+```ts
+import type {SiteConfig} from "for-humanity";
+
+export default {
+    title: "Project notes",
+    navigation: ["Guide", ["Projects", "Research"]],
+} satisfies SiteConfig;
+```
+
+문서 폴더에는 설정 파일을 하나만 둡니다. CLI는 시작할 때 값을 검증하며, 정적 타입 검사는 프로젝트에서 `tsc --noEmit`으로 실행합니다.
+
 다른 문서 폴더의 실행은 [Commands](../templates/document/commands.md), 설정은 [Settings](../templates/document/settings.md).
 루트 README를 제외한 문서마다 `group`과 선택 `order`로 묶음·읽는 순서 지정. 하위 폴더나 부모 문서 없이 각 페이지는 독립적으로 유지.
 같은 첫 글자로 시작하는 문서도 허용.

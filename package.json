@@ -26,22 +26,22 @@
     },
     "files": [
         "dist",
-        "src",
+        "src/asset",
         "CHANGELOG.md"
     ],
     "engines": {
         "node": ">=22"
     },
     "scripts": {
-        "build:kit": "node script/build-kit.mjs",
-        "sync:readme": "node util/sync-readme.mjs",
-        "sync:docs": "pnpm sync:readme && node util/sync-changelog.mjs",
+        "build:kit": "tsx script/build-kit.ts && tsc -p tsconfig.package.json",
+        "sync:readme": "tsx util/sync-readme.ts",
+        "sync:docs": "pnpm sync:readme && tsx util/sync-changelog.ts",
         "dev": "pnpm sync:docs && pnpm build:kit && node dist/cli.js dev templates/document",
         "build": "pnpm sync:docs && pnpm build:kit && node dist/cli.js build templates/document",
-        "build:pages": "pnpm build && node util/prepare-pages.mjs",
+        "build:pages": "pnpm build && tsx util/prepare-pages.ts",
         "preview": "node dist/cli.js preview templates/document",
-        "test": "vitest run",
-        "test:watch": "vitest",
+        "test": "pnpm build:kit && vitest run",
+        "test:watch": "pnpm build:kit && vitest",
         "test:browser": "pnpm build:kit && playwright test && node util/navigation/check-navigation.test.mjs",
         "test:navigation": "pnpm build:kit && node util/navigation/check-navigation.test.mjs",
         "test:mermaid": "pnpm build:kit && playwright test mermaid",
@@ -60,6 +60,7 @@
         "github-slugger": "^2.0.0",
         "hast-util-to-string": "3.0.1",
         "hono": "^4.13.12",
+        "jiti": "^2.7.0",
         "mdast-util-find-and-replace": "^3.0.2",
         "mdast-util-to-string": "^4.0.0",
         "rehype-raw": "^7.0.0",
@@ -89,8 +90,17 @@
         "mermaid": "12.2.0",
         "stylelint": "^17.15.0",
         "stylelint-config-standard": "^40.0.0",
+        "tsx": "^4.23.15",
         "typescript": "^7.0.2",
         "vitest": "^5.0.4"
     },
-    "packageManager": "pnpm@12.9.1+sha512.06b055fff5cd20dc12781de173ced3310ce0951bf2ec620211a16045d5444d5c93a663210764ef29a653a610459ba0368f0e74f84d80c54723cf95aae7bc0d6d"
+    "packageManager": "pnpm@12.9.1+sha512.06b055fff5cd20dc12781de173ced3310ce0951bf2ec620211a16045d5444d5c93a663210764ef29a653a610459ba0368f0e74f84d80c54723cf95aae7bc0d6d",
+    "types": "./dist/type/site-config.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/type/site-config.d.ts",
+            "import": "./dist/config.js"
+        },
+        "./*": "./*"
+    }
 }

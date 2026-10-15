@@ -1,12 +1,14 @@
 import {appendFile, readFile, writeFile} from "node:fs/promises";
 import {join, resolve} from "node:path";
+import {packReportSchema} from "@tool/_type/pack-report";
+import {packageMetadataSchema} from "@tool/_type/package-metadata";
 
 const [tag, directory] = process.argv.slice(2);
 if (tag === undefined || !/^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(tag) || directory === undefined) {
-    throw new Error("Use a stable version tag and an artifact directory: node util/prepare-release.mjs v0.1.1 <directory>");
+    throw new Error("Use a stable version tag and an artifact directory: pnpm exec tsx util/prepare-release.ts v0.1.1 <directory>");
 }
 
-const metadata = JSON.parse(await readFile("package.json", "utf8"));
+const metadata = packageMetadataSchema.parse(JSON.parse(await readFile("package.json", "utf8")));
 if (tag !== `v${metadata.version}`) {
     throw new Error(`Tag ${tag} does not match package.json version ${metadata.version}`);
 }
@@ -25,12 +27,22 @@ if (entry === undefined || !entry.includes("\n\n") || entry.slice(entry.indexOf(
 }
 
 const artifactDirectory = resolve(directory);
-const [pack] = Object.values(JSON.parse(await readFile(join(artifactDirectory, "pack.json"), "utf8")));
+const pack = packReportSchema.parse(JSON.parse(await readFile(join(artifactDirectory, "pack.json"), "utf8")));
 if (pack.name !== metadata.name || pack.version !== metadata.version || pack.filename !== `${metadata.name}-${metadata.version}.tgz`) {
     throw new Error("Packed package does not match the release version");
 }
 const paths = new Set(pack.files.map((file) => file.path));
-for (const file of ["dist/cli.js", "dist/cli.css", "dist/browser.js", "src/asset/favicon.svg", "README.md", "LICENSE", "CHANGELOG.md"]) {
+for (const file of [
+    "dist/cli.js",
+    "dist/cli.css",
+    "dist/browser.js",
+    "dist/config.js",
+    "dist/type/site-config.d.ts",
+    "src/asset/favicon.svg",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+]) {
     if (!paths.has(file)) {
         throw new Error(`Packed package is missing ${file}`);
     }

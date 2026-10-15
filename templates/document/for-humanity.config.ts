@@ -1,3 +1,5 @@
+import type {SiteConfig} from "for-humanity";
+
 /*
  * 프로젝트 문서 설정 · 모든 항목 선택
  */
@@ -13,4 +15,4 @@ export default {
         {phrase: "확인됨", kind: "verified", date: true},
         {phrase: "확인되지 않았다", kind: "unverified"},
     ],
-};
+} satisfies SiteConfig;

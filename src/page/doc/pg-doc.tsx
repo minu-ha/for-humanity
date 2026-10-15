@@ -2,7 +2,7 @@ import {WgProse} from "@/component/widget/prose/wg-prose";
 import {WgShell} from "@/component/widget/shell/wg-shell";
 import type {Doc} from "@/type/doc";
 import type {SiteAssets} from "@/type/site-assets";
-import type {SiteConfig} from "@/type/site-config";
+import type {ResolvedSiteConfig} from "@/type/site-config";
 
 /**
  * /:slug/ 문서 페이지 입력 · 렌더링된 HTML 사용
@@ -11,7 +11,7 @@ export interface PgDocProps {
     /**
      * 검증된 사이트 설정
      */
-    site: SiteConfig;
+    site: ResolvedSiteConfig;
     /**
      * 사이드바의 전체 문서
      */

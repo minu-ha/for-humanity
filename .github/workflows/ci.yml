@@ -44,4 +44,4 @@ jobs:
           release_directory="$RUNNER_TEMP/for-humanity-release"
           mkdir -p "$release_directory"
           npm pack --ignore-scripts --json --pack-destination "$release_directory" > "$release_directory/pack.json"
-          node util/smoke-package.mjs "$release_directory"
+          pnpm exec tsx util/smoke-package.ts "$release_directory"

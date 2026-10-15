@@ -2,6 +2,7 @@ import {readdir, readFile, rm, writeFile} from "node:fs/promises";
 import {join, resolve} from "node:path";
 import {fileURLToPath} from "node:url";
 import {build} from "esbuild";
+import {z} from "zod";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 
@@ -64,10 +65,23 @@ const packages = new Set(
 );
 const notices = await Promise.all(
     [...packages].toSorted().map(async (directory) => {
-        const manifest = JSON.parse(await readFile(join(directory, "package.json"), "utf8"));
+        const manifest = z
+            .object({name: z.string(), version: z.string(), license: z.string().optional()})
+            .parse(JSON.parse(await readFile(join(directory, "package.json"), "utf8")));
         const files = (await readdir(directory, {withFileTypes: true})).filter((file) => file.isFile() && /^(licen[cs]e|copying|notice)([.-]|$)/i.test(file.name));
         const licenses = await Promise.all(files.map(async (file) => `${file.name}\n${await readFile(join(directory, file.name), "utf8")}`));
-        return [`${manifest.name}@${manifest.version}`, `License: ${manifest.license}`, ...licenses].join("\n\n");
+        return [`${manifest.name}@${manifest.version}`, ...(manifest.license === undefined ? [] : [`License: ${manifest.license}`]), ...licenses].join("\n\n");
     }),
 );
 await writeFile(new URL("../dist/mermaid/THIRD-PARTY-NOTICES.txt", import.meta.url), notices.join("\n\n----------------------------------------\n\n"));
+
+// 공개 설정 모듈과 타입 선언 생성, 소비 프로젝트의 경로 별칭 의존 제외
+await build({
+    absWorkingDir: root,
+    entryPoints: ["src/type/site-config.ts"],
+    bundle: true,
+    platform: "node",
+    format: "esm",
+    packages: "external",
+    outfile: "dist/config.js",
+});

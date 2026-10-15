@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Support `for-humanity.config.ts` and publish a documented `SiteConfig` input type and generated declarations; retain `.mjs` support and reject duplicate configuration files.
+- Type-check build and maintenance tools, exclude repository tests from packages, and verify configuration types in an installed consumer project.
 - Fix relative links from nested documents on Windows and clean up Mermaid load errors when their widget unmounts.
 - Run repository tests with standalone Vitest and split Mermaid browser checks into isolated Playwright scenarios with failure traces.
 

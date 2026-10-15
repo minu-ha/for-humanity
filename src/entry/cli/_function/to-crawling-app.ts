@@ -2,7 +2,7 @@ import {Hono} from "hono";
 import {html} from "hono/html";
 import {crawling_robots_path, crawling_sitemap_path} from "@/entry/cli/_constant/crawling";
 import type {AppOptions} from "@/entry/cli/_function/create-app";
-import type {SiteConfig} from "@/type/site-config";
+import type {ResolvedSiteConfig} from "@/type/site-config";
 
 /**
  * URL을 명시한 공개 프로젝트의 크롤러 응답 입력
@@ -11,7 +11,7 @@ export interface CrawlingParams {
     /**
      * 설정 검증에서 루트 origin으로 정규화한 공개 HTTP(S) URL
      */
-    url: NonNullable<SiteConfig["url"]>;
+    url: NonNullable<ResolvedSiteConfig["url"]>;
     /**
      * dev 파일 변경 시 교체되는 현재 문서 목록 · 본문은 사이트맵에 포함하지 않음
      */
