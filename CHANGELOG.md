@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Replace direct esbuild package and browser fixture builds with Vite 8 and shared typed build configuration; preserve synchronous browser initialization and Mermaid license notices.
+- Raise the upcoming package minimum Node.js version to 22.12.0 and include Vite for the development command.
+
 - Support `for-humanity.config.ts` and publish a documented `SiteConfig` input type and generated declarations; retain `.mjs` support and reject duplicate configuration files.
 - Type-check build and maintenance tools, exclude repository tests from packages, and verify configuration types in an installed consumer project.
 - Split CLI and navigation checks into isolated scenarios with Korean GIVEN/WHEN/THEN conventions and Playwright failure reports.

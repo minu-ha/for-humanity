@@ -30,10 +30,10 @@
         "CHANGELOG.md"
     ],
     "engines": {
-        "node": ">=22"
+        "node": ">=22.12.0"
     },
     "scripts": {
-        "build:kit": "tsx script/build-kit.ts && tsc -p tsconfig.package.json",
+        "build:kit": "vite build --mode node && vite build --mode browser && vite build --mode mermaid && tsc -p tsconfig.package.json",
         "sync:readme": "tsx util/sync-readme.ts",
         "sync:docs": "pnpm sync:readme && tsx util/sync-changelog.ts",
         "dev": "pnpm sync:docs && pnpm build:kit && node dist/cli.js dev templates/document",
@@ -53,6 +53,7 @@
     },
     "dependencies": {
         "@hono/node-server": "^2.1.3",
+        "@hono/vite-dev-server": "^0.26.1",
         "@shikijs/rehype": "^4.4.3",
         "@shikijs/transformers": "4.4.3",
         "clsx": "^2.1.1",
@@ -75,6 +76,7 @@
         "unified": "^11.0.5",
         "unist-util-visit": "^5.1.0",
         "vfile": "^6.0.3",
+        "vite": "^8.3.4",
         "yaml": "^2.9.1",
         "zod": "^4.6.5",
         "zustand": "^5.0.15"
@@ -85,7 +87,6 @@
         "@types/hast": "^3.0.5",
         "@types/mdast": "^4.0.4",
         "@types/node": "^26.6.3",
-        "esbuild": "^0.28.2",
         "mdast-util-to-hast": "^13.2.1",
         "mermaid": "12.2.0",
         "stylelint": "^17.15.0",

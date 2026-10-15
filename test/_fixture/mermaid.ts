@@ -6,8 +6,8 @@ import {join} from "node:path";
 import {serve} from "@hono/node-server";
 import {serveStatic} from "@hono/node-server/serve-static";
 import {test as base} from "@playwright/test";
+import {loadBrowserScript} from "@test/_fixture/load-browser-script";
 import {diagram_cases} from "@test/mermaid/_constant/diagram";
-import {build} from "esbuild";
 import {Hono} from "hono";
 
 interface BrowserRuntime {
@@ -48,20 +48,11 @@ export const test = base.extend<{runtime: BrowserRuntime}, {mermaidSite: string}
                     `---\nname: Errors\nlabel: Errors\ngroup: Guide\n---\n\n\`\`\`mermaid\nnot-a-diagram\n<script>window.mermaidInjected = true</script>\n\`\`\`\n\n\`\`\`mermaid\nflowchart LR\n    Good --> Diagram\n\`\`\`\n\n\`\`\`mermaid\nflowchart LR\n    a["${"x".repeat(50100)}"] --> b\n\`\`\`\n`,
                 );
                 execFileSync(process.execPath, ["dist/cli.js", "build", root]);
-                const fixture = await build({
-                    entryPoints: ["test/mermaid/_gallery/lifecycle.tsx"],
-                    bundle: true,
-                    platform: "browser",
-                    format: "iife",
-                    jsx: "automatic",
-                    jsxImportSource: "hono/jsx/dom",
-                    loader: {".css": "empty"},
-                    write: false,
-                });
+                const fixture = await loadBrowserScript("test/mermaid/_gallery/lifecycle.tsx");
                 const shell = await readFile("dist/browser.js", "utf8");
                 const html = (await readFile(join(root, "dist/guide/index.html"), "utf8"))
                     .replace(`<script>${shell}</script>`, "")
-                    .replace("</body>", () => `<script>${fixture.outputFiles[0].text}</script></body>`);
+                    .replace("</body>", () => `<script>${fixture}</script></body>`);
                 const app = new Hono();
                 app.get("/lifecycle/", (context) => context.html(html));
                 app.use("/*", serveStatic({root: join(root, "dist")}));

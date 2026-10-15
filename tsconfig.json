@@ -16,8 +16,9 @@
             "@test/*": ["./test/*"],
             "@tool/*": ["./util/*"],
             "for-humanity": ["./src/type/site-config.ts"]
-        }
+        },
+        "allowImportingTsExtensions": true
     },
-    "include": ["src", "test", "vitest.config.ts", "playwright.config.ts", "script", "util", "templates/document/for-humanity.config.ts"],
+    "include": ["src", "test", "vitest.config.ts", "vite.config.ts", "playwright.config.ts", "script", "util", "templates/document/for-humanity.config.ts"],
     "exclude": ["dist", "templates/*/dist"]
 }

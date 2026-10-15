@@ -122,7 +122,7 @@ JSX·Hooks로 동작을 소유하면서 정적 본문을 유지하는 현재 조
 문서 링크는 전체 HTML 페이지를 이동합니다.  탐색의 클라이언트 상태는 Zustand vanilla 스토어가 소유합니다.
 문서 목록과 On this page는 각각 독립 스크롤 컨테이너입니다. 1360px 이상에서는 같은 폭의 양쪽 사이드바로 표시하고, 그 아래에서는 목차를 숨깁니다. 모바일 드로어에는 문서 목록만 포함합니다.
 
-`script/build-kit.ts`가 esbuild API로 `src/entry/browser/browser.tsx`를 단일 IIFE로 컴파일합니다. CLI는 생성한 `dist/browser.js`를 코드 문자열로 읽고 탐색 HTML과 탐색 전용 JSON 바로 뒤, 본문 앞에 포함합니다. JSON에는 문서 이름·URL·계층·현재 목차만 담고 본문은 포함하지 않습니다. `<`와 줄 구분자는 escape하여 작성한 이름이 script 태그를 닫지 못하게 합니다. 함수의 `.toString()`이나 수동 함수 조립은 사용하지 않습니다.
+`vite.config.ts`의 browser 모드가 Vite로 `src/entry/browser/browser.tsx`를 단일 IIFE로 컴파일합니다. CLI는 생성한 `dist/browser.js`를 코드 문자열로 읽고 탐색 HTML과 탐색 전용 JSON 바로 뒤, 본문 앞에 포함합니다. JSON에는 문서 이름·URL·계층·현재 목차만 담고 본문은 포함하지 않습니다. `<`와 줄 구분자는 escape하여 작성한 이름이 script 태그를 닫지 못하게 합니다. 함수의 `.toString()`이나 수동 함수 조립은 사용하지 않습니다.
 이 진입점은 첫 paint 전에 저장 상태를 읽고 `hono/jsx/dom` 런타임으로 탐색 컴포넌트를 마운트합니다. 브라우저 빌드만 `jsxImportSource=hono/jsx/dom`을 사용합니다. 외부 JS 다운로드를 기다리지 않아 메뉴 버튼·스크롤 위치가 뒤늦게 바뀌지 않습니다. 별도의 `client.ts`나 본문 module은 없습니다.
 
 Hono의 최초 레이아웃 효과는 아직 연결되지 않은 fragment에서 실행됩니다. 스크롤 측정·복원은 이 경우에만 연결 직후 microtask로 미루며 첫 paint 앞에 완료합니다. 이후 반응형 전환에서는 연결된 요소를 동기 복원합니다.
@@ -137,7 +137,7 @@ Hono의 최초 레이아웃 효과는 아직 연결되지 않은 fragment에서 
 
 커서 장식은 `src/component/widget/cursor-face`의 `WgCursorFace`가 DOM ref·좌표·미디어 조건·전역 이벤트·예약 frame을 소유합니다. 마지막 좌표는 같은 탭의 페이지 이동에서만 이어받으며 터치·reduced motion에서는 숨깁니다. 본문과 커서 동작을 모듈 최상위에서 바로 실행하지 않고 컴포넌트의 Effect에서 설치·정리합니다.
 
-`.tsx`는 JSX 문법의 구분입니다. 서버의 `hono/jsx`는 HTML을 만들고 Effect 콜백은 실행하지 않습니다. esbuild가 브라우저 진입점에서 가져오는 컴포넌트·Hook을 JS로 묶으며, `hono/jsx/dom` 렌더러가 브라우저에서 Effect를 실행합니다. Hono가 Hook마다 자동으로 청크를 생성하거나 전송하는 구조는 아닙니다.
+`.tsx`는 JSX 문법의 구분입니다. 서버의 `hono/jsx`는 HTML을 만들고 Effect 콜백은 실행하지 않습니다. Vite가 브라우저 진입점에서 가져오는 컴포넌트·Hook을 JS로 묶으며, `hono/jsx/dom` 렌더러가 브라우저에서 Effect를 실행합니다. Hono가 Hook마다 자동으로 청크를 생성하거나 전송하는 구조는 아닙니다.
 
 ### Store ownership and lifetime
 
@@ -201,7 +201,8 @@ gray-matter는 frontmatter를 분리·해석하는 다른 선택지. 여기서�
 
 ## Package output
 
-`build:kit`: `script/build-kit.ts`에서 esbuild API로 CLI·CSS·동기 셸 번들과 별도 Mermaid ESM 그래프를 생성합니다. 이전 번들이 npm 패키지에 남지 않도록 `dist` 생성물을 먼저 비웁니다.
+`build:kit`: `vite.config.ts`의 node·browser·mermaid 모드를 순서대로 실행하고 `tsc -p tsconfig.package.json`으로 공개 선언을 생성합니다. 첫 node 빌드만 `dist`를 비우며 이후 빌드는 앞 단계의 결과를 유지합니다. Vite의 Rolldown 번들러와 Oxc 변환기를 사용하고 직접 esbuild를 호출하지 않습니다.
+`util/to-browser-config.ts`는 제품과 Playwright fixture가 같은 Hono DOM 빌드 설정을 사용하게 합니다. `util/to-notices-plugin.ts`는 실제 번들 모듈의 LICENSE·COPYING·NOTICE를 수집합니다. Vite 기본 license 출력에서 빠지는 추가 고지까지 유지합니다.
 폰트와 favicon 원본은 패키지에 포함, 사이트 빌드 시 결과 폴더로 복사.
 
 - `dist/cli.js`: npm bin 진입점

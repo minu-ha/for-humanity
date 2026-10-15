@@ -6,7 +6,7 @@ import {join} from "node:path";
 import {serve} from "@hono/node-server";
 import {serveStatic} from "@hono/node-server/serve-static";
 import {test as base} from "@playwright/test";
-import {build} from "esbuild";
+import {loadBrowserScript} from "@test/_fixture/load-browser-script";
 import {Hono} from "hono";
 
 /**
@@ -33,20 +33,11 @@ export const test = base.extend<Record<never, never>, {navigationSite: string}>(
                 );
                 execFileSync(process.execPath, ["dist/cli.js", "build", root]);
 
-                const lifecycle = await build({
-                    entryPoints: ["test/navigation/_gallery/lifecycle.tsx"],
-                    bundle: true,
-                    platform: "browser",
-                    format: "iife",
-                    jsx: "automatic",
-                    jsxImportSource: "hono/jsx/dom",
-                    loader: {".css": "empty"},
-                    write: false,
-                });
+                const lifecycle = await loadBrowserScript("test/navigation/_gallery/lifecycle.tsx");
                 const browserScript = await readFile("dist/browser.js", "utf8");
                 const html = (await readFile(join(root, "dist/guide/index.html"), "utf8"))
                     .replace(`<script>${browserScript}</script>`, "")
-                    .replace("</body>", () => `<script>${lifecycle.outputFiles[0].text}</script></body>`);
+                    .replace("</body>", () => `<script>${lifecycle}</script></body>`);
                 const app = new Hono();
                 app.get("/lifecycle/", (context) => context.html(html));
                 app.use("/*", serveStatic({root: join(root, "dist")}));

@@ -65,12 +65,12 @@ Mermaid는 개발 의존성이며 `build:kit`이 패키지에 포함할 ESM 그�
 번들에 실제 포함한 패키지의 라이선스와 고지는 `dist/mermaid/THIRD-PARTY-NOTICES.txt`에 함께 생성합니다.
 CLI의 `load-mermaid-assets`가 내용 지문이 붙은 진입 파일과 청크를 조회하고, Markdown 처리기가 실제 다이어그램을 발견했을 때 자원 목록에 등록합니다.
 다이어그램이 하나라도 있으면 전체 모듈 그래프를 사이트 출력에 복사합니다. 브라우저에서는 펼쳐진 다이어그램이 있을 때만 진입 모듈을 `import()`하고, Mermaid 내부의 동적 import가 문법별 렌더러를 추가로 요청합니다. 진입 모듈의 정적 공유 의존성은 처음 import할 때 함께 요청되므로 청크 하나와 문법 하나가 대응하지는 않습니다. 화면 아래쪽의 펼쳐진 다이어그램도 렌더하며, 접힌 Details는 공개할 때 렌더합니다.
-`splitting: true`는 Mermaid의 동적 import 경계를 유지하고, `format: "esm"`은 브라우저 모듈 수신을 가능하게 합니다. 파일명의 `[hash]`는 내용이 바뀔 때 URL도 바꾸며, `minify: true`는 전송할 코드를 줄입니다. esbuild는 패키지 빌드에서만 실행합니다.
+Vite의 Mermaid library 빌드는 ESM 형식과 동적 import 경계를 유지합니다. 파일명의 `[hash]`는 내용이 바뀔 때 URL도 바꾸며 Oxc 압축으로 전송할 코드를 줄입니다. `to-notices-plugin`은 실제 출력 청크의 모듈 목록에서 추가 라이선스와 NOTICE까지 수집합니다.
 버전 갱신 때 `pnpm test:mermaid`로 공식 유형·한글·테마·실패 대체 표시를 확인하고 설치 패키지도 검증합니다.
 
 ### Repository utilities
 
-루트 `script/`는 패키지 명령의 실행 절차를 관리합니다. `build-kit.ts`는 esbuild API로 CLI·CSS·브라우저·설정 스키마 번들을 생성하고 `tsconfig.package.json`으로 공개 타입 선언을 생성합니다. 저장소 도구는 `tsx`로 실행하며 모두 `pnpm typecheck`에 포함합니다. `vitest.config.ts`는 Vite 앱 설정 없이 Node 환경의 테스트를 실행하며, `playwright.config.ts`는 Chromium 검사를 실행합니다. 제품 빌드는 esbuild를 유지합니다. 테스트 도구는 개발 의존성이며 패키지 소비자에게 필요하지 않습니다. Vitest 5 개발 환경에는 Node 22.12 이상인 22.x 또는 공식 지원 상위 버전이 필요합니다.
+`vite.config.ts`는 CLI·CSS, 동기 브라우저 번들, Mermaid ESM의 세 빌드 모드를 관리합니다. `tsconfig.package.json`으로 공개 타입 선언을 별도 생성합니다. 저장소 도구는 `tsx`로 실행하며 모두 `pnpm typecheck`에 포함합니다. `vitest.config.ts`는 제품 Vite 설정과 분리해 Node 테스트를 실행하며 `playwright.config.ts`는 Chromium 검사를 실행합니다. 제품과 브라우저 fixture는 같은 `to-browser-config.ts`의 Hono DOM 설정을 사용합니다. 직접 esbuild 의존성은 없으며 `tsx` 같은 도구의 전이 의존성은 남을 수 있습니다. 미공개 Vite 전환부터 개발·설치 패키지 모두 Node 22.12.0 이상이 필요합니다.
 
 루트 `util/`은 저장소 개발·문서 동기화·배포 검증용. npm 패키지에는 포함하지 않음.
 CSS 규칙 본문은 타입 검사하는 `util/stylelint.config.ts`에 둡니다. 루트 `stylelint.config.mjs`는 현재 cosmiconfig의 TypeScript 5 API 의존을 피하기 위한 Jiti 로더만 제공합니다.
@@ -185,7 +185,7 @@ Release는 `main`에 포함된 커밋, 태그와 일치하는 `package.json` 버
 | Allow npm dist-tag | 체크하지 않음 |
 
 GitHub가 발급하는 OIDC 자격 증명 사용. 별도 `NPM_TOKEN`이나 매번의 로그인·2FA 입력 불필요.
-GitHub-hosted runner, Node.js 24와 npm 12.2.0으로 배포. 패키지 사용자의 Node.js 최소 버전은 22 유지.
+GitHub-hosted runner, Node.js 24와 npm 12.2.0으로 배포. 미공개 Vite 전환부터 패키지 사용자의 Node.js 최소 버전은 22.12.0.
 설정 기준은 [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers/).
 
 ### Daily development

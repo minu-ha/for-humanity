@@ -78,7 +78,7 @@ try {
     const guide = await readFile(join(output, "guide/index.html"), "utf8");
     const mermaidPath = guide.match(/data-mermaid-module="([^"]+)"/)?.[1];
     assert.ok(mermaidPath);
-    assert.match(mermaidPath, /^\/_fh\/mermaid\/mermaid-[A-Z0-9]+\.js$/);
+    assert.match(mermaidPath, /^\/_fh\/mermaid\/mermaid-[A-Za-z0-9_-]+\.js$/);
     assert.match(guide, /data-mermaid-source/);
     assert.doesNotMatch(guide, /ascii-flow/);
     assert.equal(installed.dependencies?.mermaid, undefined, "the prebuilt runtime must not require a second Mermaid installation");

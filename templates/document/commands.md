@@ -27,7 +27,7 @@ flowchart LR
 
 ## Local development
 
-Node.js 22 이상과 pnpm.
+저장소 개발은 Node.js 22.12.0 이상과 pnpm.
 
 ```sh
 git clone https://github.com/minu-ha/for-humanity.git

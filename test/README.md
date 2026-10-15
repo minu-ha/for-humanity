@@ -1,6 +1,6 @@
 # 테스트
 
-제품 빌드는 esbuild, Node 환경 검사는 독립 설정의 Vitest, 실제 브라우저 검사는 Playwright가 담당합니다. Vite 앱이나 React 설치는 필요하지 않습니다. 브라우저 컴포넌트는 제품과 같은 Hono JSX DOM 런타임을 사용합니다.
+제품 빌드는 Vite, Node 환경 검사는 독립 설정의 Vitest, 실제 브라우저 검사는 Playwright가 담당합니다. React 설치는 필요하지 않습니다. 브라우저 fixture는 제품과 같은 Vite 설정과 Hono JSX DOM 런타임을 사용합니다.
 
 개발 환경은 Node 22.12 이상인 22.x 또는 Vitest가 지원하는 상위 버전을 사용합니다. 패키지 소비자의 Node 요구 사항은 `package.json`의 `engines`를 따릅니다.
 
