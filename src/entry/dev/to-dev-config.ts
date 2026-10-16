@@ -49,7 +49,9 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
         appType: "custom",
         resolve: {alias: {"@": join(kitRoot, "src")}},
         oxc: {jsx: {importSource: "hono/jsx"}},
-        optimizeDeps: {noDiscovery: !params.source},
+
+        // HTML 파일이 없는 Hono 앱의 브라우저 의존성 사전 탐색
+        optimizeDeps: {noDiscovery: !params.source, entries: params.source ? ["src/entry/browser/browser.tsx"] : []},
         server: {
             port: params.site.port,
             strictPort: true,

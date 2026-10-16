@@ -43,15 +43,19 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm test
       - run: pnpm check
-      - run: pnpm build:pages
-      - run: pnpm exec playwright install --with-deps chromium
+      - id: build
+        run: pnpm build:pages
+      - id: browser
+        run: pnpm exec playwright install --with-deps chromium
       - name: Check browser diagrams, navigation and development
         run: pnpm exec playwright test
       - name: Check generated files
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: |
           git diff --check
           git diff --exit-code
       - name: Test the installed package
+        if: ${{ !cancelled() && steps.build.outcome == 'success' && steps.browser.outcome == 'success' }}
         run: |
           release_directory="$RUNNER_TEMP/for-humanity-release"
           mkdir -p "$release_directory"
