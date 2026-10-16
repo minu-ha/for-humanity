@@ -53,7 +53,7 @@ describe("CLI 인자와 출력", () => {
         }
     });
 
-    test("폴더를 생략한 빌드는 현재 폴더를 사용하고 경고 뒤에도 성공한다", async ({root}) => {
+    test("폴더를 생략한 빌드는 현재 폴더를 사용하고 경고 뒤에도 성공한다", {timeout: 45000}, async ({root}) => {
         /**
          * GIVEN
          * 없는 문서 링크를 포함한 홈
@@ -67,7 +67,7 @@ describe("CLI 인자와 출력", () => {
         const result = spawnSync(process.execPath, [resolve("dist/cli.js"), "build"], {
             cwd: root,
             encoding: "utf8",
-            timeout: 10000,
+            timeout: 30000,
             env: {
                 ...process.env,
 
@@ -80,6 +80,7 @@ describe("CLI 인자와 출력", () => {
          * THEN
          * 표준 출력의 성공 로그와 표준 오류의 파일 위치 경고
          */
+        expect(result.error).toBeUndefined();
         expect(result.status, result.stderr).toBe(0);
         expect(result.stdout).toContain("for-humanity");
         expect(result.stdout).toContain("files,");

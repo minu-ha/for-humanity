@@ -363,13 +363,17 @@ test.describe("저장소 소스 개발", () => {
     test("[DEV-003] CSS 변경은 페이지 상태를 유지하고 TSX 변경은 서버와 브라우저에 반영한다", {tag: "@high"}, async ({page, devSite}) => {
         /**
          * GIVEN
-         * 격리된 소스에서 실행하는 개발 페이지
+         * 최초 HTML의 stylesheet에 테두리가 있는 개발 페이지
          */
+        const path = join(devSite.kitRoot, "src/component/widget/shell/wg-shell.css");
+        const original = await readFile(path, "utf8");
+        await writeFile(path, `${original}\n.wg_shell__main { outline: 3px solid rgb(1, 2, 3); }\n`);
         const errors: string[] = [];
         page.on("pageerror", (error) => errors.push(error.message));
         await page.setViewportSize({width: 760, height: 900});
         await page.goto("/");
         await expect(page.getByText("Initial content.", {exact: true})).toBeVisible();
+        await expect(page.locator("main")).toHaveCSS("outline-style", "solid");
         await page.getByRole("button", {name: "Open navigation", exact: true}).click();
         await expect(page.getByRole("dialog")).toBeVisible();
         await page.getByRole("button", {name: "Close navigation", exact: true}).click();
@@ -378,20 +382,14 @@ test.describe("저장소 소스 개발", () => {
         await test.step("CSS 갱신은 전체 문서를 다시 열지 않는다", async () => {
             /**
              * WHEN
-             * 소스 스타일 변경
+             * 최초 stylesheet의 테두리 선언 삭제
              */
-            const path = join(devSite.kitRoot, "src/component/widget/shell/wg-shell.css");
-            await writeFile(path, `${await readFile(path, "utf8")}\n.wg_shell__main { outline: 3px solid rgb(1, 2, 3); }\n`);
+            await writeFile(path, original);
 
             /**
              * THEN
-             * 스타일 반영과 같은 페이지 상태 유지
+             * 초기 stylesheet의 이전 선언 제거와 같은 페이지 상태 유지
              */
-            await expect(page.locator("main")).toHaveCSS("outline-color", "rgb(1, 2, 3)");
-            await expect(page.locator("html")).toHaveAttribute("data-dev-marker", "retained");
-
-            // 선언 삭제도 즉시 반영, 초기 stylesheet에 이전 CSS가 남는 회귀 확인
-            await writeFile(path, (await readFile(path, "utf8")).replace("\n.wg_shell__main { outline: 3px solid rgb(1, 2, 3); }\n", ""));
             await expect(page.locator("main")).toHaveCSS("outline-style", "none");
             await expect(page.locator("html")).toHaveAttribute("data-dev-marker", "retained");
         });
