@@ -22,7 +22,9 @@ describe("변경 처리 큐", () => {
                 renders.push(current);
                 running -= 1;
             },
-            onError: (error) => errors.push(error),
+            onError: (error) => {
+                return errors.push(error);
+            },
         });
 
         /**
@@ -65,7 +67,9 @@ describe("변경 처리 큐", () => {
                 }
                 renders.push(current);
             },
-            onError: (error) => errors.push(error),
+            onError: (error) => {
+                return errors.push(error);
+            },
         });
 
         /**

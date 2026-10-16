@@ -14,11 +14,29 @@ export const toBrowserConfig = (entry: string): InlineConfig => {
         resolve: {tsconfigPaths: true},
         oxc: {jsx: {importSource: "hono/jsx/dom"}},
         define: {"process.env.NODE_ENV": '"production"'},
-        plugins: [{name: "for-humanity:browser-styles", enforce: "pre", load: {filter: {id: /\.css$/}, handler: () => ""}}],
+        plugins: [
+            {
+                name: "for-humanity:browser-styles",
+                enforce: "pre",
+                load: {
+                    filter: {id: /\.css$/},
+                    handler: () => {
+                        return "";
+                    },
+                },
+            },
+        ],
         build: {
             target: "esnext",
             emptyOutDir: false,
-            lib: {entry, formats: ["iife"], name: "ForHumanity", fileName: () => "browser.js"},
+            lib: {
+                entry,
+                formats: ["iife"],
+                name: "ForHumanity",
+                fileName: () => {
+                    return "browser.js";
+                },
+            },
         },
     };
 };

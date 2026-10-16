@@ -91,17 +91,19 @@ export const WgNavigation = (props: WgNavigationProps) => {
         ) {
             return;
         }
-        props.stores.scroll.setState((state) => ({
-            positions: {
-                ...state.positions,
-                [layoutRef.current]: {
-                    navigation: navigationSignature,
-                    pathname: location.pathname,
-                    documents: documents.scrollTop,
-                    outline: outline.scrollTop,
+        props.stores.scroll.setState((state) => {
+            return {
+                positions: {
+                    ...state.positions,
+                    [layoutRef.current]: {
+                        navigation: navigationSignature,
+                        pathname: location.pathname,
+                        documents: documents.scrollTop,
+                        outline: outline.scrollTop,
+                    },
                 },
-            },
-        }));
+            };
+        });
     };
 
     /**

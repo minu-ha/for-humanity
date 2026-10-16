@@ -21,12 +21,14 @@ export const WgNavigationNav = (props: WgNavigationNavProps) => {
              * 문서 이동. 클릭하지 않는 묶음과 독립 문서
              */}
             <div className={clsx("wg_navigationNav__docs")}>
-                {props.groups.map((group) => (
-                    <section className={clsx("wg_navigationNav__docGroup")} key={JSON.stringify(group.path)} aria-label={group.name}>
-                        <div className={clsx("wg_navigationNav__group")}>{group.name}</div>
-                        <WgNavigationNavList group={group} />
-                    </section>
-                ))}
+                {props.groups.map((group) => {
+                    return (
+                        <section className={clsx("wg_navigationNav__docGroup")} key={JSON.stringify(group.path)} aria-label={group.name}>
+                            <div className={clsx("wg_navigationNav__group")}>{group.name}</div>
+                            <WgNavigationNavList group={group} />
+                        </section>
+                    );
+                })}
             </div>
         </nav>
     );

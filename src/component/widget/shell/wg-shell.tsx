@@ -58,7 +58,7 @@ export interface WgShellProps {
 export const WgShell = (props: WgShellProps) => {
     const navigationData = toNavigationData({site: props.site, docs: props.docs, current: props.current, outline: props.outline});
 
-    // 요청별 head 격리. 언어·문서 구조는 Hono 셸 소유
+    // 요청별 head 격리, 언어와 문서 구조는 Hono 셸 소유
     const head = createHead({disableDefaults: true});
     head.push({
         title: props.title === undefined ? props.site.title : `${props.title} · ${props.site.title}`,

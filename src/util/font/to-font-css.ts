@@ -26,8 +26,8 @@ interface FontCssOptions {
 export const toFontCss = (options: FontCssOptions) => {
     const files = new Map<string, string>();
     const css = [...readFileSync(options.css, "utf8").matchAll(/@font-face\s*\{[^}]*\}/g)]
-        .map((match) =>
-            match[0].replace(/font-display:\s*[^;]+;/g, `font-display: ${font_display_strategy};`).replace(/url\(([^)]+)\)/g, (_match: string, relativeUrl: string) => {
+        .map((match) => {
+            return match[0].replace(/font-display:\s*[^;]+;/g, `font-display: ${font_display_strategy};`).replace(/url\(([^)]+)\)/g, (_match: string, relativeUrl: string) => {
                 const file = join(dirname(options.css), relativeUrl);
                 const extension = extname(file);
                 const hash = createHash("sha256").update(readFileSync(file)).digest("hex").slice(0, font_hash_length);
@@ -36,8 +36,8 @@ export const toFontCss = (options: FontCssOptions) => {
                 files.set(url, file);
 
                 return `url(${url})`;
-            }),
-        )
+            });
+        })
         .join("\n");
 
     return {css, files};

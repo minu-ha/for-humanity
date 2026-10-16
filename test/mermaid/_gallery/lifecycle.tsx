@@ -12,5 +12,7 @@ window.diagramFixture = {
         mounted = createRoot(document.createElement("div"));
         flushSync(() => mounted.render(<WgMermaid />));
     },
-    unmount: () => flushSync(() => mounted.unmount()),
+    unmount: () => {
+        return flushSync(() => mounted.unmount());
+    },
 };

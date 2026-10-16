@@ -90,7 +90,12 @@ export const checkPackageServer = async (params: PackageServerParams) => {
             if (params.command === "dev") {
                 const client = await page.request.get(`${url}/@vite/client`);
                 assert.equal(client.status(), 200, `Vite client response: ${await client.text()}`);
-                const connected = page.waitForEvent("console", {predicate: (message) => message.text().includes("[vite] connected"), timeout: 10000});
+                const connected = page.waitForEvent("console", {
+                    predicate: (message) => {
+                        return message.text().includes("[vite] connected");
+                    },
+                    timeout: 10000,
+                });
                 await page.goto(url);
                 await connected;
                 await writeFile(homePath, "# Installed development\n\nLive package update.\n");

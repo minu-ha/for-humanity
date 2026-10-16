@@ -8,7 +8,11 @@ const root = document.querySelector<HTMLElement>("[data-shell-browser-root]");
 const data = document.getElementById("fh-navigation-data");
 if (root === null || data === null) throw new Error("셸 테스트의 초기 마크업이 없습니다");
 const navigation = navigationDataSchema.parse(JSON.parse(data.textContent));
-const stores = createNavigationStores({session: () => sessionStorage});
+const stores = createNavigationStores({
+    session: () => {
+        return sessionStorage;
+    },
+});
 
 /**
  * 실제 셸 소유자의 마운트와 해제, 공개 번들에 미포함
@@ -17,7 +21,9 @@ window.shellFixture = {
     mount: () => {
         const shell = createRoot(root);
         shell.render(<WgShellControls data={navigation} stores={stores} />);
-        window.shellFixture.unmount = () => flushSync(() => shell.unmount());
+        window.shellFixture.unmount = () => {
+            return flushSync(() => shell.unmount());
+        };
     },
     unmount: () => {},
 };

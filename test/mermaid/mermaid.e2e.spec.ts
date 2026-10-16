@@ -80,9 +80,11 @@ test.describe("다이어그램", () => {
              * 제목의 스크롤 여백에 맞춘 초기 위치
              */
             await expect
-                .poll(() =>
-                    page.locator("#diagram-7").evaluate((element) => Math.abs(element.getBoundingClientRect().top - Number.parseFloat(getComputedStyle(element).scrollMarginTop))),
-                )
+                .poll(() => {
+                    return page
+                        .locator("#diagram-7")
+                        .evaluate((element) => Math.abs(element.getBoundingClientRect().top - Number.parseFloat(getComputedStyle(element).scrollMarginTop)));
+                })
                 .toBeLessThanOrEqual(2);
         });
 

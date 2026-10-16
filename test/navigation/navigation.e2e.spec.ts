@@ -155,11 +155,9 @@ test.describe("문서 탐색", () => {
          * 현재 문서 목록과 일치하는 구형 배치별 저장값
          */
         await page.goto("/guide/");
-        const signature = await page
-            .locator("[data-navigation]")
-            .evaluate((element) =>
-                [...element.querySelectorAll<HTMLAnchorElement>(".wg_navigationNav__root a[href]")].map((link) => `${link.pathname}:${link.textContent}`).join("\n"),
-            );
+        const signature = await page.locator("[data-navigation]").evaluate((element) => {
+            return [...element.querySelectorAll<HTMLAnchorElement>(".wg_navigationNav__root a[href]")].map((link) => `${link.pathname}:${link.textContent}`).join("\n");
+        });
         await page.addInitScript(
             (options) => {
                 sessionStorage.removeItem(options.key);

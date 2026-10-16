@@ -106,7 +106,9 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                             // Vite는 연결 전 갱신도 보관, 최초 응답의 불필요한 재접속 제외
                             if (generation > 0) server.hot.send({type: "full-reload"});
                         },
-                        onError: (error) => server.config.logger.error(`${copy_error_prefix}: ${toErrorMessage(error)}`),
+                        onError: (error) => {
+                            return server.config.logger.error(`${copy_error_prefix}: ${toErrorMessage(error)}`);
+                        },
                     });
                     const reload = debounce(refresh, dev_reload_delay_ms);
 
@@ -141,7 +143,9 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                     // Vite의 buildStart 이후 첫 요청에서 서버 모듈 준비
                     prepare = refresh;
                 },
-                closeBundle: () => dispose?.(),
+                closeBundle: () => {
+                    return dispose?.();
+                },
             },
             devServer({
                 exclude: params.source
@@ -155,13 +159,19 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                       ]
                     : viteClientPaths,
                 ignoreWatching: dev_ignored_paths,
-                handleHotUpdate: (context) => (context.file.endsWith(".css") ? undefined : []),
+                handleHotUpdate: (context) => {
+                    return context.file.endsWith(".css") ? undefined : [];
+                },
                 loadModule: async () => {
                     ready ??= prepare?.();
                     await ready;
                     if (currentSite === undefined) throw new Error("문서 준비에 실패했습니다. 위 오류를 수정하면 다시 반영합니다.");
                     const app = currentSite.app;
-                    return {fetch: async (request, env) => app.fetch(request, env)};
+                    return {
+                        fetch: async (request, env) => {
+                            return app.fetch(request, env);
+                        },
+                    };
                 },
             }),
         ],

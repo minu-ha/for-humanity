@@ -71,45 +71,56 @@ export const WgNavigationToc = (props: WgNavigationTocProps) => {
             {/**
              * 가름별 제목 이동. 하위 제목이 현재 위치여도 부모 글씨는 강조하지 않음
              */}
-            {props.groups.map((group) => (
-                <div className={clsx("wg_navigationToc__groupSection", {"wg_navigationToc__groupSection--named": group.part !== undefined})} key={group.sections[0].heading.slug}>
-                    {group.part !== undefined && <div className={clsx("wg_navigationToc__group")}>{group.part}</div>}
-                    <ul className={clsx("wg_navigationToc__list")}>
-                        {group.sections.map((section) => (
-                            <li className={clsx("wg_navigationToc__item")} key={section.heading.slug}>
-                                <a
-                                    className={clsx("wg_navigationToc__link", {"wg_navigationToc__link--active": section.heading.slug === currentSlug})}
-                                    href={`#${section.heading.slug}`}
-                                    data-toc-link=""
-                                    aria-current={section.heading.slug === currentSlug ? "location" : undefined}
-                                >
-                                    {section.heading.text}
-                                </a>
+            {props.groups.map((group) => {
+                return (
+                    <div
+                        className={clsx("wg_navigationToc__groupSection", {"wg_navigationToc__groupSection--named": group.part !== undefined})}
+                        key={group.sections[0].heading.slug}
+                    >
+                        {group.part !== undefined && <div className={clsx("wg_navigationToc__group")}>{group.part}</div>}
+                        <ul className={clsx("wg_navigationToc__list")}>
+                            {group.sections.map((section) => {
+                                return (
+                                    <li className={clsx("wg_navigationToc__item")} key={section.heading.slug}>
+                                        <a
+                                            className={clsx("wg_navigationToc__link", {"wg_navigationToc__link--active": section.heading.slug === currentSlug})}
+                                            href={`#${section.heading.slug}`}
+                                            data-toc-link=""
+                                            aria-current={section.heading.slug === currentSlug ? "location" : undefined}
+                                        >
+                                            {section.heading.text}
+                                        </a>
 
-                                {/**
-                                 * 하위 제목. 활성 링크는 한 제목만
-                                 */}
-                                {section.subs.length > 0 && (
-                                    <ul className={clsx("wg_navigationToc__sub")}>
-                                        {section.subs.map((sub) => (
-                                            <li className={clsx("wg_navigationToc__subItem")} key={sub.heading.slug}>
-                                                <a
-                                                    className={clsx("wg_navigationToc__subLink", {"wg_navigationToc__subLink--active": sub.heading.slug === currentSlug})}
-                                                    href={`#${sub.heading.slug}`}
-                                                    data-toc-sub-link=""
-                                                    aria-current={sub.heading.slug === currentSlug ? "location" : undefined}
-                                                >
-                                                    {sub.heading.text}
-                                                </a>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            ))}
+                                        {/**
+                                         * 하위 제목. 활성 링크는 한 제목만
+                                         */}
+                                        {section.subs.length > 0 && (
+                                            <ul className={clsx("wg_navigationToc__sub")}>
+                                                {section.subs.map((sub) => {
+                                                    return (
+                                                        <li className={clsx("wg_navigationToc__subItem")} key={sub.heading.slug}>
+                                                            <a
+                                                                className={clsx("wg_navigationToc__subLink", {
+                                                                    "wg_navigationToc__subLink--active": sub.heading.slug === currentSlug,
+                                                                })}
+                                                                href={`#${sub.heading.slug}`}
+                                                                data-toc-sub-link=""
+                                                                aria-current={sub.heading.slug === currentSlug ? "location" : undefined}
+                                                            >
+                                                                {sub.heading.text}
+                                                            </a>
+                                                        </li>
+                                                    );
+                                                })}
+                                            </ul>
+                                        )}
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </div>
+                );
+            })}
         </nav>
     );
 };

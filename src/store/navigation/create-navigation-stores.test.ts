@@ -19,7 +19,14 @@ const createStorage = () => {
             session.delete(key);
         },
     };
-    return {session, options: {session: () => storage}};
+    return {
+        session,
+        options: {
+            session: () => {
+                return storage;
+            },
+        },
+    };
 };
 
 describe("탐색 스크롤 저장", () => {
@@ -139,12 +146,14 @@ describe("탐색 스크롤 저장", () => {
          */
         const setup = createStorage();
         const stores = createNavigationStores({
-            session: () => ({
-                ...setup.options.session(),
-                setItem: () => {
-                    throw new DOMException("Storage full", "QuotaExceededError");
-                },
-            }),
+            session: () => {
+                return {
+                    ...setup.options.session(),
+                    setItem: () => {
+                        throw new DOMException("Storage full", "QuotaExceededError");
+                    },
+                };
+            },
         });
 
         /**

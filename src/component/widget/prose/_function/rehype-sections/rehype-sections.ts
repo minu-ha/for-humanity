@@ -14,9 +14,9 @@ export const rehypeSections = () => (tree: Root, file: VFile) => {
         return;
     }
 
-    file.data.fh.sections = toSectionHeadings(tree).map(
-        (heading): DocSection => ({
+    file.data.fh.sections = toSectionHeadings(tree).map((heading): DocSection => {
+        return {
             part: typeof heading.properties.dataPart === "string" ? heading.properties.dataPart : undefined,
-        }),
-    );
+        };
+    });
 };

@@ -46,9 +46,9 @@ test.describe("셸 컴포넌트 수명", () => {
                     location.hash = "#hidden-detail";
                     dispatchEvent(new HashChangeEvent("hashchange"));
                 });
-                await page.waitForFunction(() =>
-                    document.querySelector<HTMLElement>("#hidden-detail .wg_prose__headingText")?.classList.contains("wg_prose__headingText--highlighted"),
-                );
+                await page.waitForFunction(() => {
+                    return document.querySelector<HTMLElement>("#hidden-detail .wg_prose__headingText")?.classList.contains("wg_prose__headingText--highlighted");
+                });
                 const main = await page.locator("main").elementHandle();
                 await page.evaluate(() => window.shellFixture.unmount());
 
@@ -58,14 +58,12 @@ test.describe("셸 컴포넌트 수명", () => {
                  */
                 expect(await main.evaluate((element) => element === document.querySelector<HTMLElement>("main"))).toBe(true);
                 expect(await page.locator(".wg_prose__headingText--highlighted").count()).toBe(0);
-                const active = await page.evaluate(
-                    (start) =>
-                        window.shellListeners
-                            .slice(start)
-                            .filter((entry) => entry.owned && !entry.removed && !(typeof entry.options === "object" && entry.options.signal?.aborted))
-                            .map((entry) => entry.type),
-                    initialListeners,
-                );
+                const active = await page.evaluate((start) => {
+                    return window.shellListeners
+                        .slice(start)
+                        .filter((entry) => entry.owned && !entry.removed && !(typeof entry.options === "object" && entry.options.signal?.aborted))
+                        .map((entry) => entry.type);
+                }, initialListeners);
                 expect(active, "unmount must clean every global listener and pending highlight").toStrictEqual([]);
             });
         }

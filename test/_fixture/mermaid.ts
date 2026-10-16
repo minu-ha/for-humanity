@@ -34,12 +34,12 @@ export const test = base.extend<{runtime: BrowserRuntime}, {mermaidSite: string}
                     "---\nname: Hidden\nlabel: Hidden\ngroup: Guide\n---\n\n:::details[Hidden diagram]\n\n```mermaid\nflowchart LR\n    Hidden --> Visible\n```\n:::\n",
                 );
                 await Promise.all(
-                    diagram_cases.map((diagram) =>
-                        writeFile(
+                    diagram_cases.map((diagram) => {
+                        return writeFile(
                             join(root, `${diagram.id}.md`),
                             `---\nname: ${diagram.name}\nlabel: ${diagram.name}\ngroup: Examples\n---\n\n\`\`\`mermaid\n${diagram.source}\n\`\`\`\n`,
-                        ),
-                    ),
+                        );
+                    }),
                 );
                 await writeFile(
                     join(root, "error.md"),

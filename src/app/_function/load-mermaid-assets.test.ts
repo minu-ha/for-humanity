@@ -42,7 +42,9 @@ describe("다이어그램", () => {
              * WHEN
              * 패키지 자원 조회
              */
-            const result = () => loadMermaidAssets(root);
+            const result = () => {
+                return loadMermaidAssets(root);
+            };
 
             /**
              * THEN

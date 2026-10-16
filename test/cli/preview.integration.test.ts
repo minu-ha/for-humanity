@@ -89,9 +89,9 @@ describe("정적 미리보기", () => {
          * 없는 문서, 원본, 설정, 환경 파일과 개발 전용 URL 요청
          */
         const responses = await Promise.all(
-            ["/missing/", "/README.md", "/vite.config.ts", "/.env.production", "/@vite/client", "/_fh/fonts/missing.woff2"].map((path) =>
-                fetch(new URL(path, previewUrl), {headers: {Accept: "text/html"}}),
-            ),
+            ["/missing/", "/README.md", "/vite.config.ts", "/.env.production", "/@vite/client", "/_fh/fonts/missing.woff2"].map((path) => {
+                return fetch(new URL(path, previewUrl), {headers: {Accept: "text/html"}});
+            }),
         );
 
         /**

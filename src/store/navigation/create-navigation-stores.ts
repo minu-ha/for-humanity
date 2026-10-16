@@ -4,7 +4,7 @@ import {type NavigationScrollState, navigationScrollStateSchema} from "@/store/n
 import {navigation_scroll_storage_key, navigation_storage_version} from "@/store/navigation/navigation-storage";
 
 /**
- * 브라우저 저장소를 늦게 읽는 경계. 차단 환경과 테스트의 메모리 저장소 지원
+ * 브라우저 저장소의 지연 조회 경계. 차단 환경과 테스트의 메모리 저장소 지원
  */
 interface NavigationStorage {
     /**
@@ -16,29 +16,31 @@ interface NavigationStorage {
 /**
  * 페이지별 브라우저 탐색 스토어
  *
- *   - 서버 요청은 이 생성기를 실행하지 않으며 저장 실패 시 메모리 상태 유지
+ *   - 브라우저 진입점에서만 생성, 서버 요청 간 상태 공유 금지
+ *   - 읽기 오류는 persist에서 처리, 쓰기 오류는 메모리 상태 유지
  */
 export const createNavigationStores = (options: NavigationStorage) => {
-    // 읽기 실패는 persist에서 처리, 쓰기 실패는 메모리 상태 유지
-    const storage = createJSONStorage<NavigationScrollState>(() => ({
-        getItem: (key) => {
-            return options.session().getItem(key);
-        },
-        setItem: (key, value) => {
-            try {
-                return options.session().setItem(key, value);
-            } catch {
-                // 용량 부족, 저장소 차단 시 현재 탭의 상태 유지
-            }
-        },
-        removeItem: (key) => {
-            try {
-                return options.session().removeItem(key);
-            } catch {
-                // 저장소 차단 시에도 기본 탐색 유지
-            }
-        },
-    }));
+    const storage = createJSONStorage<NavigationScrollState>(() => {
+        return {
+            getItem: (key) => {
+                return options.session().getItem(key);
+            },
+            setItem: (key, value) => {
+                try {
+                    return options.session().setItem(key, value);
+                } catch {
+                    // 용량 부족, 저장소 차단 시 현재 탭의 상태 유지
+                }
+            },
+            removeItem: (key) => {
+                try {
+                    return options.session().removeItem(key);
+                } catch {
+                    // 저장소 차단 시에도 기본 탐색 유지
+                }
+            },
+        };
+    });
 
     return {
         scroll: createStore<NavigationScrollState>()(
