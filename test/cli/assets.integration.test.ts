@@ -31,7 +31,7 @@ describe("문서 자원", () => {
 
         /**
          * THEN
-         * Markdown과 HTML 이미지는 첨부 파일과 내용 지문 자원을 공유한 결과
+         * Markdown, HTML 이미지와 첨부 파일의 내용 지문 자원 공유
          */
         expect(files.size).toBe(2);
         expect(docs[0].html.match(/src="\/_fh\/media\/asset\.[a-f0-9]+\.svg"/g)?.length).toBe(3);
@@ -42,12 +42,12 @@ describe("문서 자원", () => {
     test.for([
         {path: "missing.png", error: /자원/},
         {path: "../outside.png", error: /문서 폴더 밖/},
-    ])("유효하지 않은 이미지 $path 경로를 거부한다", async ({path, error}, {root}) => {
+    ])("유효하지 않은 이미지 $path 경로를 거부한다", async (scenario, {root}) => {
         /**
          * GIVEN
          * 지역 자원과 문서 입력
          */
-        await writeFile(join(root, "page.md"), `---\nname: Media\nlabel: Media\ngroup: Guide\n---\n\n![Invalid](${path})\n`);
+        await writeFile(join(root, "page.md"), `---\nname: Media\nlabel: Media\ngroup: Guide\n---\n\n![Invalid](${scenario.path})\n`);
 
         /**
          * WHEN
@@ -57,9 +57,9 @@ describe("문서 자원", () => {
 
         /**
          * THEN
-         * 누락 이미지와 문서 루트 밖의 경로를 거부한 결과
+         * 누락 파일과 문서 루트 밖의 자원 참조 오류
          */
-        await expect(result).rejects.toThrow(error);
+        await expect(result).rejects.toThrow(scenario.error);
     });
 
     test("홈 이미지의 내용이 바뀌면 렌더한 주소와 자원 지문을 함께 갱신한다", async ({root}) => {

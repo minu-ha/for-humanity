@@ -18,12 +18,12 @@ describe("문서 메타", () => {
         expect(result).toStrictEqual([["Guide"], ["Projects", "Example project", "Research"], ["Research, decisions / notes"]]);
     });
 
-    test.each(["", " ", [], ["Projects", " "], ["Projects", 1], [["Projects"]], null].map((group) => ({group})))("잘못된 묶음 $group 입력은 거부한다", ({group}) => {
+    test.each(["", " ", [], ["Projects", " "], ["Projects", 1], [["Projects"]], null].map((group) => ({group})))("잘못된 묶음 $group 입력은 거부한다", (scenario) => {
         /**
          * WHEN
          * 잘못된 묶음 입력의 검증
          */
-        const result = docDataSchema.safeParse({name: "Guide", label: "Guide", group});
+        const result = docDataSchema.safeParse({name: "Guide", label: "Guide", group: scenario.group});
 
         /**
          * THEN
@@ -52,12 +52,12 @@ describe("문서 메타", () => {
         expect(result).toStrictEqual({absent: undefined, present: "guide/settings"});
     });
 
-    test.each(["", " ", null, 1, [], ["guide"]].map((parent) => ({parent})))("잘못된 부모 $parent 입력은 거부한다", ({parent}) => {
+    test.each(["", " ", null, 1, [], ["guide"]].map((parent) => ({parent})))("잘못된 부모 $parent 입력은 거부한다", (scenario) => {
         /**
          * WHEN
          * 잘못된 부모 입력의 검증
          */
-        const result = docDataSchema.safeParse({name: "Child", label: "Child", group: "Guide", parent});
+        const result = docDataSchema.safeParse({name: "Child", label: "Child", group: "Guide", parent: scenario.parent});
 
         /**
          * THEN

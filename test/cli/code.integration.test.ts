@@ -10,7 +10,7 @@ describe("코드 블록", () => {
     test("코드 줄 표기와 메타 정보가 강조와 줄 번호로 표시된다", async ({root}) => {
         /**
          * GIVEN
-         * 코드 표기가 포함된 문서 입력
+         * 줄별 오류, 변경 표시와 강조 메타를 포함한 코드
          */
 
         await writeFile(
@@ -27,7 +27,7 @@ describe("코드 블록", () => {
 
         /**
          * THEN
-         * 코드 줄 표기와 메타 정보가 강조와 줄 번호로 표시된 결과
+         * 줄 상태와 번호 표시, 지시문 원문 제외
          */
         expect(doc.html).toMatch(/<pre class="[^"]*wg_prose__lineNumbers[^"]*"/);
         expect(doc.html).toMatch(/<span class="line highlighted error">/);
@@ -40,7 +40,7 @@ describe("코드 블록", () => {
     test("대괄호 메타는 코드 색상을 유지한 파일 제목으로 표시된다", async ({root}) => {
         /**
          * GIVEN
-         * 코드 표기가 포함된 문서 입력
+         * 파일 제목과 상태 메타를 가진 코드, 제목 없는 코드
          */
 
         await writeFile(
@@ -57,7 +57,7 @@ describe("코드 블록", () => {
 
         /**
          * THEN
-         * 대괄호 메타는 코드 색상을 유지한 파일 제목으로 표시된 결과
+         * 파일 제목과 작성 언어 표시, 코드와 제목의 상태 공유
          */
         expect(doc.html).toMatch(/<figcaption class="[^"]*wg_prose__codeFileTitle--bad[^"]*">page\/products\.ts<span class="wg_prose__codeFileLang">ts<\/span><\/figcaption>/);
         expect(doc.html).toMatch(/<pre class="[^"]*wg_prose__code--bad[^"]*"/);
@@ -68,7 +68,7 @@ describe("코드 블록", () => {
     test("스니펫은 문서 루트의 파일과 영역을 불러오고 코드 메타를 전달한다", async ({root}) => {
         /**
          * GIVEN
-         * 코드 표기가 포함된 문서 입력
+         * region 지시문과 들여쓰기를 포함한 TypeScript 스니펫
          */
 
         await mkdir(join(root, "snippet"));
@@ -90,7 +90,7 @@ describe("코드 블록", () => {
 
         /**
          * THEN
-         * 스니펫은 문서 루트의 파일과 영역을 불러오고 코드 메타를 전달한 결과
+         * 전체 파일과 선택 영역의 코드, 지시문 제외와 메타 전달
          */
         expect(doc.html).toMatch(/<pre class="[^"]*wg_prose__lineNumbers[^"]*wg_prose__code--bad[^"]*"|<pre class="[^"]*wg_prose__code--bad[^"]*wg_prose__lineNumbers[^"]*"/);
         expect(doc.html).toMatch(/<span class="line highlighted error">[^\n]*const<\/span>[^\n]* a/);
@@ -102,10 +102,10 @@ describe("코드 블록", () => {
         {reference: "../outside.ts", expected: /문서 폴더 밖/},
         {reference: "./missing.ts", expected: /파일이 없다/},
         {reference: "./present.ts#nope", expected: /region 이 없다/},
-    ])("유효하지 않은 스니펫 $reference 참조를 거부한다", async ({reference, expected}, {root}) => {
+    ])("유효하지 않은 스니펫 $reference 참조를 거부한다", async (scenario, {root}) => {
         /**
          * GIVEN
-         * 코드 표기가 포함된 문서 입력
+         * 문서 루트 안팎의 파일과 실패 경로
          */
 
         await mkdir(join(root, "docs"));
@@ -114,7 +114,7 @@ describe("코드 블록", () => {
         const site = siteConfigSchema.parse({});
         const docsRoot = join(root, "docs");
 
-        await writeFile(join(docsRoot, "guide.md"), `---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n<<< ${reference}\n`);
+        await writeFile(join(docsRoot, "guide.md"), `---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n<<< ${scenario.reference}\n`);
 
         /**
          * WHEN
@@ -124,8 +124,8 @@ describe("코드 블록", () => {
 
         /**
          * THEN
-         * 스니펫의 루트 이탈과 누락 파일과 누락 영역을 거부한 결과
+         * 루트 이탈, 누락 파일, 누락 region의 오류
          */
-        await expect(result).rejects.toThrow(expected);
+        await expect(result).rejects.toThrow(scenario.expected);
     });
 });

@@ -8,9 +8,23 @@ import {diagram_cases} from "@test/mermaid/_constant/diagram";
 import {preview} from "vite";
 import {toPreviewConfig} from "@/entry/preview/to-preview-config";
 
+/**
+ * 브라우저에서 수집한 자원 요청과 실행 오류, 케이스별 격리
+ */
 interface BrowserRuntime {
+    /**
+     * 실제 요청한 자원 URL
+     */
     requests: string[];
+
+    /**
+     * 처리되지 않은 페이지 오류
+     */
     errors: string[];
+
+    /**
+     * console.error에 기록한 메시지
+     */
     consoleErrors: string[];
 }
 

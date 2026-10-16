@@ -53,7 +53,9 @@ Mermaid·탐색 fixture는 제품과 같은 `toPreviewConfig`로 Vite preview를
 
 ## 작성
 
-새 테스트는 `workspace/sk-ax-gas-pp/test/README.md`에서 사용하는 한글 시나리오와 GIVEN·WHEN·THEN 기준을 따릅니다. 앱 전용 라우트 번호·인증·MSW·Vite gallery는 가져오지 않습니다. 기존 검사는 Vitest API로 전환하면서 기존 입력과 판정을 유지합니다.
+테스트는 아래 한글 시나리오와 GIVEN·WHEN·THEN 기준을 따릅니다. 함수, CLI, 브라우저 검사는 각 실행기의 관찰 가능한 결과를 검증합니다.
+
+반복 시나리오의 일반 입력은 `scenario.input`, `scenario.expected`처럼 원본 객체에서 읽습니다. Vitest와 Playwright의 fixture 매개변수는 실행기가 구조분해한 이름으로 의존성을 조회하므로 해당 자리에서만 구조분해를 유지합니다. 준비 코드의 전역 구독, 서버, 임시 파일은 fixture에서 생성하고 정리합니다.
 
 - 파일명은 영어, `describe`와 테스트 제목은 한국어
 - 제목은 조건과 관찰 가능한 결과 한 문장

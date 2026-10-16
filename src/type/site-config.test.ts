@@ -30,18 +30,18 @@ describe("사이트 설정", () => {
     test.each([
         {url: "https://docs.example.org/", expected: "https://docs.example.org"},
         {url: "http://localhost:4321", expected: "http://localhost:4321"},
-    ])("공개 주소 $url 입력은 루트 주소로 정규화한다", ({url, expected}) => {
+    ])("공개 주소 $url 입력은 루트 주소로 정규화한다", (scenario) => {
         /**
          * WHEN
          * 공개 주소 검증
          */
-        const result = siteConfigSchema.parse({url});
+        const result = siteConfigSchema.parse({url: scenario.url});
 
         /**
          * THEN
          * 정규화한 사이트 주소
          */
-        expect(result.url).toBe(expected);
+        expect(result.url).toBe(scenario.expected);
     });
 
     test("공개 입력은 단일 묶음과 중첩 경로를 함께 허용한다", () => {
@@ -84,12 +84,12 @@ describe("사이트 설정", () => {
         {name: "빈 탐색 경로", input: {navigation: [["Projects", ""]]}},
         {name: "빈 상태 문구", input: {status: [{phrase: " ", kind: "verified"}]}},
         {name: "지원하지 않는 상태", input: {status: [{phrase: "확인", kind: "unknown"}]}},
-    ])("$name 입력은 거부한다", ({input}) => {
+    ])("$name 입력은 거부한다", (scenario) => {
         /**
          * WHEN
          * 잘못된 외부 설정 검증
          */
-        const result = siteConfigSchema.safeParse(input);
+        const result = siteConfigSchema.safeParse(scenario.input);
 
         /**
          * THEN

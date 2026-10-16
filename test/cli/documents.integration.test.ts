@@ -84,14 +84,14 @@ describe("문서 로드", () => {
     test.for([
         {name: "자기 참조", parents: {first: "first"}},
         {name: "세 문서의 순환 참조", parents: {first: "second", second: "third", third: "first"}},
-    ])("부모의 $name 관계를 거부한다", async ({parents}, {root}) => {
+    ])("부모의 $name 관계를 거부한다", async (scenario, {root}) => {
         /**
          * GIVEN
          * 문서 파일과 메타 입력
          */
         const site = siteConfigSchema.parse({});
 
-        for (const [name, parent] of Object.entries(parents)) {
+        for (const [name, parent] of Object.entries(scenario.parents)) {
             await writeFile(join(root, `${name}.md`), `---\nname: ${name}\nlabel: ${name}\ngroup: Guide\nparent: ${parent}\n---\n\nText.\n`);
         }
 
