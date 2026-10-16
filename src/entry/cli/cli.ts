@@ -8,16 +8,12 @@
 import {copyFile, mkdir, rm, writeFile} from "node:fs/promises";
 import {dirname, join, relative, resolve} from "node:path";
 import {fileURLToPath} from "node:url";
-import {serve} from "@hono/node-server";
-import {serveStatic} from "@hono/node-server/serve-static";
-import {Hono} from "hono";
 import {toSSG} from "hono/ssg";
 import {readSiteConfig} from "@/app/_function/read-site-config";
 import {loadSite} from "@/app/load-site";
-import {asset_font_dir} from "@/constant/asset";
 import {copy_error_prefix, copy_error_unknown_command} from "@/constant/copy";
-import {font_cache_control} from "@/constant/font";
 import {cli_default_command, cli_default_docs_dir} from "@/entry/cli/_constant/cli";
+import {toPreviewConfig} from "@/entry/preview/to-preview-config";
 import {toErrorMessage} from "@/util/error/to-error-message";
 
 const commands = ["dev", "build", "preview"];
@@ -40,21 +36,9 @@ const main = async () => {
     const siteConfig = await readSiteConfig(docsRoot);
 
     if (command === "preview") {
-        const app = new Hono();
-
-        app.use(
-            "/*",
-            serveStatic({
-                root: relative(process.cwd(), outDir),
-                onFound: (_path, c) => {
-                    if (c.req.path.startsWith(`${asset_font_dir}/`)) {
-                        c.header("Cache-Control", font_cache_control);
-                    }
-                },
-            }),
-        );
-        serve({fetch: app.fetch, port: siteConfig.port}, (info) => console.log(`http://localhost:${info.port}/`));
-
+        const vite = await import("vite");
+        const server = await vite.preview(toPreviewConfig({root: docsRoot, port: siteConfig.port}));
+        server.printUrls();
         return;
     }
 

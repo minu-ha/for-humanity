@@ -21,7 +21,7 @@ order: 40
 | 6     | [Search](#search)                         | Planned | 문서·section 탐색                     |
 | 7     | [Writing skill](#writing-skill)           | Planned | 검토 가능한 문서를 쓰는 에이전트 스킬 |
 | 8     | [Subpath deployment](#subpath-deployment) | Planned | 하위 URL 경로의 정적 배포             |
-| 9     | [Vite integration](#vite-integration) | Done | 패키지 빌드·사용자 dev 통합 |
+| 9     | [Vite integration](#vite-integration) | Done | 패키지 빌드·사용자 dev·preview 통합 |
 | 10    | [Server features](#server-features) | Planned | API·인증·사용자 저장소 연결 |
 
 각 단계의 체크박스는 작업 완료와 검증 후 Markdown 원본에서 갱신.
@@ -69,7 +69,7 @@ order: 40
 
 ## Vite integration
 
-저장소 개발과 설치 패키지의 `for-humanity dev`까지 Vite로 통합했습니다. 아직 npm에는 공개하지 않았습니다. 설계 기준은 [Runtime direction](architecture.md#runtime-direction).
+저장소 개발과 설치 패키지의 `for-humanity dev`·`preview`까지 Vite로 통합했습니다. 아직 npm에는 공개하지 않았습니다. 설계 기준은 [Runtime direction](architecture.md#runtime-direction).
 Vite를 런타임 의존성에 포함하고 Node 최소 버전을 22.12.0으로 올리는 변경을 허용합니다. 공개 버전은 릴리스 준비 때 결정합니다.
 
 1. 설계 문서: 개발·운영 역할, 정적 생성 범위, 향후 DB·인증 책임 기록
@@ -86,7 +86,7 @@ Vite를 런타임 의존성에 포함하고 Node 최소 버전을 22.12.0으로 
 - [x] 저장소 TSX·CSS 변경 반영과 개발 서버 종료 시 자원 정리 검증
 - [x] 첫 화면의 동기 브라우저 초기화·Mermaid 지연 수신·로컬 자원 출력 유지
 - [x] 설치 패키지·공개 타입·Node 최소 버전 검증과 Windows CI 구성
-- [ ] 정적 preview를 Vite로 통합, 사이트 출력 경로·404·캐시·설치 CLI 검증
+- [x] 정적 preview를 Vite로 통합, 사이트 출력 경로·404·캐시·설치 CLI 검증
 
 Node 22.12.0과 24.3.0에서 설치 패키지의 공개 타입·build·dev·preview와 실제 브라우저 갱신을 검증했습니다. Windows 검증은 CI에 구성했으며 첫 원격 실행 결과는 아직 확인하지 않았습니다.
 
@@ -99,7 +99,7 @@ Node 22.12.0과 24.3.0에서 설치 패키지의 공개 타입·build·dev·prev
 검색·로그인·DB 연결은 이 전환의 미완료 작업에 포함하지 않으며 아래 후속 단계에서 별도로 설계합니다. 코드·문서 개선과 로컬 검증만 진행한 상태에서는 버전·태그·공개 기록을 변경하지 않습니다.
 
 각 단계는 `pnpm test`, `pnpm check`, `pnpm build`, `git diff --check` 통과 후 별도 커밋으로 남깁니다. 번들·브라우저·개발 서버 변경 단계에서는 관련 Playwright 검사와 설치 패키지 검사도 실행합니다.
-완료 기준: 기존 정적 출력 계약을 유지하면서 저장소 개발과 설치 패키지 개발 모두 Vite로 실행되고, 별도 파일 감시·SSE·esbuild 실행 코드가 제거된 상태.
+완료 기준: 기존 정적 출력 계약을 유지하면서 저장소·설치 패키지의 개발과 정적 미리보기가 Vite로 실행되고, 별도 파일 감시·SSE·esbuild 실행 코드와 Hono 정적 미리보기 서버가 제거된 상태.
 
 ## Visualization modules
 

@@ -34,7 +34,7 @@ pnpm exec playwright show-trace .cache/playwright/results/<case>/trace.zip
 | 위치 | 실행기 | 책임 |
 | --- | --- | --- |
 | `src/**/*.test.ts` | Vitest · Node | 소유 함수·자료 변환·상태·자원 조회 |
-| `test/cli/*.integration.test.ts` | Vitest · Node | 실제 파일과 Markdown 처리기를 연결한 문서 조립 |
+| `test/cli/*.integration.test.ts` | Vitest · Node | 실제 파일과 Markdown 처리기를 연결한 문서 조립, preview HTTP·CLI 오류 계약 |
 | `util/*.test.ts` | Vitest · Node | 저장소 릴리스 도구의 입출력 |
 | `test/mermaid/*.e2e.spec.ts` | Playwright | 실제 CLI 출력의 문법·지연 수신·모바일·앵커·실패 대체 표시 |
 | `test/mermaid/*.integration.spec.ts` | Playwright | Hono 위젯의 테마·툴팁·접힘·마운트와 해제 |
@@ -48,6 +48,8 @@ pnpm exec playwright show-trace .cache/playwright/results/<case>/trace.zip
 함수 검증과 브라우저 검증의 같은 조건을 중복 작성하지 않습니다. 예를 들어 HTML 이스케이프는 변환 검사에서, 스크립트 비활성 상태의 가독성은 실제 브라우저에서 확인합니다. jsdom으로 SVG 배치·폰트·Shadow DOM·시스템 테마를 대신 판정하지 않습니다.
 
 Vitest는 `vitest.config.ts`에서 `@/`와 `@test/` 별칭을 설정합니다. Playwright는 `tsconfig.json`의 같은 별칭을 읽습니다. 브라우저 fixture는 워커마다 임시 사이트를 만들고 빈 포트로 서버를 시작하며, 각 테스트에는 새 브라우저 컨텍스트를 제공합니다. 성공과 실패에 관계없이 fixture가 임시 파일과 서버를 정리합니다.
+
+Mermaid·탐색 fixture는 제품과 같은 `toPreviewConfig`로 Vite preview를 실행합니다. 마운트·해제 전용 페이지는 임시 출력 폴더에만 추가하며 별도 Hono 정적 서버를 만들지 않습니다. 실제 설치 CLI의 preview는 패키지 검사에서 Chromium으로 확인합니다.
 
 ## 작성
 

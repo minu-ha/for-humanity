@@ -95,6 +95,18 @@ export const checkPackageServer = async (params: PackageServerParams) => {
                 assert.ok(response !== null);
                 assert.doesNotMatch(await response.text(), /\/@vite\/client/);
                 await expect(page.getByRole("heading", {name: "Package home", exact: true})).toBeVisible();
+                const fontPath = (await response.text()).match(/href="([^"]+\.woff2)"/)?.[1];
+                assert.ok(fontPath);
+                const font = await page.request.get(`${url}${fontPath}`);
+                assert.equal(font.status(), 200);
+                assert.equal(font.headers()["cache-control"], "public, max-age=31536000, immutable");
+                for (const path of ["/missing/", "/README.md", "/for-humanity.config.ts", "/@vite/client"]) {
+                    assert.equal((await page.request.get(`${url}${path}`)).status(), 404);
+                }
+                assert.equal((await page.request.get(`${url}/guide/options?from=preview`)).status(), 200);
+                await writeFile(homePath, "# Source changed after build\n");
+                await page.reload();
+                await expect(page.getByRole("heading", {name: "Package home", exact: true})).toBeVisible();
             }
             await page.goto(`${url}/guide/`);
             await expect(page.locator('[data-mermaid-status="rendered"]')).toHaveCount(1);

@@ -107,7 +107,15 @@ pnpm exec for-humanity build docs
 pnpm exec for-humanity preview docs
 ```
 
-빌드 결과만 제공. 문서 수정 반영은 다시 `build`.
+Vite preview가 `<문서 폴더>/dist`의 빌드 결과만 제공합니다. 문서 수정 반영은 다시 `build`. 원본 감시·HMR·Hono API 실행은 포함하지 않습니다.
+
+- 접속: `localhost` · 설정 `port` 사용 · 기본 `4321`
+- 빌드 결과가 없으면 `build` 안내와 종료 코드 `1`
+- 설정 포트가 사용 중이면 다른 포트로 이동하지 않고 실패
+- 없는 문서는 홈 화면 대신 `404`
+- 별도 Vite 설정 불필요 · 프로젝트의 Vite 설정·환경 파일 자동 로드 제외
+
+로컬 빌드 확인용이며 운영 서버로 사용하지 않습니다. 현재 정적 배포는 [Deployment](deployment.md), 향후 API 개발·운영 방식은 [Architecture](architecture.md#development-preview-and-production).
 
 ### Default arguments
 

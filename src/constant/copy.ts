@@ -53,6 +53,11 @@ export const copy_error_prefix = "for-humanity";
 export const copy_error_unknown_command = "모르는 명령이다";
 
 /**
+ * 정적 미리보기의 빌드 결과 누락 오류
+ */
+export const copy_error_missing_build = "빌드 결과가 없습니다. 먼저 build 명령을 실행하세요";
+
+/**
  * 설정 검증 오류. 항목 경로와 이유 추가
  */
 export const copy_error_config = "설정이 틀렸다";

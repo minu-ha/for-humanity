@@ -23,6 +23,7 @@ flowchart LR
 | `src/entry/cli/cli.ts` | 인자 · 설정 · 정적 출력 · 실행기 선택 | Node.js |
 | `src/app/load-site.ts` | 문서·폰트·자원 준비 · 공통 Hono 앱 조립 | Node.js |
 | `src/entry/dev/to-dev-config.ts` | Vite 서버 · Hono 연결 · 문서 갱신 | Node.js · dev |
+| `src/entry/preview/to-preview-config.ts` | Vite 정적 미리보기 · 출력 경로·404·폰트 캐시 | Node.js · preview |
 | `src/app/_function/to-page-app.tsx` | 첫 화면과 문서 라우트 · Hono JSX → HTML | Node.js |
 | `src/app/_function/to-http-app.ts` | 등록 자원 · 페이지와 크롤러 앱 위임 | Node.js · dev |
 | `src/app/_function/to-crawling-app.ts` | 공개 URL을 설정한 사이트의 robots.txt · 사이트맵 응답 | Node.js |
@@ -36,7 +37,7 @@ Vite 개발·빌드와 이후 서버 기능의 설계 기준. API·인증·DB는
 
 | 구성 | 책임 |
 | --- | --- |
-| Vite | 개발 HTTP 서버, 파일 감시, 브라우저 갱신 통신, 서버·브라우저 코드 빌드 |
+| Vite | 개발 HTTP 서버, 파일 감시, 브라우저 갱신 통신, 서버·브라우저 코드 빌드, 정적 미리보기 |
 | Hono | 페이지와 API 라우팅, 요청별 미들웨어, HTML·JSON 응답 |
 | 문서 처리 | 설정 검증, Markdown 변환, 문서·자원 목록 생성, 정적 출력 |
 | 향후 기능 모듈 | 검색, 인증·권한, 사용자 데이터와 외부 서비스 연결 |
@@ -71,7 +72,9 @@ flowchart LR
 | 정적 운영 | 호스팅 서비스가 빌드 파일 제공 | 현재 공개 문서 배포 |
 | 향후 동적 운영 | 배포 환경이 Hono 앱 실행, 인증·DB 조회·API 응답 | 서버 기능 제공 |
 
-현재 preview는 Hono의 정적 파일 서버입니다. 다음 변경에서는 Vite의 `preview()`로 전환하며, 명령과 사이트 출력 경로·문서 직접 접속·404·폰트 캐시 계약을 유지합니다. 패키지 코드가 들어 있는 저장소 루트 `dist`와 사이트 출력 폴더를 혼동하지 않도록 출력 경로를 명시합니다. 소비 프로젝트의 Vite 설정·환경 파일은 자동으로 실행하지 않습니다.
+preview는 Vite의 `preview()`로 사이트 출력 폴더만 제공합니다. 패키지 코드가 들어 있는 저장소 루트 `dist`와 사이트 출력 폴더를 혼동하지 않도록 출력 경로를 명시합니다. 소비 프로젝트의 Vite 설정·환경 파일은 자동으로 실행하지 않습니다. `appType: "mpa"`로 없는 문서에 홈 화면 대신 404를 반환하며, 끝 슬래시 없는 문서 주소는 폴더의 `index.html`로 연결합니다. 폰트는 기존 장기 캐시 헤더를 유지하고 없는 파일에는 적용하지 않습니다. 빌드 결과가 없으면 서버 시작 전에 실패합니다.
+
+dev와 preview는 `localhost`의 사이트 설정 포트를 사용하며, 포트 충돌 시 다른 번호로 자동 변경하지 않습니다. preview에는 Hono 앱·개발 클라이언트·파일 감시를 연결하지 않습니다. CLI와 브라우저 fixture는 같은 `toPreviewConfig`를 사용합니다. `@hono/node-server` 직접 의존성은 제거했지만 `@hono/vite-dev-server`의 전이 의존성은 남습니다.
 
 API를 추가해도 개발 명령 하나와 같은 HTTP 포트를 유지하는 방향입니다. Vite가 API를 생성하거나 DB를 실행하는 것은 아닙니다. Hono 라우트와 인증·저장소 코드를 구현하고 개발 플러그인에 연결해야 합니다. 현재는 문서 앱만 연결되어 있으며 API·DB 확장 설정은 제공하지 않습니다.
 
@@ -131,7 +134,7 @@ HTTP API 명세는 브라우저나 외부 앱이 Hono 기능을 호출하는 계
 - Hono JSX: `c.html`에 컴포넌트를 전달해 HTML 문서 생성
 - build: Hono `ssgParams`와 `toSSG`로 같은 라우트 출력
 - dev: Vite의 `@hono/vite-dev-server`가 공통 Hono 앱 호출
-- preview: `serveStatic`으로 빌드 결과 제공
+- preview: Vite `preview()`로 빌드 결과 제공
 
 페이지 앱과 HTTP 앱의 분리는 SSG 대상과 파일 응답의 경계.
 Hono의 고정 파일·wildcard 경로를 중첩 문서의 정규식 매개변수와 합치면 기본 라우터가 바뀌면서 문서 요청이 누락될 수 있으므로, 페이지 라우팅과 파일 응답도 이 경계에서 격리합니다.

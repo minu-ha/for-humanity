@@ -58,7 +58,7 @@ Biome와 Grit의 커스텀 진단 메시지는 영어.
 
 의미·소유권·주석·접근성은 수동 리뷰 대상. 린트만으로 컨벤션 충족 판정 불가.
 
-공통 문서 읽기·Markdown 조립·Hono 앱은 `src/app`, 인자·정적 출력·미리보기는 `src/entry/cli`, Vite 개발 서버 연결은 `src/entry/dev`가 소유합니다. 문서 그룹과 부모 트리 계산은 `navigation` 위젯, 서버와 브라우저가 공유하는 제어 UI는 `shell-controls` 위젯이 소유합니다. `src/entry/browser`는 자료 검증·스토어 생성·root 마운트를 연결하며 위젯의 생명주기를 복제하지 않습니다. 실행 시점과 폴더 경계는 [Architecture](architecture.md#document-processing-lifetime)를 참고합니다.
+공통 문서 읽기·Markdown 조립·Hono 앱은 `src/app`, 인자·정적 출력·실행기 선택은 `src/entry/cli`, Vite 개발 서버 연결은 `src/entry/dev`, 정적 미리보기 설정은 `src/entry/preview`가 소유합니다. 문서 그룹과 부모 트리 계산은 `navigation` 위젯, 서버와 브라우저가 공유하는 제어 UI는 `shell-controls` 위젯이 소유합니다. `src/entry/browser`는 자료 검증·스토어 생성·root 마운트를 연결하며 위젯의 생명주기를 복제하지 않습니다. 실행 시점과 폴더 경계는 [Architecture](architecture.md#document-processing-lifetime)를 참고합니다.
 
 ### Mermaid renderer
 
@@ -77,6 +77,8 @@ Vite의 Mermaid library 빌드는 ESM 형식과 동적 import 경계를 유지�
 CI는 Ubuntu의 Node 22.12.0·24와 Windows의 Node 22.12.0에서 같은 단위·브라우저·설치 검사를 실행하도록 구성합니다. Windows의 npm 실행은 Node 배포본의 `npm-cli.js`를 사용하고, 재귀 파일 목록은 URL 경로와 비교하기 전에 구분자를 정규화합니다.
 
 `smoke-package.ts`는 설치한 CLI를 `dev .`와 `preview .`로 실행하고 Chromium에서 갱신 연결·문서 수정·Mermaid·이미지를 확인합니다. 실행 전에 `pnpm exec playwright install chromium`으로 브라우저를 준비합니다.
+
+preview의 HTTP 검사는 `test/cli/preview.integration.test.ts`에서 빌드 누락·포트 충돌·중첩 문서·원본 비공개·404·폰트 캐시를 확인합니다. Mermaid·탐색 브라우저 fixture도 CLI와 같은 Vite preview 설정을 사용하며, 설치 검사는 실제 배포 CLI에서 원본 변경 후 빌드 결과 유지·캐시·404·종료까지 확인합니다.
 
 루트 `util/`은 저장소 개발·문서 동기화·배포 검증용. npm 패키지에는 포함하지 않음.
 CSS 규칙 본문은 타입 검사하는 `util/stylelint.config.ts`에 둡니다. 루트 `stylelint.config.mjs`는 현재 cosmiconfig의 TypeScript 5 API 의존을 피하기 위한 Jiti 로더만 제공합니다.

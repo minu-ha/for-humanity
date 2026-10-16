@@ -1,13 +1,11 @@
 import {execFileSync} from "node:child_process";
-import {once} from "node:events";
-import {mkdtemp, readFile, rm, writeFile} from "node:fs/promises";
+import {mkdir, mkdtemp, readFile, rm, writeFile} from "node:fs/promises";
 import {tmpdir} from "node:os";
 import {join} from "node:path";
-import {serve} from "@hono/node-server";
-import {serveStatic} from "@hono/node-server/serve-static";
 import {test as base} from "@playwright/test";
 import {loadBrowserScript} from "@test/_fixture/load-browser-script";
-import {Hono} from "hono";
+import {preview} from "vite";
+import {toPreviewConfig} from "@/entry/preview/to-preview-config";
 
 /**
  * 워커별 실제 CLI 사이트, 각 테스트는 독립 브라우저 컨텍스트 사용
@@ -38,17 +36,15 @@ export const test = base.extend<Record<never, never>, {navigationSite: string}>(
                 const html = (await readFile(join(root, "dist/guide/index.html"), "utf8"))
                     .replace(`<script>${browserScript}</script>`, "")
                     .replace("</body>", () => `<script>${lifecycle}</script></body>`);
-                const app = new Hono();
-                app.get("/lifecycle/", (context) => context.html(html));
-                app.use("/*", serveStatic({root: join(root, "dist")}));
-                const server = serve({fetch: app.fetch, hostname: "127.0.0.1", port: 0});
+                await mkdir(join(root, "dist/lifecycle"));
+                await writeFile(join(root, "dist/lifecycle/index.html"), html);
+                const server = await preview(toPreviewConfig({root, port: 0}));
                 try {
-                    await once(server, "listening");
-                    const address = server.address();
-                    if (address === null || typeof address === "string") throw new Error("테스트 서버 포트가 없습니다");
-                    await use(`http://127.0.0.1:${address.port}`);
+                    const url = server.resolvedUrls?.local[0];
+                    if (url === undefined) throw new Error("미리보기 서버의 테스트 주소가 없습니다");
+                    await use(new URL(url).origin);
                 } finally {
-                    await new Promise<void>((resolve, reject) => server.close((error) => (error ? reject(error) : resolve())));
+                    await server.close();
                 }
             } finally {
                 await rm(root, {recursive: true, force: true});
