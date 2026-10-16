@@ -1,5 +1,6 @@
 import {readdir, readFile} from "node:fs/promises";
 import {join, posix, sep} from "node:path";
+import {isEqual} from "es-toolkit/predicate";
 import {VFile} from "vfile";
 import {parse as parseYaml} from "yaml";
 import type {Processor} from "@/app/_function/create-processor/create-processor";
@@ -46,6 +47,7 @@ export const readDocs = async (options: ReadDocsParams): Promise<Doc[]> => {
     const paths = (await readdir(options.root, {recursive: true})).filter(
         (path) => /\.mdx?$/i.test(path) && !/^(readme|agents|claude)\.md$/i.test(path) && !path.split(sep).includes("node_modules") && !path.startsWith(`dist${sep}`),
     );
+
     const docs = await Promise.all(
         paths.map(async (path): Promise<Doc> => {
             const id = path
@@ -102,6 +104,7 @@ export const readDocs = async (options: ReadDocsParams): Promise<Doc[]> => {
             };
         }),
     );
+
     const duplicateIds = [...Map.groupBy(docs, (doc) => doc.id)].filter((entry) => entry[1].length > 1);
 
     if (duplicateIds.length > 0) {
@@ -110,6 +113,7 @@ export const readDocs = async (options: ReadDocsParams): Promise<Doc[]> => {
 
     // 모든 파일을 수집한 뒤 부모 참조 검증. 파일 읽기 순서와 무관한 문서 경로
     const docsById = new Map(docs.map((doc) => [doc.id, doc]));
+
     return docs.map((doc) => {
         const ancestors = new Set([doc.id]);
         for (let parentId = doc.data.parent; parentId !== undefined; ) {
@@ -120,7 +124,7 @@ export const readDocs = async (options: ReadDocsParams): Promise<Doc[]> => {
             if (ancestors.has(parent.id)) {
                 throw new Error(`${copy_error_doc_parent_cycle}: ${[...ancestors, parent.id].join(" → ")}`);
             }
-            if (JSON.stringify(parent.data.group) !== JSON.stringify(doc.data.group)) {
+            if (!isEqual(parent.data.group, doc.data.group)) {
                 throw new Error(`${copy_error_doc_parent_group}: ${doc.id} → ${parent.id}`);
             }
             ancestors.add(parent.id);

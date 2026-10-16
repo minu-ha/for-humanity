@@ -14,29 +14,31 @@ export const toTocGroups = (outline: DocOutline): TocGroup[] => {
         .map((heading, index) => ({heading, section: outline.sections[index]}));
 
     const sections = entries.flatMap((entry, index): TocSection[] => {
-        return entry.heading.depth === section_heading_depth.section
-            ? [
-                  {
-                      heading: entry.heading,
-                      part: entry.section.part,
-                      subs: takeWhile(entries.slice(index + 1), (sub) => sub.heading.depth !== section_heading_depth.section).map((sub) => {
-                          return {
-                              heading: sub.heading,
-                          };
-                      }),
-                  },
-              ]
-            : [];
+        if (entry.heading.depth !== section_heading_depth.section) {
+            return [];
+        }
+
+        return [
+            {
+                heading: entry.heading,
+                part: entry.section.part,
+                subs: takeWhile(entries.slice(index + 1), (sub) => sub.heading.depth !== section_heading_depth.section).map((sub) => {
+                    return {heading: sub.heading};
+                }),
+            },
+        ];
     });
 
     return sections.flatMap((section, index) => {
-        return index === 0 || section.part !== undefined
-            ? [
-                  {
-                      part: section.part,
-                      sections: [section, ...takeWhile(sections.slice(index + 1), (next) => next.part === undefined)],
-                  },
-              ]
-            : [];
+        if (index > 0 && section.part === undefined) {
+            return [];
+        }
+
+        return [
+            {
+                part: section.part,
+                sections: [section, ...takeWhile(sections.slice(index + 1), (next) => next.part === undefined)],
+            },
+        ];
     });
 };

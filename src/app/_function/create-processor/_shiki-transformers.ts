@@ -9,56 +9,41 @@ import type {Element, ElementContent} from "hast";
 import type {ShikiTransformer} from "shiki";
 
 /**
- * line-numbers 메타의 줄 번호 표시, 번호 계산은 CSS counter 사용
+ * 코드 메타의 줄 번호, 상태, 파일 제목 생성
+ *
+ *   - 메타 부재는 진입점에서만 확인, 상태 판정은 코드와 figure에 공유
+ *   - 예외: ShikiTransformer.root의 호출 컨텍스트로 pre와 언어 조회, this 보존
  */
-const lineNumbers: ShikiTransformer = {
-    name: "for-humanity:line-numbers",
-    pre(node) {
+const codeMetadata: ShikiTransformer = {
+    name: "for-humanity:code-metadata",
+    root(root) {
         const meta = this.options.meta?.__raw;
 
-        if (typeof meta === "string" && /\bline-numbers\b/.test(meta)) {
-            this.addClassToHast(node, "wg_prose__lineNumbers");
-        }
-    },
-};
-
-/**
- * bad, good 메타의 코드 상태 클래스, 색상은 token.css 소유
- */
-const tone: ShikiTransformer = {
-    name: "for-humanity:code-tone",
-    pre(node) {
-        const meta = this.options.meta?.__raw;
-
-        if (typeof meta !== "string") {
+        if (meta === undefined) {
             return;
         }
 
-        for (const word of ["bad", "good"]) {
-            if (new RegExp(`\\b${word}\\b`).test(meta)) {
-                this.addClassToHast(node, `wg_prose__code--${word}`);
-            }
+        if (/\bline-numbers\b/.test(meta)) {
+            this.addClassToHast(this.pre, "wg_prose__lineNumbers");
         }
-    },
-};
 
-/**
- * 파일 이름 메타의 코드 제목 생성
- *
- *   - 제목 띠에 파일 이름과 언어 표시
- *   - 코드와 figure에 같은 상태 클래스 적용
- */
-const fileTitle: ShikiTransformer = {
-    name: "for-humanity:code-title",
-    root(root) {
-        const meta = this.options.meta?.__raw;
-        const title = typeof meta === "string" ? /\[([^\]]+)\]/.exec(meta)?.[1] : undefined;
+        const isBad = /\bbad\b/.test(meta);
+        const isGood = /\bgood\b/.test(meta);
+
+        if (isBad) {
+            this.addClassToHast(this.pre, "wg_prose__code--bad");
+        }
+
+        if (isGood) {
+            this.addClassToHast(this.pre, "wg_prose__code--good");
+        }
+
+        const title = /\[([^\]]+)\]/.exec(meta)?.[1];
 
         if (title === undefined) {
             return;
         }
 
-        const tones = typeof meta === "string" ? ["bad", "good"].filter((word) => new RegExp(`\\b${word}\\b`).test(meta)) : [];
         const caption: Element = {
             type: "element",
             tagName: "figcaption",
@@ -68,10 +53,11 @@ const fileTitle: ShikiTransformer = {
                 {type: "element", tagName: "span", properties: {className: ["wg_prose__codeFileLang"]}, children: [{type: "text", value: this.options.lang}]},
             ],
         };
+
         const figure: Element = {
             type: "element",
             tagName: "figure",
-            properties: {className: ["wg_prose__codeFile", ...tones.map((tone) => `wg_prose__codeFile--${tone}`)]},
+            properties: {className: ["wg_prose__codeFile", ...(isBad ? ["wg_prose__codeFile--bad"] : []), ...(isGood ? ["wg_prose__codeFile--good"] : [])]},
             children: [caption, ...root.children.filter((child): child is ElementContent => child.type !== "doctype")],
         };
 
@@ -88,7 +74,5 @@ export const shikiTransformers: ShikiTransformer[] = [
     transformerNotationDiff({matchAlgorithm: "v3"}),
     transformerNotationWordHighlight({matchAlgorithm: "v3"}),
     transformerMetaHighlight(),
-    lineNumbers,
-    tone,
-    fileTitle,
+    codeMetadata,
 ];

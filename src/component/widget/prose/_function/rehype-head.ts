@@ -1,4 +1,4 @@
-import type {Root} from "hast";
+import type {Element, Root} from "hast";
 import type {VFile} from "vfile";
 import {section_heading_depth} from "@/component/widget/prose/_constant/section";
 
@@ -15,17 +15,16 @@ export const rehypeHead = () => (tree: Root, file: VFile) => {
         return;
     }
 
-    tree.children = [
-        {
-            type: "element",
-            tagName: "header",
-            properties: {className: ["wg_prose__head"]},
-            children: [...tree.children.slice(0, leadEnd).filter((node) => node.type !== "doctype")],
-        },
-        ...tree.children.slice(leadEnd),
-    ];
+    const head: Element = {
+        type: "element",
+        tagName: "header",
+        properties: {className: ["wg_prose__head"]},
+        children: tree.children.slice(0, leadEnd).filter((node) => node.type !== "doctype"),
+    };
 
-    if (frontmatter !== undefined && tree.children[0].type === "element") {
-        tree.children[0].children.unshift({type: "element", tagName: "h1", properties: {}, children: [{type: "text", value: frontmatter.name}]});
+    if (frontmatter !== undefined) {
+        head.children.unshift({type: "element", tagName: "h1", properties: {}, children: [{type: "text", value: frontmatter.name}]});
     }
+
+    tree.children = [head, ...tree.children.slice(leadEnd)];
 };

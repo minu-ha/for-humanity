@@ -60,6 +60,8 @@ interface ProcessorOptions {
  *   - Shiki inline style: token.css의 --app-code-* 참조
  */
 export const createProcessor = (options: ProcessorOptions) => {
+    const files = options.files ?? new Map<string, string>();
+
     return unified()
         .use(remarkParse)
         .use(remarkFrontmatter, ["yaml"])
@@ -69,7 +71,7 @@ export const createProcessor = (options: ProcessorOptions) => {
         .use(remarkDirective)
         .use(remarkBlocks)
         .use(remarkParts)
-        .use(remarkMermaid, {assets: options.mermaid, files: options.files ?? new Map<string, string>()})
+        .use(remarkMermaid, {assets: options.mermaid, files})
         .use(remarkStatus, {status: options.site.status})
         .use(remarkSwatch)
         .use(remarkLinks, {root: options.root})
@@ -82,7 +84,7 @@ export const createProcessor = (options: ProcessorOptions) => {
         .use(rehypeSections)
         .use(rehypeTables)
         .use(rehypeRaw)
-        .use(rehypeAssets, {root: options.root, files: options.files ?? new Map<string, string>()})
+        .use(rehypeAssets, {root: options.root, files})
         .use(rehypeStringify, {allowDangerousHtml: true});
 };
 

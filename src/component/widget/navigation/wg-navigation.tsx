@@ -115,8 +115,15 @@ export const WgNavigation = (props: WgNavigationProps) => {
         if (props.stores === undefined || documents === null || outlineRef.current === null) return;
         if (layoutRef.current === "drawer" && dialogRef.current?.open !== true) return;
         const position = props.stores.scroll.getState().positions[layoutRef.current];
-        documents.scrollTop = position?.navigation === navigationSignature ? position.documents : 0;
-        outlineRef.current.scrollTop = position?.navigation === navigationSignature && position.pathname === location.pathname ? position.outline : 0;
+
+        if (position?.navigation === navigationSignature) {
+            documents.scrollTop = position.documents;
+            outlineRef.current.scrollTop = position.pathname === location.pathname ? position.outline : 0;
+        } else {
+            documents.scrollTop = 0;
+            outlineRef.current.scrollTop = 0;
+        }
+
         restorePendingRef.current = false;
         saveScroll();
 
