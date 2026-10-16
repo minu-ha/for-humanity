@@ -17,7 +17,7 @@ export interface WgCursorFaceProps {
 export const WgCursorFace = (props: WgCursorFaceProps) => {
     const faceRef = useRef<HTMLImageElement | null>(null);
     const mediaRef = useRef<MediaQueryList | null>(null);
-    const positionRef = useRef({x: 0, y: 0, frame: 0});
+    const positionRef = useRef({x: 0, y: 0, frame: 0, hasPointer: false});
 
     /**
      * 화면 이탈, 터치 전환에서 예약된 이동까지 취소
@@ -32,7 +32,10 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
      * 비활성 전환에서만 숨겨 새 마우스 이동을 취소하지 않음
      */
     const handleCursorMediaChange = () => {
-        if (!mediaRef.current?.matches) handleCursorHide();
+        if (!mediaRef.current?.matches) {
+            positionRef.current.hasPointer = false;
+            handleCursorHide();
+        }
     };
 
     /**
@@ -58,11 +61,13 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
      */
     const handleDocumentPointer = (event: PointerEvent) => {
         if (!mediaRef.current?.matches || event.pointerType !== "mouse") {
+            positionRef.current.hasPointer = false;
             handleCursorHide();
             return;
         }
         positionRef.current.x = event.clientX;
         positionRef.current.y = event.clientY;
+        positionRef.current.hasPointer = true;
         renderCursorFace();
     };
 
@@ -74,10 +79,10 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
     };
 
     /**
-     * 같은 탭의 문서 이동에서 마지막 좌표를 전달. 저장 실패는 장식에만 영향
+     * 같은 탭의 마지막 마우스 좌표 전달, 포커스 이탈의 일시 숨김과 무관
      */
     const handlePageHide = () => {
-        if (!faceRef.current?.classList.contains("wg_cursorFace__root--visible")) return;
+        if (!positionRef.current.hasPointer) return;
         try {
             sessionStorage.setItem(cursor_face_storage_key, JSON.stringify({x: positionRef.current.x, y: positionRef.current.y}));
         } catch {
@@ -106,6 +111,7 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
             ) {
                 positionRef.current.x = point.x;
                 positionRef.current.y = point.y;
+                positionRef.current.hasPointer = true;
                 renderCursorFace();
             }
         } catch {

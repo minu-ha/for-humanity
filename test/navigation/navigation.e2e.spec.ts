@@ -1,7 +1,6 @@
 import {expect} from "@playwright/test";
 import {test} from "@test/_fixture/navigation";
 import {readNavigationScroll} from "@test/_fixture/read-navigation-scroll";
-import {cursor_face_storage_key} from "@/component/widget/cursor-face/_constant/cursor-face";
 
 test.use({viewport: {width: 1920, height: 600}});
 
@@ -13,19 +12,7 @@ test.describe("문서 탐색", () => {
          */
         const errors: string[] = [];
         const scriptRequests: string[] = [];
-        const cursorEvents: string[] = [];
         page.on("pageerror", (error) => errors.push(error.message));
-        page.on("console", (message) => {
-            if (message.text().startsWith("cursor-event:")) cursorEvents.push(message.text());
-        });
-        await page.addInitScript((storageKey) => {
-            console.debug("cursor-event:", "init", document.hasFocus(), sessionStorage.getItem(storageKey));
-            for (const event of ["blur", "focus", "pagehide", "pageshow"]) {
-                addEventListener(event, () => {
-                    console.debug("cursor-event:", event, document.hasFocus(), sessionStorage.getItem(storageKey), document.querySelector("[data-cursor-face]")?.className);
-                });
-            }
-        }, cursor_face_storage_key);
         page.on("request", (request) => {
             if (request.resourceType() === "script") scriptRequests.push(request.url());
         });
@@ -46,10 +33,10 @@ test.describe("문서 탐색", () => {
              * 두 탐색 영역 스크롤 후 새로고침
              */
             await page.mouse.move(500, 200);
-            await expect(cursor, cursorEvents.join("\n")).toHaveCSS("visibility", "visible");
+            await expect(cursor).toHaveCSS("visibility", "visible");
             await page.mouse.down();
             await page.mouse.up();
-            await expect(cursor, cursorEvents.join("\n")).toHaveCSS("visibility", "visible");
+            await expect(cursor).toHaveCSS("visibility", "visible");
             await documents.evaluate((element) => {
                 element.scrollTop = 200;
             });
@@ -74,6 +61,10 @@ test.describe("문서 탐색", () => {
                 };
                 requestAnimationFrame(sample);
             });
+
+            // 브라우저 도구 모음으로 포커스 이동 후 새로고침
+            await page.evaluate(() => dispatchEvent(new Event("blur")));
+            await expect(cursor).toHaveCSS("visibility", "hidden");
             await page.reload();
             await page.waitForFunction(() => window.navigationFrames.length >= 10);
 
@@ -81,7 +72,7 @@ test.describe("문서 탐색", () => {
              * THEN
              * 첫 프레임부터 원위치와 커서 표시 유지
              */
-            await expect(cursor, cursorEvents.join("\n")).toHaveCSS("visibility", "visible");
+            await expect(cursor).toHaveCSS("visibility", "visible");
             const frames = await page.evaluate(() => window.navigationFrames);
             for (const frame of frames) {
                 expect(Math.abs(frame.documents - 200)).toBeLessThanOrEqual(roundingTolerance);

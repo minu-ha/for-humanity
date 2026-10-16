@@ -47,7 +47,13 @@ export const checkPackageServer = async (params: PackageServerParams) => {
     const originalConfig = await readFile(configPath, "utf8");
     const originalHome = await readFile(homePath, "utf8");
     await writeFile(configPath, `import type {SiteConfig} from "for-humanity";\nexport default ${JSON.stringify({...params.site, port: address.port})} satisfies SiteConfig;\n`);
-    const server = spawn(process.execPath, [params.cli, params.command, "."], {cwd: params.root, stdio: ["ignore", "pipe", "pipe"]});
+    const server = spawn(process.execPath, [params.cli, params.command, "."], {
+        cwd: params.root,
+
+        // biome-ignore lint/style/useNamingConvention: Vite의 디버그 환경 변수 계약
+        env: {...process.env, DEBUG: "vite:resolve*,vite:load*"},
+        stdio: ["ignore", "pipe", "pipe"],
+    });
     let output = "";
     server.stdout.on("data", (chunk) => {
         output += String(chunk);
@@ -82,6 +88,8 @@ export const checkPackageServer = async (params: PackageServerParams) => {
                 if (!response.ok()) output += `\n${response.status()} ${response.url()}`;
             });
             if (params.command === "dev") {
+                const client = await page.request.get(`${url}/@vite/client`);
+                assert.equal(client.status(), 200, `Vite client response: ${await client.text()}`);
                 const connected = page.waitForEvent("console", {predicate: (message) => message.text().includes("[vite] connected"), timeout: 10000});
                 await page.goto(url);
                 await connected;

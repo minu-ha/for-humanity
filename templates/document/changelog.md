@@ -23,6 +23,7 @@ order: 10
 - Serve static previews through Vite with explicit site output paths, document 404s and preserved font cache headers; bind to localhost, reject missing builds and occupied ports, and remove the direct Hono Node server dependency.
 - Share document preparation and Hono routes between static builds and a single Vite development server; replace custom file watching and SSE with Vite updates, preserve the last valid document snapshot, and support source TSX reloads and CSS HMR.
 - Avoid an extra browser reload after the first successful development request; verify recovery from an invalid initial document and shutdown after a pending file change.
+- Pre-optimize browser JSX runtimes to prevent missing development chunks, and retain the last mouse position when reloading after window focus is lost.
 - Remove seven unused color and radius tokens and align the design reference with the active styles.
 
 - Replace direct esbuild package and browser fixture builds with Vite 8 and shared typed build configuration; preserve synchronous browser initialization and Mermaid license notices.

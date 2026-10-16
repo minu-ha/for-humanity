@@ -50,8 +50,8 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
         resolve: {alias: {"@": join(kitRoot, "src")}},
         oxc: {jsx: {importSource: "hono/jsx"}},
 
-        // HTML 파일이 없는 Hono 앱의 브라우저 의존성 사전 탐색
-        optimizeDeps: {noDiscovery: !params.source, entries: params.source ? ["src/entry/browser/browser.tsx"] : []},
+        // HTML 없는 앱의 진입점과 JSX 변환으로 추가되는 DOM 런타임 사전 탐색
+        optimizeDeps: params.source ? {entries: ["src/entry/browser/browser.tsx"], include: ["hono/jsx/dom/jsx-runtime", "hono/jsx/dom/jsx-dev-runtime"]} : {noDiscovery: true},
         server: {
             port: params.site.port,
             strictPort: true,
