@@ -56,4 +56,12 @@ jobs:
           release_directory="$RUNNER_TEMP/for-humanity-release"
           mkdir -p "$release_directory"
           npm pack --ignore-scripts --json --pack-destination "$release_directory" > "$release_directory/pack.json"
-          pnpm exec tsx util/smoke-package.ts "$release_directory"
+          if ! pnpm exec tsx util/smoke-package.ts "$release_directory" 2>&1 | tee "$release_directory/smoke.log"; then
+            node --input-type=module - "$release_directory/smoke.log" <<'NODE'
+          import {readFileSync} from 'node:fs';
+          const output = readFileSync(process.argv[2], 'utf8').slice(-16000)
+            .replaceAll('%', '%25').replaceAll('\r', '%0D').replaceAll('\n', '%0A');
+          console.log(`::error title=Installed package verification::${output}`);
+          NODE
+            exit 1
+          fi
