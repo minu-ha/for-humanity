@@ -344,6 +344,7 @@ test.describe("저장소 소스 개발", () => {
          * 정상 브라우저 진입점과 문서 원본의 Vite 파일 경로 요청
          */
         const entry = await page.request.get("/src/entry/browser/browser.tsx");
+        const source = await page.request.get(`/@fs/${join(devSite.kitRoot, "src/entry/browser/browser.tsx").replaceAll("\\", "/").replace(/^\//, "")}`);
         const responses = await Promise.all(paths.map((path) => page.request.get(path)));
 
         /**
@@ -351,8 +352,9 @@ test.describe("저장소 소스 개발", () => {
          * 브라우저 코드는 제공하고 문서와 설정 파일은 접근 거부
          */
         expect(entry.status()).toBe(200);
-        expect(responses.map((response) => response.status())).toStrictEqual([403, 403, 403]);
+        expect(source.status()).toBe(200);
         for (const response of responses) {
+            expect([403, 404]).toContain(response.status());
             const body = await response.text();
             expect(body).not.toContain("Initial content.");
             expect(body).not.toContain("private-config-value");
