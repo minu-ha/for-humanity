@@ -99,7 +99,9 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                             });
                             if (state.closed || generation !== state.generation) return;
                             currentSite = nextSite;
-                            server.hot.send({type: "full-reload"});
+
+                            // Vite는 연결 전 갱신도 보관, 최초 응답의 불필요한 재접속 제외
+                            if (generation > 0) server.hot.send({type: "full-reload"});
                         },
                         onError: (error) => server.config.logger.error(`${copy_error_prefix}: ${toErrorMessage(error)}`),
                     });

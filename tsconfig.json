@@ -19,6 +19,6 @@
         },
         "allowImportingTsExtensions": true
     },
-    "include": ["src", "test", "vitest.config.ts", "vite.config.ts", "playwright.config.ts", "script", "util", "templates/document/for-humanity.config.ts"],
+    "include": ["src", "test", "vitest.config.ts", "vite.config.ts", "playwright.config.ts", "util", "templates/document/for-humanity.config.ts"],
     "exclude": ["dist", "templates/*/dist"]
 }

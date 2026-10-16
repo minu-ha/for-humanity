@@ -1,4 +1,4 @@
-import {cp, mkdir, mkdtemp, rm, symlink, writeFile} from "node:fs/promises";
+import {cp, mkdir, mkdtemp, realpath, rm, symlink, writeFile} from "node:fs/promises";
 import {tmpdir} from "node:os";
 import {join, resolve} from "node:path";
 import {test as base} from "@playwright/test";
@@ -37,14 +37,15 @@ interface DevSite {
 export const test = base.extend<{source: boolean; devSite: DevSite}>({
     source: [false, {option: true}],
     devSite: async ({source}, use) => {
-        const directory = await mkdtemp(join(tmpdir(), "for-humanity-dev-"));
-        const root = join(directory, "docs");
+        const directory = await realpath(await mkdtemp(join(tmpdir(), "for-humanity-dev-")));
         const kitRoot = source ? join(directory, "kit") : resolve(".");
+
+        // 저장소 개발과 같은 패키지 내부 문서 루트, Vite 허용 영역 안에서도 원본 차단 검증
+        const root = source ? join(kitRoot, "docs") : join(directory, "docs");
         try {
-            await mkdir(root);
+            await mkdir(root, {recursive: true});
             await writeFile(join(root, "README.md"), "# Development home\n\nInitial content.\n");
             if (source) {
-                await mkdir(kitRoot);
                 for (const name of ["src", "dist", "package.json", "tsconfig.json"]) {
                     await cp(resolve(name), join(kitRoot, name), {recursive: true});
                 }

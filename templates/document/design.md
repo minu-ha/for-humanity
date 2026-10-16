@@ -32,7 +32,7 @@ order: 20
 ## Token naming
 
 `--app-<kind>-<role>`. 값보다 역할 이름.
-예: `--app-color-surface`, `--app-space-stack`.
+예: `--app-color-ground`, `--app-space-stack`.
 컴포넌트의 공통 토큰은 대체값 없이 사용. 외부 변수와 문서별 색 값만 대체값 허용.
 
 | Kind             | Roles                                                                                  |
@@ -46,7 +46,7 @@ order: 20
 | `space`          | `inline` · `stack` · `block` · `group` · `subsection` · `section` · 페이지 틀          |
 | `size`           | `sidebar` · `page` · `brand` · `mobile-header` · `menu-button` · `drawer`                                                  |
 | `z-index`        | `sticky` 사이드바 사이트 이름 · `popper` 커서 장식                           |
-| `radius`         | `pill` · `card` · `box` · `inline` · `mark`                                            |
+| `radius`         | `box` · `inline` · `mark`                                                              |
 | `outline`        | `focus` · `focus-offset`                                                               |
 | `code`           | Shiki의 `foreground` · `background` · `token-*`                                        |
 
@@ -55,7 +55,6 @@ order: 20
 | Role                      | Use                                    |
 |---------------------------|----------------------------------------|
 | `ground`                  | 페이지 바탕                            |
-| `surface`                 | 부품의 기본 바탕                       |
 | `code`                    | 코드 상자                              |
 | `text`                    | 본문                                   |
 | `text-strong`             | 제목·굵은 글·현재 section              |
@@ -63,10 +62,10 @@ order: 20
 | `mermaid-tooltip-text`    | Mermaid 공식 툴팁의 고정 밝은 배경 위 글색 |
 | `anchor-highlight`        | 앵커로 도착한 제목의 형광펜 바탕       |
 | `backdrop`                | 모바일 탐색 모달의 배경 가림          |
-| `border` / `border-soft`  | 상자·목록·점선 / 표 구분선             |
+| `border`                 | 상자·목록·점선·표 구분선              |
 | `border-layout`          | 본문 양쪽 경계           |
 | `accent` / `accent-soft`  | 현재 section·코드 / 행 hover 바탕 |
-| `bad` / `good` + `-soft` / `-mark` | 코드 블록 바탕(메타 bad·good) / 그 위의 줄 표기 |
+| `bad-soft` / `good-soft` · `bad-mark` / `good-mark` | 코드 블록 바탕 / 그 위의 줄 표기 |
 | `warn-soft`               | 경고 줄 바탕                           |
 | `link`                    | 본문·탐색 링크·포커스                  |
 | `link-visited`            | 방문한 본문 링크              |
@@ -132,7 +131,7 @@ Shiki는 기존 역할색 참조: 키워드 strong, 함수 accent, 문자열 ver
 | `tree-row` · `tree-group` · `tree-label` · `tree-indent` | 트리 항목 위아래 여백 · 묶음 사이 · 묶음 라벨 아래 · 중첩 들여쓰기 |
 | `anchor`                         | hash 제목 위치 · TOC 읽는 선 |
 
-공통 리듬: `inline` 6px · `stack` 10px · `block` 14px · `group` 20px · `section` 32px.
+공통 리듬: `inline` 6px · `stack` 10px · `block` 14px · `group` 20px · `section` 64px.
 같은 역할의 간격은 `margin`, `padding`, `gap`에서 공통 토큰 재사용.
 사이드바는 묶음 간격 `tree-group` 16px, 라벨 아래 `tree-label` 2px, 행 위·아래 여백 없이 배치. 데스크톱의 한 줄 항목 높이는 16.8px. 모바일에서는 위·아래 여백 7px로 약 31px 높이를 확보하며 행 사이 별도 간격 없음. 홈 이동은 사이트 이름 하나로 제공.
 사이트 이름은 사이드바 상단. 제목의 행 높이·페이지 위 여백·목록 전 `group` 20px를 합친 `size-brand` 사용.

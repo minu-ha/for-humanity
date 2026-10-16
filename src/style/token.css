@@ -8,9 +8,8 @@
     /* 시스템의 밝게·어둡게 설정을 그대로 따름 */
     color-scheme: light dark;
 
-    /* 바탕 · ground 페이지, surface 상자, code 코드 */
+    /* 바탕 · ground 페이지, code 코드, backdrop 모달 배경 */
     --app-color-ground: light-dark(#fff, #181818);
-    --app-color-surface: light-dark(#fff, #181818);
     --app-color-code: light-dark(#f1f1eb, #22221f);
     --app-color-backdrop: light-dark(rgb(0 0 0 / 30%), rgb(0 0 0 / 55%));
 
@@ -29,9 +28,8 @@
     --app-motion-duration-highlight-fade: 600ms;
     --app-motion-easing-out: ease-out;
 
-    /* 선 · border 상자·목록, soft 표 구분, layout 열 경계 */
+    /* 선 · border 상자·목록, layout 열 경계 */
     --app-color-border: light-dark(#aaa, #555);
-    --app-color-border-soft: light-dark(#ddd, #333);
     --app-color-border-layout: light-dark(#eee, #2b2b2b);
 
     /* 강조 · 현재 절·코드 · soft 행 hover 바탕 */
@@ -39,13 +37,10 @@
     --app-color-accent-soft: light-dark(#f5f5f2, #222);
 
     /* 코드 판정 색 · soft 는 블록 바탕(메타 bad·good), mark 는 그 위의 줄 표기 · warn 은 줄 표기만 */
-    --app-color-bad: light-dark(#b2412e, #ff9b8a);
     --app-color-bad-soft: light-dark(#f9ebe8, #3a2522);
     --app-color-bad-mark: light-dark(#f1cdc6, #5b322c);
-    --app-color-good: light-dark(#2f7a47, #8bd3a3);
     --app-color-good-soft: light-dark(#e4f3ed, #1c342c);
     --app-color-good-mark: light-dark(#c4e4d4, #27503f);
-    --app-color-warn: light-dark(#8a6400, #e6c46a);
     --app-color-warn-soft: light-dark(#fbf3d9, #3d3418);
 
     /* 링크 · 기본·방문·hover */
@@ -131,8 +126,6 @@
     --app-space-anchor: 80px;
 
     /* 모서리 · 직각 기본값 */
-    --app-radius-pill: 0;
-    --app-radius-card: 0;
     --app-radius-box: 0;
     --app-radius-inline: 0;
     --app-radius-mark: 0;

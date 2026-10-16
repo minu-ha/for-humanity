@@ -1,3 +1,4 @@
+import {once} from "node:events";
 import {readFile, rm, writeFile} from "node:fs/promises";
 import {join} from "node:path";
 import {expect} from "@playwright/test";
@@ -9,9 +10,7 @@ test.describe("개발 서버", () => {
          * GIVEN
          * 실제 개발 서버와 갱신 통신이 연결된 홈
          */
-        const connected = page.waitForEvent("console", (message) => message.text().includes("[vite] connected"));
-        await page.goto("/");
-        await connected;
+        await Promise.all([page.waitForEvent("console", (message) => message.text().includes("[vite] connected")), page.goto("/")]);
         await expect(page.getByText("Initial content.", {exact: true})).toBeVisible();
 
         await test.step("새 문서를 추가하고 본문 변경을 반영한다", async () => {
@@ -20,7 +19,7 @@ test.describe("개발 서버", () => {
              * 문서 파일 추가와 홈 변경
              */
             await writeFile(join(devSite.root, "guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Added section\n");
-            await expect(page.getByRole("link", {name: "Guide", exact: true}).first()).toBeVisible();
+            await expect(page.getByRole("link", {name: "Guide", exact: true})).toBeVisible();
             await writeFile(join(devSite.root, "README.md"), "# Development home\n\nUpdated content.\n");
 
             /**
@@ -30,7 +29,7 @@ test.describe("개발 서버", () => {
             await expect(page.getByText("Updated content.", {exact: true})).toBeVisible();
         });
 
-        await test.step("문법 오류 동안 마지막 정상 문서를 유지하고 수정 후 복구한다", async () => {
+        await test.step("문법 오류 동안 마지막 정상 문서를 유지한다", async () => {
             /**
              * WHEN
              * 잘못된 frontmatter 저장
@@ -40,12 +39,41 @@ test.describe("개발 서버", () => {
 
             /**
              * THEN
-             * 마지막 정상 응답 유지와 파일 삭제 후 정상 갱신
+             * 마지막 정상 응답 유지
              */
             const response = await page.request.get("/guide/");
+            expect(response.status()).toBe(200);
             expect(await response.text()).toContain("Added section");
+        });
+
+        await test.step("같은 파일의 오류를 수정하면 새 내용으로 복구한다", async () => {
+            /**
+             * WHEN
+             * 잘못된 frontmatter를 정상 문서로 교체
+             */
+            await writeFile(join(devSite.root, "guide.md"), "---\nname: Recovered guide\nlabel: Recovered guide\ngroup: Guide\n---\n\n## Recovered section\n");
+
+            /**
+             * THEN
+             * 자동 갱신된 탐색과 복구한 문서의 새 본문
+             */
+            await page.getByRole("link", {name: "Recovered guide", exact: true}).click();
+            await expect(page.getByRole("heading", {name: "Recovered section", exact: true})).toBeVisible();
+        });
+
+        await test.step("파일을 삭제하면 탐색과 문서 응답에서 제외한다", async () => {
+            /**
+             * WHEN
+             * 홈에서 문서 파일 삭제
+             */
+            await Promise.all([page.waitForEvent("console", (message) => message.text().includes("[vite] connected")), page.goto("/")]);
             await rm(join(devSite.root, "guide.md"));
-            await expect(page.getByRole("link", {name: "Guide", exact: true})).toHaveCount(0);
+
+            /**
+             * THEN
+             * 링크 제거와 삭제한 문서의 404 응답
+             */
+            await expect(page.getByRole("link", {name: "Recovered guide", exact: true})).toHaveCount(0);
             expect((await page.request.get("/guide/")).status()).toBe(404);
         });
     });
@@ -62,7 +90,8 @@ test.describe("개발 서버", () => {
          * Vite 클라이언트와 직접 파일 경로 요청
          */
         const client = await page.request.get("/@vite/client");
-        const paths = ["/README.md", "/for-humanity.config.ts", `/@fs/${join(devSite.root, "README.md")}`, "/_fh/reload", "/src/entry/cli/cli.ts"];
+        const sourcePath = `/@fs/${join(devSite.root, "README.md").replaceAll("\\", "/").replace(/^\//, "")}`;
+        const paths = ["/README.md", "/for-humanity.config.ts", sourcePath, "/_fh/reload", "/src/entry/cli/cli.ts"];
         const responses = await Promise.all(paths.map((path) => page.request.get(path)));
 
         /**
@@ -78,9 +107,7 @@ test.describe("개발 서버", () => {
          * GIVEN
          * 연결된 개발 페이지와 아직 없는 로컬 참조
          */
-        const connected = page.waitForEvent("console", (message) => message.text().includes("[vite] connected"));
-        await page.goto("/");
-        await connected;
+        await Promise.all([page.waitForEvent("console", (message) => message.text().includes("[vite] connected")), page.goto("/")]);
         const home = join(devSite.root, "README.md");
         const snippet = join(devSite.root, "example.ts");
         const picture = join(devSite.root, "picture.svg");
@@ -152,16 +179,16 @@ test.describe("개발 서버", () => {
          * GIVEN
          * 실제 WebSocket 연결을 가진 개발 서버
          */
-        const connection = page.waitForEvent("websocket");
-        await page.goto("/");
-        const socket = await connection;
+        const [socket] = await Promise.all([page.waitForEvent("websocket"), page.goto("/")]);
         const closed = socket.waitForEvent("close");
 
         /**
          * WHEN
          * 변경 예약 직후 개발 서버 종료
          */
+        const changed = once(devSite.server.watcher, "change");
         await writeFile(join(devSite.root, "README.md"), "# Closing server\n");
+        await changed;
         await devSite.server.close();
         await closed;
 
@@ -172,10 +199,82 @@ test.describe("개발 서버", () => {
         expect(devSite.server.httpServer?.listening).toBe(false);
         expect(devSite.server.watcher.getWatched()).toStrictEqual({});
     });
+
+    test("[DEV-006] 첫 문서 준비가 실패해도 파일을 수정하면 같은 서버에서 복구한다", {tag: ["@high", "@negative"]}, async ({page, devSite}) => {
+        /**
+         * GIVEN
+         * 첫 요청 전부터 잘못된 frontmatter가 있는 문서
+         */
+        const document = join(devSite.root, "guide.md");
+        await writeFile(document, "---\nname: [\n---\n");
+
+        await test.step("정상 스냅샷이 없으면 오류 응답을 제공한다", async () => {
+            /**
+             * WHEN
+             * 최초 문서 요청
+             */
+            const response = await page.request.get("/guide/");
+
+            /**
+             * THEN
+             * 빈 페이지 성공 대신 준비 오류와 유지된 서버
+             */
+            expect(response.status()).toBe(500);
+            expect(devSite.errors.length).toBeGreaterThan(0);
+            expect(devSite.server.httpServer?.listening).toBe(true);
+        });
+
+        await test.step("문서를 수정하면 재시작 없이 정상 응답과 탐색을 복구한다", async () => {
+            /**
+             * WHEN
+             * 실패 원인인 문서 수정
+             */
+            await writeFile(document, "---\nname: Recovered guide\nlabel: Recovered guide\ngroup: Guide\n---\n\n## Ready after correction\n");
+
+            /**
+             * THEN
+             * 같은 서버의 정상 응답과 실제 브라우저 렌더
+             */
+            await expect.poll(async () => (await page.request.get("/guide/")).status()).toBe(200);
+            await page.goto("/guide/");
+            await expect(page.getByRole("heading", {name: "Ready after correction", exact: true})).toBeVisible();
+            await expect(page.getByRole("link", {name: "Recovered guide", exact: true})).toBeVisible();
+        });
+    });
 });
 
 test.describe("저장소 소스 개발", () => {
     test.use({source: true});
+
+    test("[DEV-007] 소스 개발에서도 Vite 파일 경로로 문서 원본과 설정을 읽을 수 없다", {tag: ["@high", "@negative"]}, async ({page, devSite}) => {
+        /**
+         * GIVEN
+         * Vite 소스 변환을 사용하는 서버의 비공개 문서 입력
+         */
+        await writeFile(join(devSite.root, "for-humanity.config.ts"), 'export default {description: "private-config-value"};');
+        await writeFile(join(devSite.root, "snippet.ts"), 'export const token = "private-snippet-value";');
+        const paths = ["README.md", "for-humanity.config.ts", "snippet.ts"].map((name) => `/@fs/${join(devSite.root, name).replaceAll("\\", "/").replace(/^\//, "")}`);
+
+        /**
+         * WHEN
+         * 정상 브라우저 진입점과 문서 원본의 Vite 파일 경로 요청
+         */
+        const entry = await page.request.get("/src/entry/dev/browser.ts");
+        const responses = await Promise.all(paths.map((path) => page.request.get(path)));
+
+        /**
+         * THEN
+         * 브라우저 코드는 제공하고 문서와 설정 파일은 접근 거부
+         */
+        expect(entry.status()).toBe(200);
+        expect(responses.map((response) => response.status())).toStrictEqual([403, 403, 403]);
+        for (const response of responses) {
+            const body = await response.text();
+            expect(body).not.toContain("Initial content.");
+            expect(body).not.toContain("private-config-value");
+            expect(body).not.toContain("private-snippet-value");
+        }
+    });
 
     test("[DEV-003] CSS 변경은 페이지 상태를 유지하고 TSX 변경은 서버와 브라우저에 반영한다", {tag: "@high"}, async ({page, devSite}) => {
         /**
