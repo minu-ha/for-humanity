@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import {execFileSync, spawnSync} from "node:child_process";
-import {mkdir, mkdtemp, readdir, readFile, rm, writeFile} from "node:fs/promises";
+import {mkdir, mkdtemp, readdir, readFile, realpath, rm, writeFile} from "node:fs/promises";
 import {tmpdir} from "node:os";
 import {dirname, join, resolve} from "node:path";
 import {checkPackageServer} from "@test/_fixture/check-package-server";
@@ -13,7 +13,9 @@ if (directory === undefined) {
 }
 const artifactDirectory = resolve(directory);
 const pack = packReportSchema.parse(JSON.parse(await readFile(join(artifactDirectory, "pack.json"), "utf8")));
-const consumer = await mkdtemp(join(tmpdir(), "for-humanity-consumer-"));
+
+// Windows 임시 폴더의 8.3 축약 경로를 전체 경로로 정규화, Vite 파일 접근 계약 준수
+const consumer = await realpath(await mkdtemp(join(tmpdir(), "for-humanity-consumer-")));
 
 try {
     const nestedGroup = ["Projects", "Example", "Guide"];
