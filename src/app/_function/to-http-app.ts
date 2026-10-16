@@ -13,12 +13,14 @@ export interface HttpParams {
      * 정적 자원 외 요청을 처리할 페이지 앱
      */
     pages: Hono;
+
     /**
      * 공개 URL을 설정한 프로젝트의 크롤러 파일 앱
      */
     crawling?: Hono;
+
     /**
-     * 자원 URL → 파일 경로 · 정적 빌드와 동일 목록
+     * 자원 URL별 파일 경로, 정적 빌드와 동일 목록
      */
     files: Map<string, string>;
 }
@@ -32,7 +34,7 @@ export const toHttpApp = (options: HttpParams) => {
     const app = new Hono();
 
     /**
-     * 등록된 URL의 자원 응답 · 미등록 시 404
+     * 등록된 URL의 자원 응답. 미등록 시 404
      */
     const handleAsset = async (c: Context) => {
         const file = options.files.get(c.req.path);

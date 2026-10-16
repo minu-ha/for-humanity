@@ -1,5 +1,5 @@
 /**
- * URL hash 대상 · 한국어 제목의 percent encoding 해석
+ * URL hash 대상. 한국어 제목의 percent encoding 해석
  */
 export const findHashTarget = (hash: string): HTMLElement | null => {
     if (!hash) {

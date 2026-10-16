@@ -4,8 +4,9 @@ import {section_heading_depth} from "@/component/widget/prose/_constant/section"
 import type {DocOutline} from "@/type/doc-outline";
 
 /**
- * h2별 h3 수집 · 가름 시작 절에서 목차 묶음 분리
- * 첫 h2 앞의 h3은 목차 제외
+ * h2별 h3 수집. 가름 시작 절에서 목차 묶음 분리
+ *
+ *   - 첫 h2 앞의 h3은 목차 제외
  */
 export const toTocGroups = (outline: DocOutline): TocGroup[] => {
     const entries = outline.headings

@@ -24,8 +24,9 @@ export interface WgNavigationProps {
      * 서버가 정리한 문서 목록과 현재 페이지 목차
      */
     data: NavigationData;
+
     /**
-     * 브라우저 진입점만 제공 · 없으면 저장소와 전역 DOM을 읽지 않음
+     * 브라우저 진입점만 제공. 없으면 저장소와 전역 DOM을 읽지 않음
      */
     stores?: ReturnType<typeof createNavigationStores>;
 }
@@ -52,7 +53,7 @@ export const WgNavigation = (props: WgNavigationProps) => {
     const restorePendingRef = useRef(true);
 
     /**
-     * 저장된 배치와 현재 CSS 조건을 구분 · 조건 변경 직후 잘린 좌표를 이전 배치에 저장하지 않음
+     * 저장된 배치와 현재 CSS 조건을 구분. 조건 변경 직후 잘린 좌표를 이전 배치에 저장하지 않음
      */
     const getNavigationLayout = (): NavigationLayout => {
         if (mobileRef.current === null || wideRef.current === null) return layoutRef.current;
@@ -61,7 +62,7 @@ export const WgNavigation = (props: WgNavigationProps) => {
     };
 
     /**
-     * Hono의 이전 노드 정리가 새 배치 참조를 비우지 않도록 두 배치의 DOM 참조를 별도로 유지
+     * 배치별 DOM 참조 분리, 이전 노드 정리 시 새 배치 참조 유지
      */
     const getNavigationPort = () => {
         return layoutRef.current === "drawer" ? drawerNavigationRef.current : navigationRef.current;
@@ -75,7 +76,7 @@ export const WgNavigation = (props: WgNavigationProps) => {
     };
 
     /**
-     * 모든 링크의 URL·표시명으로 사이트 공통 문서 목록의 동일성 판정
+     * 모든 링크의 URL, 표시명으로 사이트 공통 문서 목록의 동일성 판정
      */
     const getNavigationSignature = () => {
         const navigation = getNavigationPort();
@@ -84,7 +85,7 @@ export const WgNavigation = (props: WgNavigationProps) => {
     };
 
     /**
-     * 닫기·이동보다 먼저 실제 좌표 보존 · 숨긴 모달과 아직 복원하지 않은 배치는 저장하지 않음
+     * 닫기, 이동보다 먼저 실제 좌표 보존. 숨긴 모달과 아직 복원하지 않은 배치는 저장하지 않음
      */
     const saveScroll = () => {
         const documents = getDocumentsPort();
@@ -115,7 +116,7 @@ export const WgNavigation = (props: WgNavigationProps) => {
     };
 
     /**
-     * 연결된 영역에서 첫 paint 전 복원 · 문서는 페이지 간 공유하고 목차는 같은 경로에서만 재사용
+     * 연결된 영역에서 첫 paint 전 복원. 문서는 페이지 간 공유하고 목차는 같은 경로에서만 재사용
      */
     const restoreScroll = () => {
         layoutRef.current = getNavigationLayout();
@@ -137,7 +138,8 @@ export const WgNavigation = (props: WgNavigationProps) => {
         navigation.dataset.navigationLayout = layoutRef.current;
         restorePendingRef.current = false;
         saveScroll();
-        // 좌표 설정의 비동기 scroll 이벤트를 기다리지 않고 첫 paint의 넘침 표시를 맞춘다
+
+        // 첫 페인트의 넘침 표시 동기화, 비동기 scroll 이벤트 전 반영
         documents.dispatchEvent(new Event("scroll"));
         outlineRef.current.dispatchEvent(new Event("scroll"));
     };
@@ -194,7 +196,7 @@ export const WgNavigation = (props: WgNavigationProps) => {
     };
 
     /**
-     * 보조키·새 탭 링크는 모달 유지 · 기본 문서 이동만 닫고 같은 문서 제목에 키보드 위치 전달
+     * 보조키, 새 탭 링크는 모달 유지. 기본 문서 이동만 닫고 같은 문서 제목에 키보드 위치 전달
      */
     const handleNavigationClick: DOMAttributes["onClick"] = (event) => {
         saveScroll();
@@ -223,7 +225,7 @@ export const WgNavigation = (props: WgNavigationProps) => {
     };
 
     /**
-     * 같은 목록을 한 배치에만 렌더 · 전환 전 포커스를 기억하고 새 배치가 연결된 뒤 좌표 복원
+     * 같은 목록을 한 배치에만 렌더. 전환 전 포커스를 기억하고 새 배치가 연결된 뒤 좌표 복원
      */
     const handleLayoutChange = () => {
         const nextLayout = getNavigationLayout();
@@ -242,7 +244,7 @@ export const WgNavigation = (props: WgNavigationProps) => {
     };
 
     /**
-     * BFCache의 이전 메모리가 다음 문서의 좌표를 덮지 않도록 렌더까지 동기 갱신 후 복원
+     * BFCache 복귀 시 저장 좌표로 동기 렌더 후 복원
      */
     const handlePageShow = (event: PageTransitionEvent) => {
         if (!event.persisted || props.stores === undefined) return;
@@ -253,7 +255,7 @@ export const WgNavigation = (props: WgNavigationProps) => {
     };
 
     /**
-     * Hono 탐색이 전역 구독의 설치·정리를 소유 · 서버 렌더에서는 실행하지 않음
+     * Hono 탐색이 전역 구독의 설치, 정리를 소유. 서버 렌더에서는 실행하지 않음
      */
     useLayoutEffect(() => {
         if (props.stores === undefined) return;
@@ -275,7 +277,7 @@ export const WgNavigation = (props: WgNavigationProps) => {
     }, [props.stores]);
 
     /**
-     * 최초 mount와 반응형 재연결의 paint 전 좌표·포커스 복원 · Hono의 fragment 연결 시점 보정
+     * 최초 mount와 반응형 재연결의 paint 전 좌표, 포커스 복원. Hono의 fragment 연결 시점 보정
      */
     useLayoutEffect(() => {
         if (props.stores === undefined) return;
@@ -299,7 +301,7 @@ export const WgNavigation = (props: WgNavigationProps) => {
         if (getDocumentsPort()?.isConnected) {
             restoreNavigation();
         } else {
-            // Hono는 최초 layout effect에서 아직 fragment를 사용하므로 연결 후 microtask도 같은 첫 paint 앞에 둔다
+            // Hono 최초 레이아웃 효과는 분리된 fragment에서 실행, DOM 연결 후 첫 페인트 전 보정
             queueMicrotask(restoreNavigation);
         }
         return () => {
@@ -310,11 +312,11 @@ export const WgNavigation = (props: WgNavigationProps) => {
     return (
         <Fragment>
             {/**
-             * 데스크톱 문서 사이드바 · 모바일에서는 고정 브랜드와 연결된 메뉴 버튼
+             * 데스크톱 문서 사이드바. 모바일에서는 고정 브랜드와 연결된 메뉴 버튼
              */}
             <div className={clsx("wg_navigation__sidebar", props.stores !== undefined && "wg_navigation__sidebar--navigationReady")}>
                 {/**
-                 * 어느 문서에서도 홈으로 이동 · 모달 진입은 브라우저 동작이 연결된 뒤 표시
+                 * 어느 문서에서도 홈으로 이동. 모달 진입은 브라우저 동작이 연결된 뒤 표시
                  */}
                 <div className={clsx("wg_navigation__brandRow")}>
                     <a
@@ -325,6 +327,7 @@ export const WgNavigation = (props: WgNavigationProps) => {
                     >
                         {props.data.title}
                     </a>
+
                     {/**
                      * 네이티브 모달의 열림 상태와 접근 가능한 진입 이름
                      */}
@@ -343,8 +346,9 @@ export const WgNavigation = (props: WgNavigationProps) => {
                         </svg>
                     </button>
                 </div>
+
                 {/**
-                 * JavaScript 없이도 전체 문서 링크를 표시 · 브라우저 모바일에서는 드로어가 같은 목록을 소유
+                 * JavaScript 없이도 전체 문서 링크를 표시. 브라우저 모바일에서는 드로어가 같은 목록을 소유
                  */}
                 {layout !== "drawer" && (
                     <div ref={props.stores === undefined ? undefined : navigationRef} className={clsx("wg_navigation__navigation")} data-navigation="">
@@ -354,8 +358,9 @@ export const WgNavigation = (props: WgNavigationProps) => {
                     </div>
                 )}
             </div>
+
             {/**
-             * 와이드 화면 전용 목차 · 드로어에는 문서 목록만 표시
+             * 와이드 화면 전용 목차. 드로어에는 문서 목록만 표시
              */}
             <aside className={clsx("wg_navigation__tocRail")} data-navigation-rail="">
                 <div className={clsx("wg_navigation__outline")} data-navigation-outline="">
@@ -364,11 +369,12 @@ export const WgNavigation = (props: WgNavigationProps) => {
                     </WgNavigationScroll>
                 </div>
             </aside>
+
             {/**
-             * 브라우저 top layer의 포커스·Escape·배경 클릭 동작과 모바일 문서 목록
+             * 브라우저 top layer의 포커스, Escape, 배경 클릭 동작과 모바일 문서 목록
              */}
             {/**
-             * biome-ignore lint/a11y/useKeyWithClickEvents: 배경 클릭의 키보드 대응은 네이티브 dialog의 cancel과 별도 닫기 버튼이 제공한다
+             * biome-ignore lint/a11y/useKeyWithClickEvents: 배경 클릭의 키보드 대안은 네이티브 dialog의 cancel과 닫기 버튼
              */}
             <dialog
                 ref={props.stores === undefined ? undefined : dialogRef}
@@ -381,12 +387,13 @@ export const WgNavigation = (props: WgNavigationProps) => {
                 onClick={handleDrawerClick}
             >
                 {/**
-                 * 목록 스크롤과 독립된 대화상자 이름·닫기 동작
+                 * 목록 스크롤과 독립된 대화상자 이름, 닫기 동작
                  */}
                 <div className={clsx("wg_navigation__drawerHeader")}>
                     <h2 className={clsx("wg_navigation__drawerTitle")} id="fh-navigation-title">
                         {copy_nav_title}
                     </h2>
+
                     {/**
                      * 네이티브 close로 열기 버튼에 포커스 복원
                      */}
@@ -396,8 +403,9 @@ export const WgNavigation = (props: WgNavigationProps) => {
                         </svg>
                     </button>
                 </div>
+
                 {/**
-                 * 모바일에만 한 번 렌더하는 문서 탐색 · 다른 배치와 저장 좌표 분리
+                 * 모바일에만 한 번 렌더하는 문서 탐색. 다른 배치와 저장 좌표 분리
                  */}
                 <div className={clsx("wg_navigation__drawerContent")} data-navigation-content="">
                     {layout === "drawer" && (

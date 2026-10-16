@@ -14,14 +14,17 @@ interface DevSite {
      * 케이스별 문서 루트
      */
     root: string;
+
     /**
      * 소스 변경 검사의 격리된 패키지 루트
      */
     kitRoot: string;
+
     /**
      * 실제 Vite 서버와 종료 수명
      */
     server: ViteDevServer;
+
     /**
      * 문서 갱신 실패 기록
      */

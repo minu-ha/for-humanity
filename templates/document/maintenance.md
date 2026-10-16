@@ -47,6 +47,8 @@ git diff --check
 - Language: 제목·짧은 라벨은 영어 우선 · 본문·설명은 한국어 · [Writing](writing.md#language)
 - Commits: 영어 동사로 시작 · AI 도움을 받은 제목의 마지막은 ` | aa` · 저장소 루트 `AGENTS.md`·`CLAUDE.md`
 
+주석 앞에는 빈 줄을 둡니다. 블록·객체·배열·JSX의 첫 줄과 연속 주석은 예외입니다. 선언 설명은 여러 줄 JSDoc, 본문의 의도·절차 설명은 `//`를 사용합니다. JSDoc의 본문은 제목 다음 빈 줄과 들여쓴 목록으로 작성하고, 직접 선언한 타입·스키마에는 헤더와 필드 설명을 남깁니다. 테스트의 GIVEN·WHEN·THEN은 [테스트 작성 기준](https://github.com/minu-ha/for-humanity/blob/main/test/README.md)에 따른 별도 블록을 사용합니다.
+
 ### Lint coverage
 
 Biome: 포맷, import, 타입·이름·레이어 규칙.

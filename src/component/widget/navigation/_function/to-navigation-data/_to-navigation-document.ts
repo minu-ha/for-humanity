@@ -9,6 +9,7 @@ interface NavigationDocumentOptions {
      * 하위 문서를 가진 원본 문서
      */
     doc: DocBranch;
+
     /**
      * 현재 문서 식별자, 홈이면 생략
      */
@@ -16,7 +17,7 @@ interface NavigationDocumentOptions {
 }
 
 /**
- * 본문 없는 문서 가지 · 재귀에서도 현재 페이지 한 항목만 표시
+ * 본문 없는 문서 가지. 재귀에서도 현재 페이지 한 항목만 표시
  */
 export const toNavigationDocument = (options: NavigationDocumentOptions): NavigationDoc => {
     return {

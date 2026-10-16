@@ -6,10 +6,12 @@ export interface NavigationFocusSnapshot {
      * 문서 탐색 안에서 새 배치로 옮길 위치인지 구분
      */
     navigation: boolean;
+
     /**
-     * 메뉴 진입·닫기 버튼에서 데스크톱 브랜드로 돌아갈 위치인지 구분
+     * 메뉴 진입, 닫기 버튼에서 데스크톱 브랜드로 돌아갈 위치인지 구분
      */
     drawer: boolean;
+
     /**
      * 문서 이동 링크의 안정된 식별자
      */

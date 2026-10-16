@@ -67,11 +67,13 @@ describe("문서 로드", () => {
 
         await writeFile(join(root, "README.md"), "# Home\n");
         await writeFile(join(root, "child.md"), `---\nname: Child\nlabel: Child\ngroup: Guide\nparent: ${parent}\n---\n\nText.\n`);
+
         /**
          * WHEN
          * 문서 로드
          */
         const result = readDocs({root, processor: createProcessor({site, root})});
+
         /**
          * THEN
          * 존재하지 않거나 홈페이지를 가리키는 부모를 거부한 결과
@@ -92,6 +94,7 @@ describe("문서 로드", () => {
         for (const [name, parent] of Object.entries(parents)) {
             await writeFile(join(root, `${name}.md`), `---\nname: ${name}\nlabel: ${name}\ngroup: Guide\nparent: ${parent}\n---\n\nText.\n`);
         }
+
         /**
          * WHEN
          * 문서 로드
@@ -114,6 +117,7 @@ describe("문서 로드", () => {
 
         await writeFile(join(root, "parent.md"), "---\nname: Parent\nlabel: Parent\ngroup: [Projects, Atlas, Research]\n---\n\nText.\n");
         await writeFile(join(root, "child.md"), "---\nname: Child\nlabel: Child\ngroup: [Projects, Beacon, Research]\nparent: parent\n---\n\nText.\n");
+
         /**
          * WHEN
          * 문서 로드
@@ -171,6 +175,7 @@ describe("문서 로드", () => {
          * 문서 로드
          */
         const result = readDocs({root, processor: createProcessor({site, root})});
+
         /**
          * THEN
          * 문서 지시문 오류는 메타를 포함한 원본 행 번호를 유지한 결과

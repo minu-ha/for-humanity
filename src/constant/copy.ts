@@ -1,9 +1,9 @@
 /*
- * 화면·CLI 공통 문구 · 번역 분리의 단일 출처
+ * 화면, CLI 공통 문구. 번역 분리의 단일 출처
  */
 
 /**
- * 사이트 제목의 기본값 · 사이드바와 탭
+ * 사이트 제목의 기본값. 사이드바와 탭
  */
 export const copy_site_title_default = "for humanity";
 
@@ -53,17 +53,17 @@ export const copy_error_prefix = "for-humanity";
 export const copy_error_unknown_command = "모르는 명령이다";
 
 /**
- * 설정 검증 오류 · 항목 경로와 이유 추가
+ * 설정 검증 오류. 항목 경로와 이유 추가
  */
 export const copy_error_config = "설정이 틀렸다";
 
 /**
- * 공개 사이트 URL의 미지원 경로·자격 증명·검색·앵커 오류
+ * 공개 사이트 URL의 미지원 경로, 자격 증명, 검색, 앵커 오류
  */
 export const copy_error_site_url = "url은 사용자 정보·하위 경로·query·hash가 없는 HTTP(S) 사이트 루트여야 한다";
 
 /**
- * 문서 frontmatter 오류 · 파일과 항목 추가
+ * 문서 frontmatter 오류. 파일과 항목 추가
  */
 export const copy_error_frontmatter = "frontmatter가 올바르지 않다";
 
@@ -73,12 +73,12 @@ export const copy_error_frontmatter = "frontmatter가 올바르지 않다";
 export const copy_error_navigation_clash = "navigation의 묶음이 겹친다";
 
 /**
- * 빈 id·예약 경로·URL 예약 문자 오류
+ * 빈 id, 예약 경로, URL 예약 문자 오류
  */
 export const copy_error_doc_id = "문서 id에 사용할 수 없는 경로";
 
 /**
- * 확장자·대소문자 정규화 후 문서 경로 중복
+ * 확장자, 대소문자 정규화 후 문서 경로 중복
  */
 export const copy_error_doc_id_clash = "문서 id가 겹친다";
 
@@ -103,12 +103,12 @@ export const copy_error_doc_parent_group = "부모 문서와 group이 다르다"
 export const copy_error_unknown_directive = "모르는 부품이다";
 
 /**
- * 부품의 작성 계약 오류 · 이름과 수정 기준 추가
+ * 부품의 작성 계약 오류. 이름과 수정 기준 추가
  */
 export const copy_error_directive_syntax = "부품 문법이 올바르지 않다";
 
 /**
- * 없는 Markdown 링크 경고 · 빌드 계속
+ * 없는 Markdown 링크 경고. 빌드 계속
  */
 export const copy_warn_broken_link = "없는 문서로 건 링크다";
 
@@ -118,11 +118,11 @@ export const copy_warn_broken_link = "없는 문서로 건 링크다";
 export const copy_warn_unknown_status = "설정에 없는 상태 문구다";
 
 /**
- * 문서에서 참조한 로컬 자원의 경로·형식 오류
+ * 문서에서 참조한 로컬 자원의 경로, 형식 오류
  */
 export const copy_error_asset = "자원이 올바르지 않다";
 
 /**
- * `<<<` 로 불러온 코드 스니펫의 경로·파일·region 오류
+ * `<<<` 로 불러온 코드 스니펫의 경로, 파일, region 오류
  */
 export const copy_error_snippet = "코드 스니펫이 올바르지 않다";

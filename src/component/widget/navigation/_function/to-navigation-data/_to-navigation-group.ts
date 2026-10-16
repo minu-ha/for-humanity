@@ -10,6 +10,7 @@ interface NavigationGroupOptions {
      * 하위 문서와 묶음을 가진 원본
      */
     group: DocGroup;
+
     /**
      * 현재 문서 식별자, 홈이면 생략
      */

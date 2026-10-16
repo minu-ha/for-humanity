@@ -7,8 +7,9 @@ import {copy_warn_unknown_status} from "@/constant/copy";
 import type {ResolvedSiteConfig} from "@/type/site-config";
 
 /**
- * 설정 문구의 상태 표지 변환 · 괄호 제거 · 제목·링크 제외
- * 미등록 날짜 문구는 파일 경고 · remark-report에서 출력
+ * 설정 문구의 상태 표지 변환. 괄호 제거. 제목, 링크 제외
+ *
+ *   - 미등록 날짜 문구는 파일 경고. remark-report에서 출력
  */
 export const remarkStatus = (options: Pick<ResolvedSiteConfig, "status">) => {
     const statuses = options.status.toSorted((a, b) => b.phrase.length - a.phrase.length);
@@ -44,7 +45,7 @@ export const remarkStatus = (options: Pick<ResolvedSiteConfig, "status">) => {
             [
                 status_candidate_pattern,
                 (match: string, info: RegExpMatchObject) => {
-                    // 치환된 텍스트에 position 부재 · 위치가 남은 가까운 조상 기준
+                    // 치환된 텍스트에 position 부재. 위치가 남은 가까운 조상 기준
                     file.message(
                         `${copy_warn_unknown_status}: ${match}`,
                         info.stack.findLast((node) => node.position !== undefined),

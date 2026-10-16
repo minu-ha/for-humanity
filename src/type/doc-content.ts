@@ -8,6 +8,7 @@ export interface DocContent {
      * 문서 머리와 본문을 포함한 HTML
      */
     html: string;
+
     /**
      * 현재 문서의 독립 목차 입력
      */

@@ -5,21 +5,24 @@ import type {SiteAssets} from "@/type/site-assets";
 import type {ResolvedSiteConfig} from "@/type/site-config";
 
 /**
- * /:slug/ 문서 페이지 입력 · 렌더링된 HTML 사용
+ * /:slug/ 문서 페이지 입력. 렌더링된 HTML 사용
  */
 export interface PgDocProps {
     /**
      * 검증된 사이트 설정
      */
     site: ResolvedSiteConfig;
+
     /**
      * 사이드바의 전체 문서
      */
     docs: Doc[];
+
     /**
      * HTML 머리의 공통 자원
      */
     assets: SiteAssets;
+
     /**
      * 현재 페이지의 문서
      */

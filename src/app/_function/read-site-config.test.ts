@@ -97,11 +97,13 @@ describe("설정 파일 조회", () => {
             export default {title: "오류가 숨겨짐"};
         `,
         );
+
         /**
          * WHEN
          * 실패하는 설정 로드
          */
         const result = readSiteConfig(root);
+
         /**
          * THEN
          * 최초 오류와 정확히 한 번의 실행

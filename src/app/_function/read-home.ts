@@ -14,6 +14,7 @@ interface ReadHomeOptions {
      * 문서 루트의 절대 경로
      */
     root: string;
+
     /**
      * 홈 본문에 적용할 Markdown 처리기
      */
@@ -21,8 +22,10 @@ interface ReadHomeOptions {
 }
 
 /**
- * 문서 폴더의 README.md → 홈 · 대소문자 무시 · frontmatter 불필요
- * 파일이 없으면 생성 안내 표시, 이름만 다른 README 중복은 오류
+ * 문서 루트의 README 홈 변환
+ *
+ *   - 대소문자 무시, frontmatter 불필요
+ *   - 파일 부재 시 생성 안내 표시, 이름만 다른 README 중복은 오류
  */
 export const readHome = async (options: ReadHomeOptions): Promise<DocContent | undefined> => {
     const paths = (await readdir(options.root)).filter((path) => path.toLowerCase() === "readme.md");
@@ -37,7 +40,8 @@ export const readHome = async (options: ReadHomeOptions): Promise<DocContent | u
 
     const path = join(options.root, paths[0]);
     const fh: DocFileData = {headings: [], sections: []};
-    // 파서와 지시문 원문 복원의 offset 기준을 맞추기 위해 BOM 제외
+
+    // 파서와 지시문 원문의 offset 일치, UTF-8 BOM 제외
     const file = new VFile({value: (await readFile(path, "utf8")).replace(/^\uFEFF/, ""), path, data: {fh}});
 
     await options.processor.process(file);

@@ -1,7 +1,7 @@
 import type {NavigationPosition, NavigationScrollState} from "@/store/navigation/navigation-state";
 
 /**
- * 알 수 없는 저장 형태·음수·무한 좌표 제외 · 초기 HTML과 Zustand에 같은 검증 적용
+ * 알 수 없는 저장 형태, 음수, 무한 좌표 제외. 초기 HTML과 Zustand에 같은 검증 적용
  */
 export const toNavigationScrollState = (value: unknown): NavigationScrollState => {
     /**

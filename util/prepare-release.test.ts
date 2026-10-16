@@ -14,6 +14,7 @@ interface ReleaseRun {
      * 임시 패키지 루트
      */
     root: string;
+
     /**
      * 검증할 공개 태그
      */

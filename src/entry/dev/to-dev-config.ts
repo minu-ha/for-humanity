@@ -56,6 +56,7 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
             host: "localhost",
             fs: {
                 allow: [kitRoot],
+
                 // 설치 모드는 정확한 Vite 내부 URL만 통과; dev .의 node_modules까지 차단하지 않음
                 deny: [
                     ".env",
@@ -73,6 +74,7 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
             {
                 name: "for-humanity:documents",
                 enforce: "pre",
+
                 // Vite의 resolve 호출 컨텍스트 보존, 서버와 브라우저의 JSX 런타임 분리
                 resolveId: function (id, importer, options) {
                     if (!options.ssr && /^hono\/jsx\/jsx-(dev-)?runtime$/.test(id)) {
@@ -104,7 +106,7 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                     const reload = debounce(refresh, dev_reload_delay_ms);
 
                     /**
-                     * 문서 루트의 입력과 저장소 TS·TSX 변경만 재처리, CSS는 Vite HMR 사용
+                     * 문서 루트의 입력과 저장소 TS, TSX 변경만 재처리, CSS는 Vite HMR 사용
                      */
                     const handleChange = (_event: string, file: string) => {
                         const documentPath = relative(root, file);
@@ -126,6 +128,7 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                         reload.cancel();
                         server.watcher.off("all", handleChange);
                     };
+
                     // Vite의 buildStart 이후 첫 요청에서 서버 모듈 준비
                     prepare = refresh;
                 },

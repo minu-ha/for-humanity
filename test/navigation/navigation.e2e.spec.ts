@@ -23,6 +23,7 @@ test.describe("문서 탐색", () => {
         const navigation = page.locator("[data-navigation]");
         const details = page.locator("details");
         const hiddenHeading = page.locator("#hidden-detail .wg_prose__headingText");
+
         // 소수 높이와 scroll anchoring의 반올림만 허용
         const roundingTolerance = 1;
         await test.step("새로고침 첫 프레임부터 저장한 두 위치가 복원된다", async () => {
@@ -42,10 +43,12 @@ test.describe("문서 탐색", () => {
                 element.scrollTop = 250;
             });
             await expect.poll(async () => (await readNavigationScroll(page))?.wide).toStrictEqual({documents: 200, outline: 250});
-            // 외부 스크립트 없이 첫 프레임부터 저장 위치를 복원해야 한다.
+
+            // 외부 스크립트 수신 전 첫 프레임의 저장 위치 복원
             await page.addInitScript(() => {
                 window.navigationFrames = [];
                 let frames = 0;
+
                 /**
                  * 최초 프레임부터 적용한 탐색 위치 수집
                  */
@@ -59,6 +62,7 @@ test.describe("문서 탐색", () => {
             });
             await page.reload();
             await page.waitForFunction(() => window.navigationFrames.length >= 10);
+
             /**
              * THEN
              * 첫 프레임부터 원위치와 커서 표시 유지
@@ -131,6 +135,7 @@ test.describe("문서 탐색", () => {
              */
             await page.goto("/guide/");
             await page.mouse.move(500, 200);
+
             /**
              * THEN
              * 커서 장식 미표시
@@ -159,6 +164,7 @@ test.describe("문서 탐색", () => {
             }, storage);
             const errors: string[] = [];
             page.on("pageerror", (error) => errors.push(error.message));
+
             /**
              * WHEN
              * 탐색 스크롤과 다른 문서로 이동
@@ -168,6 +174,7 @@ test.describe("문서 탐색", () => {
                 element.scrollTop = 120;
             });
             await page.getByRole("link", {name: "Page 10", exact: true}).click();
+
             /**
              * THEN
              * 예외 없이 선택한 문서 표시

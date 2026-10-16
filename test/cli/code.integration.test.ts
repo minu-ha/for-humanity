@@ -18,6 +18,7 @@ describe("코드 블록", () => {
             "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Read\n\n```ts line-numbers\nconst a = 1; // [!code error]\nconst b = 2; // [!code ++]\nconst c = 3;\n```\n\n```txt\n# [!code highlight]\nfirst\nsecond\n```\n\n```css {2}\n.a {\n  color: red;\n}\n```\n",
         );
         const site = siteConfigSchema.parse({});
+
         /**
          * WHEN
          * Markdown 처리
@@ -47,6 +48,7 @@ describe("코드 블록", () => {
             "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Read\n\n```ts bad [page/products.ts]\nconst a = 1;\n```\n\n```ts {1}\nconst b = 2;\n```\n",
         );
         const site = siteConfigSchema.parse({});
+
         /**
          * WHEN
          * Markdown 처리
@@ -79,6 +81,7 @@ describe("코드 블록", () => {
             "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Read\n\n<<< ./snippet/example.ts#picked bad line-numbers\n\n<<< ./snippet/example.ts\n",
         );
         const site = siteConfigSchema.parse({});
+
         /**
          * WHEN
          * Markdown 처리
@@ -112,11 +115,13 @@ describe("코드 블록", () => {
         const docsRoot = join(root, "docs");
 
         await writeFile(join(docsRoot, "guide.md"), `---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n<<< ${reference}\n`);
+
         /**
          * WHEN
          * Markdown 처리
          */
         const result = readDocs({root: docsRoot, processor: createProcessor({site, root: docsRoot})});
+
         /**
          * THEN
          * 스니펫의 루트 이탈과 누락 파일과 누락 영역을 거부한 결과

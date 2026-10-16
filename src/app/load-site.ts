@@ -23,14 +23,17 @@ export interface SiteParams {
      * Markdown과 로컬 참조의 절대 루트
      */
     root: string;
+
     /**
      * 배포 번들과 내장 자원의 패키지 루트
      */
     kitRoot: string;
+
     /**
      * 시작 시 검증한 사이트 설정
      */
     site: ResolvedSiteConfig;
+
     /**
      * 개발 실행기의 브라우저 진입점, 생략 시 배포 번들 사용
      */

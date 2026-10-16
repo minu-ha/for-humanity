@@ -6,22 +6,27 @@ interface ShellListener {
      * 구독 대상
      */
     target: EventTarget;
+
     /**
      * 이벤트 이름
      */
     type: string;
+
     /**
      * 등록된 콜백
      */
     listener: EventListenerOrEventListenerObject | null;
+
     /**
      * 캡처 여부 또는 구독 옵션
      */
     options?: boolean | AddEventListenerOptions;
+
     /**
      * 명시적 해제 여부
      */
     removed: boolean;
+
     /**
      * 테스트 셸의 구독 여부
      */
@@ -36,10 +41,12 @@ interface Window {
      * 첫 프레임부터 수집한 두 스크롤 위치
      */
     navigationFrames: {documents: number; outline: number}[];
+
     /**
      * 셸 마운트와 해제 명령
      */
     shellFixture: {mount: () => void; unmount: () => void};
+
     /**
      * 전역 구독의 수명 기록
      */

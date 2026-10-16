@@ -10,6 +10,7 @@ interface MermaidOptions {
      * 로컬 Mermaid 런타임, 없으면 원문만 제공
      */
     assets?: MermaidAssets;
+
     /**
      * 실제 사용한 자원의 URL과 원본 경로 수집
      */

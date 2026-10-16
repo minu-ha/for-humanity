@@ -46,6 +46,7 @@ describe("크롤러 파일", () => {
         await writeFile(join(root, "guide/한국어 & tools.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Read\n\nText.\n");
         const url = "https://docs.example.org";
         const site = siteConfigSchema.parse({url});
+
         /**
          * WHEN
          * 페이지와 크롤러 응답 생성
@@ -82,6 +83,7 @@ describe("크롤러 파일", () => {
          */
         store.docs = [];
         const updated = await (await app.request("/sitemap.xml")).text();
+
         /**
          * THEN
          * 홈 주소만 유지
@@ -99,6 +101,7 @@ describe("크롤러 파일", () => {
         await writeFile(join(root, "guide/details.md"), "---\nname: Details\nlabel: Details\ngroup: Guide\n---\n\nNested details.\n");
         const url = "https://docs.example.org";
         const site = siteConfigSchema.parse({url});
+
         /**
          * WHEN
          * 페이지와 크롤러 응답 생성
@@ -108,6 +111,7 @@ describe("크롤러 파일", () => {
         const app = toPageApp({site, store: {docs}, assets});
         const result = await toSSG(app, {writeFile, mkdir}, {dir: root});
         const crawlerResult = await toSSG(toCrawlingApp({url, store: {docs}}), {writeFile, mkdir}, {dir: root});
+
         /**
          * THEN
          * 정적 빌드는 크롤러 파일과 일반 문서 경로를 함께 생성한 결과

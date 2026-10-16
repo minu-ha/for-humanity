@@ -9,22 +9,27 @@ export interface WgNavigationScrollProps {
      * 배치별 좌표 복원과 저장에 필요한 실제 스크롤 요소
      */
     portRef: RefObject<HTMLDivElement | null>;
+
     /**
      * 문서 목록과 현재 페이지 목차의 독립된 스크롤 수명
      */
     kind: "documents" | "outline";
+
     /**
      * JavaScript가 연결된 뒤에만 손잡이를 넘침 표시로 대체
      */
     ready: boolean;
+
     /**
      * 탐색 링크를 포함한 영역 내용
      */
     children: Child;
+
     /**
      * 이동 직전 좌표 보존과 모바일 모달 닫기
      */
     onClick?: DOMAttributes["onClick"];
+
     /**
      * 실제 스크롤 좌표가 바뀔 때 부모 저장소에 반영
      */
@@ -36,7 +41,7 @@ export const WgNavigationScroll = (props: WgNavigationScrollProps) => {
     const frameRef = useRef(0);
 
     /**
-     * 소수 픽셀 반올림을 제외한 실제 남은 내용만 위·아래 흐림으로 알림
+     * 소수 픽셀 반올림을 제외한 실제 남은 내용만 위, 아래 흐림으로 알림
      */
     const updateOverflow = () => {
         frameRef.current = 0;
@@ -62,7 +67,7 @@ export const WgNavigationScroll = (props: WgNavigationScrollProps) => {
     };
 
     /**
-     * 영역과 내용의 크기를 함께 추적 · Hono 최초 mount의 분리된 fragment 측정은 연결 직후 실행
+     * 영역과 내용의 크기를 함께 추적. Hono 최초 mount의 분리된 fragment 측정은 연결 직후 실행
      */
     useLayoutEffect(() => {
         if (!props.ready || props.portRef.current === null) return;
@@ -74,7 +79,7 @@ export const WgNavigationScroll = (props: WgNavigationScrollProps) => {
         if (props.portRef.current.isConnected) {
             updateOverflow();
         } else {
-            // Hono는 최초 layout effect를 fragment에서 실행하므로 같은 script의 paint 전 microtask에서 측정한다
+            // Hono 최초 레이아웃 효과는 분리된 fragment에서 실행, DOM 연결 후 첫 페인트 전 측정
             queueMicrotask(() => {
                 if (active) updateOverflow();
             });
@@ -89,14 +94,14 @@ export const WgNavigationScroll = (props: WgNavigationScrollProps) => {
     }, [props.portRef, props.ready]);
 
     /**
-     * 접힘 선택의 렌더가 바뀐 직후 측정 · 좌표 복원은 부모의 연결 후 처리보다 앞서 저장하지 않음
+     * 접힘 선택의 렌더가 바뀐 직후 측정. 좌표 복원은 부모의 연결 후 처리보다 앞서 저장하지 않음
      */
     useLayoutEffect(() => {
         if (props.ready && props.portRef.current?.isConnected) updateOverflow();
     }, [props.children, props.ready]);
 
     return (
-        // biome-ignore lint/a11y/noStaticElementInteractions lint/a11y/useKeyWithClickEvents: 부모의 링크 이벤트 위임이며 자식 a·button의 네이티브 키보드 동작을 그대로 소비한다
+        // biome-ignore lint/a11y/noStaticElementInteractions lint/a11y/useKeyWithClickEvents: 자식 링크와 버튼의 네이티브 키보드 이벤트를 부모에서 위임 처리
         <div
             ref={props.ready ? props.portRef : undefined}
             className={clsx(

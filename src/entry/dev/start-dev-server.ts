@@ -2,7 +2,7 @@ import {createServer} from "vite";
 import {type DevParams, toDevConfig} from "@/entry/dev/to-dev-config";
 
 /**
- * 개발 서버 시작과 프로세스 종료 시 파일 감시·통신 정리
+ * 개발 서버 시작과 프로세스 종료 시 파일 감시, 통신 정리
  */
 export const startDevServer = async (params: DevParams) => {
     const server = await createServer(toDevConfig(params));

@@ -3,7 +3,7 @@ import type {VFile} from "vfile";
 import {section_heading_depth} from "@/component/widget/prose/_constant/section";
 
 /**
- * name 제목과 첫 절 앞 본문의 공통 머리 · README는 원문의 h1 사용
+ * name 제목과 첫 절 앞 본문의 공통 머리. README는 원문의 h1 사용
  */
 export const rehypeHead = () => (tree: Root, file: VFile) => {
     const frontmatter = file.data.fh?.frontmatter;

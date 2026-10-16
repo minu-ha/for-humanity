@@ -16,8 +16,9 @@ interface LinkOptions {
 }
 
 /**
- * 상대 Markdown 링크 → 사이트 URL · query·hash 원문 유지
- * 외부·절대 URL과 같은 페이지 hash 유지 · 없는 파일은 터미널 경고
+ * 상대 Markdown 링크의 사이트 URL 변환, query와 hash 원문 유지
+ *
+ *   - 외부, 절대 URL과 같은 페이지 hash 유지. 없는 파일은 터미널 경고
  */
 export const remarkLinks = (options: LinkOptions) => (tree: Root, file: VFile) => {
     const here = posix.dirname(relative(options.root, file.path).split(sep).join("/"));
@@ -27,7 +28,7 @@ export const remarkLinks = (options: LinkOptions) => (tree: Root, file: VFile) =
             return;
         }
 
-        // 셋째 capture: query·hash 접미사 · 파일 확인과 경로 정규화에서 제외
+        // 셋째 capture: query, hash 접미사. 파일 확인과 경로 정규화에서 제외
         const match = /^(?![a-z]+:|\/|#)([^#?]+)(\.mdx?)([?#].*|)$/i.exec(node.url);
 
         if (match) {

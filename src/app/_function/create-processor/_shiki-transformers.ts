@@ -9,7 +9,7 @@ import type {Element, ElementContent} from "hast";
 import type {ShikiTransformer} from "shiki";
 
 /**
- * 펜스 메타에 `line-numbers` 가 있으면 pre 에 줄 번호 클래스 · 번호는 CSS counter
+ * line-numbers 메타의 줄 번호 표시, 번호 계산은 CSS counter 사용
  */
 const lineNumbers: ShikiTransformer = {
     name: "for-humanity:line-numbers",
@@ -23,7 +23,7 @@ const lineNumbers: ShikiTransformer = {
 };
 
 /**
- * 펜스 메타 `bad`·`good` → pre 에 블록 색 클래스 · 바탕색은 token.css 가 바꿈
+ * bad, good 메타의 코드 상태 클래스, 색상은 token.css 소유
  */
 const tone: ShikiTransformer = {
     name: "for-humanity:code-tone",
@@ -43,7 +43,10 @@ const tone: ShikiTransformer = {
 };
 
 /**
- * 펜스 메타 `[파일 이름]` → figure 로 감싸고 제목 띠에 파일 이름과 언어 · 블록 색 클래스는 figure 에도 둠
+ * 파일 이름 메타의 코드 제목 생성
+ *
+ *   - 제목 띠에 파일 이름과 언어 표시
+ *   - 코드와 figure에 같은 상태 클래스 적용
  */
 const fileTitle: ShikiTransformer = {
     name: "for-humanity:code-title",
@@ -77,7 +80,7 @@ const fileTitle: ShikiTransformer = {
 };
 
 /**
- * 코드 줄 표기 · `// [!code highlight|error|warning|++|--]`, `// [!code word:x]`, 메타 `{2,4-6}`, `line-numbers`, 블록 색 `bad`·`good`, 제목 `[파일 이름]`
+ * 코드 메타와 줄 지시문의 Shiki 변환기 순서
  */
 export const shikiTransformers: ShikiTransformer[] = [
     transformerNotationHighlight({matchAlgorithm: "v3"}),

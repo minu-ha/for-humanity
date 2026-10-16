@@ -6,17 +6,20 @@ import type {toNavigationScrollState} from "@/store/navigation/to-navigation-scr
  */
 interface RestoreNavigationScrollOptions {
     /**
-     * persist 키 · 이전 배치별 키의 접두사도 동일
+     * persist 키. 이전 배치별 키의 접두사도 동일
      */
     key: string;
+
     /**
      * 수용할 저장 형태 버전
      */
     version: number;
+
     /**
      * 현재 표시 중인 화면 배치
      */
     layout: NavigationLayout;
+
     /**
      * persist와 같은 저장 자료 검증
      */
@@ -24,14 +27,15 @@ interface RestoreNavigationScrollOptions {
 }
 
 /**
- * 탐색 진입점에서 첫 paint 전 복원 · 기존 배치별 저장 자료도 한 번 수용
+ * 탐색 진입점에서 첫 paint 전 복원. 기존 배치별 저장 자료도 한 번 수용
  */
 export const restoreNavigationScroll = (options: RestoreNavigationScrollOptions) => {
     const navigation = document.querySelector<HTMLElement>("[data-navigation]");
     const documents = document.querySelector<HTMLElement>('[data-navigation-scroll="documents"]');
     const outline = document.querySelector<HTMLElement>('[data-navigation-scroll="outline"]');
     if (!navigation || !documents || !outline) return;
-    // module을 기다리는 동안 breakpoint가 바뀌었는지 구분 · 자료가 없어도 적용 배치는 기록
+
+    // module을 기다리는 동안 breakpoint가 바뀌었는지 구분. 자료가 없어도 적용 배치는 기록
     navigation.dataset.navigationLayout = options.layout;
 
     try {
@@ -51,9 +55,10 @@ export const restoreNavigationScroll = (options: RestoreNavigationScrollOptions)
         if (position === undefined || position.navigation !== signature) return;
 
         documents.scrollTop = position.documents;
-        // 공통 문서 목록은 페이지 간 공유 · 목차는 같은 페이지에서만 재사용
+
+        // 공통 문서 목록은 페이지 간 공유. 목차는 같은 페이지에서만 재사용
         if (position.pathname === location.pathname) outline.scrollTop = position.outline;
     } catch {
-        // 차단·손상된 저장소는 복원만 생략 · 기본 링크와 스크롤 유지
+        // 차단, 손상된 저장소는 복원만 생략. 기본 링크와 스크롤 유지
     }
 };

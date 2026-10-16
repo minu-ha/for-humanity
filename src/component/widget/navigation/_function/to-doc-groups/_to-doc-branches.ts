@@ -10,6 +10,7 @@ interface DocBranchesOptions {
      * 현재 깊이의 형제 문서
      */
     docs: readonly Doc[];
+
     /**
      * 검증된 부모 식별자별 하위 문서
      */
@@ -17,7 +18,7 @@ interface DocBranchesOptions {
 }
 
 /**
- * 검증된 부모 관계로 문서 가지를 재귀 구성 · 형제 순서와 URL 유지
+ * 검증된 부모 관계로 문서 가지를 재귀 구성. 형제 순서와 URL 유지
  */
 export const toDocBranches = (options: DocBranchesOptions): DocBranch[] => {
     return options.docs

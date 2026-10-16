@@ -1,5 +1,5 @@
 /**
- * h2·h3의 가름 · 문서 순서
+ * h2, h3의 가름. 문서 순서
  */
 export interface DocSection {
     /**

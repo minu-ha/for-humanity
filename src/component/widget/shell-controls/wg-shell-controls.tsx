@@ -15,7 +15,7 @@ export const WgShellControls = (props: WgNavigationProps) => {
     const userScrollRef = useRef<AbortController | null>(null);
 
     /**
-     * 다음 앵커 이동과 해제에서 이전 강조·도착 감시·타이머를 함께 정리
+     * 다음 앵커 이동과 해제에서 이전 강조, 도착 감시, 타이머를 함께 정리
      */
     const clearHeadingHighlight = () => {
         clearTimeout(timerRef.current);
@@ -27,7 +27,7 @@ export const WgShellControls = (props: WgNavigationProps) => {
     };
 
     /**
-     * 본문 스크롤 도착 후 3초 확보 · 사이드바 자체의 scrollend는 제외
+     * 본문 스크롤 도착 후 3초 확보. 사이드바 자체의 scrollend는 제외
      */
     const handleHighlightArrival = (event: Event) => {
         if (event.target !== document) return;
@@ -38,7 +38,7 @@ export const WgShellControls = (props: WgNavigationProps) => {
     };
 
     /**
-     * 도착 제목만 강조 · 같은 hash 재클릭도 유지 시간 재시작
+     * 도착 제목만 강조. 같은 hash 재클릭도 유지 시간 재시작
      */
     const highlightHeading = (target: HTMLElement | null) => {
         clearHeadingHighlight();
@@ -71,7 +71,7 @@ export const WgShellControls = (props: WgNavigationProps) => {
     };
 
     /**
-     * hash 변경 시 접힌 대상을 공개하고 네이티브 스크롤·강조 적용
+     * hash 변경 시 접힌 대상을 공개하고 네이티브 스크롤, 강조 적용
      */
     const handleHashChange = () => {
         const target = revealHashTarget(location.hash);
@@ -84,7 +84,7 @@ export const WgShellControls = (props: WgNavigationProps) => {
     };
 
     /**
-     * 초기 폰트 로드 후 앵커 보정 · 해제된 인스턴스와 사용자 이동에 개입하지 않음
+     * 초기 폰트 로드 후 앵커 보정. 해제된 인스턴스와 사용자 이동에 개입하지 않음
      */
     const handlePageLoad = async () => {
         const lifetime = lifetimeRef.current;
@@ -100,7 +100,7 @@ export const WgShellControls = (props: WgNavigationProps) => {
     };
 
     /**
-     * 셸은 본문 앞에서 마운트 · 본문 파싱 이후에만 초기 접힘 대상 조회
+     * 셸은 본문 앞에서 마운트. 본문 파싱 이후에만 초기 접힘 대상 조회
      */
     const handleBodyReady = () => {
         revealHashTarget(location.hash);
@@ -108,7 +108,7 @@ export const WgShellControls = (props: WgNavigationProps) => {
     };
 
     /**
-     * 본문 이벤트의 설치·정리는 셸이 소유 · SSR에서는 DOM에 접근하지 않음
+     * 본문 이벤트의 설치, 정리는 셸이 소유. SSR에서는 DOM에 접근하지 않음
      */
     useLayoutEffect(() => {
         const lifetime = new AbortController();

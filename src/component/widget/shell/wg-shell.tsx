@@ -13,33 +13,39 @@ import "@/style/token.css";
 import "./wg-shell.css";
 
 /**
- * 공통 HTML 틀의 입력 · 문서 탐색·현재 목차·본문
+ * 공통 HTML 틀의 입력. 문서 탐색, 현재 목차, 본문
  */
 export interface WgShellProps {
     /**
-     * 사이트 이름 · 탭과 사이드바
+     * 사이트 이름. 탭과 사이드바
      */
     site: ResolvedSiteConfig;
+
     /**
      * 사이드바 전체 문서 목록
      */
     docs: Doc[];
+
     /**
-     * HTML 머리의 글꼴·dev 스크립트
+     * 페이지의 글꼴, 스타일, 브라우저 진입점
      */
     assets: SiteAssets;
+
     /**
-     * 탭 제목의 문서 이름 · 첫 화면 생략
+     * 탭 제목의 문서 이름. 첫 화면 생략
      */
     title?: string;
+
     /**
-     * 현재 문서 id · 첫 화면 생략
+     * 현재 문서 id. 첫 화면 생략
      */
     current?: string;
+
     /**
      * 현재 문서 또는 README 홈의 목차
      */
     outline?: DocOutline;
+
     /**
      * 현재 페이지 본문
      */
@@ -52,7 +58,7 @@ export const WgShell = (props: WgShellProps) => {
     return (
         <html lang="ko">
             {/**
-             * 공통 자원 · 브라우저 동작은 WgShellControls의 생명주기에서 연결
+             * 공통 자원. 브라우저 동작은 WgShellControls의 생명주기에서 연결
              */}
             <head>
                 <meta charSet="utf-8" />
@@ -66,18 +72,20 @@ export const WgShell = (props: WgShellProps) => {
                 ))}
                 {props.assets.stylePath !== undefined && <link rel="stylesheet" href={props.assets.stylePath} />}
             </head>
+
             {/**
-             * 문서 탐색·현재 목차·본문 · 브라우저 동작 연결
+             * 문서 탐색, 현재 목차, 본문. 브라우저 동작 연결
              */}
             <body className={clsx("wg_shell__root")}>
                 {/**
-                 * 서버·브라우저의 공통 셸 조립 · 본문 HTML은 마운트 범위에서 제외
+                 * 서버, 브라우저의 공통 셸 조립. 본문 HTML은 마운트 범위에서 제외
                  */}
                 <div className={clsx("wg_shell__browserRoot")} data-shell-browser-root="">
                     <WgShellControls data={navigationData} />
                 </div>
+
                 {/**
-                 * 최소 탐색 자료와 단일 JSX 번들 · 본문 전 상태·스크롤 복원
+                 * 서버 탐색 자료와 브라우저 진입점 연결
                  */}
                 <script type="application/json" id="fh-navigation-data" dangerouslySetInnerHTML={{__html: toNavigationJson(navigationData)}} />
                 {props.assets.browser.kind === "inline" && <script dangerouslySetInnerHTML={{__html: props.assets.browser.code}} />}

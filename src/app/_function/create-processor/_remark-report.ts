@@ -13,8 +13,9 @@ interface ReportOptions {
 }
 
 /**
- * 파일 경고의 터미널 출력 · 파일:줄 경고 · 빌드 계속
- * 경고 수집 뒤 실행하는 마지막 remark 플러그인
+ * 파일 경고의 터미널 출력. 파일:줄 경고. 빌드 계속
+ *
+ *   - 경고 수집 뒤 실행하는 마지막 remark 플러그인
  */
 export const remarkReport = (options: ReportOptions) => (_tree: Root, file: VFile) => {
     const path = relative(options.root, file.path);

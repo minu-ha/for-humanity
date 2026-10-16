@@ -17,10 +17,12 @@ export interface PageParams {
      * 검증된 사이트 설정
      */
     site: ResolvedSiteConfig;
+
     /**
-     * 렌더링 대상 홈과 문서 · dev 재처리 시 함께 교체
+     * 렌더링 대상 홈과 문서. dev 재처리 시 함께 교체
      */
     store: {docs: Doc[]; home?: DocContent};
+
     /**
      * HTML 머리에 포함할 공통 자원
      */
@@ -28,16 +30,17 @@ export interface PageParams {
 }
 
 /**
- * Hono JSX 페이지에 HTML 문서 선언 추가 · 서버와 정적 출력에서 같은 렌더러 사용
+ * Hono JSX 페이지에 HTML 문서 선언 추가. 서버와 정적 출력에서 같은 렌더러 사용
  */
 const toHtml = (page: Child) => {
     return html`<!DOCTYPE html>${page}`;
 };
 
 /**
- * 첫 화면 / · 문서 /:slug{.+}/ · 하위 폴더 id 지원
- * 자원 wildcard와 정규식 매개변수 혼합 시 TrieRouter fallback으로 중첩 경로 불일치
- * 자원 응답은 toHttpApp의 별도 앱 소유
+ * 첫 화면 /. 문서 /:slug{.+}/. 하위 폴더 id 지원
+ *
+ *   - 자원 wildcard와 정규식 매개변수 혼합 시 TrieRouter fallback으로 중첩 경로 불일치
+ *   - 자원 응답은 toHttpApp의 별도 앱 소유
  */
 export const toPageApp = (options: PageParams) => {
     const app = new Hono();

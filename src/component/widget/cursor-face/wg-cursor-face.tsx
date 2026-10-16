@@ -9,7 +9,7 @@ import "./wg-cursor-face.css";
  */
 export interface WgCursorFaceProps {
     /**
-     * 브라우저 셸이 준비한 DOM ref·이벤트 연결 활성화
+     * 브라우저 셸이 준비한 DOM ref, 이벤트 연결 활성화
      */
     ready: boolean;
 }
@@ -20,7 +20,7 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
     const positionRef = useRef({x: 0, y: 0, frame: 0});
 
     /**
-     * 화면 이탈·터치 전환에서 예약된 이동까지 취소
+     * 화면 이탈, 터치 전환에서 예약된 이동까지 취소
      */
     const handleCursorHide = () => {
         cancelAnimationFrame(positionRef.current.frame);
@@ -36,7 +36,7 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
     };
 
     /**
-     * 화면 갱신마다 한 번만 반영 · transform으로 본문 재배치 방지
+     * 화면 갱신마다 한 번만 반영. transform으로 본문 재배치 방지
      */
     const renderCursorFace = () => {
         if (positionRef.current.frame !== 0) return;
@@ -54,7 +54,7 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
     };
 
     /**
-     * 클릭·텍스트 선택 중에도 장식 유지 · 실제 마우스 입력만 좌표 반영
+     * 클릭, 텍스트 선택 중에도 장식 유지. 실제 마우스 입력만 좌표 반영
      */
     const handleDocumentPointer = (event: PointerEvent) => {
         if (!mediaRef.current?.matches || event.pointerType !== "mouse") {
@@ -74,7 +74,7 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
     };
 
     /**
-     * 같은 탭의 문서 이동에서 마지막 좌표를 전달 · 저장 실패는 장식에만 영향
+     * 같은 탭의 문서 이동에서 마지막 좌표를 전달. 저장 실패는 장식에만 영향
      */
     const handlePageHide = () => {
         if (!faceRef.current?.classList.contains("wg_cursorFace__root--visible")) return;
@@ -86,7 +86,7 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
     };
 
     /**
-     * 첫 진입·BFCache 복귀의 좌표를 한 번 소비 · 외부 저장 값은 검증 후 사용
+     * 첫 진입, BFCache 복귀의 좌표를 한 번 소비. 외부 저장 값은 검증 후 사용
      */
     const handlePageShow = () => {
         try {
@@ -114,7 +114,7 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
     };
 
     /**
-     * 첫 paint 전 좌표 복원 · 해제 시 전역 이벤트와 예약 frame을 함께 정리
+     * 첫 paint 전 좌표 복원. 해제 시 전역 이벤트와 예약 frame을 함께 정리
      */
     useLayoutEffect(() => {
         if (!props.ready) return;

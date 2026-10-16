@@ -1,5 +1,5 @@
 /**
- * 설정 파일 부재 시 입력 · 스키마 기본값 적용
+ * 설정 파일 부재 시 입력. 스키마 기본값 적용
  */
 export const site_config_absent = {};
 
@@ -9,16 +9,16 @@ export const site_config_absent = {};
 export const site_navigation_default: readonly string[] = [];
 
 /**
- * dev·preview 서버 기본 포트
+ * dev, preview 서버 기본 포트
  */
 export const site_port_default = 4321;
 
 /**
- * 포트 번호 하한 · TCP
+ * 포트 번호 하한. TCP
  */
 export const site_port_min = 1;
 
 /**
- * 포트 번호 상한 · TCP
+ * 포트 번호 상한. TCP
  */
 export const site_port_max = 65535;

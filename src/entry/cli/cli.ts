@@ -1,7 +1,8 @@
 #!/usr/bin/env node
+
 /*
- * CLI · for-humanity <dev|build|preview> [문서 폴더]
- * 기본 문서 폴더: 현재 폴더 · 출력: <문서 폴더>/dist
+ * CLI. for-humanity <dev|build|preview> [문서 폴더]
+ * 기본 문서 폴더: 현재 폴더. 출력: <문서 폴더>/dist
  */
 
 import {copyFile, mkdir, rm, writeFile} from "node:fs/promises";
@@ -23,8 +24,9 @@ const commands = ["dev", "build", "preview"];
 const [command = cli_default_command, docsDir = cli_default_docs_dir] = process.argv.slice(2);
 
 /**
- * 명령 실행 · 설정 검증, 렌더링, 빌드·서버 시작
- * 실패: 터미널 오류와 종료 코드 1
+ * 명령 실행. 설정 검증, 렌더링, 빌드, 서버 시작
+ *
+ *   - 실패: 터미널 오류와 종료 코드 1
  */
 const main = async () => {
     if (!commands.includes(command)) {

@@ -8,23 +8,26 @@ import {copy_error_asset} from "@/constant/copy";
 import {toAssetPath} from "@/util/file/to-asset-path";
 
 /**
- * 명시적으로 참조한 로컬 이미지·첨부의 수집 계약
+ * 명시적으로 참조한 로컬 이미지, 첨부의 수집 계약
  */
 export interface AssetOptions {
     /**
      * 자원을 읽을 수 있는 문서 루트
      */
     root: string;
+
     /**
-     * dev 응답과 정적 복사에서 공유할 URL → 파일 목록
+     * dev 응답과 정적 복사가 공유하는 자원 URL별 파일 경로
      */
     files: Map<string, string>;
 }
 
 /**
- * 파일 위치 기준 이미지·첨부 → 내용 지문 URL · 원시 HTML도 같은 규칙
- * 없는 파일, 폴더 밖 경로와 symlink, 지원하지 않는 이미지 형식은 빌드 실패
- * 절대 URL·외부 URL은 작성자가 제공하며 수집하지 않음
+ * 문서 상대 경로의 이미지와 첨부 수집
+ *
+ *   - 원시 HTML에도 같은 내용 지문 URL 적용
+ *   - 없는 파일, 폴더 밖 경로와 symlink, 지원하지 않는 이미지 형식은 빌드 실패
+ *   - 절대 URL, 외부 URL은 작성자가 제공하며 수집하지 않음
  */
 export const rehypeAssets = (options: AssetOptions) => (tree: Root, file: VFile) => {
     visit(tree, "element", (node) => {

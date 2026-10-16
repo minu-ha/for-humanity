@@ -10,6 +10,7 @@ export interface AssetPathOptions {
      * 사이트 루트 기준 기본 자원 경로
      */
     path: string;
+
     /**
      * 배포할 실제 파일 경로
      */
@@ -17,7 +18,7 @@ export interface AssetPathOptions {
 }
 
 /**
- * 파일명에 내용 지문 추가 · 같은 내용은 같은 URL, 변경한 내용은 새 캐시 키 사용
+ * 파일명에 내용 지문 추가. 같은 내용은 같은 URL, 변경한 내용은 새 캐시 키 사용
  */
 export const toAssetPath = (options: AssetPathOptions) => {
     const extension = posix.extname(options.path);

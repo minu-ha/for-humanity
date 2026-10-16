@@ -22,11 +22,13 @@ describe("문서 자원", () => {
             '---\nname: Media\nlabel: Media\ngroup: Guide\n---\n\n![Image](../img/sample.svg)\n\n![Reference][shot]\n\n[shot]: ../img/sample.svg\n\n<img src="../img/sample.svg" alt="Raw" />\n\n[Download](report.csv?download=1#rows)\n\n![External](https://example.com/image.png)\n',
         );
         const files = new Map<string, string>();
+
         /**
          * WHEN
          * 문서 자원 처리
          */
         const docs = await readDocs({root, processor: createProcessor({site: siteConfigSchema.parse({}), root, files})});
+
         /**
          * THEN
          * Markdown과 HTML 이미지는 첨부 파일과 내용 지문 자원을 공유한 결과
@@ -46,6 +48,7 @@ describe("문서 자원", () => {
          * 지역 자원과 문서 입력
          */
         await writeFile(join(root, "page.md"), `---\nname: Media\nlabel: Media\ngroup: Guide\n---\n\n![Invalid](${path})\n`);
+
         /**
          * WHEN
          * 문서 자원 처리
@@ -70,6 +73,7 @@ describe("문서 자원", () => {
         const site = siteConfigSchema.parse({});
         const home = await readHome({root, processor: createProcessor({site, root, files})});
         const before = [...files.keys()][0];
+
         /**
          * WHEN
          * 이미지 바이트 변경 후 홈 재처리
@@ -78,6 +82,7 @@ describe("문서 자원", () => {
         const updated = new Map<string, string>();
         const changed = await readHome({root, processor: createProcessor({site, root, files: updated})});
         const after = [...updated.keys()][0];
+
         /**
          * THEN
          * 내용 지문과 HTML 주소 동시 갱신
@@ -102,11 +107,13 @@ describe("문서 자원", () => {
         await writeFile(join(outside, "private.png"), "private");
         await symlink(join(outside, "private.png"), join(docsRoot, "linked.png"));
         await writeFile(join(docsRoot, "README.md"), "# Home\n\n![Private](linked.png)\n");
+
         /**
          * WHEN
          * 링크된 이미지를 포함한 홈 처리
          */
         const result = readHome({root: docsRoot, processor: createProcessor({site: siteConfigSchema.parse({}), root: docsRoot})});
+
         /**
          * THEN
          * 루트 이탈 오류

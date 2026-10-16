@@ -11,6 +11,7 @@ interface FontCssOptions {
      * 원본 font-face CSS 파일 경로
      */
     css: string;
+
     /**
      * 생성할 글꼴 URL의 디렉터리
      */
@@ -18,8 +19,9 @@ interface FontCssOptions {
 }
 
 /**
- * 내장 @font-face의 표시 정책과 내용 지문 URL 적용 · 원본 파일 수집
- * 늦은 글꼴 교체와 문서 이동마다 같은 글꼴을 다시 받는 현상 방지
+ * 내장 @font-face의 표시 정책과 내용 지문 URL 적용. 원본 파일 수집
+ *
+ *   - 늦은 글꼴 교체와 문서 이동마다 같은 글꼴을 다시 받는 현상 방지
  */
 export const toFontCss = (options: FontCssOptions) => {
     const files = new Map<string, string>();

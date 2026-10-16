@@ -7,8 +7,9 @@ import {hasBlockContent} from "@/component/widget/prose/_function/has-block-cont
 import {copy_error_directive_syntax} from "@/constant/copy";
 
 /**
- * Note·Details의 제목·본문·속성·닫힘 계약
- * label은 첫 자식 · summary는 Details의 첫 요소 · 원문 위치는 오류 기준
+ * Note, Details의 제목, 본문, 속성, 닫힘 계약
+ *
+ *   - label은 첫 자식. summary는 Details의 첫 요소. 원문 위치는 오류 기준
  */
 export const remarkBlocks = () => (tree: Root, file: VFile) => {
     const source = String(file.value);
@@ -55,7 +56,7 @@ export const remarkBlocks = () => (tree: Root, file: VFile) => {
         const open = node.attributes?.open;
         const attributeSource = source.slice(label.position?.end.offset, node.position?.end.offset).split(/\r?\n/, 1)[0].trim();
 
-        // 속성 정규화 이전의 표기 · 중복 open과 open="" 거부
+        // 속성 정규화 이전의 표기. 중복 open과 open="" 거부
         if (attributeSource !== "" && (node.name !== "details" || !/^\{[ \t]*open[ \t]*\}$/.test(attributeSource))) {
             file.fail(`${copy_error_directive_syntax}: ${node.name} · 허용 속성은 Details의 {open}, 나머지는 생략`, node);
         }
@@ -80,7 +81,7 @@ export const remarkBlocks = () => (tree: Root, file: VFile) => {
             }
         });
 
-        // 코드 안의 :::가 container를 먼저 닫은 경우 · 더 긴 바깥 fence로 구분
+        // 코드 안의 :::가 container를 먼저 닫은 경우. 더 긴 바깥 fence로 구분
         visit(node, "code", (code) => {
             const originalCode = source.slice(code.position?.start.offset, code.position?.end.offset);
             const codeOpening = /^ {0,3}(`{3,}|~{3,})/.exec(originalCode);

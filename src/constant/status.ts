@@ -1,5 +1,5 @@
 /**
- * 상태 표지 종류 · verified 초록, unverified amber
+ * 상태 표지 종류. verified 초록, unverified amber
  */
 export const status_kind = {
     verified: "verified",
@@ -7,7 +7,7 @@ export const status_kind = {
 } as const;
 
 /**
- * 기본 상태 문구 · 확인됨은 뒤의 날짜 포함
+ * 기본 상태 문구. 확인됨은 뒤의 날짜 포함
  */
 export const status_default_phrases = [
     {phrase: "확인됨", kind: status_kind.verified, date: true},

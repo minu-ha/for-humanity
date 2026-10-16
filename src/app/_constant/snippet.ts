@@ -1,15 +1,15 @@
 /**
- * 스니펫 줄 · `<<< ./path.ext`, 선택 `#region`, 선택 메타(펜스 메타와 같음)
+ * 스니펫 구문, `<<< ./path.ext` 뒤 선택 region과 코드 펜스 메타 허용
  */
 export const snippet_pattern = /^<<<\s+(\S+?)(?:#([\w-]+))?(?:\s+(.+?))?\s*$/;
 
 /**
- * region 표시 줄 · 주석 모양은 자유 · `#region 이름`, `#endregion 이름`
+ * region 경계 구문, 주석 형식과 무관하게 이름으로 대응
  */
 export const snippet_region_pattern = /^\s*\S*\s*#(end)?region\s+([\w-]+)/;
 
 /**
- * 확장자 → 펜스 언어 · 없으면 확장자 그대로
+ * 펜스 언어로 치환할 확장자, 미등록 확장자는 원문 사용
  */
 export const snippet_language_by_extension: Record<string, string> = {
     ".cjs": "js",

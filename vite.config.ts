@@ -1,7 +1,9 @@
 import {fileURLToPath} from "node:url";
 import {defineConfig} from "vite";
+
 // biome-ignore lint/style/noRestrictedImports: Vite 설정 부트스트랩은 tsconfig 별칭 해석 전 실행
 import {toBrowserConfig} from "./util/to-browser-config.ts";
+
 // biome-ignore lint/style/noRestrictedImports: Vite 설정 부트스트랩은 tsconfig 별칭 해석 전 실행
 import {toNoticesPlugin} from "./util/to-notices-plugin.ts";
 

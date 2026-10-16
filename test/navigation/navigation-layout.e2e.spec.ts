@@ -25,6 +25,7 @@ test.describe("탐색 레이아웃", () => {
                  */
                 const errors: string[] = [];
                 page.on("pageerror", (error) => errors.push(error.message));
+
                 /**
                  * WHEN
                  * 문서 조회와 모바일 탐색 공개
@@ -35,6 +36,7 @@ test.describe("탐색 레이아웃", () => {
                     await page.getByRole("button", {name: "Open navigation", exact: true}).click();
                     expect(await page.locator("dialog").evaluate((element) => element.matches(":modal"))).toBe(true);
                 }
+
                 /**
                  * THEN
                  * 수평 넘침 없는 문서와 화면별 탐색 배치
@@ -52,7 +54,8 @@ test.describe("탐색 레이아웃", () => {
                         const outlineWidth = await page.locator('[data-navigation-scroll="outline"]').evaluate((element) => element.getBoundingClientRect().width);
                         expect(width).toBe(200);
                         expect(outlineWidth).toBe(width);
-                        // 본문은 1920px 페이지 안에서 양쪽 바깥 여백 28px·사이드바 200px·간격 32px을 뺀 나머지 전체
+
+                        // 본문은 1920px 페이지 안에서 양쪽 바깥 여백 28px, 사이드바 200px, 간격 32px을 뺀 나머지 전체
                         const fill = await page.evaluate(() => Math.min(document.documentElement.getBoundingClientRect().width, 1920) - (28 + 200 + 32) * 2);
                         expect(await page.locator("main").evaluate((element) => element.getBoundingClientRect().width)).toBe(fill);
                     }

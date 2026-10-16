@@ -15,14 +15,17 @@ interface PackageServerParams {
      * node_modules를 포함한 소비 프로젝트와 문서 루트
      */
     root: string;
+
     /**
      * 설치된 실행 파일의 절대 경로
      */
     cli: string;
+
     /**
      * 검증 후 종료할 개발 또는 정적 미리보기 명령
      */
     command: "dev" | "preview";
+
     /**
      * 포트만 교체할 소비자 설정
      */

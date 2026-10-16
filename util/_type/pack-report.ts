@@ -8,18 +8,22 @@ export const packSchema = z.object({
      * 패키지 공개 이름
      */
     name: z.string().min(1),
+
     /**
      * 패키지 공개 버전
      */
     version: z.string().min(1),
+
     /**
      * 생성된 압축 파일 이름
      */
     filename: z.string().min(1),
+
     /**
      * npm 레지스트리와 비교할 내용 무결성 값
      */
     integrity: z.string().min(1),
+
     /**
      * 패키지에 포함된 상대 경로 목록
      */

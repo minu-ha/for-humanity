@@ -34,6 +34,7 @@ try {
     const site = {url: "https://docs.example.org", navigation: [nestedGroup, "Guide"]};
     const config = `import type {SiteConfig} from "for-humanity";\nexport default ${JSON.stringify(site)} satisfies SiteConfig;\n`;
     await writeFile(configPath, config);
+
     // Windows의 npm.cmd 대신 Node 배포본에 포함된 CLI를 직접 실행
     execFileSync(
         process.platform === "win32" ? process.execPath : "npm",
@@ -53,7 +54,7 @@ try {
     assert.equal(installed.version, pack.version);
     assert.equal(await readFile(join(packageRoot, "README.md"), "utf8"), await readFile("README.md", "utf8"));
 
-    // 저장소 별칭·개발 의존성이 없는 소비자에서 공개 선언과 중첩 입력 타입 검증
+    // 저장소 별칭, 개발 의존성이 없는 소비자에서 공개 선언과 중첩 입력 타입 검증
     const compiler = resolve("node_modules/typescript/bin/tsc");
     await writeFile(
         join(consumer, "tsconfig.json"),
@@ -134,6 +135,7 @@ try {
     }
     const changedBrowserScript = `${browserScript}\n/* changed package bytes */\n`;
     await writeFile(join(packageRoot, "dist/browser.js"), changedBrowserScript);
+
     // 같은 설치에서 기존 ESM 설정도 계속 지원
     await rm(configPath);
     await writeFile(join(consumer, "for-humanity.config.mjs"), `export default ${JSON.stringify({navigation: [nestedGroup, "Guide"]})};\n`);

@@ -11,18 +11,22 @@ interface DocGroupBranchesOptions {
      * 부모 경로에 속한 문서
      */
     docs: readonly Doc[];
+
     /**
-     * 검증된 부모 id별 문서 · 자손을 각 단계에서 다시 수집하지 않음
+     * 검증된 부모 id별 문서. 자손을 각 단계에서 다시 수집하지 않음
      */
     children: ReadonlyMap<Doc["data"]["parent"], Doc[]>;
+
     /**
-     * 부모까지의 경로 · 최상위는 빈 배열
+     * 부모까지의 경로. 최상위는 빈 배열
      */
     path: DocGroup["path"];
+
     /**
      * 전체 경로의 JSON 키와 navigation 위치
      */
     positions: ReadonlyMap<string, number>;
+
     /**
      * 미지정 경로를 지정한 묶음 뒤에 놓는 위치
      */
@@ -30,7 +34,7 @@ interface DocGroupBranchesOptions {
 }
 
 /**
- * 각 단계의 직접 문서와 하위 묶음을 분리 · 고정된 깊이 제한 없이 구성
+ * 각 단계의 직접 문서와 하위 묶음을 분리. 고정된 깊이 제한 없이 구성
  */
 export const toDocGroupBranches = (options: DocGroupBranchesOptions): DocGroup[] => {
     return [

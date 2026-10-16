@@ -15,6 +15,7 @@ test.describe("셸 컴포넌트 수명", () => {
             window.shellListeners = [];
             const add = EventTarget.prototype.addEventListener;
             const remove = EventTarget.prototype.removeEventListener;
+
             // DOM이 전달하는 this를 보존하는 계측 경계
             EventTarget.prototype.addEventListener = function (type, listener, options) {
                 if (this === window || this === document || this === document.documentElement || this instanceof MediaQueryList) {
@@ -50,9 +51,10 @@ test.describe("셸 컴포넌트 수명", () => {
                 );
                 const main = await page.locator("main").elementHandle();
                 await page.evaluate(() => window.shellFixture.unmount());
+
                 /**
                  * THEN
-                 * 본문 유지와 구독·타이머 정리
+                 * 본문 유지와 구독, 타이머 정리
                  */
                 expect(await main.evaluate((element) => element === document.querySelector<HTMLElement>("main"))).toBe(true);
                 expect(await page.locator(".wg_prose__headingText--highlighted").count()).toBe(0);
@@ -67,6 +69,7 @@ test.describe("셸 컴포넌트 수명", () => {
                 expect(active, "unmount must clean every global listener and pending highlight").toStrictEqual([]);
             });
         }
+
         // 첫 Effect frame 이전 해제에서도 늦은 구독 설치 방지
         await page.evaluate(() => {
             window.shellFixture.mount();

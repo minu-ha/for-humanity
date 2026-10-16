@@ -4,7 +4,8 @@ import {section_heading_depth} from "@/component/widget/prose/_constant/section"
 
 /**
  * ::part[이름]의 본문 가름과 다음 h2의 data-part
- * rehype-sections에서 같은 지점의 목차 묶음 생성
+ *
+ *   - rehype-sections에서 같은 지점의 목차 묶음 생성
  */
 export const remarkParts = () => (tree: Root) => {
     for (const [index, node] of tree.children.entries()) {

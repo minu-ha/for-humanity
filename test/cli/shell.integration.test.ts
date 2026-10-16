@@ -13,6 +13,7 @@ describe("페이지 셸", () => {
         const site = siteConfigSchema.parse({});
         const assets = {fontCss: "", preload: [], browser: {kind: "inline" as const, code: "window.shellReady = true;"}, stylePath: "/_fh/style.abc123.css"};
         const app = toPageApp({site, store: {docs: []}, assets});
+
         /**
          * WHEN
          * 페이지 렌더
@@ -37,6 +38,7 @@ describe("페이지 셸", () => {
         const site = siteConfigSchema.parse({cursorFace: true});
         const browserScript = "window.navigationFixture = true;";
         const assets = {fontCss: "", preload: [], stylePath: asset_style_path, browser: {kind: "inline" as const, code: browserScript}};
+
         /**
          * WHEN
          * 페이지 렌더

@@ -23,6 +23,7 @@ describe("문서 탐색", () => {
         const title = "</script><script>window.injected=true</script>\u2028\u2029";
         const site = siteConfigSchema.parse({title});
         await writeFile(join(root, "guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Read\n\nPrivate body marker.\n");
+
         /**
          * WHEN
          * 탐색 데이터와 마크업 생성
@@ -49,6 +50,7 @@ describe("문서 탐색", () => {
          */
         await writeFile(join(root, "README.md"), "# Home\n\n## Read here\n\n### More context\n\nText.\n");
         const site = siteConfigSchema.parse({});
+
         /**
          * WHEN
          * 탐색 데이터와 마크업 생성
@@ -230,6 +232,7 @@ describe("문서 탐색", () => {
             const docs = await readDocs({root: scope, processor: createProcessor({site, root: scope})});
             const parentId = scope === root ? "project/research/readme" : "research/readme";
             const groups = toDocGroups({docs, navigation: site.navigation});
+
             /**
              * THEN
              * 상대 부모 경로는 전체 문서와 하위 프로젝트 루트에서 모두 해석된 결과

@@ -5,7 +5,7 @@ import {navigation_scroll_storage_key, navigation_storage_version} from "@/store
 import {toNavigationScrollState} from "@/store/navigation/to-navigation-scroll-state";
 
 /**
- * 브라우저 저장소를 늦게 읽는 경계 · 차단 환경과 테스트의 메모리 저장소 지원
+ * 브라우저 저장소를 늦게 읽는 경계. 차단 환경과 테스트의 메모리 저장소 지원
  */
 interface NavigationStorage {
     /**
@@ -15,31 +15,32 @@ interface NavigationStorage {
 }
 
 /**
- * 브라우저 탐색의 vanilla 스토어 생성기 · Hono Hook이 아닌 생성기이므로 use- 접두사를 붙이지 않음
- * 서버 요청은 이 생성기를 실행하지 않으며 저장 실패 시 메모리 상태 유지
+ * 페이지별 브라우저 탐색 스토어
+ *
+ *   - 서버 요청은 이 생성기를 실행하지 않으며 저장 실패 시 메모리 상태 유지
  */
 export const createNavigationStores = (options: NavigationStorage) => {
     /**
-     * 저장소 접근이 막혀도 persist 갱신이 스크롤 동작을 중단하지 않도록 격리
+     * persist 저장 실패 격리, 메모리 기반 스크롤 동작 유지
      */
     const toSafeStorage = (getStorage: NavigationStorage["session"]): StateStorage => {
         return {
             getItem: (key) => {
-                // persist의 읽기 오류 경로로 보내 기존 메모리 상태를 유지 · null은 실제 저장소 초기화에만 사용
+                // persist 오류 경로에서 메모리 상태 유지, null 반환은 저장 상태 초기화에만 사용
                 return getStorage().getItem(key);
             },
             setItem: (key, value) => {
                 try {
                     return getStorage().setItem(key, value);
                 } catch {
-                    /* 저장 실패 시에도 스토어의 메모리 상태는 유지 */
+                    // 저장 실패 시 스토어의 메모리 상태 유지
                 }
             },
             removeItem: (key) => {
                 try {
                     return getStorage().removeItem(key);
                 } catch {
-                    /* 저장소 차단이 탐색을 막지 않음 */
+                    // 저장소 차단 시에도 기본 탐색 유지
                 }
             },
         };

@@ -5,7 +5,7 @@ import {copy_nav_aria_label} from "@/constant/copy";
 import "./_wg-navigation-nav.css";
 
 /**
- * 서버·브라우저가 공유하는 문서 트리
+ * 서버, 브라우저가 공유하는 문서 트리
  */
 export interface WgNavigationNavProps {
     /**
@@ -18,7 +18,7 @@ export const WgNavigationNav = (props: WgNavigationNavProps) => {
     return (
         <nav className={clsx("wg_navigationNav__root")} aria-label={copy_nav_aria_label}>
             {/**
-             * 문서 이동 · 클릭하지 않는 묶음과 독립 문서
+             * 문서 이동. 클릭하지 않는 묶음과 독립 문서
              */}
             <div className={clsx("wg_navigationNav__docs")}>
                 {props.groups.map((group) => (

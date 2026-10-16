@@ -1,5 +1,5 @@
 /*
- * 브라우저 진입 · 서버 자료 검증과 저장소 생성 후 공통 셸 컨트롤을 한 번 마운트
+ * 브라우저 진입. 서버 자료 검증과 저장소 생성 후 공통 셸 컨트롤을 한 번 마운트
  */
 import {createRoot} from "hono/jsx/dom/client";
 import {navigationDataSchema} from "@/component/widget/navigation/_constant/navigation-data-schema";
@@ -16,7 +16,7 @@ if (root !== null && payload !== null) {
         const stores = createNavigationStores({session: () => sessionStorage});
         createRoot(root).render(<WgShellControls data={data} stores={stores} />);
     } catch (error) {
-        // 초기화 오류에서도 서버의 링크·본문과 네이티브 스크롤 유지
+        // 초기화 오류에서도 서버의 링크, 본문과 네이티브 스크롤 유지
         console.error("for-humanity browser initialization failed", error);
     }
 }

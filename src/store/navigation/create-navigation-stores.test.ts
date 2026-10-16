@@ -29,6 +29,7 @@ describe("탐색 스크롤 저장", () => {
          * 격리된 세션 저장소
          */
         const setup = createStorage();
+
         /**
          * WHEN
          * 탐색 스토어 생성과 저장 상태 복원
@@ -42,6 +43,7 @@ describe("탐색 스크롤 저장", () => {
             },
         });
         const restored = createNavigationStores(setup.options).scroll.getState();
+
         /**
          * THEN
          * 복원 상태 확인
@@ -56,11 +58,13 @@ describe("탐색 스크롤 저장", () => {
          */
         const setup = createStorage();
         setup.session.set(navigation_scroll_storage_key, value);
+
         /**
          * WHEN
          * 탐색 스토어 생성과 저장 상태 복원
          */
         const stores = createNavigationStores(setup.options);
+
         /**
          * THEN
          * 기본 탐색 위치
@@ -87,11 +91,13 @@ describe("탐색 스크롤 저장", () => {
                 },
             }),
         );
+
         /**
          * WHEN
          * 탐색 스토어 생성과 저장 상태 복원
          */
         const stores = createNavigationStores(setup.options);
+
         /**
          * THEN
          * 유효한 와이드 좌표만 복원
@@ -114,11 +120,13 @@ describe("탐색 스크롤 저장", () => {
         };
         const stores = createNavigationStores({session: blocked});
         stores.scroll.setState({positions: {desktop: {navigation: "docs", pathname: "/", documents: 100, outline: 200}}});
+
         /**
          * WHEN
          * 저장된 상태 다시 조회
          */
         stores.scroll.persist.rehydrate();
+
         /**
          * THEN
          * 저장소 오류에도 기존 메모리 상태 유지

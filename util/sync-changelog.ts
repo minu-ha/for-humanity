@@ -1,8 +1,9 @@
 import {readFile, writeFile} from "node:fs/promises";
 
 /**
- * 공식 변경 기록의 사이트 문서 동기화 · npm에 포함하는 CHANGELOG.md를 원본으로 사용
- * 버전별 본문은 유지하고 문서 탐색 정보와 공개 릴리스 링크만 추가
+ * 공식 변경 기록의 사이트 문서 동기화. npm에 포함하는 CHANGELOG.md를 원본으로 사용
+ *
+ *   - 버전별 본문은 유지하고 문서 탐색 정보와 공개 릴리스 링크만 추가
  */
 const source = await readFile(new URL("../CHANGELOG.md", import.meta.url), "utf8");
 await writeFile(

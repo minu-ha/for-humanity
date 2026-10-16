@@ -17,7 +17,9 @@ export interface SnippetOptions {
 }
 
 /**
- * region 이름이 있으면 그 안만, 없으면 전체 · region 표시 줄은 항상 제거 · 공통 들여쓰기 제거
+ * region 지정 시 해당 범위만 추출, 미지정 시 전체 사용
+ *
+ *   - region 경계 줄과 공통 들여쓰기 제거
  */
 const toSnippetBody = (source: string, region: string | undefined): string | undefined => {
     const lines = source.replace(/\r\n/g, "\n").split("\n");
@@ -61,7 +63,10 @@ const toSnippetBody = (source: string, region: string | undefined): string | und
 };
 
 /**
- * `<<< ./path.ext#region 메타` 문단 → 코드 펜스 · 파일 위치 기준 경로 · 문서 폴더 밖과 없는 파일은 빌드 실패
+ * 문서 상대 경로의 코드 스니펫 삽입
+ *
+ *   - 선택 region과 메타를 코드 펜스에 반영
+ *   - 문서 폴더 밖 경로와 없는 파일은 빌드 실패
  */
 export const remarkSnippets = (options: SnippetOptions) => (tree: Root, file: VFile) => {
     visit(tree, "paragraph", (node, index, parent) => {

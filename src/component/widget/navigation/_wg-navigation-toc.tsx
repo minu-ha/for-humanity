@@ -7,11 +7,11 @@ import {findHashTarget} from "@/util/dom/find-hash-target";
 import "./_wg-navigation-toc.css";
 
 /**
- * 현재 문서의 목차 · 읽는 제목 한 항목만 강조
+ * 현재 문서의 목차. 읽는 제목 한 항목만 강조
  */
 export interface WgNavigationTocProps {
     /**
-     * 본문 순서의 가름·절·소제목
+     * 본문 순서의 가름, 절, 소제목
      */
     groups: TocGroup[];
 }
@@ -20,7 +20,7 @@ export const WgNavigationToc = (props: WgNavigationTocProps) => {
     const [currentSlug, setCurrentSlug] = useState<string>();
 
     /**
-     * 구독은 연결마다 한 번 설치 · 초기 갱신은 본문 파싱 이후로 미룸
+     * 연결마다 구독 설치, 초기 위치 갱신은 본문 파싱 이후 실행
      */
     useLayoutEffect(() => {
         const sections = props.groups.flatMap((group) => group.sections);
@@ -42,7 +42,7 @@ export const WgNavigationToc = (props: WgNavigationTocProps) => {
         };
 
         /**
-         * 연속 스크롤은 프레임당 한 번만 읽음
+         * 연속 스크롤의 프레임당 1회 위치 조회
          */
         const handleReadingPositionChange = () => {
             if (frame.id === 0) frame.id = requestAnimationFrame(updateCurrentHeading);
@@ -69,7 +69,7 @@ export const WgNavigationToc = (props: WgNavigationTocProps) => {
         <nav className={clsx("wg_navigationToc__root")} aria-label={copy_nav_toc_label}>
             <div className={clsx("wg_navigationToc__label")}>{copy_nav_toc_label}</div>
             {/**
-             * 가름별 제목 이동 · 하위 제목이 현재 위치여도 부모 글씨는 강조하지 않음
+             * 가름별 제목 이동. 하위 제목이 현재 위치여도 부모 글씨는 강조하지 않음
              */}
             {props.groups.map((group) => (
                 <div className={clsx("wg_navigationToc__groupSection", {"wg_navigationToc__groupSection--named": group.part !== undefined})} key={group.sections[0].heading.slug}>
@@ -85,8 +85,9 @@ export const WgNavigationToc = (props: WgNavigationTocProps) => {
                                 >
                                     {section.heading.text}
                                 </a>
+
                                 {/**
-                                 * 하위 제목 · 활성 링크는 한 제목만
+                                 * 하위 제목. 활성 링크는 한 제목만
                                  */}
                                 {section.subs.length > 0 && (
                                     <ul className={clsx("wg_navigationToc__sub")}>
