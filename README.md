@@ -58,6 +58,8 @@ Set an optional public root `url` in the site configuration to generate `robots.
 
 ### Develop the kit
 
+The unreleased Vite migration requires Node.js 22.12.0 or later. Repository development uses one Vite server with Hono, source TSX reloads and CSS HMR.
+
 To work on the CLI or read this library's guides and examples locally, run the project from source:
 
 ```sh

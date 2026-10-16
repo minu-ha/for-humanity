@@ -72,6 +72,8 @@ Vite의 Mermaid library 빌드는 ESM 형식과 동적 import 경계를 유지�
 
 `vite.config.ts`는 CLI·CSS, 동기 브라우저 번들, Mermaid ESM의 세 빌드 모드를 관리합니다. `tsconfig.package.json`으로 공개 타입 선언을 별도 생성합니다. 저장소 도구는 `tsx`로 실행하며 모두 `pnpm typecheck`에 포함합니다. `vitest.config.ts`는 제품 Vite 설정과 분리해 Node 테스트를 실행하며 `playwright.config.ts`는 Chromium 검사를 실행합니다. 제품과 브라우저 fixture는 같은 `to-browser-config.ts`의 Hono DOM 설정을 사용합니다. 직접 esbuild 의존성은 없으며 `tsx` 같은 도구의 전이 의존성은 남을 수 있습니다. 미공개 Vite 전환부터 개발·설치 패키지 모두 Node 22.12.0 이상이 필요합니다.
 
+CI는 Ubuntu의 Node 22.12.0·24와 Windows의 Node 22.12.0에서 같은 단위·브라우저·설치 검사를 실행하도록 구성합니다. Windows의 npm 실행은 Node 배포본의 `npm-cli.js`를 사용하고, 재귀 파일 목록은 URL 경로와 비교하기 전에 구분자를 정규화합니다.
+
 `smoke-package.ts`는 설치한 CLI를 `dev .`와 `preview .`로 실행하고 Chromium에서 갱신 연결·문서 수정·Mermaid·이미지를 확인합니다. 실행 전에 `pnpm exec playwright install chromium`으로 브라우저를 준비합니다.
 
 루트 `util/`은 저장소 개발·문서 동기화·배포 검증용. npm 패키지에는 포함하지 않음.

@@ -58,6 +58,8 @@ Cloudflare Pages에 빌드 결과 배포 가능. 설정은 [Deployment](../templ
 
 ### Develop the kit
 
+미공개 Vite 전환은 Node.js 22.12.0 이상 필요. 저장소 개발은 Vite 서버 하나와 Hono를 사용하며 소스 TSX 갱신과 CSS HMR 지원.
+
 CLI를 개발하거나 이 라이브러리의 가이드·예시를 로컬에서 읽으려면 소스 저장소에서 실행.
 
 ```sh

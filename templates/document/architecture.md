@@ -55,6 +55,8 @@ flowchart LR
 
 공통 Hono 앱은 CLI 인자와 Vite 서버를 직접 참조하지 않습니다. 개발 연결과 운영 실행 어댑터가 같은 앱을 사용하도록 구성합니다. Markdown 파일 읽기는 빌드·준비 단계에 두며 페이지 요청마다 반복하지 않습니다. 정적 생성 대상은 공개 페이지와 크롤러 파일이고, 향후 API·인증 라우트는 정적 생성 대상에서 제외합니다.
 
+현재 문서 준비와 등록 자원 응답은 Node 파일 시스템을 사용합니다. 다른 서버리스 런타임을 지원할 때는 준비된 문서 자료와 자원 제공 방식을 해당 플랫폼에 맞게 연결하고 별도로 검증합니다.
+
 참조: [Hono Vite 개발 플러그인](https://github.com/honojs/vite-plugins/tree/main/packages/dev-server), [Hono Node 서버](https://hono.dev/docs/getting-started/nodejs), [Vite 배포](https://vite.dev/guide/static-deploy).
 
 ### Search, identity and storage

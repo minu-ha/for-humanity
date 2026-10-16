@@ -57,6 +57,7 @@ describe("릴리스 산출물", () => {
                     integrity: "sha512-example",
                     files: [
                         "dist/cli.js",
+                        "dist/site.js",
                         "dist/cli.css",
                         "dist/browser.js",
                         "dist/config.js",
@@ -160,7 +161,7 @@ describe("릴리스 산출물", () => {
         expect(result.stderr).toMatch(scenario.error);
     });
 
-    test.for(["dist/cli.css", "dist/browser.js", "dist/config.js", "dist/type/site-config.d.ts"])("필수 산출물 %s가 없으면 거부한다", async (missing, {root}) => {
+    test.for(["dist/site.js", "dist/cli.css", "dist/browser.js", "dist/config.js", "dist/type/site-config.d.ts"])("필수 산출물 %s가 없으면 거부한다", async (missing, {root}) => {
         /**
          * GIVEN
          * 필수 파일이 누락된 패키지 보고서

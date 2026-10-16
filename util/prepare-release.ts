@@ -34,6 +34,7 @@ if (pack.name !== metadata.name || pack.version !== metadata.version || pack.fil
 const paths = new Set(pack.files.map((file) => file.path));
 for (const file of [
     "dist/cli.js",
+    "dist/site.js",
     "dist/cli.css",
     "dist/browser.js",
     "dist/config.js",

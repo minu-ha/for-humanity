@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import {execFileSync, spawnSync} from "node:child_process";
 import {mkdir, mkdtemp, readdir, readFile, rm, writeFile} from "node:fs/promises";
 import {tmpdir} from "node:os";
-import {join, resolve} from "node:path";
+import {dirname, join, resolve} from "node:path";
 import {checkPackageServer} from "@test/_fixture/check-package-server";
 import {packReportSchema} from "@tool/_type/pack-report";
 import {packageMetadataSchema} from "@tool/_type/package-metadata";
@@ -34,7 +34,19 @@ try {
     const site = {url: "https://docs.example.org", navigation: [nestedGroup, "Guide"]};
     const config = `import type {SiteConfig} from "for-humanity";\nexport default ${JSON.stringify(site)} satisfies SiteConfig;\n`;
     await writeFile(configPath, config);
-    execFileSync("npm", ["install", "--ignore-scripts", "--no-audit", "--no-fund", join(artifactDirectory, pack.filename)], {cwd: consumer, stdio: "inherit"});
+    // Windows의 npm.cmd 대신 Node 배포본에 포함된 CLI를 직접 실행
+    execFileSync(
+        process.platform === "win32" ? process.execPath : "npm",
+        [
+            ...(process.platform === "win32" ? [join(dirname(process.execPath), "node_modules/npm/bin/npm-cli.js")] : []),
+            "install",
+            "--ignore-scripts",
+            "--no-audit",
+            "--no-fund",
+            join(artifactDirectory, pack.filename),
+        ],
+        {cwd: consumer, stdio: "inherit"},
+    );
 
     const packageRoot = join(consumer, "node_modules", pack.name);
     const installed = packageMetadataSchema.parse(JSON.parse(await readFile(join(packageRoot, "package.json"), "utf8")));
@@ -108,7 +120,7 @@ try {
     assert.equal([...child.matchAll(/aria-current="page"/g)].length, 1);
     assert.equal([...childNavigation.matchAll(/wg_navigationNavList__link--active/g)].length, 1);
     assert.ok(nested.indexOf('aria-label="Projects"') < nested.indexOf('aria-label="Guide"'));
-    const entries = await readdir(output, {recursive: true});
+    const entries = (await readdir(output, {recursive: true})).map((path) => path.replaceAll("\\", "/"));
     assert.ok(!entries.includes("agents/index.html"));
     assert.ok(!entries.includes("claude/index.html"));
     for (const extension of [".woff2", ".css", ".svg"]) {
@@ -129,7 +141,7 @@ try {
     const rebuilt = await readFile(join(output, "index.html"), "utf8");
     assert.equal(rebuilt.match(/rel="stylesheet" href="([^"]+)"/)?.[1], stylePath);
     assert.ok(rebuilt.includes(`<script>${changedBrowserScript}</script>`));
-    const rebuiltEntries = await readdir(output, {recursive: true});
+    const rebuiltEntries = (await readdir(output, {recursive: true})).map((path) => path.replaceAll("\\", "/"));
     assert.ok(!rebuiltEntries.includes("robots.txt"), "removing the public URL must also remove previous crawler files");
     assert.ok(!rebuiltEntries.includes("sitemap.xml"), "projects without a public URL must not emit a sitemap");
     assert.ok(!rebuiltEntries.some((file) => file.endsWith(".js") && !file.startsWith("_fh/mermaid/")), "only the lazy Mermaid graph may emit script assets");
