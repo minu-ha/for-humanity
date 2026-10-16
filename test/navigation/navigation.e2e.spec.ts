@@ -28,6 +28,7 @@ test.describe("문서 탐색", () => {
                         event,
                         focused: document.hasFocus(),
                         visibility: document.visibilityState,
+                        media: matchMedia("(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)").matches,
                         stored: sessionStorage.getItem(storageKey),
                         className: face?.className,
                         transform: face?.style.transform,
@@ -41,7 +42,7 @@ test.describe("문서 탐색", () => {
                     (event) => {
                         if (type === "pointerleave" && event.target !== document.documentElement) return;
                         if (["blur", "focus"].includes(type) && event.target !== window) return;
-                        record(type);
+                        record(event instanceof PointerEvent ? `${type}:${event.pointerType}` : type);
                         queueMicrotask(() => record(`${type}:after`));
                     },
                     {capture: true},
@@ -107,7 +108,9 @@ test.describe("문서 탐색", () => {
              * THEN
              * 첫 프레임부터 원위치와 커서 표시 유지
              */
-            await expect(cursor, await page.evaluate(() => sessionStorage.getItem("test:cursor-events") ?? undefined)).toHaveCSS("visibility", "visible");
+            const cursorEvents = await page.evaluate(() => sessionStorage.getItem("test:cursor-events") ?? undefined);
+            if (process.env.CI) console.log(`::notice title=Cursor lifecycle::${cursorEvents?.replaceAll("%", "%25").replaceAll("\r", "%0D").replaceAll("\n", "%0A")}`);
+            await expect(cursor, cursorEvents).toHaveCSS("visibility", "visible");
             const frames = await page.evaluate(() => window.navigationFrames);
             for (const frame of frames) {
                 expect(Math.abs(frame.documents - 200)).toBeLessThanOrEqual(roundingTolerance);
