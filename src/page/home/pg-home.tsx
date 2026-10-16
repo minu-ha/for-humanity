@@ -35,9 +35,14 @@ export const PgHome = (props: PgHomeProps) => {
     return (
         <WgShell site={props.site} docs={props.docs} assets={props.assets} outline={props.home?.outline}>
             {/**
-             * README 원문. 없을 때만 파일 작성 안내
+             * 작성한 README 본문
              */}
-            {props.home === undefined ? <WgProse head={{title: props.site.title, lead: copy_home_missing}} /> : <WgProse html={props.home.html} />}
+            {props.home !== undefined && <WgProse html={props.home.html} />}
+
+            {/**
+             * README 부재 시 파일 작성 안내
+             */}
+            {props.home === undefined && <WgProse head={{title: props.site.title, lead: copy_home_missing}} />}
         </WgShell>
     );
 };

@@ -14,6 +14,7 @@ order: 10
 
 - Let Zustand persist own navigation scroll storage and hydration; remove direct storage reads, legacy layout-key compatibility and duplicate restoration helpers.
 - Validate saved navigation positions once with a shared Zod schema, discard malformed snapshots, and compare navigation data without traversing DOM links on every scroll event.
+- Keep code-block and caption backgrounds in the prose stylesheet, remove inline container colors and token overrides outside their owner, and share metadata decisions across both elements.
 
 ## 0.13.0 — 2026-10-16
 

@@ -59,9 +59,9 @@ describe("코드 블록", () => {
          * THEN
          * 대괄호 메타는 코드 색상을 유지한 파일 제목으로 표시된 결과
          */
-        expect(doc.html).toMatch(
-            /<figure class="wg_prose__codeFile wg_prose__codeFile--bad"><figcaption class="wg_prose__codeFileTitle">page\/products\.ts<span class="wg_prose__codeFileLang">ts<\/span><\/figcaption><pre class="[^"]*wg_prose__code--bad/,
-        );
+        expect(doc.html).toMatch(/<figcaption class="[^"]*wg_prose__codeFileTitle--bad[^"]*">page\/products\.ts<span class="wg_prose__codeFileLang">ts<\/span><\/figcaption>/);
+        expect(doc.html).toMatch(/<pre class="[^"]*wg_prose__code--bad[^"]*"/);
+        expect(doc.html).not.toMatch(/<pre\b[^>]*\bstyle=/);
         expect(doc.html.split("<figure").length - 1, "braces meta is not a title").toBe(1);
     });
 

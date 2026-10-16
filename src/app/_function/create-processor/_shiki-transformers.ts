@@ -11,24 +11,26 @@ import type {ShikiTransformer} from "shiki";
 /**
  * 코드 메타의 줄 번호, 상태, 파일 제목 생성
  *
- *   - 메타 부재는 진입점에서만 확인, 상태 판정은 코드와 figure에 공유
+ *   - 메타 부재는 진입점에서만 확인, 상태 판정은 코드와 제목에 공유
+ *   - 코드 상자의 색상은 소유 CSS에서 지정, 토큰별 Shiki 색상은 유지
  *   - 예외: ShikiTransformer.root의 호출 컨텍스트로 pre와 언어 조회, this 보존
  */
 const codeMetadata: ShikiTransformer = {
     name: "for-humanity:code-metadata",
     root(root) {
-        const meta = this.options.meta?.__raw;
+        this.pre.properties.style = undefined;
+        this.addClassToHast(this.pre, "wg_prose__code");
 
-        if (meta === undefined) {
+        if (this.options.meta?.__raw === undefined) {
             return;
         }
 
-        if (/\bline-numbers\b/.test(meta)) {
+        if (/\bline-numbers\b/.test(this.options.meta.__raw)) {
             this.addClassToHast(this.pre, "wg_prose__lineNumbers");
         }
 
-        const isBad = /\bbad\b/.test(meta);
-        const isGood = /\bgood\b/.test(meta);
+        const isBad = /\bbad\b/.test(this.options.meta.__raw);
+        const isGood = /\bgood\b/.test(this.options.meta.__raw);
 
         if (isBad) {
             this.addClassToHast(this.pre, "wg_prose__code--bad");
@@ -38,7 +40,7 @@ const codeMetadata: ShikiTransformer = {
             this.addClassToHast(this.pre, "wg_prose__code--good");
         }
 
-        const title = /\[([^\]]+)\]/.exec(meta)?.[1];
+        const title = /\[([^\]]+)\]/.exec(this.options.meta.__raw)?.[1];
 
         if (title === undefined) {
             return;
@@ -47,7 +49,7 @@ const codeMetadata: ShikiTransformer = {
         const caption: Element = {
             type: "element",
             tagName: "figcaption",
-            properties: {className: ["wg_prose__codeFileTitle"]},
+            properties: {className: ["wg_prose__codeFileTitle", ...(isBad ? ["wg_prose__codeFileTitle--bad"] : []), ...(isGood ? ["wg_prose__codeFileTitle--good"] : [])]},
             children: [
                 {type: "text", value: title},
                 {type: "element", tagName: "span", properties: {className: ["wg_prose__codeFileLang"]}, children: [{type: "text", value: this.options.lang}]},
@@ -57,7 +59,7 @@ const codeMetadata: ShikiTransformer = {
         const figure: Element = {
             type: "element",
             tagName: "figure",
-            properties: {className: ["wg_prose__codeFile", ...(isBad ? ["wg_prose__codeFile--bad"] : []), ...(isGood ? ["wg_prose__codeFile--good"] : [])]},
+            properties: {className: ["wg_prose__codeFile"]},
             children: [caption, ...root.children.filter((child): child is ElementContent => child.type !== "doctype")],
         };
 

@@ -109,6 +109,9 @@ export default {
                 "selector-class-pattern": null,
                 "property-disallowed-list": null,
 
+                // 컴포넌트 클래스의 선언은 소유 CSS에 한정
+                "selector-disallowed-list": [/\.(pg|wg|ui)_/],
+
                 // var() 소비까지 검사. 외부 변수 소비 파일 제외
                 "custom-property-pattern": "^app-[a-z0-9-]+$",
             },

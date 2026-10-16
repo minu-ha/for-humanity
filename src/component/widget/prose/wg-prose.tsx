@@ -37,8 +37,8 @@ export const WgProse = (props: WgProseProps) => {
         <article className={clsx("wg_prose__root")}>
             {props.head !== undefined && (
                 <header className={clsx("wg_prose__head")}>
-                    <h1>{props.head.title}</h1>
-                    {props.head.lead !== undefined && <p>{props.head.lead}</p>}
+                    <h1 className={clsx("wg_prose__title")}>{props.head.title}</h1>
+                    {props.head.lead !== undefined && <p className={clsx("wg_prose__lead")}>{props.head.lead}</p>}
                 </header>
             )}
         </article>

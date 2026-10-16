@@ -165,6 +165,19 @@
         font-size: inherit;
     }
 
+    & .wg_prose__code {
+        background: var(--app-code-background);
+        color: var(--app-code-foreground);
+    }
+
+    & .wg_prose__code--bad {
+        background: var(--app-color-bad-soft);
+    }
+
+    & .wg_prose__code--good {
+        background: var(--app-color-good-soft);
+    }
+
     /* 인용과 첫머리 안내 */
     & blockquote {
         margin: var(--app-space-block) 0;
@@ -298,6 +311,14 @@
         letter-spacing: 0;
     }
 
+    & .wg_prose__codeFileTitle--bad {
+        background: var(--app-color-bad-soft);
+    }
+
+    & .wg_prose__codeFileTitle--good {
+        background: var(--app-color-good-soft);
+    }
+
     & .wg_prose__codeFileLang {
         text-transform: uppercase;
     }
@@ -319,6 +340,23 @@
     }
     /* stylelint-enable selector-class-pattern */
     /* stylelint-enable selector-disallowed-list */
+}
+
+/* 생성한 문서 제목, 작성 HTML의 태그 선택자와 독립 */
+.wg_prose__title {
+    margin: 0 0 var(--app-space-stack);
+    color: var(--app-color-text-strong);
+    font-size: var(--app-font-size-title);
+    font-weight: var(--app-font-weight-title);
+    line-height: var(--app-line-height-title);
+    letter-spacing: var(--app-letter-spacing-title);
+    text-wrap: balance;
+    text-box: trim-start cap alphabetic;
+}
+
+.wg_prose__lead {
+    margin: 0 0 var(--app-space-stack);
+    font-size: var(--app-font-size-lead);
 }
 
 /* 공통 문서 머리 · 제목·소개 */
