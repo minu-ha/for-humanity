@@ -67,10 +67,20 @@ export const WgShell = (props: WgShellProps) => {
                 <title>{props.title === undefined ? props.site.title : `${props.title} · ${props.site.title}`}</title>
                 <link rel="icon" href={asset_favicon_path} type="image/svg+xml" />
                 <style dangerouslySetInnerHTML={{__html: props.assets.fontCss}} />
+
+                {/**
+                 * 본문 표시 전 글꼴 선요청
+                 */}
                 {props.assets.preload.map((href) => (
                     <link key={href} rel="preload" href={href} as="font" type="font/woff2" crossOrigin="" />
                 ))}
-                {props.assets.stylePath !== undefined && <link rel="stylesheet" href={props.assets.stylePath} />}
+
+                {/**
+                 * JavaScript 수신과 독립적인 첫 화면 스타일
+                 */}
+                {props.assets.stylePaths.map((href) => (
+                    <link key={href} rel="stylesheet" href={href} />
+                ))}
             </head>
 
             {/**

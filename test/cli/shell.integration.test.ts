@@ -11,7 +11,7 @@ describe("페이지 셸", () => {
          * 페이지 설정과 자원 입력
          */
         const site = siteConfigSchema.parse({});
-        const assets = {fontCss: "", preload: [], browser: {kind: "inline" as const, code: "window.shellReady = true;"}, stylePath: "/_fh/style.abc123.css"};
+        const assets = {fontCss: "", preload: [], browser: {kind: "inline" as const, code: "window.shellReady = true;"}, stylePaths: ["/_fh/style.abc123.css"]};
         const app = toPageApp({site, store: {docs: []}, assets});
 
         /**
@@ -37,7 +37,7 @@ describe("페이지 셸", () => {
          */
         const site = siteConfigSchema.parse({cursorFace: true});
         const browserScript = "window.navigationFixture = true;";
-        const assets = {fontCss: "", preload: [], stylePath: asset_style_path, browser: {kind: "inline" as const, code: browserScript}};
+        const assets = {fontCss: "", preload: [], stylePaths: [asset_style_path], browser: {kind: "inline" as const, code: browserScript}};
 
         /**
          * WHEN

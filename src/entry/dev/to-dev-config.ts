@@ -95,7 +95,8 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                                 ...params,
                                 root,
                                 kitRoot,
-                                browser: params.source ? {kind: "module", path: "/src/entry/dev/browser.ts"} : undefined,
+                                browser: params.source ? {kind: "module", path: "/src/entry/browser/browser.tsx"} : undefined,
+                                stylePaths: params.source ? z.array(z.string()).parse((await server.ssrLoadModule("/src/entry/dev/_constant/style.ts")).style_paths) : undefined,
                             });
                             if (state.closed || generation !== state.generation) return;
                             currentSite = nextSite;
@@ -108,9 +109,9 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                     const reload = debounce(refresh, dev_reload_delay_ms);
 
                     /**
-                     * 문서 루트의 입력과 저장소 TS, TSX 변경만 재처리, CSS는 Vite HMR 사용
+                     * 문서와 소스 변경 시 스냅샷 갱신, 기존 CSS 수정은 Vite HMR 사용
                      */
-                    const handleChange = (_event: string, file: string) => {
+                    const handleChange = (event: string, file: string) => {
                         const documentPath = relative(root, file);
                         const segments = documentPath.split(sep);
                         const isDocument =
@@ -118,7 +119,11 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                             !isAbsolute(documentPath) &&
                             !documentPath.startsWith(`..${sep}`) &&
                             !segments.some((part) => ["dist", "node_modules", ".git", ".cache"].includes(part));
-                        const isSource = params.source && file.startsWith(`${join(kitRoot, "src")}${sep}`) && [".ts", ".tsx"].includes(extname(file));
+                        const extension = extname(file);
+                        const isSource =
+                            params.source &&
+                            file.startsWith(`${join(kitRoot, "src")}${sep}`) &&
+                            ([".ts", ".tsx"].includes(extension) || (extension === ".css" && event !== "change"));
                         if (ready === undefined || (!isDocument && !isSource) || config_file_names.some((name) => documentPath === name)) return;
                         state.generation += 1;
                         reload();
@@ -144,7 +149,7 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                           /^\/node_modules\/\.vite\//,
                           /^\/@fs\//,
                           /^\/src\/(component|page|style|store|constant|type|util)\//,
-                          /^\/src\/entry\/(browser|dev\/browser\.ts)/,
+                          /^\/src\/entry\/browser\//,
                       ]
                     : viteClientPaths,
                 ignoreWatching: dev_ignored_paths,

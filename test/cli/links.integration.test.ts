@@ -79,7 +79,7 @@ describe("문서 링크와 목차", () => {
         const app = toPageApp({
             site,
             store: {docs},
-            assets: {stylePath: asset_style_path, browser: {kind: "inline" as const, code: ""}, fontCss: "", preload: []},
+            assets: {stylePaths: [asset_style_path], browser: {kind: "inline" as const, code: ""}, fontCss: "", preload: []},
         });
         const html = await (await app.request("/guide/")).text();
 

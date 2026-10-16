@@ -35,7 +35,7 @@ describe("홈페이지", () => {
         const app = toPageApp({
             site,
             store: {docs, home},
-            assets: {stylePath: asset_style_path, browser: {kind: "inline" as const, code: ""}, fontCss: "", preload: []},
+            assets: {stylePaths: [asset_style_path], browser: {kind: "inline" as const, code: ""}, fontCss: "", preload: []},
         });
         const response = await app.request("/");
         const html = await response.text();
@@ -75,7 +75,7 @@ describe("홈페이지", () => {
         const app = toPageApp({
             site,
             store: {docs: [], home},
-            assets: {stylePath: asset_style_path, browser: {kind: "inline" as const, code: ""}, fontCss: "", preload: []},
+            assets: {stylePaths: [asset_style_path], browser: {kind: "inline" as const, code: ""}, fontCss: "", preload: []},
         });
         const html = await (await app.request("/")).text();
 

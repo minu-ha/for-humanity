@@ -56,7 +56,7 @@ describe("문서 탐색", () => {
          * 탐색 데이터와 마크업 생성
          */
         const home = await readHome({root, processor: createProcessor({site, root})});
-        const assets = {fontCss: "", preload: [], browser: {kind: "inline" as const, code: ""}, stylePath: asset_style_path};
+        const assets = {fontCss: "", preload: [], browser: {kind: "inline" as const, code: ""}, stylePaths: [asset_style_path]};
         const html = await (await toPageApp({site, store: {docs: [], home}, assets}).request("/")).text();
         const rail = html.match(/<aside\b[^>]*data-navigation-rail=""[^>]*>([\s\S]*?)<\/aside>/)?.[1];
 
@@ -203,7 +203,7 @@ describe("문서 탐색", () => {
         const app = toPageApp({
             site,
             store: {docs},
-            assets: {stylePath: asset_style_path, browser: {kind: "inline" as const, code: ""}, fontCss: "", preload: []},
+            assets: {stylePaths: [asset_style_path], browser: {kind: "inline" as const, code: ""}, fontCss: "", preload: []},
         });
         for (const doc of docs) {
             expect((await app.request(`/${doc.id}/`)).status).toBe(200);

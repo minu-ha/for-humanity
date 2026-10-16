@@ -3,9 +3,9 @@
  */
 export interface SiteAssets {
     /**
-     * 내용 지문으로 구분한 스타일시트 URL
+     * 첫 화면 전에 적용할 스타일시트 URL, 배열 순서로 우선순위 유지
      */
-    stylePath?: string;
+    stylePaths: string[];
 
     /**
      * 동기 배포 번들 또는 개발 실행기의 모듈 진입점

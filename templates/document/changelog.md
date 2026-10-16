@@ -12,6 +12,7 @@ order: 10
 
 ## Unreleased
 
+- Load source development CSS through HTML stylesheet links before the first paint; preserve CSS HMR and refresh the stylesheet list when files are added or removed.
 - Mark the prebuilt Mermaid module URL as an intentional runtime import to avoid Vite development warnings while preserving lazy loading.
 - Serve static previews through Vite with explicit site output paths, document 404s and preserved font cache headers; bind to localhost, reject missing builds and occupied ports, and remove the direct Hono Node server dependency.
 - Share document preparation and Hono routes between static builds and a single Vite development server; replace custom file watching and SSE with Vite updates, preserve the last valid document snapshot, and support source TSX reloads and CSS HMR.

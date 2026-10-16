@@ -38,6 +38,11 @@ export interface SiteParams {
      * 개발 실행기의 브라우저 진입점, 생략 시 배포 번들 사용
      */
     browser?: SiteAssets["browser"];
+
+    /**
+     * 개발 실행기의 소스 스타일 URL, 생략 시 내용 지문을 붙인 배포 CSS 사용
+     */
+    stylePaths?: SiteAssets["stylePaths"];
 }
 
 /**
@@ -50,9 +55,9 @@ export const loadSite = async (params: SiteParams) => {
     const mono = toFontCss({css: join(params.kitRoot, font_mono_css), fontDir: asset_font_dir});
     const body = toFontCss({css: join(params.kitRoot, font_body_css), fontDir: asset_font_dir});
     const brand = toFontCss({css: join(params.kitRoot, font_brand_css), fontDir: asset_font_dir});
-    const stylePath = params.browser?.kind === "module" ? undefined : toAssetPath({path: asset_style_path, file: join(params.kitRoot, "dist/cli.css")});
+    const stylePaths = params.stylePaths ?? [toAssetPath({path: asset_style_path, file: join(params.kitRoot, "dist/cli.css")})];
     const files = new Map([[asset_favicon_path, join(params.kitRoot, "src/asset/favicon.svg")], ...mono.files, ...body.files, ...brand.files]);
-    if (stylePath !== undefined) files.set(stylePath, join(params.kitRoot, "dist/cli.css"));
+    if (params.stylePaths === undefined) files.set(stylePaths[0], join(params.kitRoot, "dist/cli.css"));
     const processor = createProcessor({site: params.site, root: params.root, files, mermaid: loadMermaidAssets(params.kitRoot)});
     const [docs, home] = await Promise.all([
         readDocs({root: params.root, processor, reserved: params.site.url === undefined ? undefined : crawling_reserved_roots}),
@@ -63,7 +68,7 @@ export const loadSite = async (params: SiteParams) => {
         site: params.site,
         store,
         assets: {
-            stylePath,
+            stylePaths,
             browser: params.browser === undefined ? {kind: "inline", code: readFileSync(join(params.kitRoot, "dist/browser.js"), "utf8")} : params.browser,
             fontCss: [mono.css, body.css, brand.css].join("\n"),
             preload: [...brand.files.keys(), ...mono.files.keys(), ...body.files.keys()],

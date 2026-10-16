@@ -36,7 +36,7 @@ interface DevSite {
  */
 export const test = base.extend<{source: boolean; devSite: DevSite}>({
     source: [false, {option: true}],
-    devSite: async ({source}, use) => {
+    devSite: async ({source}, use, testInfo) => {
         const directory = await realpath(await mkdtemp(join(tmpdir(), "for-humanity-dev-")));
         const kitRoot = source ? join(directory, "kit") : resolve(".");
 
@@ -64,6 +64,10 @@ export const test = base.extend<{source: boolean; devSite: DevSite}>({
                 await server.listen();
                 await use({root, kitRoot, server, errors});
             } finally {
+                // 화면의 준비 오류 뒤에 숨은 원인을 실패 보고서에 보존
+                if (testInfo.status !== testInfo.expectedStatus && errors.length > 0) {
+                    await testInfo.attach("dev-server-errors", {body: errors.join("\n"), contentType: "text/plain"});
+                }
                 await server.close();
             }
         } finally {

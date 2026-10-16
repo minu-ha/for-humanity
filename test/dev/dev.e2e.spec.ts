@@ -246,6 +246,90 @@ test.describe("개발 서버", () => {
 test.describe("저장소 소스 개발", () => {
     test.use({source: true});
 
+    test.describe("브라우저 JavaScript 미실행", () => {
+        test.use({javaScriptEnabled: false});
+
+        test("[DEV-008] 첫 요청과 새로고침은 JavaScript 없이 최신 CSS를 적용한다", {tag: "@high"}, async ({page, devSite}) => {
+            /**
+             * GIVEN
+             * 브라우저 모듈을 실행하지 않는 소스 개발 페이지
+             */
+            const path = join(devSite.kitRoot, "src/component/widget/shell/wg-shell.css");
+
+            /**
+             * WHEN
+             * 최초 페이지 요청
+             */
+            await page.goto("/");
+
+            /**
+             * THEN
+             * JavaScript의 스타일 삽입 전에도 전역 CSS와 셸 배치 적용
+             */
+            await expect(page.getByRole("main")).toHaveCSS("box-sizing", "border-box");
+            await expect(page.locator("body")).toHaveCSS("display", "grid");
+            await expect(page.locator("body")).toHaveCSS("margin-top", "0px");
+
+            await test.step("소스 CSS 수정 뒤 새로고침도 최신 스타일을 사용한다", async () => {
+                /**
+                 * WHEN
+                 * 패키지 재빌드 없이 CSS 수정 후 페이지 새로고침
+                 */
+                const changed = once(devSite.server.watcher, "change");
+                await writeFile(path, (await readFile(path, "utf8")).replace("margin: 0 auto;", "margin: 7px auto;"));
+                await changed;
+                await page.reload();
+
+                /**
+                 * THEN
+                 * 이전 빌드 CSS 대신 수정한 소스 스타일 적용
+                 */
+                await expect(page.locator("body")).toHaveCSS("margin-top", "7px");
+                expect(devSite.errors).toStrictEqual([]);
+            });
+        });
+    });
+
+    test("[DEV-009] CSS 파일 추가와 삭제는 HTML의 스타일 목록에 반영된다", {tag: "@high"}, async ({page, devSite}) => {
+        /**
+         * GIVEN
+         * 소스 스타일 목록을 사용하는 개발 페이지
+         */
+        const path = join(devSite.kitRoot, "src/component/widget/shell/_wg-shell-test.css");
+        await page.goto("/");
+        await expect(page.getByRole("main")).toHaveCSS("outline-style", "none");
+
+        await test.step("새 CSS 파일은 등록 설정 없이 적용한다", async () => {
+            /**
+             * WHEN
+             * 기존 소유자 폴더에 스타일 파일 추가
+             */
+            await writeFile(path, ".wg_shell__main { outline: 2px solid rgb(4, 5, 6); }\n");
+
+            /**
+             * THEN
+             * 새 HTML의 스타일 목록과 실제 렌더에 파일 반영
+             */
+            await expect(page.getByRole("main")).toHaveCSS("outline-color", "rgb(4, 5, 6)");
+            await expect(page.getByRole("main")).toHaveCSS("outline-style", "solid");
+        });
+
+        await test.step("삭제한 CSS 파일은 스타일 목록에서 제외한다", async () => {
+            /**
+             * WHEN
+             * 추가한 스타일 파일 삭제
+             */
+            await rm(path);
+
+            /**
+             * THEN
+             * 삭제 전 스타일이 남지 않고 정상 스냅샷 유지
+             */
+            await expect(page.getByRole("main")).toHaveCSS("outline-style", "none");
+            expect(devSite.errors).toStrictEqual([]);
+        });
+    });
+
     test("[DEV-007] 소스 개발에서도 Vite 파일 경로로 문서 원본과 설정을 읽을 수 없다", {tag: ["@high", "@negative"]}, async ({page, devSite}) => {
         /**
          * GIVEN
@@ -259,7 +343,7 @@ test.describe("저장소 소스 개발", () => {
          * WHEN
          * 정상 브라우저 진입점과 문서 원본의 Vite 파일 경로 요청
          */
-        const entry = await page.request.get("/src/entry/dev/browser.ts");
+        const entry = await page.request.get("/src/entry/browser/browser.tsx");
         const responses = await Promise.all(paths.map((path) => page.request.get(path)));
 
         /**
@@ -304,6 +388,11 @@ test.describe("저장소 소스 개발", () => {
              * 스타일 반영과 같은 페이지 상태 유지
              */
             await expect(page.locator("main")).toHaveCSS("outline-color", "rgb(1, 2, 3)");
+            await expect(page.locator("html")).toHaveAttribute("data-dev-marker", "retained");
+
+            // 선언 삭제도 즉시 반영, 초기 stylesheet에 이전 CSS가 남는 회귀 확인
+            await writeFile(path, (await readFile(path, "utf8")).replace("\n.wg_shell__main { outline: 3px solid rgb(1, 2, 3); }\n", ""));
+            await expect(page.locator("main")).toHaveCSS("outline-style", "none");
             await expect(page.locator("html")).toHaveAttribute("data-dev-marker", "retained");
         });
 
