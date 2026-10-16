@@ -1,6 +1,7 @@
 import {expect} from "@playwright/test";
 import {test} from "@test/_fixture/navigation";
 import {readNavigationScroll} from "@test/_fixture/read-navigation-scroll";
+import {navigation_scroll_storage_key} from "@/store/navigation/navigation-storage";
 
 test.use({viewport: {width: 1920, height: 600}});
 
@@ -147,6 +148,39 @@ test.describe("문서 탐색", () => {
              */
             await expect(page.locator("[data-cursor-face]")).toHaveCSS("visibility", "hidden");
         });
+    });
+    test("[NAV-015] 구형 저장 키의 좌표는 복원하지 않는다", {tag: ["@high", "@negative"]}, async ({page}) => {
+        /**
+         * GIVEN
+         * 현재 문서 목록과 일치하는 구형 배치별 저장값
+         */
+        await page.goto("/guide/");
+        const signature = await page
+            .locator("[data-navigation]")
+            .evaluate((element) =>
+                [...element.querySelectorAll<HTMLAnchorElement>(".wg_navigationNav__root a[href]")].map((link) => `${link.pathname}:${link.textContent}`).join("\n"),
+            );
+        await page.addInitScript(
+            (options) => {
+                sessionStorage.removeItem(options.key);
+                sessionStorage.setItem(`${options.key}:desktop`, JSON.stringify({navigation: options.signature, pathname: "/guide/", documents: 180, outline: 120}));
+            },
+            {key: navigation_scroll_storage_key, signature},
+        );
+
+        /**
+         * WHEN
+         * 현재 persist 저장값이 없는 문서 새로고침
+         */
+        await page.reload();
+
+        /**
+         * THEN
+         * 구형 좌표 대신 초기 위치를 현재 스토어에 저장
+         */
+        await expect(page.locator('[data-navigation-scroll="documents"]')).toHaveJSProperty("scrollTop", 0);
+        await expect(page.locator('[data-navigation-scroll="outline"]')).toHaveJSProperty("scrollTop", 0);
+        await expect.poll(async () => (await readNavigationScroll(page))?.wide).toStrictEqual({documents: 0, outline: 0});
     });
     for (const storage of ["blocked", "corrupt"]) {
         test(`[NAV-${storage === "blocked" ? "012" : "013"}] 저장소 ${storage} 상태에서도 문서를 이동한다`, {tag: ["@high", "@negative"]}, async ({page}) => {

@@ -12,6 +12,9 @@ order: 10
 
 ## Unreleased
 
+- Let Zustand persist own navigation scroll storage and hydration; remove direct storage reads, legacy layout-key compatibility and duplicate restoration helpers.
+- Validate saved navigation positions once with a shared Zod schema, discard malformed snapshots, and compare navigation data without traversing DOM links on every scroll event.
+
 ## 0.13.0 — 2026-10-16
 
 **Upgrade:** Node.js 22.12.0 or later is now required; upgrade Node before installing. Existing `dev`, `build`, `preview` commands and `.mjs` configurations remain supported. To use typed configuration, replace the `.mjs` file with `for-humanity.config.ts`; keep only one configuration file per document folder. Development and preview servers bind to localhost.

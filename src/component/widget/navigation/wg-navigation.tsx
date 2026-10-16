@@ -2,7 +2,6 @@ import clsx from "clsx";
 import {type DOMAttributes, Fragment, useLayoutEffect, useRef, useState} from "hono/jsx";
 import {flushSync} from "hono/jsx/dom";
 import {navigation_mobile_query, navigation_wide_query} from "@/component/widget/navigation/_constant/navigation";
-import {restoreNavigationScroll} from "@/component/widget/navigation/_function/restore-navigation-scroll";
 import type {NavigationData} from "@/component/widget/navigation/_type/navigation-data";
 import type {NavigationFocusSnapshot} from "@/component/widget/navigation/_type/navigation-focus-snapshot";
 import {WgNavigationNav} from "@/component/widget/navigation/_wg-navigation-nav";
@@ -10,9 +9,7 @@ import {WgNavigationScroll} from "@/component/widget/navigation/_wg-navigation-s
 import {WgNavigationToc} from "@/component/widget/navigation/_wg-navigation-toc";
 import {copy_nav_close, copy_nav_open, copy_nav_title} from "@/constant/copy";
 import type {createNavigationStores} from "@/store/navigation/create-navigation-stores";
-import type {NavigationLayout, NavigationPosition} from "@/store/navigation/navigation-state";
-import {navigation_scroll_storage_key, navigation_storage_version} from "@/store/navigation/navigation-storage";
-import {toNavigationScrollState} from "@/store/navigation/to-navigation-scroll-state";
+import type {NavigationLayout} from "@/store/navigation/navigation-state";
 import {revealHashTarget} from "@/util/dom/reveal-hash-target";
 import "./wg-navigation.css";
 
@@ -52,6 +49,9 @@ export const WgNavigation = (props: WgNavigationProps) => {
     const focusRef = useRef<NavigationFocusSnapshot | null>(null);
     const restorePendingRef = useRef(true);
 
+    // 스크롤 이벤트마다 DOM 순회 없이 비교, 페이지별 활성 표시 제외
+    const navigationSignature = JSON.stringify(props.data.groups, (key, value: unknown) => (key === "active" ? undefined : value));
+
     /**
      * 저장된 배치와 현재 CSS 조건을 구분. 조건 변경 직후 잘린 좌표를 이전 배치에 저장하지 않음
      */
@@ -76,41 +76,30 @@ export const WgNavigation = (props: WgNavigationProps) => {
     };
 
     /**
-     * 모든 링크의 URL, 표시명으로 사이트 공통 문서 목록의 동일성 판정
-     */
-    const getNavigationSignature = () => {
-        const navigation = getNavigationPort();
-        if (navigation === null) return undefined;
-        return [...navigation.querySelectorAll<HTMLAnchorElement>(".wg_navigationNav__root a[href]")].map((link) => `${link.pathname}:${link.textContent}`).join("\n");
-    };
-
-    /**
      * 닫기, 이동보다 먼저 실제 좌표 보존. 숨긴 모달과 아직 복원하지 않은 배치는 저장하지 않음
      */
     const saveScroll = () => {
         const documents = getDocumentsPort();
+        const outline = outlineRef.current;
         if (
             props.stores === undefined ||
             documents === null ||
-            outlineRef.current === null ||
+            outline === null ||
             restorePendingRef.current ||
             layoutRef.current !== getNavigationLayout() ||
             (layoutRef.current === "drawer" && dialogRef.current?.open !== true)
         ) {
             return;
         }
-        const signature = getNavigationSignature();
-        if (signature === undefined) return;
-        const navigationPosition: NavigationPosition = {
-            navigation: signature,
-            pathname: location.pathname,
-            documents: documents.scrollTop,
-            outline: outlineRef.current.scrollTop,
-        };
         props.stores.scroll.setState((state) => ({
             positions: {
                 ...state.positions,
-                [layoutRef.current]: navigationPosition,
+                [layoutRef.current]: {
+                    navigation: navigationSignature,
+                    pathname: location.pathname,
+                    documents: documents.scrollTop,
+                    outline: outline.scrollTop,
+                },
             },
         }));
     };
@@ -121,21 +110,11 @@ export const WgNavigation = (props: WgNavigationProps) => {
     const restoreScroll = () => {
         layoutRef.current = getNavigationLayout();
         const documents = getDocumentsPort();
-        const navigation = getNavigationPort();
-        if (props.stores === undefined || documents === null || outlineRef.current === null || navigation === null) return;
+        if (props.stores === undefined || documents === null || outlineRef.current === null) return;
         if (layoutRef.current === "drawer" && dialogRef.current?.open !== true) return;
-        const signature = getNavigationSignature();
-        if (signature === undefined) return;
         const position = props.stores.scroll.getState().positions[layoutRef.current];
-        documents.scrollTop = 0;
-        outlineRef.current.scrollTop = 0;
-        if (position === undefined) {
-            restoreNavigationScroll({key: navigation_scroll_storage_key, version: navigation_storage_version, layout: layoutRef.current, toState: toNavigationScrollState});
-        } else if (position.navigation === signature) {
-            documents.scrollTop = position.documents;
-            if (position.pathname === location.pathname) outlineRef.current.scrollTop = position.outline;
-        }
-        navigation.dataset.navigationLayout = layoutRef.current;
+        documents.scrollTop = position?.navigation === navigationSignature ? position.documents : 0;
+        outlineRef.current.scrollTop = position?.navigation === navigationSignature && position.pathname === location.pathname ? position.outline : 0;
         restorePendingRef.current = false;
         saveScroll();
 
@@ -244,12 +223,12 @@ export const WgNavigation = (props: WgNavigationProps) => {
     };
 
     /**
-     * BFCache 복귀 시 저장 좌표로 동기 렌더 후 복원
+     * BFCache 복귀 시 persist의 최신 저장 좌표를 다시 읽어 복원
      */
     const handlePageShow = (event: PageTransitionEvent) => {
         if (!event.persisted || props.stores === undefined) return;
         restorePendingRef.current = true;
-        flushSync(() => props.stores?.scroll.persist.rehydrate());
+        props.stores.scroll.persist.rehydrate();
         handleLayoutChange();
         restoreScroll();
     };
@@ -351,7 +330,12 @@ export const WgNavigation = (props: WgNavigationProps) => {
                  * JavaScript 없이도 전체 문서 링크를 표시. 브라우저 모바일에서는 드로어가 같은 목록을 소유
                  */}
                 {layout !== "drawer" && (
-                    <div ref={props.stores === undefined ? undefined : navigationRef} className={clsx("wg_navigation__navigation")} data-navigation="">
+                    <div
+                        ref={props.stores === undefined ? undefined : navigationRef}
+                        className={clsx("wg_navigation__navigation")}
+                        data-navigation=""
+                        data-navigation-layout={layout}
+                    >
                         <WgNavigationScroll portRef={documentsRef} kind="documents" ready={props.stores !== undefined} onScroll={saveScroll} onClick={handleNavigationClick}>
                             <WgNavigationNav groups={props.data.groups} />
                         </WgNavigationScroll>
@@ -409,7 +393,12 @@ export const WgNavigation = (props: WgNavigationProps) => {
                  */}
                 <div className={clsx("wg_navigation__drawerContent")} data-navigation-content="">
                     {layout === "drawer" && (
-                        <div ref={props.stores === undefined ? undefined : drawerNavigationRef} className={clsx("wg_navigation__navigation")} data-navigation="">
+                        <div
+                            ref={props.stores === undefined ? undefined : drawerNavigationRef}
+                            className={clsx("wg_navigation__navigation")}
+                            data-navigation=""
+                            data-navigation-layout={layout}
+                        >
                             <WgNavigationScroll
                                 portRef={drawerDocumentsRef}
                                 kind="documents"
