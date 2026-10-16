@@ -12,6 +12,12 @@ order: 10
 
 ## Unreleased
 
+## 0.13.1 — 2026-10-16
+
+**Upgrade:** CLI commands, configuration and Node.js requirements remain unchanged. Navigation scroll positions saved by older versions may reset once after upgrading.
+
+**Known issue:** The previously recorded intermittent Windows cursor check (`NAV-010`) remains deferred. See [Maintenance](https://for-humanity.fyi/maintenance/#known-windows-check-issue).
+
 - Let Zustand persist own navigation scroll storage and hydration; remove direct storage reads, legacy layout-key compatibility and duplicate restoration helpers.
 - Validate saved navigation positions once with a shared Zod schema, discard malformed snapshots, and compare navigation data without traversing DOM links on every scroll event.
 - Keep code-block and caption backgrounds in the prose stylesheet, remove inline container colors and token overrides outside their owner, and share metadata decisions across both elements.
