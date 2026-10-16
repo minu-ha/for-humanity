@@ -57,8 +57,8 @@ export const WgMermaid = (props: WgMermaidProps) => {
                 const pending = elements.filter((element) => element.checkVisibility({visibilityProperty: true}) && element.dataset.mermaidTheme !== mode);
                 if (pending.length === 0) return;
 
-                // 빌드가 생성한 자체 호스팅 ESM. 탐색 번들에는 실행 의존 미포함
-                const library: typeof import("mermaid") = await import(path);
+                // 미리 빌드한 자체 호스팅 ESM의 런타임 URL, Vite의 번들 대상 분석 제외
+                const library: typeof import("mermaid") = await import(/* @vite-ignore */ path);
                 await document.fonts.ready;
                 if (lifetime.signal.aborted) return;
                 for (const element of pending) {

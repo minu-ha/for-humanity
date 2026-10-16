@@ -12,6 +12,7 @@ order: 10
 
 ## Unreleased
 
+- Mark the prebuilt Mermaid module URL as an intentional runtime import to avoid Vite development warnings while preserving lazy loading.
 - Serve static previews through Vite with explicit site output paths, document 404s and preserved font cache headers; bind to localhost, reject missing builds and occupied ports, and remove the direct Hono Node server dependency.
 - Share document preparation and Hono routes between static builds and a single Vite development server; replace custom file watching and SSE with Vite updates, preserve the last valid document snapshot, and support source TSX reloads and CSS HMR.
 - Avoid an extra browser reload after the first successful development request; verify recovery from an invalid initial document and shutdown after a pending file change.
