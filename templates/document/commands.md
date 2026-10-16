@@ -56,6 +56,18 @@ pnpm exec for-humanity dev docs
 문서가 프로젝트 루트에 있다면 `docs` 대신 `.` 사용. 루트 `AGENTS.md`·`CLAUDE.md`는 문서 수집에서 제외.
 `0.12.0`은 `dev`, `build`, `preview` 지원. `init`은 아직 미구현.
 
+### Help and version
+
+미공개 변경부터 Citty 기반 도움말과 버전 표시 지원. 설정 파일을 실행하거나 서버를 시작하지 않습니다.
+
+```sh
+pnpm exec for-humanity --help
+pnpm exec for-humanity build --help
+pnpm exec for-humanity --version
+```
+
+`-h`, `-v`도 사용 가능. 지원하지 않는 옵션과 문서 폴더를 여러 개 지정한 입력은 종료 코드 `1`로 실패합니다.
+
 ### Test a local package
 
 공개 전 변경을 확인할 때는 저장소에서 만든 패키지를 별도 프로젝트에 설치.
@@ -100,6 +112,8 @@ pnpm exec for-humanity build docs
 | ------- | ------------------------------------------------------------------------- | ----------------------- |
 | Error   | 설정·frontmatter 오류, 문서 id 중복, 모르는 블록 지시문, 흐름도 실패       | 종료 코드 `1`           |
 | Warning | 없는 Markdown 링크, 설정에 없는 날짜 상태 문구                            | 터미널 경고 · 빌드 계속 |
+
+미공개 변경부터 빌드 완료·문서 경고·실행 오류는 Consola로 표시합니다. 성공은 표준 출력, 경고·오류는 표준 오류로 출력하며 문서 경고의 파일·줄 위치를 유지합니다. Vite의 주소·HMR·변환 오류는 Vite 출력 방식을 사용합니다.
 
 ## preview
 

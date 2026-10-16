@@ -126,6 +126,16 @@ HTTP API 명세는 브라우저나 외부 앱이 Hono 기능을 호출하는 계
 
 ## Routing and rendering
 
+### CLI ownership
+
+Citty가 `dev`·`build`·`preview` 선택, 위치 인자, 도움말과 버전 표시를 담당합니다. 명령 생략 시 `dev`, 문서 폴더 생략 시 현재 폴더를 사용합니다. 사이트 실행 코드는 명령을 실행할 때만 가져오므로 도움말 조회가 사용자 설정이나 문서 처리를 실행하지 않습니다.
+
+Consola는 빌드 결과·문서 경고·사이트 실행 오류의 공통 출력입니다. 전역 console을 교체하지 않으며 Vite와 브라우저의 진단 출력은 각 실행기가 소유합니다. `init`의 입력 프롬프트는 후속 기능이고 현재 파일 생성 명령은 제공하지 않습니다.
+
+참조: [Citty](https://github.com/unjs/citty), [Consola](https://github.com/unjs/consola).
+
+### Page routes
+
 페이지 앱의 라우트: `/`, `/:slug{.+}/`. 문서 id에는 하위 폴더 포함.
 `/`는 문서 폴더의 `README.md`. 일반 문서 목록과 별도로 읽고, 개발 중 함께 갱신.
 

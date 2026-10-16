@@ -1,74 +1,66 @@
 #!/usr/bin/env node
 
-/*
- * CLI. for-humanity <dev|build|preview> [문서 폴더]
- * 기본 문서 폴더: 현재 폴더. 출력: <문서 폴더>/dist
- */
+import {readFile} from "node:fs/promises";
+import {defineCommand, runMain} from "citty";
+import {z} from "zod/mini";
+import {cli_default_command, cli_docs_args} from "@/entry/cli/_constant/cli";
+import {logger} from "@/util/logger/logger";
 
-import {copyFile, mkdir, rm, writeFile} from "node:fs/promises";
-import {dirname, join, relative, resolve} from "node:path";
-import {fileURLToPath} from "node:url";
-import {toSSG} from "hono/ssg";
-import {readSiteConfig} from "@/app/_function/read-site-config";
-import {loadSite} from "@/app/load-site";
-import {copy_error_prefix, copy_error_unknown_command} from "@/constant/copy";
-import {cli_default_command, cli_default_docs_dir} from "@/entry/cli/_constant/cli";
-import {toPreviewConfig} from "@/entry/preview/to-preview-config";
-import {toErrorMessage} from "@/util/error/to-error-message";
+const main = defineCommand({
+    /**
+     * 설치한 패키지의 명령 이름과 버전
+     */
+    meta: async () => {
+        const content: unknown = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
+        const manifest = z.object({name: z.string(), version: z.string()}).parse(content);
+        return {...manifest, description: "Markdown 문서 사이트 개발·빌드·미리보기"};
+    },
+    default: cli_default_command,
+    /**
+     * Citty의 미지정 옵션 허용을 제한하는 CLI 입력 경계
+     */
+    setup: (context) => {
+        const option = Object.keys(context.args).find((key) => key !== "_");
+        if (option !== undefined) {
+            logger.error(`지원하지 않는 옵션: ${option}. --help로 사용법을 확인하세요`);
+            process.exit(1);
+        }
+    },
+    subCommands: {
+        dev: defineCommand({
+            meta: {name: "dev", description: "문서 변경을 반영하는 개발 서버"},
+            args: cli_docs_args,
+            /**
+             * 도움말 조회와 분리한 사이트 실행
+             */
+            run: async (context) => {
+                const command = await import("@/entry/cli/_function/run-site-command");
+                await command.runSiteCommand({command: "dev", args: context.args});
+            },
+        }),
+        build: defineCommand({
+            meta: {name: "build", description: "문서 폴더의 dist에 정적 사이트 생성"},
+            args: cli_docs_args,
+            /**
+             * 도움말 조회와 분리한 사이트 실행
+             */
+            run: async (context) => {
+                const command = await import("@/entry/cli/_function/run-site-command");
+                await command.runSiteCommand({command: "build", args: context.args});
+            },
+        }),
+        preview: defineCommand({
+            meta: {name: "preview", description: "빌드한 정적 사이트의 로컬 미리보기"},
+            args: cli_docs_args,
+            /**
+             * 도움말 조회와 분리한 사이트 실행
+             */
+            run: async (context) => {
+                const command = await import("@/entry/cli/_function/run-site-command");
+                await command.runSiteCommand({command: "preview", args: context.args});
+            },
+        }),
+    },
+});
 
-const commands = ["dev", "build", "preview"];
-const [command = cli_default_command, docsDir = cli_default_docs_dir] = process.argv.slice(2);
-
-/**
- * 명령 실행. 설정 검증, 렌더링, 빌드, 서버 시작
- *
- *   - 실패: 터미널 오류와 종료 코드 1
- */
-const main = async () => {
-    if (!commands.includes(command)) {
-        throw new Error(`${copy_error_unknown_command}: ${command} (${commands.join(", ")})`);
-    }
-
-    // dist/cli.js 기준 패키지 루트
-    const kitRoot = fileURLToPath(new URL("../", import.meta.url));
-    const docsRoot = resolve(docsDir);
-    const outDir = join(docsRoot, "dist");
-    const siteConfig = await readSiteConfig(docsRoot);
-
-    if (command === "preview") {
-        const vite = await import("vite");
-        const server = await vite.preview(toPreviewConfig({root: docsRoot, port: siteConfig.port}));
-        server.printUrls();
-        return;
-    }
-
-    if (command === "dev") {
-        const dev = await import("@/entry/dev/start-dev-server");
-        await dev.startDevServer({root: docsRoot, kitRoot, site: siteConfig, source: false});
-        return;
-    }
-
-    const snapshot = await loadSite({root: docsRoot, kitRoot, site: siteConfig});
-
-    // 삭제된 문서와 자원의 잔여 파일 방지
-    await rm(outDir, {recursive: true, force: true});
-    const result = await toSSG(snapshot.pages, {writeFile, mkdir}, {dir: outDir});
-    if (!result.success) throw result.error;
-    const crawling = snapshot.crawling === undefined ? undefined : await toSSG(snapshot.crawling, {writeFile, mkdir}, {dir: outDir});
-    if (crawling?.success === false) throw crawling.error;
-
-    for (const [url, file] of snapshot.files) {
-        await mkdir(dirname(join(outDir, url)), {recursive: true});
-        await copyFile(file, join(outDir, url));
-    }
-    console.log(
-        `${crawling === undefined ? result.files.length : result.files.length + crawling.files.length} files, ${snapshot.files.size} assets → ${relative(process.cwd(), outDir)}`,
-    );
-};
-
-try {
-    await main();
-} catch (error) {
-    console.error(`${copy_error_prefix}: ${toErrorMessage(error)}`);
-    process.exit(1);
-}
+await runMain(main);

@@ -1,6 +1,7 @@
 import {relative} from "node:path";
 import type {Root} from "mdast";
 import type {VFile} from "vfile";
+import {logger} from "@/util/logger/logger";
 
 /**
  * 문서 경고 표시 기준
@@ -21,6 +22,6 @@ export const remarkReport = (options: ReportOptions) => (_tree: Root, file: VFil
     const path = relative(options.root, file.path);
 
     for (const message of file.messages) {
-        console.warn(`${message.line === undefined ? path : `${path}:${message.line}`} ${message.reason}`);
+        logger.warn(`${message.line === undefined ? path : `${path}:${message.line}`} ${message.reason}`);
     }
 };

@@ -43,14 +43,9 @@ export const copy_nav_toc_label = "On this page";
 export const copy_error_home_clash = "홈 README가 겹친다";
 
 /**
- * CLI 오류 접두사
+ * 터미널 로그 접두사
  */
 export const copy_error_prefix = "for-humanity";
-
-/**
- * 미지원 명령 오류
- */
-export const copy_error_unknown_command = "모르는 명령이다";
 
 /**
  * 정적 미리보기의 빌드 결과 누락 오류

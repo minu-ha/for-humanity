@@ -12,6 +12,7 @@ order: 10
 
 ## Unreleased
 
+- Use Citty for CLI commands and help/version output, reject unsupported options and extra paths before running, and format build results and document warnings with Consola.
 - Load source development CSS through HTML stylesheet links before the first paint; preserve CSS HMR and refresh the stylesheet list when files are added or removed.
 - Mark the prebuilt Mermaid module URL as an intentional runtime import to avoid Vite development warnings while preserving lazy loading.
 - Serve static previews through Vite with explicit site output paths, document 404s and preserved font cache headers; bind to localhost, reject missing builds and occupied ports, and remove the direct Hono Node server dependency.
