@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Render page titles, metadata and resource tags with a request-local Unhead server instance; deduplicate links, preserve literal metadata text, and keep CSS and font loading in the initial HTML.
 - Use Citty for CLI commands and help/version output, reject unsupported options and extra paths before running, and format build results and document warnings with Consola.
 - Load source development CSS through HTML stylesheet links before the first paint; preserve CSS HMR and refresh the stylesheet list when files are added or removed.
 - Mark the prebuilt Mermaid module URL as an intentional runtime import to avoid Vite development warnings while preserving lazy loading.

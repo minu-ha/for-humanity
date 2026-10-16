@@ -54,6 +54,10 @@ try {
     assert.equal(installed.version, pack.version);
     assert.equal(await readFile(join(packageRoot, "README.md"), "utf8"), await readFile("README.md", "utf8"));
 
+    // 소비 프로젝트에서 CLI 메타데이터와 도움말의 패키지 상대 경로 검증
+    assert.equal(execFileSync(process.execPath, [join(packageRoot, "dist/cli.js"), "--version"], {cwd: consumer, encoding: "utf8"}).trim(), pack.version);
+    assert.match(execFileSync(process.execPath, [join(packageRoot, "dist/cli.js"), "build", "--help"], {cwd: consumer, encoding: "utf8"}), /USAGE.*for-humanity build/);
+
     // 저장소 별칭, 개발 의존성이 없는 소비자에서 공개 선언과 중첩 입력 타입 검증
     const compiler = resolve("node_modules/typescript/bin/tsc");
     await writeFile(

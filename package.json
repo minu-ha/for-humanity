@@ -74,6 +74,7 @@
         "remark-rehype": "^11.1.2",
         "remark-smartypants": "^3.0.3",
         "shiki": "4.4.3",
+        "unhead": "^3.4.3",
         "unified": "^11.0.5",
         "unist-util-visit": "^5.1.0",
         "vfile": "^6.0.3",

@@ -78,6 +78,8 @@ CI는 Ubuntu의 Node 22.12.0·24와 Windows의 Node 22.12.0에서 같은 단위�
 
 `smoke-package.ts`는 설치한 CLI를 `dev .`와 `preview .`로 실행하고 Chromium에서 갱신 연결·문서 수정·Mermaid·이미지를 확인합니다. 실행 전에 `pnpm exec playwright install chromium`으로 브라우저를 준비합니다.
 
+설치 CLI의 도움말·버전도 소비 프로젝트에서 검증합니다. head 검사는 제목·설명의 텍스트 보존, 요청 간 격리, 자원 중복 제거와 CSS 순서를 포함합니다. 브라우저에서는 소스·설치 번들의 JavaScript 비활성 상태에서도 메타데이터와 첫 화면 스타일을 확인합니다.
+
 preview의 HTTP 검사는 `test/cli/preview.integration.test.ts`에서 빌드 누락·포트 충돌·중첩 문서·원본 비공개·404·폰트 캐시를 확인합니다. Mermaid·탐색 브라우저 fixture도 CLI와 같은 Vite preview 설정을 사용하며, 설치 검사는 실제 배포 CLI에서 원본 변경 후 빌드 결과 유지·캐시·404·종료까지 확인합니다.
 
 루트 `util/`은 저장소 개발·문서 동기화·배포 검증용. npm 패키지에는 포함하지 않음.

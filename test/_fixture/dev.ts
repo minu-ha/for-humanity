@@ -4,7 +4,7 @@ import {join, resolve} from "node:path";
 import {test as base} from "@playwright/test";
 import {createLogger, createServer, mergeConfig, type ViteDevServer} from "vite";
 import {toDevConfig} from "@/entry/dev/to-dev-config";
-import {siteConfigSchema} from "@/type/site-config";
+import {type SiteConfig, siteConfigSchema} from "@/type/site-config";
 
 /**
  * 파일 변경과 오류 복구를 관찰하는 개발 서버
@@ -32,11 +32,32 @@ interface DevSite {
 }
 
 /**
+ * 개발 서버 시나리오의 실행 모드와 사이트 입력
+ */
+interface DevFixture {
+    /**
+     * 저장소 소스 또는 설치 번들 실행
+     */
+    source: boolean;
+
+    /**
+     * 서버 시작 시 기본값을 적용할 설정
+     */
+    site: SiteConfig;
+
+    /**
+     * 테스트 종료 시 정리할 임시 사이트
+     */
+    devSite: DevSite;
+}
+
+/**
  * 케이스별 문서와 서버 격리, 소스 검사는 저장소 복사본 사용
  */
-export const test = base.extend<{source: boolean; devSite: DevSite}>({
+export const test = base.extend<DevFixture>({
     source: [false, {option: true}],
-    devSite: async ({source}, use, testInfo) => {
+    site: [{}, {option: true}],
+    devSite: async ({source, site}, use, testInfo) => {
         const directory = await realpath(await mkdtemp(join(tmpdir(), "for-humanity-dev-")));
         const kitRoot = source ? join(directory, "kit") : resolve(".");
 
@@ -53,7 +74,7 @@ export const test = base.extend<{source: boolean; devSite: DevSite}>({
             }
             const errors: string[] = [];
             const server = await createServer(
-                mergeConfig(toDevConfig({root, kitRoot, site: siteConfigSchema.parse({}), source}), {
+                mergeConfig(toDevConfig({root, kitRoot, site: siteConfigSchema.parse(site), source}), {
                     customLogger: {...createLogger("silent"), error: (message: string) => errors.push(message)},
                     server: {port: 0, host: "127.0.0.1"},
                 }),

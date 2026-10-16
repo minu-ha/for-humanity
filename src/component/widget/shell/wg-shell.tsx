@@ -1,5 +1,8 @@
 import clsx from "clsx";
+import {raw} from "hono/html";
 import type {Child} from "hono/jsx";
+import {createHead, escapeHtml} from "unhead/server";
+import type {Link} from "unhead/types";
 import {toNavigationData} from "@/component/widget/navigation/_function/to-navigation-data/to-navigation-data";
 import {toNavigationJson} from "@/component/widget/navigation/_function/to-navigation-json";
 import {WgShellControls} from "@/component/widget/shell-controls/wg-shell-controls";
@@ -55,33 +58,31 @@ export interface WgShellProps {
 export const WgShell = (props: WgShellProps) => {
     const navigationData = toNavigationData({site: props.site, docs: props.docs, current: props.current, outline: props.outline});
 
+    // 요청별 head 격리. 언어·문서 구조는 Hono 셸 소유
+    const head = createHead({disableDefaults: true});
+    head.push({
+        title: props.title === undefined ? props.site.title : `${props.title} · ${props.site.title}`,
+        meta: [
+            {charset: "utf-8"},
+            {name: "viewport", content: "width=device-width, initial-scale=1"},
+
+            // Unhead 속성 직렬화는 따옴표만 escape. 입력의 HTML 엔티티도 텍스트로 보존
+            {name: "description", content: props.site.description === undefined ? undefined : escapeHtml(props.site.description)},
+        ],
+        style: [{textContent: props.assets.fontCss}],
+        link: [
+            {rel: "icon", href: asset_favicon_path, type: "image/svg+xml"},
+            ...props.assets.preload.map<Link>((href) => ({rel: "preload", href, as: "font", type: "font/woff2", crossorigin: ""})),
+            ...props.assets.stylePaths.map<Link>((href) => ({rel: "stylesheet", href})),
+        ],
+    });
+
     return (
         <html lang="ko">
             {/**
-             * 공통 자원. 브라우저 동작은 WgShellControls의 생명주기에서 연결
+             * Unhead의 서버 직렬화 결과. 글꼴·CSS는 JavaScript 수신 전에 로드
              */}
-            <head>
-                <meta charSet="utf-8" />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
-                {props.site.description !== undefined && <meta name="description" content={props.site.description} />}
-                <title>{props.title === undefined ? props.site.title : `${props.title} · ${props.site.title}`}</title>
-                <link rel="icon" href={asset_favicon_path} type="image/svg+xml" />
-                <style dangerouslySetInnerHTML={{__html: props.assets.fontCss}} />
-
-                {/**
-                 * 본문 표시 전 글꼴 선요청
-                 */}
-                {props.assets.preload.map((href) => (
-                    <link key={href} rel="preload" href={href} as="font" type="font/woff2" crossOrigin="" />
-                ))}
-
-                {/**
-                 * JavaScript 수신과 독립적인 첫 화면 스타일
-                 */}
-                {props.assets.stylePaths.map((href) => (
-                    <link key={href} rel="stylesheet" href={href} />
-                ))}
-            </head>
+            <head>{raw(head.render().headTags)}</head>
 
             {/**
              * 문서 탐색, 현재 목차, 본문. 브라우저 동작 연결

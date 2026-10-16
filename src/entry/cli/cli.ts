@@ -16,6 +16,7 @@ const main = defineCommand({
         return {...manifest, description: "Markdown 문서 사이트 개발·빌드·미리보기"};
     },
     default: cli_default_command,
+
     /**
      * Citty의 미지정 옵션 허용을 제한하는 CLI 입력 경계
      */
@@ -30,6 +31,7 @@ const main = defineCommand({
         dev: defineCommand({
             meta: {name: "dev", description: "문서 변경을 반영하는 개발 서버"},
             args: cli_docs_args,
+
             /**
              * 도움말 조회와 분리한 사이트 실행
              */
@@ -41,6 +43,7 @@ const main = defineCommand({
         build: defineCommand({
             meta: {name: "build", description: "문서 폴더의 dist에 정적 사이트 생성"},
             args: cli_docs_args,
+
             /**
              * 도움말 조회와 분리한 사이트 실행
              */
@@ -52,6 +55,7 @@ const main = defineCommand({
         preview: defineCommand({
             meta: {name: "preview", description: "빌드한 정적 사이트의 로컬 미리보기"},
             args: cli_docs_args,
+
             /**
              * 도움말 조회와 분리한 사이트 실행
              */

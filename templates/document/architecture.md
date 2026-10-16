@@ -149,6 +149,18 @@ Consola는 빌드 결과·문서 경고·사이트 실행 오류의 공통 출�
 페이지 앱과 HTTP 앱의 분리는 SSG 대상과 파일 응답의 경계.
 Hono의 고정 파일·wildcard 경로를 중첩 문서의 정규식 매개변수와 합치면 기본 라우터가 바뀌면서 문서 요청이 누락될 수 있으므로, 페이지 라우팅과 파일 응답도 이 경계에서 격리합니다.
 
+### Document head
+
+`WgShell`이 렌더마다 `unhead/server` 인스턴스를 생성해 제목·설명·charset·viewport·favicon·글꼴·CSS 태그를 조립합니다. Unhead가 중복 태그 제거와 직렬화를 담당하고 Hono는 `<html lang="ko">`와 페이지 본문을 렌더링합니다. 공용 head 인스턴스를 저장하지 않으므로 사이트나 요청 사이에 메타데이터가 섞이지 않습니다.
+
+CSS와 글꼴 선언은 최초 HTML의 `<head>`에 포함합니다. JavaScript가 꺼져 있어도 스타일과 메타데이터가 적용되며 CSS의 상대 순서를 유지합니다. Unhead는 서버 전용으로 사용하고 브라우저 head 동기화 코드나 React 어댑터를 추가하지 않습니다. 현재 문서 이동은 전체 페이지 요청입니다.
+
+제목은 Unhead가 텍스트로 escape합니다. 설명 속성은 현재 Unhead 직렬화가 따옴표만 처리하므로 `escapeHtml`로 HTML 엔티티까지 보존합니다. `&copy;` 같은 입력과 태그 모양의 문자열이 브라우저에서도 원문으로 남는지 검증합니다. Hono의 `raw`에는 Unhead가 직렬화한 태그만 전달합니다.
+
+현재 공개 설정은 기존 `title`·`description`을 유지합니다. 페이지별 canonical·Open Graph·구조화 데이터 설정은 후속 요구사항에 맞춰 추가합니다.
+
+참조: [Unhead](https://github.com/unjs/unhead).
+
 ### Document processing lifetime
 
 `src/app/_function`이 파일 읽기·frontmatter 검증·Markdown 처리·서버 구성을 소유합니다. `create-processor`의 전용 플러그인은 그 함수 폴더의 `_` 파일에 둡니다. 본문의 표현을 만드는 플러그인은 `prose` 위젯이 계속 소유합니다.
