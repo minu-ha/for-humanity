@@ -102,6 +102,12 @@ CSS 규칙 본문은 타입 검사하는 `util/stylelint.config.ts`에 둡니다
 
 Hono 브라우저 셸·탐색·커서를 변경하면 자동 브라우저 검사를 실행합니다. Playwright Chromium이 필요하며 이미 설치한 Chrome으로도 실행할 수 있습니다.
 
+### Known Windows check issue
+
+`0.13.0` 릴리스 검증에서 Windows Node 22.12.0의 `[NAV-010]`이 새로고침 후 커서 장식을 `visible` 대신 `hidden`으로 확인하는 간헐적 실패가 남아 있습니다. [검증 실행](https://github.com/minu-ha/for-humanity/actions/runs/38868716242)에서 브라우저 검사 47개는 통과했고 이 검사 1개가 실패했습니다. 단위 검사·린트·타입 검사·빌드·별도 프로젝트 설치 후 dev/preview 검사는 통과했습니다.
+
+같은 변경의 macOS 브라우저 검사 48개와 Linux Node 22.12.0·24 검사는 통과했습니다. 커서 저장·복원과 포커스 이벤트 순서의 추가 확인은 후속 작업으로 남기며, 이 Windows 검사 실패를 기록한 상태로 `0.13.0` 공개를 진행합니다.
+
 ```sh
 pnpm exec playwright install chromium
 pnpm test:navigation

@@ -16,6 +16,8 @@ order: 10
 
 **Upgrade:** Node.js 22.12.0 or later is now required; upgrade Node before installing. Existing `dev`, `build`, `preview` commands and `.mjs` configurations remain supported. To use typed configuration, replace the `.mjs` file with `for-humanity.config.ts`; keep only one configuration file per document folder. Development and preview servers bind to localhost.
 
+**Known issue:** The Windows browser check for cursor visibility after a reload (`NAV-010`) intermittently fails. The other browser checks and installed-package dev/preview checks pass; further cursor lifecycle investigation is deferred. See [Maintenance](https://for-humanity.fyi/maintenance/#known-windows-check-issue).
+
 - Render page titles, metadata and resource tags with a request-local Unhead server instance; deduplicate links, preserve literal metadata text, and keep CSS and font loading in the initial HTML.
 - Use Citty for CLI commands and help/version output, reject unsupported options and extra paths before running, and format build results and document warnings with Consola.
 - Load source development CSS through HTML stylesheet links before the first paint; preserve CSS HMR and refresh the stylesheet list when files are added or removed.
