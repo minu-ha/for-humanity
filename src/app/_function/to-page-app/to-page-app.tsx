@@ -1,7 +1,6 @@
 import {Hono} from "hono";
-import {html} from "hono/html";
-import type {Child} from "hono/jsx";
 import {ssgParams} from "hono/ssg";
+import {toHtml} from "@/app/_function/to-page-app/_to-html";
 import {PgDoc} from "@/page/doc/pg-doc";
 import {PgHome} from "@/page/home/pg-home";
 import type {Doc} from "@/type/doc";
@@ -28,13 +27,6 @@ export interface PageParams {
      */
     assets: SiteAssets;
 }
-
-/**
- * Hono JSX 페이지에 HTML 문서 선언 추가. 서버와 정적 출력에서 같은 렌더러 사용
- */
-const toHtml = (page: Child) => {
-    return html`<!DOCTYPE html>${page}`;
-};
 
 /**
  * 첫 화면 /. 문서 /:slug{.+}/. 하위 폴더 id 지원

@@ -24,7 +24,7 @@ flowchart LR
 | `src/app/load-site.ts` | 문서·폰트·자원 준비 · 공통 Hono 앱 조립 | Node.js |
 | `src/entry/dev/to-dev-config.ts` | Vite 서버 · Hono 연결 · 문서 갱신 | Node.js · dev |
 | `src/entry/preview/to-preview-config.ts` | Vite 정적 미리보기 · 출력 경로·404·폰트 캐시 | Node.js · preview |
-| `src/app/_function/to-page-app.tsx` | 첫 화면과 문서 라우트 · Hono JSX → HTML | Node.js |
+| `src/app/_function/to-page-app/to-page-app.tsx` | 첫 화면과 문서 라우트 · Hono JSX → HTML | Node.js |
 | `src/app/_function/to-http-app.ts` | 등록 자원 · 페이지와 크롤러 앱 위임 | Node.js · dev |
 | `src/app/_function/to-crawling-app.ts` | 공개 URL을 설정한 사이트의 robots.txt · 사이트맵 응답 | Node.js |
 | `src/entry/browser/browser.tsx` | 입력 검증 · 저장소 생성 · 브라우저 셸 마운트 | Browser · 동기 |

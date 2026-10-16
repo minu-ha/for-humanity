@@ -6,7 +6,7 @@ import {describe, expect} from "vitest";
 import {createProcessor} from "@/app/_function/create-processor/create-processor";
 import {readDocs} from "@/app/_function/read-docs";
 import {readHome} from "@/app/_function/read-home";
-import {toPageApp} from "@/app/_function/to-page-app";
+import {toPageApp} from "@/app/_function/to-page-app/to-page-app";
 import {navigationDataSchema} from "@/component/widget/navigation/_constant/navigation-data-schema";
 import {toDocGroups} from "@/component/widget/navigation/_function/to-doc-groups/to-doc-groups";
 import {toNavigationData} from "@/component/widget/navigation/_function/to-navigation-data/to-navigation-data";

@@ -3,7 +3,8 @@ import {dirname, extname, isAbsolute, relative, resolve, sep} from "node:path";
 import type {Root} from "mdast";
 import {visit} from "unist-util-visit";
 import type {VFile} from "vfile";
-import {snippet_language_by_extension, snippet_pattern, snippet_region_pattern} from "@/app/_constant/snippet";
+import {snippet_language_by_extension, snippet_pattern} from "@/app/_constant/snippet";
+import {toSnippetBody} from "@/app/_function/create-processor/_to-snippet-body";
 import {copy_error_snippet} from "@/constant/copy";
 
 /**
@@ -15,52 +16,6 @@ export interface SnippetOptions {
      */
     root: string;
 }
-
-/**
- * region 지정 시 해당 범위만 추출, 미지정 시 전체 사용
- *
- *   - region 경계 줄과 공통 들여쓰기 제거
- */
-const toSnippetBody = (source: string, region: string | undefined): string | undefined => {
-    const lines = source.replace(/\r\n/g, "\n").split("\n");
-    let inside = region === undefined;
-    let found = region === undefined;
-    const kept: string[] = [];
-
-    for (const line of lines) {
-        const marker = snippet_region_pattern.exec(line);
-
-        if (marker !== null) {
-            if (region !== undefined && marker[2] === region) {
-                inside = marker[1] === undefined;
-                found = true;
-            }
-
-            continue;
-        }
-
-        if (inside) {
-            kept.push(line);
-        }
-    }
-
-    if (!found) {
-        return undefined;
-    }
-
-    while (kept.length > 0 && kept[0]?.trim() === "") {
-        kept.shift();
-    }
-
-    while (kept.length > 0 && kept.at(-1)?.trim() === "") {
-        kept.pop();
-    }
-
-    const indents = kept.filter((line) => line.trim() !== "").map((line) => line.length - line.trimStart().length);
-    const indent = indents.length === 0 ? 0 : Math.min(...indents);
-
-    return kept.map((line) => line.slice(Math.min(indent, line.length - line.trimStart().length))).join("\n");
-};
 
 /**
  * 문서 상대 경로의 코드 스니펫 삽입

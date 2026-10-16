@@ -1,7 +1,7 @@
 import {Hono} from "hono";
 import {html} from "hono/html";
 import {crawling_robots_path, crawling_sitemap_path} from "@/app/_constant/crawling";
-import type {PageParams} from "@/app/_function/to-page-app";
+import type {PageParams} from "@/app/_function/to-page-app/to-page-app";
 import type {ResolvedSiteConfig} from "@/type/site-config";
 
 /**

@@ -7,7 +7,7 @@ import {readDocs} from "@/app/_function/read-docs";
 import {readHome} from "@/app/_function/read-home";
 import {toCrawlingApp} from "@/app/_function/to-crawling-app";
 import {toHttpApp} from "@/app/_function/to-http-app";
-import {toPageApp} from "@/app/_function/to-page-app";
+import {toPageApp} from "@/app/_function/to-page-app/to-page-app";
 import {asset_favicon_path, asset_font_dir, asset_style_path} from "@/constant/asset";
 import {font_body_css, font_brand_css, font_mono_css} from "@/constant/font";
 import type {SiteAssets} from "@/type/site-assets";
