@@ -1,6 +1,7 @@
 import {expect} from "@playwright/test";
 import {test} from "@test/_fixture/navigation";
 import {readNavigationScroll} from "@test/_fixture/read-navigation-scroll";
+import {cursor_face_storage_key} from "@/component/widget/cursor-face/_constant/cursor-face";
 
 test.use({viewport: {width: 1920, height: 600}});
 
@@ -13,6 +14,40 @@ test.describe("문서 탐색", () => {
         const errors: string[] = [];
         const scriptRequests: string[] = [];
         page.on("pageerror", (error) => errors.push(error.message));
+        await page.addInitScript((storageKey) => {
+            const initialEvents = "";
+
+            /**
+             * 문서 종료 뒤에도 복원 실패의 이벤트 순서 보존
+             */
+            const record = (event: string) => {
+                const face = document.querySelector<HTMLImageElement>("[data-cursor-face]");
+                sessionStorage.setItem(
+                    "test:cursor-events",
+                    `${sessionStorage.getItem("test:cursor-events") ?? initialEvents}\n${JSON.stringify({
+                        event,
+                        focused: document.hasFocus(),
+                        visibility: document.visibilityState,
+                        stored: sessionStorage.getItem(storageKey),
+                        className: face?.className,
+                        transform: face?.style.transform,
+                    })}`,
+                );
+            };
+            record("init");
+            for (const type of ["blur", "focus", "pagehide", "pageshow", "pointerleave", "pointermove", "pointerdown", "visibilitychange"]) {
+                addEventListener(
+                    type,
+                    (event) => {
+                        if (type === "pointerleave" && event.target !== document.documentElement) return;
+                        if (["blur", "focus"].includes(type) && event.target !== window) return;
+                        record(type);
+                        queueMicrotask(() => record(`${type}:after`));
+                    },
+                    {capture: true},
+                );
+            }
+        }, cursor_face_storage_key);
         page.on("request", (request) => {
             if (request.resourceType() === "script") scriptRequests.push(request.url());
         });
@@ -72,7 +107,7 @@ test.describe("문서 탐색", () => {
              * THEN
              * 첫 프레임부터 원위치와 커서 표시 유지
              */
-            await expect(cursor).toHaveCSS("visibility", "visible");
+            await expect(cursor, await page.evaluate(() => sessionStorage.getItem("test:cursor-events") ?? undefined)).toHaveCSS("visibility", "visible");
             const frames = await page.evaluate(() => window.navigationFrames);
             for (const frame of frames) {
                 expect(Math.abs(frame.documents - 200)).toBeLessThanOrEqual(roundingTolerance);
