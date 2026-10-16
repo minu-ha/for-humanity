@@ -72,7 +72,7 @@ Vite의 Mermaid library 빌드는 ESM 형식과 동적 import 경계를 유지�
 
 ### Repository utilities
 
-`vite.config.ts`는 CLI·CSS, 동기 브라우저 번들, Mermaid ESM의 세 빌드 모드를 관리합니다. `tsconfig.package.json`으로 공개 타입 선언을 별도 생성합니다. 저장소 도구는 `tsx`로 실행하며 모두 `pnpm typecheck`에 포함합니다. `vitest.config.ts`는 제품 Vite 설정과 분리해 Node 테스트를 실행하며 `playwright.config.ts`는 Chromium 검사를 실행합니다. 제품과 브라우저 fixture는 같은 `to-browser-config.ts`의 Hono DOM 설정을 사용합니다. 직접 esbuild 의존성은 없으며 `tsx` 같은 도구의 전이 의존성은 남을 수 있습니다. 미공개 Vite 전환부터 개발·설치 패키지 모두 Node 22.12.0 이상이 필요합니다.
+`vite.config.ts`는 CLI·CSS, 동기 브라우저 번들, Mermaid ESM의 세 빌드 모드를 관리합니다. `tsconfig.package.json`으로 공개 타입 선언을 별도 생성합니다. 저장소 도구는 `tsx`로 실행하며 모두 `pnpm typecheck`에 포함합니다. `vitest.config.ts`는 제품 Vite 설정과 분리해 Node 테스트를 실행하며 `playwright.config.ts`는 Chromium 검사를 실행합니다. 제품과 브라우저 fixture는 같은 `to-browser-config.ts`의 Hono DOM 설정을 사용합니다. 직접 esbuild 의존성은 없으며 `tsx` 같은 도구의 전이 의존성은 남을 수 있습니다. `0.13.0`부터 개발·설치 패키지 모두 Node 22.12.0 이상이 필요합니다.
 
 CI는 Ubuntu의 Node 22.12.0·24와 Windows의 Node 22.12.0에서 같은 단위·브라우저·설치 검사를 실행하도록 구성합니다. Windows의 npm 실행은 Node 배포본의 `npm-cli.js`를 사용하고, 재귀 파일 목록은 URL 경로와 비교하기 전에 구분자를 정규화합니다.
 
@@ -195,7 +195,7 @@ Release는 `main`에 포함된 커밋, 태그와 일치하는 `package.json` 버
 | Allow npm dist-tag | 체크하지 않음 |
 
 GitHub가 발급하는 OIDC 자격 증명 사용. 별도 `NPM_TOKEN`이나 매번의 로그인·2FA 입력 불필요.
-GitHub-hosted runner, Node.js 24와 npm 12.2.0으로 배포. 미공개 Vite 전환부터 패키지 사용자의 Node.js 최소 버전은 22.12.0.
+GitHub-hosted runner, Node.js 24와 npm 12.2.0으로 배포. `0.13.0`부터 패키지 사용자의 Node.js 최소 버전은 22.12.0.
 설정 기준은 [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers/).
 
 ### Daily development

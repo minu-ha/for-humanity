@@ -12,7 +12,7 @@ Markdown으로 작성하고, 맥락을 남기고, 정적 사이트로 공유.
 
 [![MIT](https://img.shields.io/badge/license-MIT-1111aa?style=flat-square)](../LICENSE)
 [![npm](https://img.shields.io/npm/v/for-humanity?style=flat-square)](https://www.npmjs.com/package/for-humanity)
-![Node 22+](https://img.shields.io/badge/node-22%2B-444444?style=flat-square)
+![Node 22.12.0+](https://img.shields.io/badge/node-22.12.0%2B-444444?style=flat-square)
 ![Hono JSX](https://img.shields.io/badge/Hono-JSX-444444?style=flat-square)
 ![Prototype](https://img.shields.io/badge/status-prototype-9a6400?style=flat-square)
 
@@ -30,10 +30,10 @@ Markdown으로 작성하고, 맥락을 남기고, 정적 사이트로 공유.
 
 ## Quick start
 
-Node.js 22 이상과 pnpm. 자신의 문서 프로젝트에 CLI 설치.
+Node.js 22.12.0 이상과 pnpm. 자신의 문서 프로젝트에 CLI 설치.
 
 ```sh
-pnpm add -D --save-exact for-humanity@0.12.0
+pnpm add -D --save-exact for-humanity@0.13.0
 mkdir docs
 ```
 
@@ -52,13 +52,13 @@ pnpm exec for-humanity preview docs
 
 프로젝트 루트에 Markdown을 두었다면 `docs` 대신 `.` 사용. 루트 `README.md`는 홈으로 표시하며, 루트 `AGENTS.md`·`CLAUDE.md`는 사이트에서 제외.
 
-`0.12.0`은 `dev`, `build`, `preview` 지원. `init`은 예정 작업 · [Roadmap](../templates/document/roadmap.md) · [Changelog](../CHANGELOG.md).
+`0.13.0`은 `dev`, `build`, `preview` 지원. `init`은 예정 작업 · [Roadmap](../templates/document/roadmap.md) · [Changelog](../CHANGELOG.md).
 Cloudflare Pages에 빌드 결과 배포 가능. 설정은 [Deployment](../templates/document/deployment.md).
 사이트 설정에 선택적 공개 루트 `url`을 지정하면 `robots.txt`·`sitemap.xml` 생성. URL을 생략하면 두 파일을 생성하지 않음 · [Crawling](../templates/document/crawling.md).
 
 ### Develop the kit
 
-미공개 Vite 전환은 Node.js 22.12.0 이상 필요. 저장소 개발은 Vite 서버 하나와 Hono를 사용하며 소스 TSX 갱신과 CSS HMR 지원.
+0.13.0부터 Node.js 22.12.0 이상 필요. 저장소 개발은 Vite 서버 하나와 Hono를 사용하며 소스 TSX 갱신과 CSS HMR 지원.
 
 CLI를 개발하거나 이 라이브러리의 가이드·예시를 로컬에서 읽으려면 소스 저장소에서 실행.
 
@@ -77,7 +77,7 @@ pnpm preview    # 정적 사이트 미리보기
 pnpm build:pages # Cloudflare Pages 헤더·404 페이지 포함
 ```
 
-`main`에 push하면 문서 사이트 갱신. `v0.12.0` 같은 정식 버전 태그를 push하면 검증 후 npm 배포와 GitHub Release 생성. 두 곳에 같은 패키지 파일 사용.
+`main`에 push하면 문서 사이트 갱신. `v0.13.0` 같은 정식 버전 태그를 push하면 검증 후 npm 배포와 GitHub Release 생성. 두 곳에 같은 패키지 파일 사용.
 npm의 README는 새 패키지 버전을 배포할 때 반영. 공개 절차는 [Maintenance](../templates/document/maintenance.md#packaging-and-release).
 
 ## Make it yours
@@ -86,27 +86,19 @@ npm의 README는 새 패키지 버전을 배포할 때 반영. 공개 절차는 
 문서 폴더의 `README.md`는 홈(`/`)으로 표시하며 frontmatter 불필요. 사이트 이름을 누르면 홈으로 이동.
 이 사이트의 홈은 [최상위 README](../README.md), [변경 기록](../templates/document/changelog.md)은 최상위 CHANGELOG.md와 동기화. 원본 수정 후 `pnpm sync:docs` 실행.
 `pnpm dev`와 `pnpm build`도 시작할 때 [문서 폴더 README](../templates/document/README.md)와 변경 기록 동기화.
-`for-humanity.config.mjs`의 `title`로 자신의 사이트 이름 지정.
-
-```js
-export default {
-    title: "Project notes",
-    description: "결정·작업 기록·구현의 근거를 담는 문서.",
-    navigation: ["Getting started", "Guide", "Reference", "Examples"],
-};
-```
-
-소스 빌드는 공개 입력 타입을 제공하는 `for-humanity.config.ts`도 지원합니다. **미공개 변경**이며 npm `0.12.0`에서는 위 `.mjs` 예제를 사용합니다. 이 변경을 포함한 패키지를 설치하면 다음처럼 작성합니다.
+`for-humanity.config.ts`의 `title`로 자신의 사이트 이름 지정. 공개 `SiteConfig` 타입으로 편집기 자동완성과 정적 타입 검사 지원.
 
 ```ts
 import type {SiteConfig} from "for-humanity";
 
 export default {
     title: "Project notes",
-    navigation: ["Guide", ["Projects", "Research"]],
+    description: "결정·작업 기록·구현의 근거를 담는 문서.",
+    navigation: ["Getting started", "Guide", "Reference", "Examples"],
 } satisfies SiteConfig;
 ```
 
+기존 `for-humanity.config.mjs`도 지원합니다. TypeScript로 전환할 때는 기존 파일을 `.ts` 파일로 교체합니다.
 문서 폴더에는 설정 파일을 하나만 둡니다. CLI는 시작할 때 값을 검증하며, 정적 타입 검사는 프로젝트에서 `tsc --noEmit`으로 실행합니다.
 
 다른 문서 폴더의 실행은 [Commands](../templates/document/commands.md), 설정은 [Settings](../templates/document/settings.md).

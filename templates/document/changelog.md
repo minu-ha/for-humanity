@@ -12,6 +12,10 @@ order: 10
 
 ## Unreleased
 
+## 0.13.0 — 2026-10-16
+
+**Upgrade:** Node.js 22.12.0 or later is now required; upgrade Node before installing. Existing `dev`, `build`, `preview` commands and `.mjs` configurations remain supported. To use typed configuration, replace the `.mjs` file with `for-humanity.config.ts`; keep only one configuration file per document folder. Development and preview servers bind to localhost.
+
 - Render page titles, metadata and resource tags with a request-local Unhead server instance; deduplicate links, preserve literal metadata text, and keep CSS and font loading in the initial HTML.
 - Use Citty for CLI commands and help/version output, reject unsupported options and extra paths before running, and format build results and document warnings with Consola.
 - Load source development CSS through HTML stylesheet links before the first paint; preserve CSS HMR and refresh the stylesheet list when files are added or removed.
@@ -22,7 +26,7 @@ order: 10
 - Remove seven unused color and radius tokens and align the design reference with the active styles.
 
 - Replace direct esbuild package and browser fixture builds with Vite 8 and shared typed build configuration; preserve synchronous browser initialization and Mermaid license notices.
-- Raise the upcoming package minimum Node.js version to 22.12.0 and include Vite for the development and preview commands.
+- Raise the package minimum Node.js version to 22.12.0 and include Vite for the development and preview commands.
 
 - Support `for-humanity.config.ts` and publish a documented `SiteConfig` input type and generated declarations; retain `.mjs` support and reject duplicate configuration files.
 - Type-check build and maintenance tools, exclude repository tests from packages, and verify configuration types in an installed consumer project.

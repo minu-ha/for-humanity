@@ -8,7 +8,7 @@ order: 30
 문서 폴더의 `for-humanity.config.ts`. 제목, 소개, 공개 URL, 문서 묶음 순서, status badge 설정.
 설정 파일과 각 항목 모두 선택. 생략한 값은 기본값 적용.
 
-TypeScript 설정과 공개 `SiteConfig` 타입은 **미공개 변경**입니다. npm `0.12.0`에서는 기존 `for-humanity.config.mjs`를 사용합니다. 소스 빌드는 두 확장자를 지원하며, 같은 폴더에 두 설정이 있으면 실행 전에 중복 오류를 표시합니다.
+TypeScript 설정과 공개 `SiteConfig` 타입은 `0.13.0`부터 지원합니다. 기존 `for-humanity.config.mjs`도 지원하며, 같은 폴더에 두 설정이 있으면 실행 전에 중복 오류를 표시합니다. `.ts`로 전환할 때는 기존 `.mjs` 파일을 교체합니다.
 
 ## Overview
 

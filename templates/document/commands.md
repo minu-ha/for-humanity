@@ -45,20 +45,20 @@ pnpm preview
 
 ### Use in another project
 
-Node.js 22 이상과 pnpm이 있는 문서 프로젝트에서 npm 패키지 설치.
+Node.js 22.12.0 이상과 pnpm이 있는 문서 프로젝트에서 npm 패키지 설치.
 
 ```sh
-pnpm add -D --save-exact for-humanity@0.12.0
+pnpm add -D --save-exact for-humanity@0.13.0
 pnpm exec for-humanity dev docs
 ```
 
 `docs/README.md`를 홈으로 작성. 다른 문서의 frontmatter는 [Writing](writing.md) 참고.
 문서가 프로젝트 루트에 있다면 `docs` 대신 `.` 사용. 루트 `AGENTS.md`·`CLAUDE.md`는 문서 수집에서 제외.
-`0.12.0`은 `dev`, `build`, `preview` 지원. `init`은 아직 미구현.
+`0.13.0`은 `dev`, `build`, `preview` 지원. `init`은 아직 미구현.
 
 ### Help and version
 
-미공개 변경부터 Citty 기반 도움말과 버전 표시 지원. 설정 파일을 실행하거나 서버를 시작하지 않습니다.
+`0.13.0`부터 Citty 기반 도움말과 버전 표시 지원. 설정 파일을 실행하거나 서버를 시작하지 않습니다.
 
 ```sh
 pnpm exec for-humanity --help
@@ -77,7 +77,7 @@ pnpm exec for-humanity --version
 pnpm pack
 
 # 문서 프로젝트
-pnpm add -D /path/to/for-humanity-0.12.0.tgz
+pnpm add -D /path/to/for-humanity-0.13.0.tgz
 pnpm exec for-humanity dev docs
 ```
 
@@ -95,7 +95,7 @@ pnpm exec for-humanity dev docs
 - 설정 변경 → 서버 재시작
 - 저장소 `pnpm dev`: TS·TSX 변경은 페이지 갱신, CSS는 HMR로 반영
 - 설치 패키지 변경 → 다시 설치한 뒤 서버 재시작
-- 미공개 Vite 전환부터 Node 22.12.0 이상 필요. 별도 Vite 설정 파일은 만들지 않아도 됨
+- `0.13.0`부터 Node 22.12.0 이상 필요. 별도 Vite 설정 파일은 만들지 않아도 됨
 
 ## build
 
@@ -113,7 +113,7 @@ pnpm exec for-humanity build docs
 | Error   | 설정·frontmatter 오류, 문서 id 중복, 모르는 블록 지시문, 흐름도 실패       | 종료 코드 `1`           |
 | Warning | 없는 Markdown 링크, 설정에 없는 날짜 상태 문구                            | 터미널 경고 · 빌드 계속 |
 
-미공개 변경부터 빌드 완료·문서 경고·실행 오류는 Consola로 표시합니다. 성공은 표준 출력, 경고·오류는 표준 오류로 출력하며 문서 경고의 파일·줄 위치를 유지합니다. Vite의 주소·HMR·변환 오류는 Vite 출력 방식을 사용합니다.
+`0.13.0`부터 빌드 완료·문서 경고·실행 오류는 Consola로 표시합니다. 성공은 표준 출력, 경고·오류는 표준 오류로 출력하며 문서 경고의 파일·줄 위치를 유지합니다. Vite의 주소·HMR·변환 오류는 Vite 출력 방식을 사용합니다.
 
 ## preview
 

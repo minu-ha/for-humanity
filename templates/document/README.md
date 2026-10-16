@@ -14,7 +14,7 @@ Write Markdown. Keep the context. Share a static site.
 
 [![MIT](https://img.shields.io/badge/license-MIT-1111aa?style=flat-square)](https://github.com/minu-ha/for-humanity/blob/main/LICENSE)
 [![npm](https://img.shields.io/npm/v/for-humanity?style=flat-square)](https://www.npmjs.com/package/for-humanity)
-![Node 22+](https://img.shields.io/badge/node-22%2B-444444?style=flat-square)
+![Node 22.12.0+](https://img.shields.io/badge/node-22.12.0%2B-444444?style=flat-square)
 ![Hono JSX](https://img.shields.io/badge/Hono-JSX-444444?style=flat-square)
 ![Prototype](https://img.shields.io/badge/status-prototype-9a6400?style=flat-square)
 
@@ -32,10 +32,10 @@ Write Markdown. Keep the context. Share a static site.
 
 ## Quick start
 
-Node.js 22 or later and pnpm. Install the CLI in your document project:
+Node.js 22.12.0 or later and pnpm. Install the CLI in your document project:
 
 ```sh
-pnpm add -D --save-exact for-humanity@0.12.0
+pnpm add -D --save-exact for-humanity@0.13.0
 mkdir docs
 ```
 
@@ -54,13 +54,13 @@ pnpm exec for-humanity preview docs
 
 If your Markdown files are in the project root, use `.` instead of `docs`. The root `README.md` becomes the home page; root `AGENTS.md` and `CLAUDE.md` stay out of the site.
 
-Version `0.12.0` supports `dev`, `build` and `preview`. `init` is planned; see the [Roadmap](roadmap.md) and [Changelog](changelog.md).
+Version `0.13.0` supports `dev`, `build` and `preview`. `init` is planned; see the [Roadmap](roadmap.md) and [Changelog](changelog.md).
 Cloudflare Pages can host the generated site. See [Deployment](deployment.md) for the build settings.
 Set an optional public root `url` in the site configuration to generate `robots.txt` and `sitemap.xml`; projects without a URL emit neither file. See [Crawling](crawling.md).
 
 ### Develop the kit
 
-The unreleased Vite migration requires Node.js 22.12.0 or later. Repository development uses one Vite server with Hono, source TSX reloads and CSS HMR.
+Version 0.13.0 requires Node.js 22.12.0 or later. Repository development uses one Vite server with Hono, source TSX reloads and CSS HMR.
 
 To work on the CLI or read this library's guides and examples locally, run the project from source:
 
@@ -79,7 +79,7 @@ pnpm preview    # Preview the static site
 pnpm build:pages # Add Cloudflare Pages headers and a 404 page
 ```
 
-Changes pushed to `main` update the documentation site. A stable version tag such as `v0.12.0` runs checks, publishes the package to npm, then creates a GitHub Release with the same package file.
+Changes pushed to `main` update the documentation site. A stable version tag such as `v0.13.0` runs checks, publishes the package to npm, then creates a GitHub Release with the same package file.
 The npm README updates with each package release. See [Maintenance](maintenance.md#packaging-and-release) for the release steps.
 
 ## Make it yours
@@ -87,27 +87,19 @@ The npm README updates with each package release. See [Maintenance](maintenance.
 A document folder is enough to get started. Without a site configuration, the sidebar shows **for humanity**. The pixel face appears in the browser tab, and follows the mouse on desktop when the site sets `cursorFace: true`.
 The folder's `README.md` becomes the home page at `/`, with no frontmatter required. Click the site name to return home.
 This repository generates [the documentation home](README.md) from its root README.md and [the site changelog](changelog.md) from CHANGELOG.md. Edit those source files, then run `pnpm sync:docs`; `pnpm dev` and `pnpm build` also sync them on startup.
-Set your own name in `for-humanity.config.mjs`:
-
-```js
-export default {
-    title: "Project notes",
-    description: "Decisions, working notes and the details behind them.",
-    navigation: ["Getting started", "Guide", "Reference", "Examples"],
-};
-```
-
-The source build also supports `for-humanity.config.ts` with a documented public input type. This is **unreleased**; npm `0.12.0` uses the `.mjs` example above. After installing a package containing this change, use:
+Set your own name in `for-humanity.config.ts`, using the exported `SiteConfig` type for editor completion and static checking:
 
 ```ts
 import type {SiteConfig} from "for-humanity";
 
 export default {
     title: "Project notes",
-    navigation: ["Guide", ["Projects", "Research"]],
+    description: "Decisions, working notes and the details behind them.",
+    navigation: ["Getting started", "Guide", "Reference", "Examples"],
 } satisfies SiteConfig;
 ```
 
+Existing `for-humanity.config.mjs` files remain supported. When migrating to TypeScript, replace the old file with the `.ts` file.
 Use one configuration file per document folder. The CLI validates values at startup; run `tsc --noEmit` in your project for static type checking.
 
 See [Commands](commands.md) for using another document folder, and [Settings](settings.md) for configuration.

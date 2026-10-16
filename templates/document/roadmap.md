@@ -69,8 +69,8 @@ order: 40
 
 ## Vite integration
 
-저장소 개발과 설치 패키지의 `for-humanity dev`·`preview`까지 Vite로 통합했습니다. 아직 npm에는 공개하지 않았습니다. 설계 기준은 [Runtime direction](architecture.md#runtime-direction).
-Vite를 런타임 의존성에 포함하고 Node 최소 버전을 22.12.0으로 올리는 변경을 허용합니다. 공개 버전은 릴리스 준비 때 결정합니다.
+저장소 개발과 설치 패키지의 `for-humanity dev`·`preview`까지 Vite로 통합했습니다. `0.13.0`에 포함합니다. 설계 기준은 [Runtime direction](architecture.md#runtime-direction).
+Vite를 런타임 의존성에 포함하고 Node 최소 버전을 22.12.0으로 올리는 변경을 허용합니다. 이번 변경의 공개 버전은 `0.13.0`입니다.
 
 1. 설계 문서: 개발·운영 역할, 정적 생성 범위, 향후 DB·인증 책임 기록
 2. 패키지 빌드: `vite.config.ts`의 서버·브라우저·Mermaid 빌드와 `tsc` 선언 생성으로 `script/build-kit.ts` 대체. 브라우저 fixture의 esbuild 호출도 전환
@@ -88,15 +88,11 @@ Vite를 런타임 의존성에 포함하고 Node 최소 버전을 22.12.0으로 
 - [x] 설치 패키지·공개 타입·Node 최소 버전 검증과 Windows CI 구성
 - [x] 정적 preview를 Vite로 통합, 사이트 출력 경로·404·캐시·설치 CLI 검증
 
-Node 22.12.0과 24.3.0에서 설치 패키지의 공개 타입·build·dev·preview와 실제 브라우저 갱신을 검증했습니다. Windows 검증은 CI에 구성했으며 첫 원격 실행 결과는 아직 확인하지 않았습니다.
+Node 22.12.0과 24.3.0에서 설치 패키지의 공개 타입·build·dev·preview와 실제 브라우저 갱신을 검증했습니다. Windows의 Node 22.12.0에서도 CI가 단위·브라우저·설치 검사를 실행합니다.
 
-공개 전 남은 작업:
+`0.13.0`의 공개 검증은 Ubuntu·Windows CI와 패키지 설치 검사로 수행합니다. 결과는 [CI 실행 기록](https://github.com/minu-ha/for-humanity/actions/workflows/ci.yml)과 [GitHub Release](https://github.com/minu-ha/for-humanity/releases/tag/v0.13.0)에서 확인합니다. Node 지원 범위·버전·태그의 일치 기준은 [Releases](releases.md), 공개 절차는 [Maintenance](maintenance.md#packaging-and-release)를 따릅니다.
 
-- [ ] Ubuntu·Windows CI의 단위·브라우저·설치 검사 원격 실행 결과 확인
-- [ ] 마지막 공개 이후 전체 변경을 기준으로 버전 결정, Node 지원 범위와 설치 안내·변경 기록·태그 일치 확인
-- [ ] 패키지 릴리스 요청 시 npm·GitHub Release 공개와 공개 패키지 설치 검증
-
-검색·로그인·DB 연결은 이 전환의 미완료 작업에 포함하지 않으며 아래 후속 단계에서 별도로 설계합니다. 코드·문서 개선과 로컬 검증만 진행한 상태에서는 버전·태그·공개 기록을 변경하지 않습니다.
+검색·로그인·DB 연결은 아래 후속 단계에서 별도로 설계합니다.
 
 각 단계는 `pnpm test`, `pnpm check`, `pnpm build`, `git diff --check` 통과 후 별도 커밋으로 남깁니다. 번들·브라우저·개발 서버 변경 단계에서는 관련 Playwright 검사와 설치 패키지 검사도 실행합니다.
 완료 기준: 기존 정적 출력 계약을 유지하면서 저장소·설치 패키지의 개발과 정적 미리보기가 Vite로 실행되고, 별도 파일 감시·SSE·esbuild 실행 코드와 Hono 정적 미리보기 서버가 제거된 상태.
@@ -122,7 +118,7 @@ Node 22.12.0과 24.3.0에서 설치 패키지의 공개 타입·build·dev·prev
 새 프로젝트에 문서 폴더·설정·시작 문서를 준비하는 `for-humanity init` 명령.
 현재 명령은 `dev`, `build`, `preview`. `init`은 아직 미구현.
 
-명령 등록·도움말은 Citty, 로그와 향후 대화형 입력은 Consola를 사용합니다. 미공개 변경에 기존 세 명령의 Citty 전환과 공통 로그를 반영했습니다.
+명령 등록·도움말은 Citty, 로그와 향후 대화형 입력은 Consola를 사용합니다. `0.13.0`에 기존 세 명령의 Citty 전환과 공통 로그를 반영했습니다.
 
 - [ ] 대상 폴더 지정과 생성할 파일 목록 확정
 - [ ] 사이트 이름 입력 · 미지정 시 `for humanity`와 기본 favicon

@@ -15,9 +15,9 @@ order: 0
 [npm 패키지](https://www.npmjs.com/package/for-humanity) · [최신 GitHub Release](https://github.com/minu-ha/for-humanity/releases/latest) · [전체 릴리스](https://github.com/minu-ha/for-humanity/releases)
 
 정식 버전은 npm과 같은 `vX.Y.Z` 태그로 공개. GitHub Release에는 해당 버전의 변경 기록, 설치 명령, npm 링크와 같은 패키지 `.tgz` 첨부.
-지원 명령은 `dev`, `build`, `preview`. Node.js 22 이상 필요. `init`, 검색과 URL 하위 경로 배포는 [Roadmap](roadmap.md)의 예정 작업.
+지원 명령은 `dev`, `build`, `preview`. Node.js 22.12.0 이상 필요. `init`, 검색과 URL 하위 경로 배포는 [Roadmap](roadmap.md)의 예정 작업.
 
-미공개 Vite 전환부터 Node.js 22.12.0 이상이 필요합니다. 다음 릴리스에서 최소 버전 변경과 Vite 런타임 의존성을 함께 안내합니다.
+`0.13.0`부터 Vite를 개발·미리보기 실행에 포함하며 Node.js 최소 버전이 22.12.0으로 올라갑니다. 이전 버전을 쓰던 프로젝트는 Node.js를 먼저 업데이트한 뒤 패키지를 설치하세요.
 
 ## Install and update
 
