@@ -10,7 +10,7 @@ export default defineConfig({
     timeout: 30000,
     expect: {timeout: 10000},
     outputDir: ".cache/playwright/results",
-    reporter: [["list"], ["html", {outputFolder: ".cache/playwright/report", open: "never"}]],
+    reporter: [[process.env.CI ? "github" : "list"], ["html", {outputFolder: ".cache/playwright/report", open: "never"}]],
     use: {
         browserName: "chromium",
         channel: process.env.FH_TEST_BROWSER_CHANNEL,

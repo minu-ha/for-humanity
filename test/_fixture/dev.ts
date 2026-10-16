@@ -75,6 +75,8 @@ export const test = base.extend<DevFixture>({
             const errors: string[] = [];
             const server = await createServer(
                 mergeConfig(toDevConfig({root, kitRoot, site: siteConfigSchema.parse(site), source}), {
+                    // node_modules 링크를 공유해도 서버별 의존성 캐시는 격리
+                    cacheDir: join(directory, ".vite"),
                     customLogger: {...createLogger("silent"), error: (message: string) => errors.push(message)},
                     server: {port: 0, host: "127.0.0.1"},
                 }),
