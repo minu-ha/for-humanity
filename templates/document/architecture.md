@@ -59,6 +59,49 @@ flowchart LR
 
 참조: [Hono Vite 개발 플러그인](https://github.com/honojs/vite-plugins/tree/main/packages/dev-server), [Hono Node 서버](https://hono.dev/docs/getting-started/nodejs), [Vite 배포](https://vite.dev/guide/static-deploy).
 
+### Development, preview and production
+
+`dev`는 원본을 수정하면서 확인하는 실행기이고, `preview`는 이미 빌드한 사이트를 로컬에서 확인하는 실행기입니다. 운영 환경에는 정적 결과물 또는 실제 요청을 처리하는 Hono 앱을 배포합니다.
+
+| 실행 | 입력과 동작 | 용도 |
+| --- | --- | --- |
+| `dev` | 원본 문서·소스, Vite 파일 감시·변환·갱신, Hono HTML 응답 | 작성·개발 중 확인 |
+| `build` | 문서 처리와 정적 생성, `<문서 폴더>/dist` 출력 | 배포 파일 생성 |
+| `preview` | `<문서 폴더>/dist`의 HTML·CSS·JS 제공, 원본 감시·HMR 미사용 | 빌드 결과 확인 |
+| 정적 운영 | 호스팅 서비스가 빌드 파일 제공 | 현재 공개 문서 배포 |
+| 향후 동적 운영 | 배포 환경이 Hono 앱 실행, 인증·DB 조회·API 응답 | 서버 기능 제공 |
+
+현재 preview는 Hono의 정적 파일 서버입니다. 다음 변경에서는 Vite의 `preview()`로 전환하며, 명령과 사이트 출력 경로·문서 직접 접속·404·폰트 캐시 계약을 유지합니다. 패키지 코드가 들어 있는 저장소 루트 `dist`와 사이트 출력 폴더를 혼동하지 않도록 출력 경로를 명시합니다. 소비 프로젝트의 Vite 설정·환경 파일은 자동으로 실행하지 않습니다.
+
+API를 추가해도 개발 명령 하나와 같은 HTTP 포트를 유지하는 방향입니다. Vite가 API를 생성하거나 DB를 실행하는 것은 아닙니다. Hono 라우트와 인증·저장소 코드를 구현하고 개발 플러그인에 연결해야 합니다. 현재는 문서 앱만 연결되어 있으며 API·DB 확장 설정은 제공하지 않습니다.
+
+```text
+향후 dev
+  Vite 개발 서버 하나
+    ├─ JS·CSS 변환, 파일 감시, 브라우저 갱신
+    └─ Hono 앱
+         ├─ 문서 HTML 응답
+         └─ API·로그인 처리 → 개발용 DB 또는 외부 서비스
+
+현재 정적 배포
+  문서 build → 사이트 dist → 정적 호스팅 → 사용자
+
+향후 동적 배포
+  앱·자원 빌드 → 배포 환경 → Hono 앱 → 사용자 소유 DB
+```
+
+원격 개발용 DB는 연결 설정이 필요하고, 로컬 DB는 별도 프로세스나 컨테이너로 실행해야 합니다. 실행 명령을 묶는 것은 가능하지만 Vite의 자동 기능은 아닙니다. Cloudflare D1 같은 플랫폼 전용 기능을 사용하면 해당 개발 플러그인·실행 환경도 연결해야 합니다. API 변경 반영, 연결 정리, 비밀값 비공개를 포함해 후속 단계에서 검증합니다.
+
+| 향후 배포 대상 | Hono 실행 방식 |
+| --- | --- |
+| Cloudflare Workers | Cloudflare 런타임이 Hono의 `fetch` 호출 |
+| AWS Lambda | Lambda 핸들러와 어댑터가 요청을 Hono에 전달 |
+| Node.js 서버·컨테이너 | 운영 진입점에서 `@hono/node-server` 등으로 HTTP 서버 실행 |
+
+`@hono/node-server`는 preview 전용 도구가 아닙니다. Node.js 운영 서버에서도 사용할 수 있지만 Workers·Lambda에는 각 환경에 맞는 진입점이 필요합니다. 정적 파일과 API는 같은 도메인·배포 프로젝트로 구성할 수 있으며 반드시 서버 두 대를 운영할 필요는 없습니다. `vite preview`는 운영 앱 실행이나 플랫폼별 동작 검증을 대신하지 않습니다.
+
+참조: [Hono Cloudflare Workers](https://hono.dev/docs/getting-started/cloudflare-workers), [Hono AWS Lambda](https://hono.dev/docs/getting-started/aws-lambda), [Hono Cloudflare + Vite](https://hono.dev/docs/getting-started/cloudflare-workers-vite).
+
 ### Search, identity and storage
 
 검색·로그인·DB 연결은 아직 제공하지 않습니다. Vite 전환에는 다음 확장 원칙만 포함합니다.
