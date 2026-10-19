@@ -109,6 +109,7 @@ export const WgNavigationScroll = (props: WgNavigationScrollProps) => {
                 props.kind === "documents" && "wg_navigation__documents",
                 props.kind === "outline" && "wg_navigation__headings",
                 props.ready && "wg_navigation__scroll--ready",
+                props.ready && (overflow.above || overflow.below) && "wg_navigation__scroll--overflow",
                 props.ready && overflow.above && "wg_navigation__scroll--above",
                 props.ready && overflow.below && "wg_navigation__scroll--below",
             )}

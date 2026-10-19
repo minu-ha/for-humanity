@@ -220,4 +220,68 @@ test.describe("문서 탐색", () => {
             expect(errors).toStrictEqual([]);
         });
     }
+    test("[NAV-018] 화면에 들어가는 탐색 영역의 휠은 본문을 스크롤하고 넘치는 목록은 끝에서 휠을 가둔다", {tag: "@high"}, async ({page}) => {
+        await page.setViewportSize({width: 1920, height: 1600});
+        await page.goto("/guide/");
+        for (const area of [
+            {kind: "documents", name: "문서 목록"},
+            {kind: "outline", name: "목차"},
+        ]) {
+            await test.step(`${area.name} 위의 링크와 빈 영역`, async () => {
+                /**
+                 * GIVEN
+                 * 화면 높이 안에 모두 들어가는 탐색 영역
+                 */
+                const list = page.locator(`[data-navigation-scroll="${area.kind}"]`);
+                await expect(list).not.toHaveClass(/wg_navigation__scroll--overflow/);
+                const center = await list.evaluate((element) => element.getBoundingClientRect().left + element.getBoundingClientRect().width / 2);
+                for (const point of [
+                    {name: "링크", y: 200},
+                    {name: "빈 영역", y: 1550},
+                ]) {
+                    await page.evaluate(() => scrollTo({top: 0, behavior: "instant"}));
+
+                    /**
+                     * WHEN
+                     * 탐색 영역 위에서 휠 이동
+                     */
+                    await page.mouse.move(center, point.y);
+                    await page.mouse.wheel(0, 300);
+
+                    /**
+                     * THEN
+                     * 본문 스크롤
+                     */
+                    await expect.poll(() => page.evaluate(() => scrollY), {message: point.name}).toBeGreaterThan(0);
+                }
+            });
+        }
+        await test.step("넘치는 문서 목록의 끝", async () => {
+            /**
+             * GIVEN
+             * 화면보다 긴 문서 목록을 끝까지 내린 상태
+             */
+            await page.setViewportSize({width: 1920, height: 600});
+            await page.evaluate(() => scrollTo({top: 0, behavior: "instant"}));
+            const documents = page.locator('[data-navigation-scroll="documents"]');
+            await expect(documents).toHaveClass(/wg_navigation__scroll--overflow/);
+            await documents.evaluate((element) => {
+                element.scrollTop = element.scrollHeight;
+            });
+
+            /**
+             * WHEN
+             * 목록 위에서 휠 이동
+             */
+            await page.mouse.move(100, 300);
+            await page.mouse.wheel(0, 300);
+
+            /**
+             * THEN
+             * 본문 위치 유지
+             */
+            await expect(documents).toHaveJSProperty("scrollTop", await documents.evaluate((element) => element.scrollHeight - element.clientHeight));
+            expect(await page.evaluate(() => scrollY)).toBe(0);
+        });
+    });
 });

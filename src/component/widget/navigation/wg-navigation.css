@@ -140,8 +140,12 @@
 
 .wg_navigation__scroll {
     overflow-y: auto;
-    overscroll-behavior-y: contain;
     scroll-padding-block: var(--app-size-navigation-fade);
+}
+
+.wg_navigation__scroll--overflow {
+    /* 넘치는 목록만 끝의 휠을 가둠, Chrome은 넘침 없는 영역에도 적용해 본문 스크롤 차단 */
+    overscroll-behavior-y: contain;
 }
 
 .wg_navigation__scroll--ready {
