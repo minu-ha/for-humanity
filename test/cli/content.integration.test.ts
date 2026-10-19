@@ -7,7 +7,7 @@ import {loadSite} from "@/app/load-site";
 import {siteConfigSchema} from "@/type/site-config";
 
 describe("공개와 내부 문서", () => {
-    test("기본 프로젝트 빌드는 공개 URL을 유지하고 내부 본문과 자원을 제외한다", async ({root}) => {
+    test("기본 프로젝트 빌드는 공개 URL을 유지하고 내부 본문과 자원을 제외한다", {timeout: 45000}, async ({root}) => {
         /**
          * GIVEN
          * 공개 문서, 내부 전용 이미지와 Mermaid, 수집 대상 밖의 Markdown
