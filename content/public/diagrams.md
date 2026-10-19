@@ -117,7 +117,7 @@ erDiagram
 ## Tree View
 
 들여쓰기로 계층을 표현합니다. 폴더 이름 끝에는 `/`를 붙입니다.
-기존 `├──`, `└──`, `│` 형식도 `treeView-beta` 아래에서 사용할 수 있습니다. 실제 예시는 [Images](images.md#relative-paths).
+기존 `├──`, `└──`, `│` 형식도 `treeView-beta` 아래에서 사용할 수 있습니다. [Images](images.md#relative-paths)에 실제 예시가 있습니다.
 Tree View는 Mermaid의 beta 문법이므로 버전 갱신 때 예제를 함께 확인합니다.
 
 ````markdown
@@ -169,4 +169,4 @@ flowchart LR
 그림의 핵심과 독자가 판단할 내용은 본문에도 적습니다. 스크린 리더 설명이 필요하면 Mermaid의 `accTitle`·`accDescr`를 지원하는 유형에서 함께 작성합니다.
 공식 툴팁은 지원하지만 `strict` 보안 모드를 유지하므로 임의 JavaScript 콜백과 클릭 동작은 활성화하지 않습니다.
 
-참조: [Mermaid 유형별 문법](https://mermaid.ai/open-source/intro/), [공식 테마](https://mermaid.ai/open-source/config/theming.html), [Tree View](https://mermaid.ai/open-source/syntax/treeView.html).
+자세한 문법은 [Mermaid 유형별 문법](https://mermaid.ai/open-source/intro/), [공식 테마](https://mermaid.ai/open-source/config/theming.html), [Tree View](https://mermaid.ai/open-source/syntax/treeView.html) 문서를 참고합니다.

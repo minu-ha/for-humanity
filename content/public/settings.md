@@ -57,7 +57,7 @@ export default {title: "Project notes"};
 기본값을 사용하면 홈은 `content/README.md`, 공개 문서는 `content/public`, 내부 문서는 `content/private`입니다.
 공개 폴더는 필수입니다. 내부 문서가 없으면 private 폴더는 생략할 수 있습니다.
 
-다른 이름을 사용하려면:
+다른 이름을 사용하려면 다음과 같이 지정합니다.
 
 ```ts
 import type {SiteConfig} from "for-humanity";
@@ -71,7 +71,7 @@ export default {
 공개 문서 `published/guide.md`의 URL은 `/guide/`, 내부 문서 `internal/plan.md`의 로컬 URL은 `/private/plan/`입니다.
 
 경로는 프로젝트 내부의 상대 경로를 사용합니다. `content.root: "."`도 가능하지만 public과 private은 서로 다른 하위 폴더여야 합니다. 두 경로가 같거나 한쪽이 다른 쪽 안에 들어갈 수 없습니다.
-`..`, `dist`, `.git`, `node_modules`가 포함된 경로는 사용할 수 없습니다. 공개·내부 폴더 자체를 symlink로 지정하거나, symlink로 프로젝트 밖 또는 예약 폴더를 가리킬 수도 없습니다.
+`..`, `dist`, `.git`, `node_modules`가 포함된 경로는 사용할 수 없습니다. 공개·내부 폴더 자체를 symlink로 지정할 수 없습니다. symlink로 프로젝트 밖이나 예약 폴더를 가리킬 수도 없습니다.
 
 ### Public and private content
 
@@ -79,7 +79,7 @@ export default {
 홈이나 공개 문서에서 private 문서·이미지·첨부·스니펫을 참조하면 빌드가 실패합니다.
 
 공용 자료는 `content/asset`, 내부 자료는 `content/private/asset`에 보관합니다. `asset` 이름은 자유롭게 바꿀 수 있으며 링크를 수정하면 됩니다. 별도 설정은 필요하지 않습니다.
-`private`는 사이트 배포 제외 규칙입니다. Git 저장소에 올린 파일의 접근 권한을 바꾸지는 않습니다.
+`private`은 사이트 배포 제외 규칙입니다. Git 저장소에 올린 파일의 접근 권한을 바꾸지는 않습니다.
 
 ## Navigation
 
@@ -126,7 +126,7 @@ export default {
 | Key | Use |
 | --- | --- |
 | `phrase` | 본문에서 찾을 비어 있지 않은 문구 |
-| `kind` | `verified`: 초록 · `unverified`: amber |
+| `kind` | `verified`: 초록 · `unverified`: 호박색 |
 | `date` | `true`이면 뒤의 `YYYY-MM-DD` 날짜도 함께 표시 |
 
 위 설정을 사용한 문서에 `검토 완료 2026-10-01`을 쓰면 날짜까지 하나의 표지로 표시합니다.

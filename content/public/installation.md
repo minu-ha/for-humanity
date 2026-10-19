@@ -20,7 +20,7 @@ pnpm add -D --save-exact for-humanity@0.14.0
 
 ## Your first site
 
-`content/public` 폴더를 만들고, `content/README.md`에 홈에 표시할 내용을 작성합니다. 기본 파일을 복사해서 시작하려면 아래 [Content layout](#content-layout)을 참고합니다.
+`content/public` 폴더를 만들고 `content/README.md`에 홈에 표시할 내용을 작성합니다. 기본 파일을 복사해서 시작하려면 아래 [Content layout](#content-layout)을 참고합니다.
 
 ```markdown
 # Project notes
@@ -65,7 +65,7 @@ pnpm exec for-humanity preview
 
 ## Content layout
 
-설정은 프로젝트 루트에 두고, 문서는 공개·내부 폴더로 구분합니다.
+설정은 프로젝트 루트에 두고 문서는 공개·내부 폴더로 구분합니다.
 
 설치된 `node_modules/for-humanity/template`에서 설정 파일과 `content` 폴더를 자신의 프로젝트로 복사합니다. 기존 파일이 있다면 필요한 항목만 병합합니다.
 

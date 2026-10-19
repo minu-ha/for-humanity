@@ -43,13 +43,13 @@ Pages에서 문서 프로젝트의 Git 저장소를 연결하고 Framework prese
 자세한 연결 절차는 [Cloudflare Git integration](https://developers.cloudflare.com/pages/get-started/git-integration/)을 참고합니다.
 
 없는 문서가 홈으로 표시되지 않도록 출력 루트에 `404.html`을 포함합니다.
-별도로 관리한 파일은 빌드가 끝난 뒤 `content/dist`에 복사하도록 배포 명령에 추가합니다. [Cloudflare의 정적 페이지 제공 규칙](https://developers.cloudflare.com/pages/configuration/serving-pages/).
+별도로 관리한 파일은 빌드가 끝난 뒤 `content/dist`에 복사하도록 배포 명령에 추가합니다. [Cloudflare의 정적 페이지 제공 규칙](https://developers.cloudflare.com/pages/configuration/serving-pages/)을 참고합니다.
 
 ## Verify the deployment
 
 - 홈과 문서의 개별 URL이 열리는지 확인합니다.
 - 그림과 글꼴이 정상으로 표시되는지 확인합니다.
 - 없는 경로와 내부 문서 경로가 `404`를 반환하는지 확인합니다.
-- 검색 엔진용 파일이 필요하면 `url`을 설정하고 `/robots.txt`와 `/sitemap.xml`을 확인합니다. [Crawling](crawling.md).
+- 검색 엔진용 파일이 필요하면 [Crawling](crawling.md)에 따라 `url`을 설정하고 `/robots.txt`와 `/sitemap.xml`을 확인합니다.
 
 `preview`는 로컬 빌드 확인용입니다. 운영 사이트에는 빌드 결과를 정적 호스팅으로 제공합니다.

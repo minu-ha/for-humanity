@@ -67,7 +67,7 @@ public·private 안의 README는 일반 문서이므로 다른 문서처럼 fron
 
 ### Navigation groups
 
-같은 `group`을 지정한 문서는 함께 표시됩니다. `order`가 작을수록 먼저 표시되며, 생략한 문서는 순서를 지정한 문서 뒤에서 제목순으로 표시됩니다.
+같은 `group`을 지정한 문서는 함께 표시됩니다. `order`가 작을수록 먼저 표시됩니다. 생략한 문서는 순서를 지정한 문서 뒤에서 제목순으로 표시됩니다.
 
 ```yaml
 group: [Projects, Research]
@@ -80,11 +80,11 @@ order: 10
 ### File names
 
 공개 문서의 ID는 public 폴더 기준 경로에서 확장자를 뺀 소문자입니다. `public/guide/setup.md`는 `/guide/setup/`로 표시됩니다.
-private 문서에는 `/private/`가 붙습니다. `.mdx`도 Markdown으로 읽으며 JSX는 실행하지 않습니다.
+private 문서에는 `/private/`이 붙습니다. `.mdx`도 Markdown으로 읽으며 JSX는 실행하지 않습니다.
 
 같은 ID가 되는 파일 두 개는 함께 사용할 수 없습니다. 예를 들어 `Guide.md`와 `guide.mdx`는 충돌합니다.
 파일 이름에는 `#`, `?`, `%`, `*`, `:`, `\`나 제어문자를 사용하지 않습니다. `.`·`..`·`index.html` 경로 조각도 사용할 수 없습니다.
-첫 경로 `_fh`·`favicon.svg`는 기본 자원용, `private`는 내부 문서용입니다. `url`을 설정하면 `robots.txt`·`sitemap.xml`도 예약됩니다.
+첫 경로 `_fh`·`favicon.svg`는 기본 자원용, `private`은 내부 문서용입니다. `url`을 설정하면 `robots.txt`·`sitemap.xml`도 예약됩니다.
 
 ## Sections and parts
 
@@ -104,11 +104,11 @@ private 문서에는 `/private/`가 붙습니다. `.mdx`도 Markdown으로 읽�
 실행 안내.
 ```
 
-part는 본문과 목차에서 절의 묶음을 표시합니다. 제목에 자동 번호는 붙지 않으며, 번호가 필요하면 제목에 직접 적습니다.
+part는 본문과 목차에서 절의 묶음을 표시합니다. 제목에 자동 번호는 붙지 않습니다. 번호가 필요하면 제목에 직접 적습니다.
 
 ### Links
 
-`content/public/guide.md`에서 다른 문서와 홈을 연결하려면:
+`content/public/guide.md`에서 다른 문서와 홈을 연결하려면 다음과 같이 작성합니다.
 
 ```markdown
 [설정](settings.md)
@@ -180,7 +180,7 @@ const count = 3;
 <<< ./example/response.ts#contract line-numbers [response.ts]
 ```
 
-경로는 현재 Markdown 파일 기준입니다. 파일은 content 루트 안에 있어야 하며, 공개 문서에서는 private 파일을 불러올 수 없습니다.
+경로는 현재 Markdown 파일 기준입니다. 파일은 content 루트 안에 있어야 합니다. 공개 문서에서는 private 파일을 불러올 수 없습니다.
 `#contract`를 붙이면 파일의 `// #region contract`와 `// #endregion contract` 사이만 표시합니다. region 표시 줄과 공통 들여쓰기는 제거합니다.
 언어는 파일 확장자로 정합니다. 경로 뒤에는 코드 블록과 같은 메타를 사용할 수 있습니다. dev에서는 불러온 파일의 변경도 반영합니다.
 

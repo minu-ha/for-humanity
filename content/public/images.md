@@ -22,7 +22,7 @@ content/
         └── screen.md
 ```
 
-`content/public/guide/screen.md`에서:
+`content/public/guide/screen.md`에서는 다음과 같이 작성합니다.
 
 ```markdown
 ![가상 책 목록의 선택 상태](../../asset/sample.svg)
@@ -53,8 +53,8 @@ URL에는 파일 내용 지문을 포함하며 같은 내용·확장자는 같�
 
 ## Supported files
 
-이미지: SVG·PNG·JPG/JPEG·GIF·WebP·AVIF.
-첨부 링크: 위 이미지 형식과 PDF·CSV·TXT·ZIP. 실행 파일·프로젝트 소스·설정 파일을 자동으로 배포하지 않습니다.
+이미지는 SVG·PNG·JPG/JPEG·GIF·WebP·AVIF 형식을 지원합니다.
+첨부 링크에는 위 이미지 형식과 PDF·CSV·TXT·ZIP을 사용할 수 있습니다. 실행 파일·프로젝트 소스·설정 파일을 자동으로 배포하지 않습니다.
 
 없는 로컬 이미지·첨부, 루트 밖 경로와 바깥을 가리키는 symlink, 지원하지 않는 이미지 형식은 빌드 오류입니다.
 외부 URL·data URL·사이트 루트 기준 절대 URL은 바꾸거나 내려받지 않습니다. 절대 URL의 파일은 작성자가 별도로 제공합니다.

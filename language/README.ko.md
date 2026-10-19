@@ -21,7 +21,7 @@ Markdown으로 작성하고, 맥락을 남기고, 정적 사이트로 공유.
 
 ## Write, organize, publish
 
-Markdown에 코드 예제, 표, 이미지와 Mermaid 다이어그램을 작성합니다. 문서를 그룹과 하위 문서로 정리하고, 보충 설명은 Note에, 긴 설명은 접을 수 있는 Details에 담습니다.
+Markdown에 코드 예제, 표, 이미지와 Mermaid 다이어그램을 작성합니다. 문서를 그룹과 하위 문서로 정리합니다. 보충 설명은 Note에, 긴 설명은 접을 수 있는 Details에 담습니다.
 
 빌드 결과는 글꼴이 포함된 정적 사이트입니다. 밝은·어두운 테마, 키보드 탐색과 좁은 화면에 맞는 배치를 제공합니다.
 
@@ -60,7 +60,7 @@ pnpm exec for-humanity preview
 
 생성된 `content/dist`를 배포하고 `.gitignore`에 추가합니다. 호스팅 설정은 [Deployment](../content/public/deployment.md)를 참고합니다.
 
-배포할 문서는 `content/public`, 로컬에서만 읽을 문서는 `content/private`에 둡니다. 로컬 서버는 양쪽을 보여 주고, 빌드는 공개 문서와 홈만 포함합니다. 폴더 이름은 설정으로 바꿀 수 있습니다.
+배포할 문서는 `content/public`, 로컬에서만 읽을 문서는 `content/private`에 둡니다. 로컬 서버는 양쪽을 보여 주고 빌드는 공개 문서와 홈만 포함합니다. 폴더 이름은 설정으로 바꿀 수 있습니다.
 
 ## Make it yours
 
@@ -76,7 +76,7 @@ export default {
 } satisfies SiteConfig;
 ```
 
-`package.json` 옆의 프로젝트 루트 `for-humanity.config.ts`에 저장합니다. 기존 `.mjs` 설정도 지원하며, 설정 파일은 하나만 둡니다.
+`package.json` 옆의 프로젝트 루트 `for-humanity.config.ts`에 저장합니다. 기존 `.mjs` 설정도 지원합니다. 설정 파일은 하나만 둡니다.
 
 각 문서는 frontmatter에 제목·설명·그룹을 지정합니다. 완성된 문서 예시는 [Writing](../content/public/writing.md), 설정 항목은 [Settings](../content/public/settings.md)를 참고합니다.
 
