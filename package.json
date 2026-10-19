@@ -1,6 +1,6 @@
 {
     "name": "for-humanity",
-    "version": "0.14.0",
+    "version": "0.14.1",
     "description": "Documents written for humans to read: a docs kit with a sidebar, parts, sections and Mermaid diagrams, built on Hono JSX",
     "keywords": [
         "docs",

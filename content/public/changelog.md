@@ -19,6 +19,12 @@ pnpm add -D --save-exact for-humanity@latest
 
 ## Unreleased
 
+## 0.14.1 — 2026-10-19
+
+**Upgrade:** CLI commands, configuration, document syntax and Node.js requirements remain unchanged.
+
+**Known issue:** The intermittent Windows cursor check (`NAV-010`) fails again in CI, and its cause is being investigated. See [Maintenance](https://github.com/minu-ha/for-humanity/blob/main/content/private/maintenance.md#known-windows-check-issue).
+
 - Reorganize the documentation site into Start, Guide and Updates. Installation has its own page, Commands covers command options and troubleshooting, and the changelog is published with update instructions. The Reference and Releases pages are removed; their content is in Commands, Settings, Writing and Changelog.
 - Let the mouse wheel scroll the document over the document list and the outline when they fit on screen. Chrome previously kept the wheel inside them.
 - Restore the scroll position instantly when reloading or going back to an address with a heading, without first jumping to the heading or sliding down from the top.
