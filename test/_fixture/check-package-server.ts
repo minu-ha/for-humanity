@@ -43,7 +43,7 @@ export const checkPackageServer = async (params: PackageServerParams) => {
     assert.ok(address !== null && typeof address !== "string");
     await new Promise<void>((resolve, reject) => reservation.close((error) => (error === undefined ? resolve() : reject(error))));
     const configPath = join(params.root, "for-humanity.config.ts");
-    const homePath = join(params.root, "README.md");
+    const homePath = join(params.root, "content/README.md");
     const originalConfig = await readFile(configPath, "utf8");
     const originalHome = await readFile(homePath, "utf8");
     await writeFile(configPath, `import type {SiteConfig} from "for-humanity";\nexport default ${JSON.stringify({...params.site, port: address.port})} satisfies SiteConfig;\n`);
@@ -96,6 +96,7 @@ export const checkPackageServer = async (params: PackageServerParams) => {
                     },
                     timeout: 10000,
                 });
+                assert.equal((await page.request.get(`${url}/private/internal/`)).status(), 200);
                 await page.goto(url);
                 await connected;
                 await writeFile(homePath, "# Installed development\n\nLive package update.\n");
@@ -113,7 +114,7 @@ export const checkPackageServer = async (params: PackageServerParams) => {
                 const font = await page.request.get(`${url}${fontPath}`);
                 assert.equal(font.status(), 200);
                 assert.equal(font.headers()["cache-control"], "public, max-age=31536000, immutable");
-                for (const path of ["/missing/", "/README.md", "/for-humanity.config.ts", "/@vite/client"]) {
+                for (const path of ["/private/internal/", "/missing/", "/README.md", "/for-humanity.config.ts", "/@vite/client"]) {
                     assert.equal((await page.request.get(`${url}${path}`)).status(), 404);
                 }
                 assert.equal((await page.request.get(`${url}/guide/options?from=preview`)).status(), 200);

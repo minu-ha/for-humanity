@@ -1,5 +1,5 @@
 import {execFileSync} from "node:child_process";
-import {readFile, writeFile} from "node:fs/promises";
+import {mkdir, readFile, writeFile} from "node:fs/promises";
 import {join} from "node:path";
 import {test} from "@test/_fixture/unit";
 import {describe, expect} from "vitest";
@@ -10,20 +10,21 @@ describe("사이트 설정", () => {
          * GIVEN
          * 이름순과 반대인 탐색 설정과 두 묶음의 문서
          */
-        await writeFile(join(root, "README.md"), "# Home\n");
+        await mkdir(join(root, "content/public"), {recursive: true});
+        await writeFile(join(root, "content/README.md"), "# Home\n");
         await writeFile(
             join(root, "for-humanity.config.ts"),
             'import type {SiteConfig} from "for-humanity";\nexport default {title: "Typed site", navigation: ["Z group", "A group"]} satisfies SiteConfig;\n',
         );
-        await writeFile(join(root, "alpha.md"), "---\nname: Alpha\nlabel: Alpha\ngroup: A group\n---\n\nFirst alphabetically.\n");
-        await writeFile(join(root, "zeta.md"), "---\nname: Zeta\nlabel: Zeta\ngroup: Z group\n---\n\nFirst by configuration.\n");
+        await writeFile(join(root, "content/public/alpha.md"), "---\nname: Alpha\nlabel: Alpha\ngroup: A group\n---\n\nFirst alphabetically.\n");
+        await writeFile(join(root, "content/public/zeta.md"), "---\nname: Zeta\nlabel: Zeta\ngroup: Z group\n---\n\nFirst by configuration.\n");
 
         /**
          * WHEN
          * 실제 CLI의 정적 사이트 빌드
          */
         execFileSync(process.execPath, ["dist/cli.js", "build", root]);
-        const result = await readFile(join(root, "dist/index.html"), "utf8");
+        const result = await readFile(join(root, "content/dist/index.html"), "utf8");
 
         /**
          * THEN

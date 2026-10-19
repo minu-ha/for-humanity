@@ -18,7 +18,7 @@ Pages 프로젝트는 `for-humanity`, 기본 주소는 [for-humanity-1i2.pages.d
 
 | Target             | Build                     | Output                   |
 | ------------------ | ------------------------- | ------------------------ |
-| 이 저장소의 문서   | `pnpm build:pages`        | `templates/document/dist` |
+| 이 저장소의 문서   | `pnpm build:pages`        | `content/dist` |
 | 자신의 문서        | `pnpm exec for-humanity build docs` | `docs/dist`     |
 
 로컬 서버를 인터넷에 계속 켜 두는 방식이 아니라, 빌드한 HTML·CSS·스크립트·폰트를 정적 호스팅에 업로드.
@@ -37,7 +37,7 @@ for humanity의 CLI는 빌드할 때만 Node.js에서 실행. 배포 후에는 �
 | Framework preset       | `None`                      |
 | Root directory         | 저장소 루트                 |
 | Build command          | `pnpm build:pages`          |
-| Build output directory | `templates/document/dist`   |
+| Build output directory | `content/dist`   |
 | `NODE_VERSION`          | `22`                        |
 | `PNPM_VERSION`          | `12.9.1`                    |
 

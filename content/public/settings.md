@@ -138,4 +138,4 @@ export default {
 - 본문·라벨·인라인 코드: 한글 IBM Plex Sans KR · 영문 Monoplex KR
 - 코드 블록·흐름도: Monoplex KR
 - 폰트 파일: 빌드 결과 포함 · CDN 요청 없음
-- 색과 간격: `src/style/token.css` · [Design](design.md)
+- 색과 간격: `src/style/token.css` · [Design](https://github.com/minu-ha/for-humanity/blob/main/content/private/design.md)

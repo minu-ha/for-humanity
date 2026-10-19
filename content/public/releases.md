@@ -6,7 +6,7 @@ order: 0
 ---
 
 공식 npm 패키지의 설치·업데이트와 버전·호환성 정책.
-버전별 변경 사항은 [Changelog](changelog.md), 공개 작업 절차는 [Maintenance](maintenance.md#packaging-and-release).
+버전별 변경 사항은 [Changelog](changelog.md), 공개 작업 절차는 [Maintenance](https://github.com/minu-ha/for-humanity/blob/main/content/private/maintenance.md#packaging-and-release).
 
 ## Latest release
 
@@ -113,4 +113,4 @@ Trunk-based development 사용. 검증한 작은 변경을 `main`에 자주 반�
 같은 태그의 재시도는 같은 패키지 파일임이 확인될 때만 허용.
 현재 배포 자동화는 `vX.Y.Z` 태그만 지원. `beta`·`rc` 같은 prerelease는 배포 정책과 워크플로를 추가한 뒤 사용.
 
-정책 적용과 공개 순서는 [Maintenance](maintenance.md#packaging-and-release).
+정책 적용과 공개 순서는 [Maintenance](https://github.com/minu-ha/for-humanity/blob/main/content/private/maintenance.md#packaging-and-release).

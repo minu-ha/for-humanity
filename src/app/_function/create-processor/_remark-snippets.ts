@@ -6,6 +6,8 @@ import type {VFile} from "vfile";
 import {snippet_language_by_extension, snippet_pattern} from "@/app/_constant/snippet";
 import {toSnippetBody} from "@/app/_function/create-processor/_to-snippet-body";
 import {copy_error_snippet} from "@/constant/copy";
+import type {ContentScope} from "@/type/content-scope";
+import {assertContentPath} from "@/util/file/assert-content-path";
 
 /**
  * 스니펫 수집 계약
@@ -15,6 +17,11 @@ export interface SnippetOptions {
      * 스니펫을 읽을 수 있는 문서 루트
      */
     root: string;
+
+    /**
+     * 사이트 빌드에서 적용할 공개 범위
+     */
+    scope?: ContentScope;
 }
 
 /**
@@ -39,6 +46,13 @@ export const remarkSnippets = (options: SnippetOptions) => (tree: Root, file: VF
 
         const [, path = "", region, meta] = match;
         const target = resolve(dirname(file.path), path);
+        if (options.scope !== undefined) {
+            try {
+                assertContentPath({scope: options.scope, path: target});
+            } catch (error) {
+                file.fail(error instanceof Error ? error.message : String(error), node);
+            }
+        }
         const location = relative(options.root, target);
 
         if (location === ".." || location.startsWith(`..${sep}`) || isAbsolute(location)) {

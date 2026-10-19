@@ -37,26 +37,28 @@ export const test = base.extend<{runtime: BrowserRuntime}, {mermaidSite: string}
         async ({}, use) => {
             const root = await mkdtemp(join(tmpdir(), "for-humanity-mermaid-browser-"));
             try {
+                await mkdir(join(root, "public"));
+                await writeFile(join(root, "for-humanity.config.ts"), 'export default {content: {root: "."}};');
                 const diagrams = diagram_cases.map((diagram, index) => `## Diagram ${index}\n\n\`\`\`mermaid\n${diagram.source}\n\`\`\`\n`).join("\n");
                 await writeFile(join(root, "README.md"), "# Home\n\nOrdinary content.\n");
                 await writeFile(
-                    join(root, "guide.md"),
+                    join(root, "public/guide.md"),
                     `---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n${diagrams}\n:::details[Hidden diagram]\n\n\`\`\`mermaid\nflowchart LR\n    Hidden --> Visible\n\`\`\`\n:::\n`,
                 );
                 await writeFile(
-                    join(root, "hidden.md"),
+                    join(root, "public/hidden.md"),
                     "---\nname: Hidden\nlabel: Hidden\ngroup: Guide\n---\n\n:::details[Hidden diagram]\n\n```mermaid\nflowchart LR\n    Hidden --> Visible\n```\n:::\n",
                 );
                 await Promise.all(
                     diagram_cases.map((diagram) => {
                         return writeFile(
-                            join(root, `${diagram.id}.md`),
+                            join(root, `public/${diagram.id}.md`),
                             `---\nname: ${diagram.name}\nlabel: ${diagram.name}\ngroup: Examples\n---\n\n\`\`\`mermaid\n${diagram.source}\n\`\`\`\n`,
                         );
                     }),
                 );
                 await writeFile(
-                    join(root, "error.md"),
+                    join(root, "public/error.md"),
                     `---\nname: Errors\nlabel: Errors\ngroup: Guide\n---\n\n\`\`\`mermaid\nnot-a-diagram\n<script>window.mermaidInjected = true</script>\n\`\`\`\n\n\`\`\`mermaid\nflowchart LR\n    Good --> Diagram\n\`\`\`\n\n\`\`\`mermaid\nflowchart LR\n    a["${"x".repeat(50100)}"] --> b\n\`\`\`\n`,
                 );
                 execFileSync(process.execPath, ["dist/cli.js", "build", root]);

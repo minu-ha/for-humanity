@@ -4,6 +4,9 @@ import type {Root} from "mdast";
 import {visit} from "unist-util-visit";
 import type {VFile} from "vfile";
 import {copy_warn_broken_link} from "@/constant/copy";
+import type {ContentScope} from "@/type/content-scope";
+import {assertContentPath} from "@/util/file/assert-content-path";
+import {toContentId} from "@/util/file/to-content-id";
 
 /**
  * 상대 문서 링크 해석 기준
@@ -13,6 +16,11 @@ interface LinkOptions {
      * 문서 루트의 절대 경로
      */
     root: string;
+
+    /**
+     * 문서 폴더와 URL을 분리하는 사이트 공개 범위
+     */
+    scope?: ContentScope;
 }
 
 /**
@@ -32,6 +40,18 @@ export const remarkLinks = (options: LinkOptions) => (tree: Root, file: VFile) =
         const match = /^(?![a-z]+:|\/|#)([^#?]+)(\.mdx?)([?#].*|)$/i.exec(node.url);
 
         if (match) {
+            if (options.scope !== undefined) {
+                const target = resolve(dirname(file.path), decodeURIComponent(`${match[1]}${match[2]}`));
+                try {
+                    assertContentPath({scope: options.scope, path: target});
+                    const id = toContentId({scope: options.scope, path: target});
+                    if (!existsSync(target)) file.message(`${copy_warn_broken_link}: ${node.url}`, node);
+                    node.url = `${id === "" ? "/" : `/${id}/`}${match[3]}`;
+                } catch (error) {
+                    file.fail(error instanceof Error ? error.message : String(error), node);
+                }
+                return;
+            }
             if (!existsSync(resolve(dirname(file.path), `${match[1]}${match[2]}`))) {
                 file.message(`${copy_warn_broken_link}: ${node.url}`, node);
             }

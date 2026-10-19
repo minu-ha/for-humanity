@@ -10,6 +10,7 @@ import remarkSmartypants from "remark-smartypants";
 import {createCssVariablesTheme} from "shiki";
 import {unified} from "unified";
 import {rehypeAssets} from "@/app/_function/create-processor/_rehype-assets";
+import {rehypeContentLinks} from "@/app/_function/create-processor/_rehype-content-links";
 import {rehypeHeadingIds} from "@/app/_function/create-processor/_rehype-heading-ids";
 import {remarkReport} from "@/app/_function/create-processor/_remark-report";
 import {remarkSnippets} from "@/app/_function/create-processor/_remark-snippets";
@@ -24,6 +25,7 @@ import {remarkParts} from "@/component/widget/prose/_function/remark-parts";
 import {remarkStatus} from "@/component/widget/prose/_function/remark-status";
 import {remarkSwatch} from "@/component/widget/prose/_function/remark-swatch";
 import {remarkUnknownDirectives} from "@/component/widget/prose/_function/remark-unknown-directives";
+import type {ContentScope} from "@/type/content-scope";
 import type {MermaidAssets} from "@/type/mermaid-assets";
 import type {ResolvedSiteConfig} from "@/type/site-config";
 
@@ -40,6 +42,11 @@ interface ProcessorOptions {
      * 상대 링크와 자원을 해석할 문서 루트
      */
     root: string;
+
+    /**
+     * 사이트 실행의 문서 공개 범위
+     */
+    scope?: ContentScope;
 
     /**
      * 사용한 자원의 URL과 원본 경로 수집
@@ -66,7 +73,7 @@ export const createProcessor = (options: ProcessorOptions) => {
         .use(remarkParse)
         .use(remarkFrontmatter, ["yaml"])
         .use(remarkGfm)
-        .use(remarkSnippets, {root: options.root})
+        .use(remarkSnippets, {root: options.root, scope: options.scope})
         .use(remarkSmartypants)
         .use(remarkDirective)
         .use(remarkBlocks)
@@ -74,7 +81,7 @@ export const createProcessor = (options: ProcessorOptions) => {
         .use(remarkMermaid, {assets: options.mermaid, files})
         .use(remarkStatus, {status: options.site.status})
         .use(remarkSwatch)
-        .use(remarkLinks, {root: options.root})
+        .use(remarkLinks, {root: options.root, scope: options.scope})
         .use(remarkUnknownDirectives)
         .use(remarkReport, {root: options.root})
         .use(remarkRehype, {allowDangerousHtml: true})
@@ -84,7 +91,8 @@ export const createProcessor = (options: ProcessorOptions) => {
         .use(rehypeSections)
         .use(rehypeTables)
         .use(rehypeRaw)
-        .use(rehypeAssets, {root: options.root, files})
+        .use(rehypeContentLinks, {scope: options.scope})
+        .use(rehypeAssets, {root: options.root, files, scope: options.scope})
         .use(rehypeStringify, {allowDangerousHtml: true});
 };
 

@@ -3,6 +3,7 @@ import {join} from "node:path";
 import {crawling_reserved_roots} from "@/app/_constant/crawling";
 import {createProcessor} from "@/app/_function/create-processor/create-processor";
 import {loadMermaidAssets} from "@/app/_function/load-mermaid-assets";
+import {readContentScope} from "@/app/_function/read-content-scope";
 import {readDocs} from "@/app/_function/read-docs";
 import {readHome} from "@/app/_function/read-home";
 import {toCrawlingApp} from "@/app/_function/to-crawling-app";
@@ -23,6 +24,11 @@ export interface SiteParams {
      * Markdown과 로컬 참조의 절대 루트
      */
     root: string;
+
+    /**
+     * 개발 실행의 내부 문서 포함, 생략 시 공개 출력
+     */
+    includePrivate?: boolean;
 
     /**
      * 배포 번들과 내장 자원의 패키지 루트
@@ -58,10 +64,11 @@ export const loadSite = async (params: SiteParams) => {
     const stylePaths = params.stylePaths ?? [toAssetPath({path: asset_style_path, file: join(params.kitRoot, "dist/cli.css")})];
     const files = new Map([[asset_favicon_path, join(params.kitRoot, "src/asset/favicon.svg")], ...mono.files, ...body.files, ...brand.files]);
     if (params.stylePaths === undefined) files.set(stylePaths[0], join(params.kitRoot, "dist/cli.css"));
-    const processor = createProcessor({site: params.site, root: params.root, files, mermaid: loadMermaidAssets(params.kitRoot)});
+    const scope = readContentScope({root: params.root, content: params.site.content, includePrivate: params.includePrivate === true});
+    const processor = createProcessor({site: params.site, root: scope.root, files, mermaid: loadMermaidAssets(params.kitRoot), scope});
     const [docs, home] = await Promise.all([
-        readDocs({root: params.root, processor, reserved: params.site.url === undefined ? undefined : crawling_reserved_roots}),
-        readHome({root: params.root, processor}),
+        readDocs({root: scope.root, scope, processor, reserved: params.site.url === undefined ? undefined : crawling_reserved_roots}),
+        readHome({root: scope.root, scope, processor}),
     ]);
     const store = {docs, home};
     const pages = toPageApp({

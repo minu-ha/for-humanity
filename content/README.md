@@ -18,7 +18,7 @@ Write Markdown. Keep the context. Share a static site.
 ![Hono JSX](https://img.shields.io/badge/Hono-JSX-444444?style=flat-square)
 ![Prototype](https://img.shields.io/badge/status-prototype-9a6400?style=flat-square)
 
-[Quick start](#quick-start) · [Guide](writing.md) · [API](api.md) · [Deployment](deployment.md) · [Korean](https://github.com/minu-ha/for-humanity/blob/main/language/README.ko.md)
+[Quick start](#quick-start) · [Guide](public/writing.md) · [API](public/api.md) · [Deployment](public/deployment.md) · [Korean](https://github.com/minu-ha/for-humanity/blob/main/language/README.ko.md)
 
 </div>
 
@@ -54,9 +54,9 @@ pnpm exec for-humanity preview docs
 
 If your Markdown files are in the project root, use `.` instead of `docs`. The root `README.md` becomes the home page; root `AGENTS.md` and `CLAUDE.md` stay out of the site.
 
-Version `0.13.1` supports `dev`, `build` and `preview`. `init` is planned; see the [Roadmap](roadmap.md) and [Changelog](changelog.md).
-Cloudflare Pages can host the generated site. See [Deployment](deployment.md) for the build settings.
-Set an optional public root `url` in the site configuration to generate `robots.txt` and `sitemap.xml`; projects without a URL emit neither file. See [Crawling](crawling.md).
+Version `0.13.1` supports `dev`, `build` and `preview`. `init` is planned; see the [Roadmap](public/roadmap.md) and [Changelog](public/changelog.md).
+Cloudflare Pages can host the generated site. See [Deployment](public/deployment.md) for the build settings.
+Set an optional public root `url` in the site configuration to generate `robots.txt` and `sitemap.xml`; projects without a URL emit neither file. See [Crawling](public/crawling.md).
 
 ### Develop the kit
 
@@ -74,19 +74,19 @@ pnpm dev
 Open [localhost:4321](http://localhost:4321) to read this library's usage guides, API reference and fictional examples.
 
 ```sh
-pnpm build      # Generate templates/document/dist
+pnpm build      # Generate content/dist
 pnpm preview    # Preview the static site
 pnpm build:pages # Add Cloudflare Pages headers and a 404 page
 ```
 
 Changes pushed to `main` update the documentation site. A stable version tag such as `v0.13.1` runs checks, publishes the package to npm, then creates a GitHub Release with the same package file.
-The npm README updates with each package release. See [Maintenance](maintenance.md#packaging-and-release) for the release steps.
+The npm README updates with each package release. See [Maintenance](https://github.com/minu-ha/for-humanity/blob/main/content/private/maintenance.md#packaging-and-release) for the release steps.
 
 ## Make it yours
 
 A document folder is enough to get started. Without a site configuration, the sidebar shows **for humanity**. The pixel face appears in the browser tab, and follows the mouse on desktop when the site sets `cursorFace: true`.
 The folder's `README.md` becomes the home page at `/`, with no frontmatter required. Click the site name to return home.
-This repository generates [the documentation home](README.md) from its root README.md and [the site changelog](changelog.md) from CHANGELOG.md. Edit those source files, then run `pnpm sync:docs`; `pnpm dev` and `pnpm build` also sync them on startup.
+This repository generates [the documentation home](https://github.com/minu-ha/for-humanity/blob/main/content/README.md) from its root README.md and [the site changelog](public/changelog.md) from CHANGELOG.md. Edit those source files, then run `pnpm sync:docs`; `pnpm dev` and `pnpm build` also sync them on startup.
 Set your own name in `for-humanity.config.ts`, using the exported `SiteConfig` type for editor completion and static checking:
 
 ```ts
@@ -102,10 +102,10 @@ export default {
 Existing `for-humanity.config.mjs` files remain supported. When migrating to TypeScript, replace the old file with the `.ts` file.
 Use one configuration file per document folder. The CLI validates values at startup; run `tsc --noEmit` in your project for static type checking.
 
-See [Commands](commands.md) for using another document folder, and [Settings](settings.md) for configuration.
+See [Commands](public/commands.md) for using another document folder, and [Settings](public/settings.md) for configuration.
 Each document other than the root README chooses a `group` and optional `order`. Pages stay independent; groups do not need parent documents or nested folders. Document names may share the same first letter.
 Use `group: Guide` for one group or `group: [Projects, Example project, Research]` for nested navigation. Group paths do not change document URLs.
-Use `parent: writing` to place a document below another document in the same group. File-relative references such as `parent: ./readme` also work. Parent pages remain clickable and each page keeps its own URL; see [Navigation](navigation.md).
+Use `parent: writing` to place a document below another document in the same group. File-relative references such as `parent: ./readme` also work. Parent pages remain clickable and each page keeps its own URL; see [Navigation](public/navigation.md).
 
 ## Write with context
 
@@ -119,18 +119,18 @@ The contract, code or reasoning behind the visible result.
 :::
 ```
 
-[Parts](parts.md) pairs source examples with their rendered results. The [Design example](blueprint.md) uses a fictional reading-list app to show a screen flow, decisions, open questions and illustrative API contracts.
+[Parts](public/parts.md) pairs source examples with their rendered results. The [Design example](public/blueprint.md) uses a fictional reading-list app to show a screen flow, decisions, open questions and illustrative API contracts.
 
 ## Documentation
 
 | Group | Read |
 | ----- | ---- |
-| Getting started | [Commands](commands.md) · [Deployment](deployment.md) |
-| Guide | [Writing](writing.md) · [Parts](parts.md) · [Settings](settings.md) |
-| Reference | [API](api.md) |
-| Releases | [Official releases](releases.md) · [Changelog](changelog.md) |
-| Examples | [Fictional design example](blueprint.md) |
-| Development | [Architecture](architecture.md) · [Design](design.md) · [Maintenance](maintenance.md) · [Roadmap](roadmap.md) |
+| Getting started | [Commands](public/commands.md) · [Deployment](public/deployment.md) |
+| Guide | [Writing](public/writing.md) · [Parts](public/parts.md) · [Settings](public/settings.md) |
+| Reference | [API](public/api.md) |
+| Releases | [Official releases](public/releases.md) · [Changelog](public/changelog.md) |
+| Examples | [Fictional design example](public/blueprint.md) |
+| Development | [Architecture](https://github.com/minu-ha/for-humanity/blob/main/content/private/architecture.md) · [Design](https://github.com/minu-ha/for-humanity/blob/main/content/private/design.md) · [Maintenance](https://github.com/minu-ha/for-humanity/blob/main/content/private/maintenance.md) · [Roadmap](public/roadmap.md) |
 
 ## License
 

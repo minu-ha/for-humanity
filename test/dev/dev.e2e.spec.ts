@@ -18,7 +18,7 @@ test.describe("개발 서버", () => {
              * WHEN
              * 문서 파일 추가와 홈 변경
              */
-            await writeFile(join(devSite.root, "guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Added section\n");
+            await writeFile(join(devSite.root, "public/guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Added section\n");
             await expect(page.getByRole("link", {name: "Guide", exact: true})).toBeVisible();
             await writeFile(join(devSite.root, "README.md"), "# Development home\n\nUpdated content.\n");
 
@@ -34,7 +34,7 @@ test.describe("개발 서버", () => {
              * WHEN
              * 잘못된 frontmatter 저장
              */
-            await writeFile(join(devSite.root, "guide.md"), "---\nname: [\n---\n");
+            await writeFile(join(devSite.root, "public/guide.md"), "---\nname: [\n---\n");
             await expect.poll(() => devSite.errors.length).toBeGreaterThan(0);
 
             /**
@@ -51,7 +51,7 @@ test.describe("개발 서버", () => {
              * WHEN
              * 잘못된 frontmatter를 정상 문서로 교체
              */
-            await writeFile(join(devSite.root, "guide.md"), "---\nname: Recovered guide\nlabel: Recovered guide\ngroup: Guide\n---\n\n## Recovered section\n");
+            await writeFile(join(devSite.root, "public/guide.md"), "---\nname: Recovered guide\nlabel: Recovered guide\ngroup: Guide\n---\n\n## Recovered section\n");
 
             /**
              * THEN
@@ -67,7 +67,7 @@ test.describe("개발 서버", () => {
              * 홈에서 문서 파일 삭제
              */
             await Promise.all([page.waitForEvent("console", (message) => message.text().includes("[vite] connected")), page.goto("/")]);
-            await rm(join(devSite.root, "guide.md"));
+            await rm(join(devSite.root, "public/guide.md"));
 
             /**
              * THEN
@@ -205,7 +205,7 @@ test.describe("개발 서버", () => {
          * GIVEN
          * 첫 요청 전부터 잘못된 frontmatter가 있는 문서
          */
-        const document = join(devSite.root, "guide.md");
+        const document = join(devSite.root, "public/guide.md");
         await writeFile(document, "---\nname: [\n---\n");
 
         await test.step("정상 스냅샷이 없으면 오류 응답을 제공한다", async () => {

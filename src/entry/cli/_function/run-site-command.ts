@@ -1,9 +1,9 @@
 import {copyFile, mkdir, rm, writeFile} from "node:fs/promises";
-import {dirname, join, relative, resolve} from "node:path";
+import {dirname, join, relative} from "node:path";
 import {fileURLToPath} from "node:url";
 import type {ParsedArgs} from "citty";
 import {toSSG} from "hono/ssg";
-import {readSiteConfig} from "@/app/_function/read-site-config";
+import {readProject} from "@/app/_function/read-project";
 import {loadSite} from "@/app/load-site";
 import type {cli_docs_args} from "@/entry/cli/_constant/cli";
 import {toPreviewConfig} from "@/entry/preview/to-preview-config";
@@ -30,28 +30,27 @@ interface CliCommandParams {
  */
 export const runSiteCommand = async (params: CliCommandParams) => {
     try {
-        if (params.args._.length > 1) throw new Error("문서 폴더는 하나만 지정하세요");
+        if (params.args._.length > 1) throw new Error("프로젝트 폴더는 하나만 지정하세요");
 
         // dist의 실행 청크 기준 패키지 루트
         const kitRoot = fileURLToPath(new URL("../", import.meta.url));
-        const docsRoot = resolve(params.args.dir);
-        const outDir = join(docsRoot, "dist");
-        const siteConfig = await readSiteConfig(docsRoot);
+        const project = await readProject(params.args.dir);
+        const outDir = join(project.root, "dist");
 
         if (params.command === "preview") {
             const vite = await import("vite");
-            const server = await vite.preview(toPreviewConfig({root: docsRoot, port: siteConfig.port}));
+            const server = await vite.preview(toPreviewConfig({root: project.root, port: project.site.port}));
             server.printUrls();
             return;
         }
 
         if (params.command === "dev") {
             const dev = await import("@/entry/dev/start-dev-server");
-            await dev.startDevServer({root: docsRoot, kitRoot, site: siteConfig, source: false});
+            await dev.startDevServer({root: project.root, kitRoot, site: project.site, source: false, includePrivate: true});
             return;
         }
 
-        const snapshot = await loadSite({root: docsRoot, kitRoot, site: siteConfig});
+        const snapshot = await loadSite({root: project.root, kitRoot, site: project.site});
 
         // 삭제된 문서와 자원의 잔여 파일 방지
         await rm(outDir, {recursive: true, force: true});

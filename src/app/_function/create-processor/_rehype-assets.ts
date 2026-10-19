@@ -5,6 +5,8 @@ import {visit} from "unist-util-visit";
 import type {VFile} from "vfile";
 import {asset_media_dir, asset_media_extensions} from "@/constant/asset";
 import {copy_error_asset} from "@/constant/copy";
+import type {ContentScope} from "@/type/content-scope";
+import {assertContentPath} from "@/util/file/assert-content-path";
 import {toAssetPath} from "@/util/file/to-asset-path";
 
 /**
@@ -15,6 +17,11 @@ export interface AssetOptions {
      * 자원을 읽을 수 있는 문서 루트
      */
     root: string;
+
+    /**
+     * 사이트 빌드에서 적용할 공개 범위
+     */
+    scope?: ContentScope;
 
     /**
      * dev 응답과 정적 복사가 공유하는 자원 URL별 파일 경로
@@ -53,6 +60,13 @@ export const rehypeAssets = (options: AssetOptions) => (tree: Root, file: VFile)
         }
 
         const target = resolve(dirname(file.path), path);
+        if (options.scope !== undefined) {
+            try {
+                assertContentPath({scope: options.scope, path: target});
+            } catch (error) {
+                file.fail(error instanceof Error ? error.message : String(error), node);
+            }
+        }
         const location = relative(options.root, target);
         if (location === ".." || location.startsWith(`..${sep}`) || isAbsolute(location)) {
             file.fail(`${copy_error_asset}: 문서 폴더 밖 · ${url}`, node);

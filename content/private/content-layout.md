@@ -31,12 +31,12 @@ group: Development
 
 ### 2. Collection and repository migration
 
-- [ ] `load-site`, `read-docs`, 링크/자원/스니펫 처리에 공개 범위 전달.
-- [ ] CLI와 개발 진입점에 프로젝트 설정과 content 루트 적용.
-- [ ] 실제 CLI 테스트에서 공개 출력 제외, 로컬 내부 문서, 잘못된 참조와 사용자 경로 검증.
-- [ ] `templates/document`를 content로 이전, 설정을 루트로 이전. 기존 공개 URL 유지.
-- [ ] 빌드, 동기화, 배포와 문서 링크 경로 갱신.
-- [ ] 필수 검증 후 커밋.
+- [x] `load-site`, `read-docs`, 링크/자원/스니펫 처리에 공개 범위 전달.
+- [x] CLI와 개발 진입점에 프로젝트 설정과 content 루트 적용.
+- [x] 실제 CLI 테스트에서 공개 출력 제외, 로컬 내부 문서, 잘못된 참조와 사용자 경로 검증.
+- [x] `templates/document`를 content로 이전, 설정을 루트로 이전. 기존 공개 URL 유지.
+- [x] 빌드, 동기화, 배포와 문서 링크 경로 갱신.
+- [x] 필수 검증 후 커밋.
 
 ### 3. Consumer workflow
 

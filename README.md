@@ -16,7 +16,7 @@ Write Markdown. Keep the context. Share a static site.
 ![Hono JSX](https://img.shields.io/badge/Hono-JSX-444444?style=flat-square)
 ![Prototype](https://img.shields.io/badge/status-prototype-9a6400?style=flat-square)
 
-[Quick start](#quick-start) · [Guide](https://github.com/minu-ha/for-humanity/blob/main/templates/document/writing.md) · [API](https://github.com/minu-ha/for-humanity/blob/main/templates/document/api.md) · [Deployment](https://github.com/minu-ha/for-humanity/blob/main/templates/document/deployment.md) · [Korean](https://github.com/minu-ha/for-humanity/blob/main/language/README.ko.md)
+[Quick start](#quick-start) · [Guide](https://github.com/minu-ha/for-humanity/blob/main/content/public/writing.md) · [API](https://github.com/minu-ha/for-humanity/blob/main/content/public/api.md) · [Deployment](https://github.com/minu-ha/for-humanity/blob/main/content/public/deployment.md) · [Korean](https://github.com/minu-ha/for-humanity/blob/main/language/README.ko.md)
 
 </div>
 
@@ -52,9 +52,9 @@ pnpm exec for-humanity preview docs
 
 If your Markdown files are in the project root, use `.` instead of `docs`. The root `README.md` becomes the home page; root `AGENTS.md` and `CLAUDE.md` stay out of the site.
 
-Version `0.13.1` supports `dev`, `build` and `preview`. `init` is planned; see the [Roadmap](https://github.com/minu-ha/for-humanity/blob/main/templates/document/roadmap.md) and [Changelog](https://github.com/minu-ha/for-humanity/blob/main/CHANGELOG.md).
-Cloudflare Pages can host the generated site. See [Deployment](https://github.com/minu-ha/for-humanity/blob/main/templates/document/deployment.md) for the build settings.
-Set an optional public root `url` in the site configuration to generate `robots.txt` and `sitemap.xml`; projects without a URL emit neither file. See [Crawling](https://github.com/minu-ha/for-humanity/blob/main/templates/document/crawling.md).
+Version `0.13.1` supports `dev`, `build` and `preview`. `init` is planned; see the [Roadmap](https://github.com/minu-ha/for-humanity/blob/main/content/public/roadmap.md) and [Changelog](https://github.com/minu-ha/for-humanity/blob/main/CHANGELOG.md).
+Cloudflare Pages can host the generated site. See [Deployment](https://github.com/minu-ha/for-humanity/blob/main/content/public/deployment.md) for the build settings.
+Set an optional public root `url` in the site configuration to generate `robots.txt` and `sitemap.xml`; projects without a URL emit neither file. See [Crawling](https://github.com/minu-ha/for-humanity/blob/main/content/public/crawling.md).
 
 ### Develop the kit
 
@@ -72,19 +72,19 @@ pnpm dev
 Open [localhost:4321](http://localhost:4321) to read this library's usage guides, API reference and fictional examples.
 
 ```sh
-pnpm build      # Generate templates/document/dist
+pnpm build      # Generate content/dist
 pnpm preview    # Preview the static site
 pnpm build:pages # Add Cloudflare Pages headers and a 404 page
 ```
 
 Changes pushed to `main` update the documentation site. A stable version tag such as `v0.13.1` runs checks, publishes the package to npm, then creates a GitHub Release with the same package file.
-The npm README updates with each package release. See [Maintenance](https://github.com/minu-ha/for-humanity/blob/main/templates/document/maintenance.md#packaging-and-release) for the release steps.
+The npm README updates with each package release. See [Maintenance](https://github.com/minu-ha/for-humanity/blob/main/content/private/maintenance.md#packaging-and-release) for the release steps.
 
 ## Make it yours
 
 A document folder is enough to get started. Without a site configuration, the sidebar shows **for humanity**. The pixel face appears in the browser tab, and follows the mouse on desktop when the site sets `cursorFace: true`.
 The folder's `README.md` becomes the home page at `/`, with no frontmatter required. Click the site name to return home.
-This repository generates [the documentation home](https://github.com/minu-ha/for-humanity/blob/main/templates/document/README.md) from its root README.md and [the site changelog](https://github.com/minu-ha/for-humanity/blob/main/templates/document/changelog.md) from CHANGELOG.md. Edit those source files, then run `pnpm sync:docs`; `pnpm dev` and `pnpm build` also sync them on startup.
+This repository generates [the documentation home](https://github.com/minu-ha/for-humanity/blob/main/content/README.md) from its root README.md and [the site changelog](https://github.com/minu-ha/for-humanity/blob/main/content/public/changelog.md) from CHANGELOG.md. Edit those source files, then run `pnpm sync:docs`; `pnpm dev` and `pnpm build` also sync them on startup.
 Set your own name in `for-humanity.config.ts`, using the exported `SiteConfig` type for editor completion and static checking:
 
 ```ts
@@ -100,10 +100,10 @@ export default {
 Existing `for-humanity.config.mjs` files remain supported. When migrating to TypeScript, replace the old file with the `.ts` file.
 Use one configuration file per document folder. The CLI validates values at startup; run `tsc --noEmit` in your project for static type checking.
 
-See [Commands](https://github.com/minu-ha/for-humanity/blob/main/templates/document/commands.md) for using another document folder, and [Settings](https://github.com/minu-ha/for-humanity/blob/main/templates/document/settings.md) for configuration.
+See [Commands](https://github.com/minu-ha/for-humanity/blob/main/content/public/commands.md) for using another document folder, and [Settings](https://github.com/minu-ha/for-humanity/blob/main/content/public/settings.md) for configuration.
 Each document other than the root README chooses a `group` and optional `order`. Pages stay independent; groups do not need parent documents or nested folders. Document names may share the same first letter.
 Use `group: Guide` for one group or `group: [Projects, Example project, Research]` for nested navigation. Group paths do not change document URLs.
-Use `parent: writing` to place a document below another document in the same group. File-relative references such as `parent: ./readme` also work. Parent pages remain clickable and each page keeps its own URL; see [Navigation](https://github.com/minu-ha/for-humanity/blob/main/templates/document/navigation.md).
+Use `parent: writing` to place a document below another document in the same group. File-relative references such as `parent: ./readme` also work. Parent pages remain clickable and each page keeps its own URL; see [Navigation](https://github.com/minu-ha/for-humanity/blob/main/content/public/navigation.md).
 
 ## Write with context
 
@@ -117,18 +117,18 @@ The contract, code or reasoning behind the visible result.
 :::
 ```
 
-[Parts](https://github.com/minu-ha/for-humanity/blob/main/templates/document/parts.md) pairs source examples with their rendered results. The [Design example](https://github.com/minu-ha/for-humanity/blob/main/templates/document/blueprint.md) uses a fictional reading-list app to show a screen flow, decisions, open questions and illustrative API contracts.
+[Parts](https://github.com/minu-ha/for-humanity/blob/main/content/public/parts.md) pairs source examples with their rendered results. The [Design example](https://github.com/minu-ha/for-humanity/blob/main/content/public/blueprint.md) uses a fictional reading-list app to show a screen flow, decisions, open questions and illustrative API contracts.
 
 ## Documentation
 
 | Group | Read |
 | ----- | ---- |
-| Getting started | [Commands](https://github.com/minu-ha/for-humanity/blob/main/templates/document/commands.md) · [Deployment](https://github.com/minu-ha/for-humanity/blob/main/templates/document/deployment.md) |
-| Guide | [Writing](https://github.com/minu-ha/for-humanity/blob/main/templates/document/writing.md) · [Parts](https://github.com/minu-ha/for-humanity/blob/main/templates/document/parts.md) · [Settings](https://github.com/minu-ha/for-humanity/blob/main/templates/document/settings.md) |
-| Reference | [API](https://github.com/minu-ha/for-humanity/blob/main/templates/document/api.md) |
-| Releases | [Official releases](https://github.com/minu-ha/for-humanity/blob/main/templates/document/releases.md) · [Changelog](https://github.com/minu-ha/for-humanity/blob/main/templates/document/changelog.md) |
-| Examples | [Fictional design example](https://github.com/minu-ha/for-humanity/blob/main/templates/document/blueprint.md) |
-| Development | [Architecture](https://github.com/minu-ha/for-humanity/blob/main/templates/document/architecture.md) · [Design](https://github.com/minu-ha/for-humanity/blob/main/templates/document/design.md) · [Maintenance](https://github.com/minu-ha/for-humanity/blob/main/templates/document/maintenance.md) · [Roadmap](https://github.com/minu-ha/for-humanity/blob/main/templates/document/roadmap.md) |
+| Getting started | [Commands](https://github.com/minu-ha/for-humanity/blob/main/content/public/commands.md) · [Deployment](https://github.com/minu-ha/for-humanity/blob/main/content/public/deployment.md) |
+| Guide | [Writing](https://github.com/minu-ha/for-humanity/blob/main/content/public/writing.md) · [Parts](https://github.com/minu-ha/for-humanity/blob/main/content/public/parts.md) · [Settings](https://github.com/minu-ha/for-humanity/blob/main/content/public/settings.md) |
+| Reference | [API](https://github.com/minu-ha/for-humanity/blob/main/content/public/api.md) |
+| Releases | [Official releases](https://github.com/minu-ha/for-humanity/blob/main/content/public/releases.md) · [Changelog](https://github.com/minu-ha/for-humanity/blob/main/content/public/changelog.md) |
+| Examples | [Fictional design example](https://github.com/minu-ha/for-humanity/blob/main/content/public/blueprint.md) |
+| Development | [Architecture](https://github.com/minu-ha/for-humanity/blob/main/content/private/architecture.md) · [Design](https://github.com/minu-ha/for-humanity/blob/main/content/private/design.md) · [Maintenance](https://github.com/minu-ha/for-humanity/blob/main/content/private/maintenance.md) · [Roadmap](https://github.com/minu-ha/for-humanity/blob/main/content/public/roadmap.md) |
 
 ## License
 

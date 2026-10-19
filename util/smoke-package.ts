@@ -18,20 +18,29 @@ const pack = packReportSchema.parse(JSON.parse(await readFile(join(artifactDirec
 const consumer = await realpath(await mkdtemp(join(tmpdir(), "for-humanity-consumer-")));
 
 try {
+    await mkdir(join(consumer, "content/public"), {recursive: true});
+    await mkdir(join(consumer, "content/private"));
+    await writeFile(join(consumer, "content/private/internal.md"), "---\nname: Internal only\nlabel: Internal only\ngroup: Internal\n---\n\nINTERNAL_PACKAGE_SENTINEL");
     const nestedGroup = ["Projects", "Example", "Guide"];
     await writeFile(join(consumer, "package.json"), JSON.stringify({name: "release-consumer", private: true, type: "module"}));
-    await writeFile(join(consumer, "README.md"), "# Package home\n\n[Guide](guide.md)\n");
-    await writeFile(join(consumer, "AGENTS.md"), "# Private instructions\n");
-    await writeFile(join(consumer, "CLAUDE.md"), "# Private instructions\n");
-    await writeFile(join(consumer, "guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n# Guide\n\n```mermaid\nflowchart LR\n    A[Markdown] --> B[HTML]\n```\n");
-    await mkdir(join(consumer, "guide"));
-    await mkdir(join(consumer, "images"));
-    await writeFile(join(consumer, "images", "local image.svg"), '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><rect width="10" height="10"/></svg>');
+    await writeFile(join(consumer, "content/README.md"), "# Package home\n\n[Guide](public/guide.md)\n");
+    await writeFile(join(consumer, "content/AGENTS.md"), "# Private instructions\n");
+    await writeFile(join(consumer, "content/CLAUDE.md"), "# Private instructions\n");
     await writeFile(
-        join(consumer, "guide/options.md"),
-        "---\nname: Options\nlabel: Options\ngroup: Guide\nparent: ../guide\n---\n\nChild page.\n\n![Local](../images/local%20image.svg)\n\n[Expand](../images/local%20image.svg)\n",
+        join(consumer, "content/public/guide.md"),
+        "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n# Guide\n\n```mermaid\nflowchart LR\n    A[Markdown] --> B[HTML]\n```\n",
     );
-    await writeFile(join(consumer, "guide/agents.md"), `---\nname: Nested guide\nlabel: Nested guide\ngroup: ${JSON.stringify(nestedGroup)}\n---\n\n# Nested guide\n`);
+    await mkdir(join(consumer, "content/public/guide"));
+    await mkdir(join(consumer, "content/asset"));
+    await writeFile(join(consumer, "content/asset", "local image.svg"), '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><rect width="10" height="10"/></svg>');
+    await writeFile(
+        join(consumer, "content/public/guide/options.md"),
+        "---\nname: Options\nlabel: Options\ngroup: Guide\nparent: ../guide\n---\n\nChild page.\n\n![Local](../../asset/local%20image.svg)\n\n[Expand](../../asset/local%20image.svg)\n",
+    );
+    await writeFile(
+        join(consumer, "content/public/guide/agents.md"),
+        `---\nname: Nested guide\nlabel: Nested guide\ngroup: ${JSON.stringify(nestedGroup)}\n---\n\n# Nested guide\n`,
+    );
     const configPath = join(consumer, "for-humanity.config.ts");
     const site = {url: "https://docs.example.org", navigation: [nestedGroup, "Guide"]};
     const config = `import type {SiteConfig} from "for-humanity";\nexport default ${JSON.stringify(site)} satisfies SiteConfig;\n`;
@@ -67,7 +76,7 @@ try {
         JSON.stringify({compilerOptions: {strict: true, noEmit: true, target: "ESNext", module: "NodeNext", types: []}, files: ["for-humanity.config.ts"]}),
     );
     execFileSync(process.execPath, [compiler, "--project", "tsconfig.json"], {cwd: consumer, stdio: "inherit"});
-    for (const invalid of [{port: "4321"}, {navigation: [false]}, {status: [{phrase: "Reviewed", kind: "unknown"}]}, {titel: "Typo"}]) {
+    for (const invalid of [{port: "4321"}, {navigation: [false]}, {status: [{phrase: "Reviewed", kind: "unknown"}]}, {titel: "Typo"}, {content: {root: false}}]) {
         await writeFile(configPath, `import type {SiteConfig} from "for-humanity";\nexport default ${JSON.stringify(invalid)} satisfies SiteConfig;\n`);
         const checked = spawnSync(process.execPath, [compiler, "--project", "tsconfig.json"], {cwd: consumer, encoding: "utf8"});
         assert.equal(checked.error, undefined);
@@ -79,9 +88,11 @@ try {
     assert.ok(!packageFiles.some((file) => /\.(test|spec)\.[cm]?[jt]sx?$/.test(file)), "consumer package must exclude repository tests");
     execFileSync(process.execPath, [join(packageRoot, "dist/cli.js"), "build", "."], {cwd: consumer, stdio: "inherit"});
 
-    const output = join(consumer, "dist");
+    const output = join(consumer, "content/dist");
     const home = await readFile(join(output, "index.html"), "utf8");
     assert.match(home, /Package home/);
+    assert.doesNotMatch(home, /INTERNAL_PACKAGE_SENTINEL|Internal only/);
+    assert.ok(!(await readdir(output)).includes("private"));
     assert.equal(await readFile(join(output, "robots.txt"), "utf8"), "User-agent: *\nAllow: /\n\nSitemap: https://docs.example.org/sitemap.xml\n");
     const sitemap = await readFile(join(output, "sitemap.xml"), "utf8");
     assert.deepEqual(
@@ -121,7 +132,7 @@ try {
     assert.match(child, /href="\/guide\/options\/"[^>]*aria-current="page"/);
     const imagePath = child.match(/src="(\/_fh\/media\/asset\.[a-f0-9]+\.svg)"/)?.[1];
     assert.ok(imagePath);
-    assert.equal(await readFile(join(output, imagePath), "utf8"), await readFile(join(consumer, "images", "local image.svg"), "utf8"));
+    assert.equal(await readFile(join(output, imagePath), "utf8"), await readFile(join(consumer, "content/asset", "local image.svg"), "utf8"));
     assert.ok(child.includes(`href="${imagePath}"`));
     assert.equal([...child.matchAll(/href="\/guide\/options\/"/g)].length, 1);
     assert.equal([...child.matchAll(/aria-current="page"/g)].length, 1);
@@ -153,7 +164,7 @@ try {
     assert.ok(!rebuiltEntries.includes("robots.txt"), "removing the public URL must also remove previous crawler files");
     assert.ok(!rebuiltEntries.includes("sitemap.xml"), "projects without a public URL must not emit a sitemap");
     assert.ok(!rebuiltEntries.some((file) => file.endsWith(".js") && !file.startsWith("_fh/mermaid/")), "only the lazy Mermaid graph may emit script assets");
-    await writeFile(join(consumer, "guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\nOrdinary text.\n");
+    await writeFile(join(consumer, "content/public/guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\nOrdinary text.\n");
     execFileSync(process.execPath, [join(packageRoot, "dist/cli.js"), "build", "."], {cwd: consumer, stdio: "inherit"});
     assert.ok(!(await readdir(join(output, "_fh"))).includes("mermaid"), "removing all diagrams must remove the previous runtime assets");
     console.log(

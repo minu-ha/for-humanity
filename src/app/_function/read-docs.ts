@@ -1,5 +1,6 @@
+import {existsSync} from "node:fs";
 import {readdir, readFile} from "node:fs/promises";
-import {join, posix, sep} from "node:path";
+import {dirname, join, posix, relative, resolve, sep} from "node:path";
 import {isEqual} from "es-toolkit/predicate";
 import {VFile} from "vfile";
 import {parse as parseYaml} from "yaml";
@@ -13,9 +14,12 @@ import {
     copy_error_doc_parent_missing,
     copy_error_frontmatter,
 } from "@/constant/copy";
+import type {ContentScope} from "@/type/content-scope";
 import type {Doc} from "@/type/doc";
 import {docDataSchema} from "@/type/doc-data";
 import type {DocFileData} from "@/type/doc-file-data";
+import {assertContentPath} from "@/util/file/assert-content-path";
+import {toContentId} from "@/util/file/to-content-id";
 
 /**
  * 문서 폴더를 읽고 명령별 출력 경로와 함께 검증하는 입력
@@ -25,6 +29,11 @@ export interface ReadDocsParams {
      * CLI에 넘긴 문서 폴더의 절대 경로
      */
     root: string;
+
+    /**
+     * 사이트 실행의 공개 범위, 개별 Markdown 처리에서는 생략
+     */
+    scope?: ContentScope;
 
     /**
      * 설정, 자원 목록을 연결한 Markdown 처리기
@@ -44,17 +53,25 @@ export interface ReadDocsParams {
  *   - 머리말, 문서 식별자 중복, 플러그인 오류 시 실패
  */
 export const readDocs = async (options: ReadDocsParams): Promise<Doc[]> => {
-    const paths = (await readdir(options.root, {recursive: true})).filter(
-        (path) => /\.mdx?$/i.test(path) && !/^(readme|agents|claude)\.md$/i.test(path) && !path.split(sep).includes("node_modules") && !path.startsWith(`dist${sep}`),
-    );
+    const roots =
+        options.scope === undefined
+            ? [options.root]
+            : [options.scope.publicRoot, ...(options.scope.includePrivate && existsSync(options.scope.privateRoot) ? [options.scope.privateRoot] : [])];
+    const paths = (await Promise.all(roots.map(async (root) => (await readdir(root, {recursive: true})).map((path) => relative(options.root, join(root, path))))))
+        .flat()
+        .filter((path) => /\.mdx?$/i.test(path) && !/^(readme|agents|claude)\.md$/i.test(path) && !path.split(sep).includes("node_modules") && !path.startsWith(`dist${sep}`));
 
     const docs = await Promise.all(
         paths.map(async (path): Promise<Doc> => {
-            const id = path
-                .replace(/\.mdx?$/i, "")
-                .split(sep)
-                .join("/")
-                .toLowerCase();
+            if (options.scope !== undefined) assertContentPath({scope: options.scope, path: join(options.root, path)});
+            const id =
+                options.scope === undefined
+                    ? path
+                          .replace(/\.mdx?$/i, "")
+                          .split(sep)
+                          .join("/")
+                          .toLowerCase()
+                    : toContentId({scope: options.scope, path: join(options.root, path)});
             const segments = id.split("/");
 
             // Hono, SSG, 정적 제공의 공통 URL 계약. 예약 문자에 의한 페이지 누락 방지
@@ -82,10 +99,9 @@ export const readDocs = async (options: ReadDocsParams): Promise<Doc[]> => {
             }
 
             // 상대 부모 id는 파일 위치 기준으로 한 번 해소. 문서 루트를 바꿔도 같은 관계 유지
-            const data = {
-                ...parsed.data,
-                parent: parsed.data.parent !== undefined && /^\.\.?\//.test(parsed.data.parent) ? posix.join(posix.dirname(id), parsed.data.parent) : parsed.data.parent,
-            };
+            const parentPath = parsed.data.parent !== undefined && /^\.\.?\//.test(parsed.data.parent) ? resolve(dirname(file.path), parsed.data.parent) : undefined;
+            const parent = parsed.data.parent !== undefined && parentPath !== undefined ? posix.join(posix.dirname(id), parsed.data.parent) : parsed.data.parent;
+            const data = {...parsed.data, parent: options.scope !== undefined && parentPath !== undefined ? toContentId({scope: options.scope, path: parentPath}) : parent};
 
             // 플러그인의 제목, 절 정보 공유
             const fh: DocFileData = {frontmatter: data, headings: [], sections: []};

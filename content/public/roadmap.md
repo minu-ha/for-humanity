@@ -32,7 +32,7 @@ order: 40
 ## Foundation
 
 현재의 폭과 사이드바 배치에서 글과 링크 중심의 표현 기준 정리.
-표현은 [Design](design.md), 작성 기준은 [Writing](writing.md), 검증은 [Maintenance](maintenance.md#browser-checks).
+표현은 [Design](https://github.com/minu-ha/for-humanity/blob/main/content/private/design.md), 작성 기준은 [Writing](writing.md), 검증은 [Maintenance](https://github.com/minu-ha/for-humanity/blob/main/content/private/maintenance.md#browser-checks).
 
 - [x] 흰 바탕·진회색 본문·파란 링크·얇은 점선
 - [x] 사이트 폭 유지 · 본문·사이드바 링크 12px 통일
@@ -69,7 +69,7 @@ order: 40
 
 ## Vite integration
 
-저장소 개발과 설치 패키지의 `for-humanity dev`·`preview`까지 Vite로 통합했습니다. `0.13.0`에 포함합니다. 설계 기준은 [Runtime direction](architecture.md#runtime-direction).
+저장소 개발과 설치 패키지의 `for-humanity dev`·`preview`까지 Vite로 통합했습니다. `0.13.0`에 포함합니다. 설계 기준은 [Runtime direction](https://github.com/minu-ha/for-humanity/blob/main/content/private/architecture.md#runtime-direction).
 Vite를 런타임 의존성에 포함하고 Node 최소 버전을 22.12.0으로 올리는 변경을 허용합니다. 이번 변경의 공개 버전은 `0.13.0`입니다.
 
 1. 설계 문서: 개발·운영 역할, 정적 생성 범위, 향후 DB·인증 책임 기록
@@ -90,7 +90,7 @@ Vite를 런타임 의존성에 포함하고 Node 최소 버전을 22.12.0으로 
 
 Node 22.12.0과 24.3.0에서 설치 패키지의 공개 타입·build·dev·preview와 실제 브라우저 갱신을 검증했습니다. Windows의 Node 22.12.0에서도 CI가 단위·브라우저·설치 검사를 실행합니다.
 
-`0.13.0`의 공개 검증은 Ubuntu·Windows CI와 패키지 설치 검사로 수행합니다. 결과는 [CI 실행 기록](https://github.com/minu-ha/for-humanity/actions/workflows/ci.yml)과 [GitHub Release](https://github.com/minu-ha/for-humanity/releases/tag/v0.13.0)에서 확인합니다. Node 지원 범위·버전·태그의 일치 기준은 [Releases](releases.md), 공개 절차는 [Maintenance](maintenance.md#packaging-and-release)를 따릅니다.
+`0.13.0`의 공개 검증은 Ubuntu·Windows CI와 패키지 설치 검사로 수행합니다. 결과는 [CI 실행 기록](https://github.com/minu-ha/for-humanity/actions/workflows/ci.yml)과 [GitHub Release](https://github.com/minu-ha/for-humanity/releases/tag/v0.13.0)에서 확인합니다. Node 지원 범위·버전·태그의 일치 기준은 [Releases](releases.md), 공개 절차는 [Maintenance](https://github.com/minu-ha/for-humanity/blob/main/content/private/maintenance.md#packaging-and-release)를 따릅니다.
 
 검색·로그인·DB 연결은 아래 후속 단계에서 별도로 설계합니다.
 
@@ -163,7 +163,7 @@ prototype의 첫 버전 `0.1.0`은 `dev`, `build`, `preview`를 지원. `init`�
 - [ ] 비공개 문서·첨부·검색 인덱스의 권한 검사와 정적 출력 제외 검증
 
 사용자가 DB·인증 서비스·배포 환경을 소유하고 운영합니다. 패키지의 HTTP API 명세와 서버 내부의 저장소 연결 계약은 별개입니다. 공개 정적 문서 사용자는 DB를 설치하지 않아도 됩니다.
-개발·미리보기·운영의 실행 방식과 플랫폼별 책임은 [Development, preview and production](architecture.md#development-preview-and-production). 운영 배포에는 `dev`나 `preview` 대신 지원 플랫폼의 Hono 실행 진입점을 사용합니다.
+개발·미리보기·운영의 실행 방식과 플랫폼별 책임은 [Development, preview and production](https://github.com/minu-ha/for-humanity/blob/main/content/private/architecture.md#development-preview-and-production). 운영 배포에는 `dev`나 `preview` 대신 지원 플랫폼의 Hono 실행 진입점을 사용합니다.
 완료 기준: 지원하는 환경에 패키지를 설치하고 사용자 소유 서비스에 연결한 뒤, 인증·권한·저장·검색을 실제 요청으로 검증할 수 있음.
 
 ## Search
@@ -210,7 +210,7 @@ prototype의 첫 버전 `0.1.0`은 `dev`, `build`, `preview`를 지원. `init`�
 
 1. `Next` 단계의 실제 샘플과 범위 확정
 2. 작성 계약·표현·오류 기준 기록
-3. 구현 후 [Maintenance](maintenance.md#browser-checks)의 검증 수행
+3. 구현 후 [Maintenance](https://github.com/minu-ha/for-humanity/blob/main/content/private/maintenance.md#browser-checks)의 검증 수행
 4. 체크박스와 상태 갱신 · 다음 단계 지정
 
 새 요청은 영향을 받는 단계에 추가. 다음 단계의 구현은 현재 단계의 완료 기준을 충족한 뒤 시작.

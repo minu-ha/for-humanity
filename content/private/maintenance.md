@@ -6,7 +6,7 @@ order: 30
 ---
 
 코드 변경, 컨벤션, 검증, 패키지 배포 기준.
-엔진은 [Architecture](architecture.md), 표현 기준은 [Design](design.md), 다음 작업은 [Roadmap](roadmap.md).
+엔진은 [Architecture](architecture.md), 표현 기준은 [Design](design.md), 다음 작업은 [Roadmap](../public/roadmap.md).
 
 ## Overview
 
@@ -44,7 +44,7 @@ git diff --check
 - Props: 구조분해 없이 `props.*` 접근
 - Classes: `scope_slug__element--modifier` · 조합은 `clsx`
 - Comments: 명사구 · 목적·계약·제약 · 구현 반복 설명 제거
-- Language: 제목·짧은 라벨은 영어 우선 · 본문·설명은 한국어 · [Writing](writing.md#language)
+- Language: 제목·짧은 라벨은 영어 우선 · 본문·설명은 한국어 · [Writing](../public/writing.md#language)
 - Commits: 영어 동사로 시작 · AI 도움을 받은 제목의 마지막은 ` | aa` · 저장소 루트 `AGENTS.md`·`CLAUDE.md`
 
 주석 앞에는 빈 줄을 둡니다. 블록·객체·배열·JSX의 첫 줄과 연속 주석은 예외입니다. 선언 설명은 여러 줄 JSDoc, 본문의 의도·절차 설명은 `//`를 사용합니다. JSDoc의 본문은 제목 다음 빈 줄과 들여쓴 목록으로 작성하고, 직접 선언한 타입·스키마에는 헤더와 필드 설명을 남깁니다. 테스트의 GIVEN·WHEN·THEN은 [테스트 작성 기준](https://github.com/minu-ha/for-humanity/blob/main/test/README.md)에 따른 별도 블록을 사용합니다.
@@ -158,8 +158,8 @@ pnpm exec playwright show-report .cache/playwright/report
 
 ## Packaging and release
 
-버전 선택·공개 시점·호환성 정책의 기준은 [Releases](releases.md). 이 문서는 검증과 공개 작업 절차 담당.
-버전별 변경 기록은 [Changelog](changelog.md).
+버전 선택·공개 시점·호환성 정책의 기준은 [Releases](../public/releases.md). 이 문서는 검증과 공개 작업 절차 담당.
+버전별 변경 기록은 [Changelog](../public/changelog.md).
 변경 기록은 최상위 `CHANGELOG.md`에 작성. npm 패키지·GitHub Release·사이트에서 같은 기록 사용.
 
 ```sh
@@ -167,7 +167,7 @@ pnpm pack
 ```
 
 패키지 설치 후 별도 폴더에서 `dev`, `build`, `preview` 확인.
-정적 사이트는 문서 폴더의 `dist` 전체 배포. 사이트 루트 경로 기준 · [Deployment](deployment.md).
+정적 사이트는 문서 폴더의 `dist` 전체 배포. 사이트 루트 경로 기준 · [Deployment](../public/deployment.md).
 첫 공개 버전 `0.1.0`의 지원 범위는 `dev`, `build`, `preview`. `init`은 별도 예정 작업.
 
 공개 전 위 검증 명령을 모두 통과하고, 패키지에 CLI·CSS·클라이언트 스크립트·폰트·favicon·라이선스가 포함되는지 확인.
@@ -217,10 +217,10 @@ CI가 실패하면 다른 작업보다 실패 원인 수정 우선. 현재 Pages
 
 패키지 릴리스가 작업 범위에 포함됐을 때 실행:
 
-1. 마지막 공개 태그 이후의 전체 변경을 검토하고 [Version policy](releases.md#version-policy)에 따라 버전 선택.
+1. 마지막 공개 태그 이후의 전체 변경을 검토하고 [Version policy](../public/releases.md#version-policy)에 따라 버전 선택.
 2. `package.json` 버전을 올리고 `CHANGELOG.md`의 `Unreleased`를 해당 버전·공개 날짜 항목으로 옮김. 이번 공개에 포함될 미공개 기록이 남지 않았는지 확인.
 3. 최상위 `README.md`와 `language/README.ko.md`의 설치 버전·지원 버전 갱신. 공개하는 기능 문서의 미공개 표시 제거.
-4. 검증 명령 실행. `pnpm build`가 `templates/document/README.md`와 `changelog.md`도 동기화.
+4. 검증 명령 실행. `pnpm build`가 `content/README.md`와 `content/public/changelog.md`도 동기화.
 5. 릴리스 준비 변경만 커밋하고 `main`에 push. 해당 커밋의 CI와 Pages 결과 확인.
 6. 검증한 릴리스 준비 커밋에 같은 버전의 태그를 만들고 push. 태그를 만들기 전후에 다른 커밋으로 대상을 바꾸지 않음.
 
@@ -243,5 +243,5 @@ git push origin v0.2.2
 
 ## Roadmap
 
-진행 순서, 단계별 산출물과 완료 기준은 [Roadmap](roadmap.md).
-다음 작업은 [Authoring](authoring.md)의 작성 기준과 [시각화·테마 모듈](roadmap.md#visualization-modules).
+진행 순서, 단계별 산출물과 완료 기준은 [Roadmap](../public/roadmap.md).
+다음 작업은 [Authoring](../public/authoring.md)의 작성 기준과 [시각화·테마 모듈](../public/roadmap.md#visualization-modules).

@@ -170,7 +170,7 @@ describe("정적 미리보기", () => {
          * GIVEN
          * 이미 실행 중인 미리보기와 같은 포트의 사이트 설정
          */
-        await writeFile(join(root, "for-humanity.config.ts"), `export default {port: ${new URL(previewUrl).port}};\n`);
+        await writeFile(join(root, "for-humanity.config.ts"), `export default {content: {root: "."}, port: ${new URL(previewUrl).port}};\n`);
 
         /**
          * WHEN

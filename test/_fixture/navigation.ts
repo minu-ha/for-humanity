@@ -17,19 +17,23 @@ export const test = base.extend<Record<never, never>, {navigationSite: string}>(
         async ({}, use) => {
             const root = await mkdtemp(join(tmpdir(), "for-humanity-navigation-"));
             try {
+                await mkdir(join(root, "public"));
                 const sections = range(24)
                     .map((index) => `## Section ${index}\n\n### Detail ${index}\n\n${"Readable context. ".repeat(40)}\n`)
                     .join("\n");
-                await writeFile(join(root, "README.md"), "# Home\n\n## Start\n\n[Guide](guide.md)\n");
-                await writeFile(join(root, "for-humanity.config.ts"), "export default {cursorFace: true};\n");
+                await writeFile(join(root, "README.md"), "# Home\n\n## Start\n\n[Guide](public/guide.md)\n");
+                await writeFile(join(root, "for-humanity.config.ts"), 'export default {content: {root: "."}, cursorFace: true};\n');
                 await writeFile(
-                    join(root, "guide.md"),
+                    join(root, "public/guide.md"),
                     `---\nname: Guide\nlabel: Guide\ngroup: Guide\norder: 0\n---\n\n${sections}\n:::details[Folded context]\n### Hidden detail\n\nHidden context.\n:::\n`,
                 );
-                await writeFile(join(root, "child.md"), "---\nname: Child\nlabel: Child\ngroup: Guide\nparent: guide\norder: 1\n---\n\n## Short page\n\nText.\n");
+                await writeFile(join(root, "public/child.md"), "---\nname: Child\nlabel: Child\ngroup: Guide\nparent: guide\norder: 1\n---\n\n## Short page\n\nText.\n");
                 await Promise.all(
                     range(60).map((index) => {
-                        return writeFile(join(root, `page-${index}.md`), `---\nname: Page ${index}\nlabel: Page\ngroup: Guide\norder: ${index + 2}\n---\n\n## Read\n\nText.\n`);
+                        return writeFile(
+                            join(root, `public/page-${index}.md`),
+                            `---\nname: Page ${index}\nlabel: Page\ngroup: Guide\norder: ${index + 2}\n---\n\n## Read\n\nText.\n`,
+                        );
                     }),
                 );
                 execFileSync(process.execPath, ["dist/cli.js", "build", root]);

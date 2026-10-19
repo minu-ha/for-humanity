@@ -1,5 +1,5 @@
 import {spawnSync} from "node:child_process";
-import {readFile, writeFile} from "node:fs/promises";
+import {mkdir, readFile, writeFile} from "node:fs/promises";
 import {join, resolve} from "node:path";
 import {test} from "@test/_fixture/unit";
 import {describe, expect} from "vitest";
@@ -53,12 +53,13 @@ describe("CLI 인자와 출력", () => {
         }
     });
 
-    test("폴더를 생략한 빌드는 현재 폴더를 사용하고 경고 뒤에도 성공한다", {timeout: 45000}, async ({root}) => {
+    test("폴더를 생략한 빌드는 현재 프로젝트의 content를 사용하고 경고 뒤에도 성공한다", {timeout: 45000}, async ({root}) => {
         /**
          * GIVEN
          * 없는 문서 링크를 포함한 홈
          */
-        await writeFile(join(root, "README.md"), "# Local home\n\n[Missing](missing.md)\n");
+        await mkdir(join(root, "content/public"), {recursive: true});
+        await writeFile(join(root, "content/README.md"), "# Local home\n\n[Missing](public/missing.md)\n");
 
         /**
          * WHEN
@@ -86,6 +87,6 @@ describe("CLI 인자와 출력", () => {
         expect(result.stdout).toContain("files,");
         expect(result.stderr).toContain("README.md:3");
         expect(result.stderr).toContain("missing.md");
-        expect(await readFile(join(root, "dist/index.html"), "utf8")).toContain("Local home");
+        expect(await readFile(join(root, "content/dist/index.html"), "utf8")).toContain("Local home");
     });
 });

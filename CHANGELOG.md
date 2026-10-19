@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+**Migration:** Configuration now belongs in the project root. CLI paths identify a project, not a Markdown folder. Move published documents into `content/public`, local-only documents into `content/private`, and the site home into `content/README.md`; use `content.root`, `content.public` and `content.private` to customize these paths. Existing flat document folders are not automatically published. The current npm release remains `0.13.1`; these changes are not published yet.
+
+- Show both document collections in `dev`; build and preview only the public site in `content/dist`.
+- Preserve public document URLs and reserve `/private/` for local internal pages. Exclude internal pages, navigation data, sitemap entries and their assets from public builds.
+- Reject public references to internal Markdown, images and snippets, including raw HTML and symlink targets.
+- Move this repository's documentation to `content` and its configuration to the project root.
+
 ## 0.13.1 — 2026-10-16
 
 **Upgrade:** CLI commands, configuration and Node.js requirements remain unchanged. Navigation scroll positions saved by older versions may reset once after upgrading.

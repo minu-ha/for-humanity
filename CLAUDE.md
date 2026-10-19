@@ -7,7 +7,7 @@
 
 # Release rules
 
-- 버전·호환성·공개 시점은 [Releases](templates/document/releases.md), 검증·배포 절차는 [Maintenance](templates/document/maintenance.md#packaging-and-release)를 따른다. 버전 정책은 Releases에서 관리한다.
+- 버전·호환성·공개 시점은 [Releases](content/public/releases.md), 검증·배포 절차는 [Maintenance](content/private/maintenance.md#packaging-and-release)를 따른다. 버전 정책은 Releases에서 관리한다.
 - 검증한 작은 변경을 `main`에 반영한다. `main` push에 따른 사이트 배포만으로 `package.json`이나 README의 설치 버전을 올리지 않는다.
 - 커밋·push·사이트 배포만 요청된 작업에서는 릴리스 태그와 npm 공개를 자동으로 추가하지 않는다. 패키지 릴리스가 요청되거나 기존에 합의한 작업 범위에 포함됐을 때 공개 절차를 수행한다.
 - 사용자에게 영향을 주는 변경은 `CHANGELOG.md`의 `Unreleased`에 모은다. 공개한 버전의 기록에 새 작업을 추가하지 않는다.

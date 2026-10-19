@@ -4,8 +4,8 @@
 export const cli_default_command = "dev";
 
 /**
- * 문서 폴더 생략 시 현재 폴더
+ * 프로젝트 폴더 생략 시 현재 폴더
  */
 export const cli_docs_args = {
-    dir: {type: "positional", description: "문서 폴더", default: "."},
+    dir: {type: "positional", description: "프로젝트 폴더", default: "."},
 } as const;

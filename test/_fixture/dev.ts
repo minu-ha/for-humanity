@@ -64,7 +64,7 @@ export const test = base.extend<DevFixture>({
         // 저장소 개발과 같은 패키지 내부 문서 루트, Vite 허용 영역 안에서도 원본 차단 검증
         const root = source ? join(kitRoot, "docs") : join(directory, "docs");
         try {
-            await mkdir(root, {recursive: true});
+            await mkdir(join(root, "public"), {recursive: true});
             await writeFile(join(root, "README.md"), "# Development home\n\nInitial content.\n");
             if (source) {
                 for (const name of ["src", "dist", "package.json", "tsconfig.json"]) {
@@ -74,7 +74,7 @@ export const test = base.extend<DevFixture>({
             }
             const errors: string[] = [];
             const server = await createServer(
-                mergeConfig(toDevConfig({root, kitRoot, site: siteConfigSchema.parse(site), source}), {
+                mergeConfig(toDevConfig({root, kitRoot, site: siteConfigSchema.parse(site), source, includePrivate: true}), {
                     // node_modules 링크를 공유해도 서버별 의존성 캐시는 격리
                     cacheDir: join(directory, ".vite"),
                     customLogger: {

@@ -4,6 +4,7 @@ import type {SiteConfig} from "for-humanity";
  * 프로젝트 문서 설정, 모든 항목 선택
  */
 export default {
+    content: {root: "content", public: "public", private: "private"},
     title: "for humanity",
     url: "https://for-humanity.fyi",
     description: "Markdown으로 문서를 작성하고 정적 사이트로 공유하는 문서 도구. 설치와 사용법, 작성 가이드, API와 가상 프로젝트 예시.",

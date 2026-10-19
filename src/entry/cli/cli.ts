@@ -41,7 +41,7 @@ const main = defineCommand({
             },
         }),
         build: defineCommand({
-            meta: {name: "build", description: "문서 폴더의 dist에 정적 사이트 생성"},
+            meta: {name: "build", description: "content/dist에 공개 문서 사이트 생성"},
             args: cli_docs_args,
 
             /**

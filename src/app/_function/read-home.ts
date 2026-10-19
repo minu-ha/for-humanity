@@ -3,8 +3,10 @@ import {join} from "node:path";
 import {VFile} from "vfile";
 import type {Processor} from "@/app/_function/create-processor/create-processor";
 import {copy_error_home_clash} from "@/constant/copy";
+import type {ContentScope} from "@/type/content-scope";
 import type {DocContent} from "@/type/doc-content";
 import type {DocFileData} from "@/type/doc-file-data";
+import {assertContentPath} from "@/util/file/assert-content-path";
 
 /**
  * 홈 문서 조회 입력
@@ -14,6 +16,11 @@ interface ReadHomeOptions {
      * 문서 루트의 절대 경로
      */
     root: string;
+
+    /**
+     * 홈 원본의 공개 범위와 symlink 검사
+     */
+    scope?: ContentScope;
 
     /**
      * 홈 본문에 적용할 Markdown 처리기
@@ -39,6 +46,7 @@ export const readHome = async (options: ReadHomeOptions): Promise<DocContent | u
     }
 
     const path = join(options.root, paths[0]);
+    if (options.scope !== undefined) assertContentPath({scope: options.scope, path});
     const fh: DocFileData = {headings: [], sections: []};
 
     // 파서와 지시문 원문의 offset 일치, UTF-8 BOM 제외
