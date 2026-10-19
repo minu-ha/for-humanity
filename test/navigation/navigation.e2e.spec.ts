@@ -220,6 +220,58 @@ test.describe("문서 탐색", () => {
             expect(errors).toStrictEqual([]);
         });
     }
+    test("[NAV-017] hash로 연 문서를 새로고침하면 앵커로 갔다가 다시 이동하지 않는다", {tag: "@high"}, async ({page}) => {
+        /**
+         * GIVEN
+         * hash 제목으로 연 뒤 휠로 다른 위치에 이동한 문서
+         */
+        await page.goto("/guide/#detail-10");
+        const heading = page.locator("#detail-10");
+        await expect
+            .poll(() => heading.evaluate((element) => Math.abs(element.getBoundingClientRect().top - Number.parseFloat(getComputedStyle(element).scrollMarginTop))))
+            .toBeLessThanOrEqual(1);
+        await expect(page.locator("html")).toHaveCSS("scroll-behavior", "smooth");
+        const anchorPosition = await page.evaluate(() => scrollY);
+        await page.mouse.move(800, 300);
+        await page.mouse.wheel(0, -1000);
+        await expect.poll(() => page.evaluate(() => scrollY)).toBe(anchorPosition - 1000);
+
+        // 외부 스크립트 수신 전 첫 프레임부터 본문 위치 수집
+        await page.addInitScript(() => {
+            window.readingFrames = [];
+
+            /**
+             * 최초 프레임부터 적용한 본문 위치 수집
+             */
+            const sample = () => {
+                window.readingFrames.push(scrollY);
+                if (window.readingFrames.length < 45) requestAnimationFrame(sample);
+            };
+            requestAnimationFrame(sample);
+        });
+
+        /**
+         * WHEN
+         * 같은 주소 새로고침
+         */
+        await page.reload();
+        await page.waitForFunction(() => window.readingFrames.length >= 45);
+
+        /**
+         * THEN
+         * 문서 표시 후 위치 변경 없음, 앵커 도착 강조 없음, 첫 입력 전 즉시 스크롤
+         *
+         *   - 제약: 이전 위치와 앵커 중 복원 대상은 Chromium의 탐색 상태 저장 시점이 결정
+         */
+        const frames = await page.evaluate(() => window.readingFrames);
+        expect(new Set(frames.filter((position) => position !== 0)).size).toBe(1);
+
+        // 강조 유지 시간 종료 전의 즉시 조회
+        expect(await page.locator(".wg_prose__headingText--highlighted").count()).toBe(0);
+        await expect(page.locator("html")).toHaveCSS("scroll-behavior", "auto");
+        await page.mouse.wheel(0, 100);
+        await expect(page.locator("html")).toHaveCSS("scroll-behavior", "smooth");
+    });
     test("[NAV-018] 화면에 들어가는 탐색 영역의 휠은 본문을 스크롤하고 넘치는 목록은 끝에서 휠을 가둔다", {tag: "@high"}, async ({page}) => {
         await page.setViewportSize({width: 1920, height: 1600});
         await page.goto("/guide/");
@@ -282,6 +334,22 @@ test.describe("문서 탐색", () => {
              */
             await expect(documents).toHaveJSProperty("scrollTop", await documents.evaluate((element) => element.scrollHeight - element.clientHeight));
             expect(await page.evaluate(() => scrollY)).toBe(0);
+        });
+    });
+    test.describe("스크립트 없음", () => {
+        test.use({javaScriptEnabled: false});
+        test("[NAV-019] 스크립트 연결 전 문서 스크롤은 즉시 이동한다", {tag: "@mid"}, async ({page}) => {
+            /**
+             * WHEN
+             * 스크립트 없이 문서 열기
+             */
+            await page.goto("/guide/");
+
+            /**
+             * THEN
+             * 부드러운 스크롤 미적용, 새로고침 위치 복원도 즉시 이동
+             */
+            await expect(page.locator("html")).toHaveCSS("scroll-behavior", "auto");
         });
     });
 });

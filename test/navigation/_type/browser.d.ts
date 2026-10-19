@@ -43,6 +43,11 @@ interface Window {
     navigationFrames: {documents: number; outline: number}[];
 
     /**
+     * 첫 프레임부터 수집한 본문 스크롤 위치
+     */
+    readingFrames: number[];
+
+    /**
      * 셸 마운트와 해제 명령
      */
     shellFixture: {mount: () => void; unmount: () => void};

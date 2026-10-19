@@ -4,6 +4,7 @@
 
 - Reorganize the documentation site into Start, Guide and Updates. Installation has its own page, Commands covers command options and troubleshooting, and the changelog is published with update instructions. The Reference and Releases pages are removed; their content is in Commands, Settings, Writing and Changelog.
 - Let the mouse wheel scroll the document over the document list and the outline when they fit on screen. Chrome previously kept the wheel inside them.
+- Restore the scroll position instantly when reloading or going back to an address with a heading, without first jumping to the heading or sliding down from the top.
 
 ## 0.14.0 — 2026-10-19
 

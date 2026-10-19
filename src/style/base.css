@@ -6,11 +6,10 @@
     box-sizing: border-box;
 }
 
-/* 페이지 바탕과 절 이동, 초기 hash 보정 중 smooth scroll 일시 중지 */
+/* 페이지 바탕, 로드 중 위치 복원은 즉시 이동, 부드러운 절 이동은 셸 스크립트가 문서 준비 후 활성화 */
 :root {
     background: var(--app-color-ground);
     scrollbar-gutter: stable;
-    scroll-behavior: smooth;
 }
 
 /* 움직임 줄이기, 컴포넌트보다 우선하는 전역 !important 예외 */

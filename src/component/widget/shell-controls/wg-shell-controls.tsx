@@ -4,6 +4,8 @@ import {WgCursorFace} from "@/component/widget/cursor-face/wg-cursor-face";
 import {WgMermaid} from "@/component/widget/mermaid/wg-mermaid";
 import {WgNavigation, type WgNavigationProps} from "@/component/widget/navigation/wg-navigation";
 import {heading_highlight_hold_ms} from "@/component/widget/prose/_constant/heading-highlight";
+import {scroll_user_input_events} from "@/constant/scroll";
+import {isRestoringNavigation} from "@/util/dom/is-restoring-navigation";
 import {revealHashTarget} from "@/util/dom/reveal-hash-target";
 import "./wg-shell-controls.css";
 
@@ -79,24 +81,32 @@ export const WgShellControls = (props: WgNavigationProps) => {
         highlightHeading(target);
     };
 
+    /**
+     * 첫 사용자 입력. 초기 앵커 보정 중단, 부드러운 절 이동 활성화
+     */
     const handleUserScroll = () => {
         userScrollRef.current?.abort();
+        document.documentElement.style.scrollBehavior = "smooth";
     };
 
     /**
      * 초기 폰트 로드 후 앵커 보정. 해제된 인스턴스와 사용자 이동에 개입하지 않음
+     *
+     *   - 새로고침, 뒤로가기는 브라우저의 이전 위치 복원 사용
+     *   - 부드러운 절 이동은 보정 후 활성화, 복원 진입은 첫 사용자 입력까지 즉시 스크롤 유지
      */
     const handlePageLoad = async () => {
         const lifetime = lifetimeRef.current;
         const hash = location.hash;
         const target = revealHashTarget(hash);
+        if (isRestoringNavigation()) return;
         await document.fonts.ready;
         if (lifetime === null || lifetime.signal.aborted) return;
         if (target !== null && !userScrollRef.current?.signal.aborted && hash === location.hash) {
             target.scrollIntoView({behavior: "instant"});
             highlightHeading(target);
         }
-        document.documentElement.style.removeProperty("scroll-behavior");
+        document.documentElement.style.scrollBehavior = "smooth";
     };
 
     /**
@@ -114,11 +124,10 @@ export const WgShellControls = (props: WgNavigationProps) => {
         const lifetime = new AbortController();
         lifetimeRef.current = lifetime;
         userScrollRef.current = new AbortController();
-        document.documentElement.style.scrollBehavior = "auto";
         document.addEventListener("click", handleHashClick, {signal: lifetime.signal});
         addEventListener("hashchange", handleHashChange, {signal: lifetime.signal});
         addEventListener("load", handlePageLoad, {once: true, signal: lifetime.signal});
-        for (const type of ["wheel", "touchmove", "keydown", "mousedown"]) {
+        for (const type of scroll_user_input_events) {
             addEventListener(type, handleUserScroll, {once: true, passive: true, signal: lifetime.signal});
         }
         if (document.readyState === "loading") {
