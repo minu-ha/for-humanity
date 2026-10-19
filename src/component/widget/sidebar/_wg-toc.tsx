@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import {useLayoutEffect, useState} from "hono/jsx";
+import {anchor_shift_property} from "@/component/widget/article/_constant/anchor-shift";
 import {reading_line_slack_px} from "@/component/widget/sidebar/_constant/reading-line";
 import type {TocGroup} from "@/component/widget/sidebar/_type/toc-group";
 import {copy_nav_toc_label} from "@/constant/copy";
@@ -36,34 +37,45 @@ export const WgToc = (props: WgTocProps) => {
         const lock = {slug: isRestoringNavigation() ? undefined : toHashId(location.hash)};
 
         /**
+         * 끝 구간 제목의 도착 위치를 목차 전환 위치와 일치
+         *
+         *   - 읽는 선에 닿지 못하는 끝 절이 있으면 마지막 한 화면 구간의 도착 위치를 문서 끝까지 비례 압축
+         *   - 압축한 거리만큼 제목 위 여백 추가, 앵커 이동과 목차 판정이 같은 위치 사용
+         */
+        const updateAnchorShifts = () => {
+            for (const heading of headings) findHashTarget(`#${heading.slug}`)?.style.removeProperty(anchor_shift_property);
+            const anchors = headings.flatMap((heading) => {
+                const target = findHashTarget(`#${heading.slug}`);
+                return target?.checkVisibility()
+                    ? [{target, arrival: scrollY + target.getBoundingClientRect().top - Number.parseFloat(getComputedStyle(target).scrollMarginTop)}]
+                    : [];
+            });
+            const last = anchors.at(-1);
+            const scrollEnd = document.documentElement.scrollHeight - innerHeight;
+            if (last === undefined || scrollEnd <= 0 || last.arrival <= scrollEnd) return;
+            const stretchFrom = Math.max(0, scrollEnd - innerHeight);
+            const stretchScale = (scrollEnd - stretchFrom) / (last.arrival - stretchFrom);
+            for (const anchor of anchors) {
+                if (anchor.arrival > stretchFrom) anchor.target.style.setProperty(anchor_shift_property, `${(anchor.arrival - stretchFrom) * (1 - stretchScale)}px`);
+            }
+        };
+
+        /**
          * 접힌 본문 제목은 제외하고 읽는 선을 통과한 마지막 제목 선택
          *
          *   - 링크, hash로 이동한 제목은 사용자 스크롤 전까지 유지
-         *   - 읽는 선에 닿지 못하는 끝 절이 있으면 마지막 한 화면 구간의 도착 위치를 문서 끝까지 비례 압축
          */
         const updateCurrentHeading = () => {
             frame.id = 0;
             const visible = headings.flatMap((heading) => {
                 const target = findHashTarget(`#${heading.slug}`);
                 return target?.checkVisibility()
-                    ? [{slug: heading.slug, arrival: scrollY + target.getBoundingClientRect().top - Number.parseFloat(getComputedStyle(target).scrollMarginTop)}]
+                    ? [{slug: heading.slug, top: target.getBoundingClientRect().top - Number.parseFloat(getComputedStyle(target).scrollMarginTop)}]
                     : [];
             });
-            const last = visible.at(-1);
-            if (last === undefined) {
-                setCurrentSlug(undefined);
-                return;
-            }
-            const scrollEnd = document.documentElement.scrollHeight - innerHeight;
-            const stretchFrom = Math.max(0, scrollEnd - innerHeight);
-
-            // 끝 절이 없거나 스크롤할 수 없는 문서는 원래 도착 위치 사용
-            const stretchScale = scrollEnd > 0 && last.arrival > scrollEnd ? (scrollEnd - stretchFrom) / (last.arrival - stretchFrom) : 1;
-            const passed = visible.findLast((heading) => {
-                const arrival = heading.arrival > stretchFrom ? stretchFrom + (heading.arrival - stretchFrom) * stretchScale : heading.arrival;
-                return arrival <= scrollY + reading_line_slack_px;
-            });
-            setCurrentSlug(visible.find((heading) => heading.slug === lock.slug)?.slug ?? passed?.slug ?? visible[0].slug);
+            setCurrentSlug(
+                visible.find((heading) => heading.slug === lock.slug)?.slug ?? visible.findLast((heading) => heading.top <= reading_line_slack_px)?.slug ?? visible[0]?.slug,
+            );
         };
 
         /**
@@ -71,6 +83,14 @@ export const WgToc = (props: WgTocProps) => {
          */
         const handleReadingPositionChange = () => {
             if (frame.id === 0) frame.id = requestAnimationFrame(updateCurrentHeading);
+        };
+
+        /**
+         * 문서 크기, 화면 높이 변경. 끝 구간 도착 위치와 현재 제목 재계산
+         */
+        const handleLayoutChange = () => {
+            updateAnchorShifts();
+            handleReadingPositionChange();
         };
 
         /**
@@ -93,27 +113,33 @@ export const WgToc = (props: WgTocProps) => {
 
         /**
          * 사용자 스크롤 시작. 도착 제목 고정 해제
+         *
+         *   - 재계산은 실제 스크롤에서 실행, 링크를 누르는 동안 다른 제목 표시 방지
          */
         const handleUserScroll = () => {
             lock.slug = undefined;
-            handleReadingPositionChange();
         };
 
+        // 글꼴, 다이어그램, 접힘 변경의 문서 크기 변화 추적
+        const observer = new ResizeObserver(handleLayoutChange);
+        observer.observe(document.body);
         addEventListener("scroll", handleReadingPositionChange, {passive: true, signal: lifetime.signal});
-        addEventListener("resize", handleReadingPositionChange, {signal: lifetime.signal});
+        addEventListener("resize", handleLayoutChange, {signal: lifetime.signal});
         addEventListener("toggle", handleReadingPositionChange, {capture: true, signal: lifetime.signal});
         addEventListener("pageshow", handleReadingPositionChange, {signal: lifetime.signal});
         addEventListener("hashchange", handleHashChange, {signal: lifetime.signal});
-        document.addEventListener("DOMContentLoaded", handleReadingPositionChange, {signal: lifetime.signal});
+        document.addEventListener("DOMContentLoaded", handleLayoutChange, {signal: lifetime.signal});
         document.addEventListener("click", handleHashLinkClick, {signal: lifetime.signal});
         for (const type of scroll_user_input_events) {
             addEventListener(type, handleUserScroll, {passive: true, signal: lifetime.signal});
         }
-        if (document.readyState !== "loading") updateCurrentHeading();
+        if (document.readyState !== "loading") handleLayoutChange();
 
         return () => {
             cancelAnimationFrame(frame.id);
             lifetime.abort();
+            observer.disconnect();
+            for (const heading of headings) findHashTarget(`#${heading.slug}`)?.style.removeProperty(anchor_shift_property);
         };
     }, [props.groups]);
 

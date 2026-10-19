@@ -246,22 +246,49 @@ test.describe("문서 탐색", () => {
             expect(indexes).toStrictEqual(indexes.map((_index, step) => indexes[0] + step));
             expect(seen.at(-1)).toBe("#detail-23");
         });
-        await test.step("목차로 이동한 끝 절 제목은 사용자 스크롤 전까지 유지한다", async () => {
+        await test.step("끝 구간 제목으로 이동하면 다른 제목을 거치지 않고 도착 위치와 목차가 같다", async () => {
+            /**
+             * GIVEN
+             * 끝 구간 제목으로 이동한 뒤 목차 변경을 기록하는 문서
+             */
+            await page.getByRole("link", {name: "Detail 22", exact: true}).click();
+            await expect(current).toHaveAttribute("href", "#detail-22");
+            await page.evaluate(() => {
+                window.tocChanges = [];
+                const toc = document.querySelector("[data-sidebar-toc]");
+                if (toc === null) return;
+                new MutationObserver(() => {
+                    const href = document.querySelector('[aria-current="location"]')?.getAttribute("href");
+                    if (href) window.tocChanges.push(href);
+                }).observe(toc, {subtree: true, attributeFilter: ["aria-current"]});
+            });
+
             /**
              * WHEN
-             * 문서 끝에서 읽는 선에 닿지 못하는 제목 선택
+             * 읽는 선에 닿지 못하는 끝 절 제목을 사람처럼 누른 뒤 떼고 도착 후 조금 스크롤
              */
-            await page.getByRole("link", {name: "Section 23", exact: true}).click();
+            await page.getByRole("link", {name: "Section 23", exact: true}).hover();
+            await page.mouse.down();
+
+            // 누르고 떼는 사이의 화면 갱신
+            await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+            await page.mouse.up();
 
             /**
              * THEN
-             * 선택한 제목 유지, 휠 입력 후 위치 기준 제목
+             * 제목이 읽는 선에 도착, 누른 제목으로 한 번만 변경, 스크롤 후에도 도착한 제목 유지
              */
-            await expect(current).toHaveAttribute("href", "#section-23");
-            expect(await page.evaluate(() => Math.round(scrollY))).toBe(Math.round(scrollEnd));
+            await expect
+                .poll(() => {
+                    return page
+                        .locator("#section-23")
+                        .evaluate((element) => Math.abs(element.getBoundingClientRect().top - Number.parseFloat(getComputedStyle(element).scrollMarginTop)));
+                })
+                .toBeLessThanOrEqual(1);
+            await expect.poll(() => page.evaluate(() => window.tocChanges)).toStrictEqual(["#section-23"]);
             await page.mouse.move(800, 300);
-            await page.mouse.wheel(0, 100);
-            await expect(current).toHaveAttribute("href", "#detail-23");
+            await page.mouse.wheel(0, 10);
+            await expect(current).toHaveAttribute("href", "#section-23");
         });
     });
     test("[NAV-017] hash로 연 문서를 새로고침하면 앵커로 갔다가 다시 이동하지 않는다", {tag: "@high"}, async ({page}) => {

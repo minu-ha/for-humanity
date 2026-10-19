@@ -7,6 +7,7 @@
 - Restore the scroll position instantly when reloading or going back to an address with a heading, without first jumping to the heading or sliding down from the top.
 - End documents with a regular section margin instead of nearly a screen of blank space. Over the last screen, the outline steps through the remaining headings in order, and a heading opened from a link stays marked until you scroll.
 - Land anchor links with the heading at 40% of the screen height instead of near the top, and switch the outline at the same line.
+- Land anchor links in the last screen exactly where the outline switches to them, so clicking an outline entry never briefly marks another heading.
 
 ## 0.14.0 — 2026-10-19
 

@@ -48,6 +48,11 @@ interface Window {
     readingFrames: number[];
 
     /**
+     * 목차 현재 항목의 변경 기록
+     */
+    tocChanges: string[];
+
+    /**
      * 셸 마운트와 해제 명령
      */
     shellFixture: {mount: () => void; unmount: () => void};
