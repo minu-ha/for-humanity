@@ -18,7 +18,7 @@ export default {
     title: "Project notes",
     description: "프로젝트 사용 안내와 참고 문서",
     content: {root: "content", public: "public", private: "private"},
-    navigation: ["Getting started", "Guide", "Reference"],
+    navigation: ["Start", "Guide", "Updates"],
 } satisfies SiteConfig;
 ```
 
@@ -87,7 +87,7 @@ export default {
 
 ```ts
 export default {
-    navigation: ["Getting started", "Guide", "Reference"],
+    navigation: ["Start", "Guide", "Updates"],
 };
 ```
 

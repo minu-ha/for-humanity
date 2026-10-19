@@ -1,7 +1,7 @@
 ---
 name: Installation
 label: 설치하고 첫 문서 실행하기
-group: Getting started
+group: Start
 order: 10
 ---
 

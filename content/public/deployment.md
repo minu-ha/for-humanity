@@ -1,7 +1,7 @@
 ---
 name: Deployment
 label: 작성한 문서를 정적 사이트로 배포
-group: Getting started
+group: Start
 order: 20
 ---
 

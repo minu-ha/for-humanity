@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Reorganize the documentation site into Start, Guide and Updates. Installation has its own page, Commands covers command options and troubleshooting, and the changelog is published with update instructions. The Reference and Releases pages are removed; their content is in Commands, Settings, Writing and Changelog.
+
 ## 0.14.0 — 2026-10-19
 
 **Breaking change:** Configuration now belongs in the project root. CLI paths identify a project, not a Markdown folder. Move published documents into `content/public`, local-only documents into `content/private`, and the site home into `content/README.md`; use `content.root`, `content.public` and `content.private` to customize these paths. Existing flat document folders are not automatically published. See the [migration guide](https://for-humanity.fyi/migration/). Node.js 22.12.0 or later is still required.

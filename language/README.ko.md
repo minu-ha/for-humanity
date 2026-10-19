@@ -72,7 +72,7 @@ import type {SiteConfig} from "for-humanity";
 export default {
     title: "Project notes",
     description: "프로젝트 사용 안내.",
-    navigation: ["Getting started", "Guide", "Reference"],
+    navigation: ["Start", "Guide", "Updates"],
 } satisfies SiteConfig;
 ```
 
