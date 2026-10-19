@@ -34,9 +34,7 @@ export const rehypeContentLinks = (options: ContentLinkOptions) => (tree: Root, 
                 continue;
             }
 
-            const urls = property === "srcSet" ? value.split(",").map((entry) => entry.trim().split(/\s+/)[0]) : [value];
-
-            for (const url of urls) {
+            for (const url of property === "srcSet" ? value.split(",").map((entry) => entry.trim().split(/\s+/)[0]) : [value]) {
                 if (/^(?:[a-z][a-z\d+.-]*:|\/\/|#)/i.test(url)) {
                     continue;
                 }

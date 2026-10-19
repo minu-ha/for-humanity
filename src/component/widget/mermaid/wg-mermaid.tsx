@@ -120,12 +120,12 @@ export const WgMermaid = (props: WgMermaidProps) => {
                             return;
                         }
 
-                        // 생성 SVG의 공식 스타일 격리. 본문 p, code, a 선택자의 내부 라벨 개입 제외
-                        const shadow = result.shadowRoot ?? result.attachShadow({mode: "open"});
                         const canvas = document.createElement("div");
 
                         canvas.innerHTML = rendered.svg;
-                        shadow.replaceChildren(canvas);
+
+                        // 생성 SVG의 공식 스타일 격리. 본문 p, code, a 선택자의 내부 라벨 개입 제외
+                        (result.shadowRoot ?? result.attachShadow({mode: "open"})).replaceChildren(canvas);
 
                         // Mermaid bindFunctions는 SVG 자식을 가진 Element 요구
                         rendered.bindFunctions?.(canvas);

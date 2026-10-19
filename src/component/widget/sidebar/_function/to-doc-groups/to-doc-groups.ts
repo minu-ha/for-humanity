@@ -34,7 +34,11 @@ export const toDocGroups = (options: DocGroupsOptions) => {
         ),
     );
 
-    const children = Map.groupBy(options.docs, (doc) => doc.data.parent);
-
-    return toDocGroupBranches({docs: options.docs, children, path: [], positions, unlistedPosition: options.navigation.length});
+    return toDocGroupBranches({
+        docs: options.docs,
+        children: Map.groupBy(options.docs, (doc) => doc.data.parent),
+        path: [],
+        positions,
+        unlistedPosition: options.navigation.length,
+    });
 };

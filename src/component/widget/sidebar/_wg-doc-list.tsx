@@ -14,17 +14,15 @@ export interface WgDocListProps {
 }
 
 export const WgDocList = (props: WgDocListProps) => {
-    const entries = [
-        ...props.group.docs.map((doc) => ({kind: "document" as const, key: `doc:${doc.id}`, doc})),
-        ...props.group.groups.map((group) => ({kind: "group" as const, key: `group:${JSON.stringify(group.path)}`, group})),
-    ];
-
     return (
         <ul className={clsx("wg_docList__root")} aria-label={props.group.name}>
             {/**
              * 문서 링크는 원래 파일 URL 사용
              */}
-            {entries.map((entry) => {
+            {[
+                ...props.group.docs.map((doc) => ({kind: "document" as const, key: `doc:${doc.id}`, doc})),
+                ...props.group.groups.map((group) => ({kind: "group" as const, key: `group:${JSON.stringify(group.path)}`, group})),
+            ].map((entry) => {
                 return (
                     <li className={clsx("wg_docList__item")} key={entry.key}>
                         {/**

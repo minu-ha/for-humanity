@@ -81,8 +81,12 @@ export const remarkSnippets = (options: SnippetOptions) => (tree: Root, file: VF
         }
 
         const extension = extname(actual).toLowerCase();
-        const lang = snippet_language_by_extension[extension] === undefined ? extension.slice(1) : snippet_language_by_extension[extension];
 
-        parent.children.splice(index, 1, {type: "code", lang, meta: meta === undefined ? null : meta, value: body});
+        parent.children.splice(index, 1, {
+            type: "code",
+            lang: snippet_language_by_extension[extension] === undefined ? extension.slice(1) : snippet_language_by_extension[extension],
+            meta: meta === undefined ? null : meta,
+            value: body,
+        });
     });
 };

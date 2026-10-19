@@ -53,7 +53,6 @@ export const remarkBlocks = () => (tree: Root, file: VFile) => {
             file.fail(`${copy_error_directive_syntax}: ${node.name} · 미지원 속성 ${unsupported}`, node);
         }
 
-        const open = node.attributes?.open;
         const attributeSource = source.slice(label.position?.end.offset, node.position?.end.offset).split(/\r?\n/, 1)[0].trim();
 
         // 속성 정규화 이전의 표기. 중복 open과 open="" 거부
@@ -109,7 +108,7 @@ export const remarkBlocks = () => (tree: Root, file: VFile) => {
         node.data = {
             ...node.data,
             hName: node.name === "note" ? "aside" : "details",
-            hProperties: node.name === "note" ? {className: ["wg_article__note"], ariaLabel: title} : {className: ["wg_article__details"], open: open === ""},
+            hProperties: node.name === "note" ? {className: ["wg_article__note"], ariaLabel: title} : {className: ["wg_article__details"], open: node.attributes?.open === ""},
         };
     });
 };

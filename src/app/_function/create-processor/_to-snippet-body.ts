@@ -8,12 +8,11 @@ import {snippet_region_pattern} from "@/app/_constant/snippet";
  *   - 빈 region은 빈 문자열, 없는 region은 undefined 반환
  */
 export const toSnippetBody = (source: string, region: string | undefined): string | undefined => {
-    const lines = source.replace(/\r\n/g, "\n").split("\n");
     let inside = region === undefined;
     let found = region === undefined;
     const kept: string[] = [];
 
-    for (const line of lines) {
+    for (const line of source.replace(/\r\n/g, "\n").split("\n")) {
         const marker = snippet_region_pattern.exec(line);
 
         if (marker !== null) {

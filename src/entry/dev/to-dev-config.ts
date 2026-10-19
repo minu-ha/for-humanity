@@ -98,9 +98,8 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
 
                             // 저장소 자체 모듈의 공개 계약, Vite가 캐시를 무효화한 소스에서 로드
                             const module = params.source ? await server.ssrLoadModule("/src/app/load-site.ts") : await import(pathToFileURL(join(kitRoot, "dist/site.js")).href);
-                            const load = z.custom<typeof loadSite>((value) => typeof value === "function").parse(module.loadSite);
 
-                            const nextSite = await load({
+                            const nextSite = await z.custom<typeof loadSite>((value) => typeof value === "function").parse(module.loadSite)({
                                 ...params,
                                 root,
                                 kitRoot,
@@ -131,13 +130,12 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                      */
                     const handleChange = (event: string, file: string) => {
                         const documentPath = relative(root, file);
-                        const segments = documentPath.split(sep);
 
                         const isDocument =
                             documentPath !== ".." &&
                             !isAbsolute(documentPath) &&
                             !documentPath.startsWith(`..${sep}`) &&
-                            !segments.some((part) => ["dist", "node_modules", ".git", ".cache"].includes(part));
+                            !documentPath.split(sep).some((part) => ["dist", "node_modules", ".git", ".cache"].includes(part));
 
                         const extension = extname(file);
 

@@ -5,7 +5,7 @@ import {
     transformerNotationHighlight,
     transformerNotationWordHighlight,
 } from "@shikijs/transformers";
-import type {Element, ElementContent} from "hast";
+import type {ElementContent} from "hast";
 import type {ShikiTransformer} from "shiki";
 
 /**
@@ -46,24 +46,27 @@ const codeMetadata: ShikiTransformer = {
             return;
         }
 
-        const caption: Element = {
-            type: "element",
-            tagName: "figcaption",
-            properties: {className: ["wg_article__codeFileTitle", ...(isBad ? ["wg_article__codeFileTitle--bad"] : []), ...(isGood ? ["wg_article__codeFileTitle--good"] : [])]},
-            children: [
-                {type: "text", value: title},
-                {type: "element", tagName: "span", properties: {className: ["wg_article__codeFileLang"]}, children: [{type: "text", value: this.options.lang}]},
-            ],
-        };
-
-        const figure: Element = {
-            type: "element",
-            tagName: "figure",
-            properties: {className: ["wg_article__codeFile"]},
-            children: [caption, ...root.children.filter((child): child is ElementContent => child.type !== "doctype")],
-        };
-
-        root.children = [figure];
+        root.children = [
+            {
+                type: "element",
+                tagName: "figure",
+                properties: {className: ["wg_article__codeFile"]},
+                children: [
+                    {
+                        type: "element",
+                        tagName: "figcaption",
+                        properties: {
+                            className: ["wg_article__codeFileTitle", ...(isBad ? ["wg_article__codeFileTitle--bad"] : []), ...(isGood ? ["wg_article__codeFileTitle--good"] : [])],
+                        },
+                        children: [
+                            {type: "text", value: title},
+                            {type: "element", tagName: "span", properties: {className: ["wg_article__codeFileLang"]}, children: [{type: "text", value: this.options.lang}]},
+                        ],
+                    },
+                    ...root.children.filter((child): child is ElementContent => child.type !== "doctype"),
+                ],
+            },
+        ];
     },
 };
 

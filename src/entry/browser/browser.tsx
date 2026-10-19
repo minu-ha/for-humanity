@@ -11,16 +11,16 @@ const payload = document.getElementById("fh-navigation-data");
 
 if (root !== null && payload !== null) {
     try {
-        const value: unknown = JSON.parse(payload.textContent);
-        const data = navigationDataSchema.parse(value);
-
-        const stores = createNavigationStores({
-            session: () => {
-                return sessionStorage;
-            },
-        });
-
-        createRoot(root).render(<WgShellControls data={data} stores={stores} />);
+        createRoot(root).render(
+            <WgShellControls
+                data={navigationDataSchema.parse(JSON.parse(payload.textContent))}
+                stores={createNavigationStores({
+                    session: () => {
+                        return sessionStorage;
+                    },
+                })}
+            />,
+        );
     } catch (error) {
         // 초기화 오류에서도 서버의 링크, 본문과 네이티브 스크롤 유지
         console.error("for-humanity browser initialization failed", error);

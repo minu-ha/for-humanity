@@ -12,9 +12,8 @@ const main = defineCommand({
      */
     meta: async () => {
         const content: unknown = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
-        const manifest = z.object({name: z.string(), version: z.string()}).parse(content);
 
-        return {...manifest, description: "Markdown 문서 사이트 개발·빌드·미리보기"};
+        return {...z.object({name: z.string(), version: z.string()}).parse(content), description: "Markdown 문서 사이트 개발·빌드·미리보기"};
     },
     default: cli_default_command,
 
