@@ -63,6 +63,7 @@ public은 라이브러리를 설치하고 사용하는 독자를 위한 안내�
 - Imports: `@/` · 같은 폴더 CSS 부수효과 import만 `./`
 - Ownership: 소유자 전용 파일 `_` · `_function`, `_type`, `_constant` 역할 폴더
 - Functions: 이름 붙인 `const` 화살표 · 블록 본문 · 명시적 반환
+- Helpers: 두 곳 이상이 부르거나 세 갈래 이상 판정, 타입 가드, 재귀일 때만 이름 붙임 · 한 곳에서만 쓰는 단계와 값은 호출부에 둠 · 예외는 unified·Vite 플러그인처럼 라이브러리에 이름으로 등록하는 단위
 - Statements: `if`·`for`·`while`은 한 줄이어도 중괄호 · 선언 묶음, 블록 문, 여러 줄 문장의 앞뒤와 `return`·`throw` 앞에 빈 줄
 - Props: 구조분해 없이 `props.*` 접근
 - Classes: `scope_slug__element--modifier` · 조합은 `clsx`
