@@ -9,8 +9,6 @@ order: 20
 로컬 이미지와 첨부를 문서 파일 위치 기준으로 참조합니다. 같은 파일을 dev·정적 빌드에서 같은 내용 지문 URL로 제공합니다.
 이미지의 설명과 출처는 일반 Markdown으로 작성하며 별도 Figure directive는 아직 없습니다.
 
-**Unreleased:** 아래 content 경로와 private 자료의 빌드 차단은 다음 릴리스용입니다. npm `0.13.1`에는 private 구분이 없으므로 배포할 자료만 문서 폴더에 넣습니다. [Migration](migration.md).
-
 ## Relative paths
 
 ```mermaid

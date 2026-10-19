@@ -7,8 +7,6 @@ order: 10
 
 문서 한 장을 Markdown 파일 하나로 작성합니다. 파일 앞에는 문서 정보를, 그 아래에는 본문을 적습니다.
 
-**Unreleased:** 아래 파일 위치는 다음 릴리스의 content 구조 기준입니다. npm `0.13.1`에서는 문서 폴더에 파일을 직접 둡니다. Markdown 문법은 같은 방식으로 사용할 수 있습니다. [첫 문서 만들기](commands.md#your-first-site).
-
 ## Your first document
 
 `content/public/guide.md`를 만들고 다음 내용을 작성합니다.

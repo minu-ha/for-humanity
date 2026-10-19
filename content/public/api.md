@@ -8,8 +8,6 @@ order: 10
 작성 중에 자주 확인하는 명령, 설정 필드와 Markdown 문법을 모았습니다.
 처음 시작한다면 [Commands](commands.md)의 첫 문서 예시를 따라 합니다.
 
-**Unreleased:** 프로젝트 경로와 `content` 설정은 다음 릴리스 기준입니다. npm `0.13.1`의 실행 예시는 [Commands](commands.md#your-first-site), 이전 방법은 [Migration](migration.md).
-
 ## Commands
 
 ```text

@@ -44,7 +44,7 @@ pnpm dev
 개발 서버는 `content/public`과 `content/private`를 함께 읽습니다. 소스 변경은 개발 서버에 반영하고, 배포 결과는 `pnpm build` 후 `pnpm preview`로 확인합니다.
 홈의 정본은 루트 `README.md`, 상세 변경 기록의 정본은 루트 `CHANGELOG.md`입니다. `pnpm sync:docs`는 각각 `content/README.md`와 `content/private/changelog.md`를 생성합니다. dev·build 시작 시에도 동기화합니다.
 
-공개 전 패키지를 소비 프로젝트에 설치하려면 저장소에서 `pnpm pack`을 실행하고, 별도 프로젝트에서 `pnpm add -D /path/to/for-humanity-0.13.1.tgz`로 설치합니다. 실제 공개 전까지 패키지 버전은 마지막 공개 버전을 유지합니다.
+공개 전 패키지를 소비 프로젝트에 설치하려면 저장소에서 `pnpm pack`을 실행하고, 별도 프로젝트에서 `pnpm add -D /path/to/for-humanity-X.Y.Z.tgz`로 설치합니다. 평소에는 마지막 공개 버전을 유지하고, 릴리스 준비 시 선택한 버전으로 올립니다.
 공식 사이트의 Cloudflare 프로젝트·출력 경로·헤더 운영은 [Site deployment](site-deployment.md)를 따릅니다.
 
 ### Documentation audience
@@ -241,7 +241,7 @@ CI가 실패하면 다른 작업보다 실패 원인 수정 우선. 현재 Pages
 1. 마지막 공개 태그 이후의 전체 변경을 검토하고 [Version policy](release-policy.md#version-policy)에 따라 버전 선택.
 2. `package.json` 버전을 올리고 `CHANGELOG.md`의 `Unreleased`를 해당 버전·공개 날짜 항목으로 옮김. 이번 공개에 포함될 미공개 기록이 남지 않았는지 확인.
 3. 최상위 `README.md`와 `language/README.ko.md`의 설치 버전·지원 버전 갱신. 공개하는 기능 문서의 미공개 표시 제거.
-4. 검증 명령 실행. `pnpm build`가 `content/README.md`와 `content/public/changelog.md`도 동기화.
+4. 검증 명령 실행. `pnpm build`가 `content/README.md`와 `content/private/changelog.md`도 동기화.
 5. 릴리스 준비 변경만 커밋하고 `main`에 push. 해당 커밋의 CI와 Pages 결과 확인.
 6. 검증한 릴리스 준비 커밋에 같은 버전의 태그를 만들고 push. 태그를 만들기 전후에 다른 커밋으로 대상을 바꾸지 않음.
 

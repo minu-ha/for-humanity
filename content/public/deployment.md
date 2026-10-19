@@ -7,8 +7,6 @@ order: 20
 
 문서를 빌드한 뒤 생성된 결과 폴더를 정적 호스팅에 배포합니다. 배포 후에는 별도 Node.js 서버가 필요하지 않습니다.
 
-**Unreleased:** 아래 경로는 다음 릴리스의 content 구조 기준입니다. npm `0.13.1`에서는 `for-humanity build docs`로 빌드한 `docs/dist`를 사용합니다. 전환 방법은 [Migration](migration.md).
-
 ## Build and preview
 
 프로젝트 루트에서 실행합니다.

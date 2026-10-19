@@ -59,4 +59,4 @@ group: Development
 - 설치 패키지: dev·preview 실제 브라우저, 공개 설정 타입, TS·ESM 설정, 자원·Mermaid·탐색·크롤러 파일, 기본형과 사용자 경로 빌드 통과.
 - 저장소 dev: maintenance·architecture·design·content-layout 페이지와 내부 사이트맵 확인.
 - 읽기 전용 코드 리뷰의 content-root symlink 지적 수정. 예약 폴더 세 경로의 실패 재현 후 회귀 검사 통과.
-- 다음 사이트 배포 전에 호스팅 출력 경로를 `content/dist`로 변경. npm 버전은 공개된 `0.13.1` 유지.
+- 다음 사이트 배포 전에 호스팅 출력 경로를 `content/dist`로 변경. 구조 전환 커밋에서는 npm 버전 `0.13.1` 유지. 릴리스 준비 시 전체 변경에 맞는 버전 선택.

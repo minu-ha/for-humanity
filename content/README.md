@@ -29,13 +29,15 @@ The result is a static site with bundled fonts, light and dark themes, keyboard 
 
 ## Quick start
 
-You need Node.js 22.12.0 or later and pnpm. In a project with a `package.json`, install the current published version:
+You need Node.js 22.12.0 or later and pnpm. In a project with a `package.json`, install the package:
 
 ```sh
-pnpm add -D --save-exact for-humanity@0.13.1
+pnpm add -D --save-exact for-humanity@0.14.0
 ```
 
-Create `docs/README.md` for your home page:
+Copy `for-humanity.config.ts` and the `content` folder from `node_modules/for-humanity/template` into your project. If you already have documentation, follow [Migration](public/migration.md) before moving files.
+
+Edit `content/README.md` for your home page:
 
 ```markdown
 # Project notes
@@ -46,7 +48,7 @@ Welcome to the project documentation.
 Start the local server:
 
 ```sh
-pnpm exec for-humanity dev docs
+pnpm exec for-humanity dev
 ```
 
 Open [localhost:4321](http://localhost:4321). Edit the Markdown file and save to update the page. Follow [Commands](public/commands.md) to add your first document.
@@ -54,13 +56,13 @@ Open [localhost:4321](http://localhost:4321). Edit the Markdown file and save to
 Build and inspect the site before deployment:
 
 ```sh
-pnpm exec for-humanity build docs
-pnpm exec for-humanity preview docs
+pnpm exec for-humanity build
+pnpm exec for-humanity preview
 ```
 
-Deploy the generated `docs/dist` directory. See [Deployment](public/deployment.md) for hosting settings.
+Deploy the generated `content/dist` directory and add it to `.gitignore`. See [Deployment](public/deployment.md) for hosting settings.
 
-**Next release — Unreleased:** The new layout uses project-root configuration and `content/public` and `content/private` folders. This is not included in npm `0.13.1`. See [Migration](public/migration.md) before adopting that layout.
+Keep published documents in `content/public` and local notes in `content/private`. The local server shows both; builds include only public documents and the home page. Folder names are configurable.
 
 ## Make it yours
 
@@ -76,7 +78,7 @@ export default {
 } satisfies SiteConfig;
 ```
 
-With `0.13.1`, save this as `docs/for-humanity.config.ts`. In the upcoming content layout, put it in the project root. Existing `.mjs` configuration is also supported; keep one configuration file in the selected location.
+Save this as `for-humanity.config.ts` in the project root, alongside `package.json`. Existing `.mjs` configuration is also supported; keep only one configuration file.
 
 Each document declares a title, description and navigation group in frontmatter. See [Writing](public/writing.md) for a complete example and [Settings](public/settings.md) for available options.
 

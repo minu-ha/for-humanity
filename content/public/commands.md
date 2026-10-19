@@ -13,25 +13,24 @@ Node.js 22.12.0 이상과 pnpm이 필요합니다.
 `package.json`이 있는 프로젝트에서 설치합니다.
 
 ```sh
-pnpm add -D --save-exact for-humanity@0.13.1
+pnpm add -D --save-exact for-humanity@0.14.0
 ```
 
-**현재 공개 버전은 `0.13.1`입니다.** 이 버전은 아래의 평면 문서 폴더를 사용합니다.
-이 사이트의 `content/public`·`content/private` 구조는 다음 릴리스용이며 아직 npm에 공개되지 않았습니다.
+`0.13.1` 이하에서 업데이트한다면 먼저 [Migration](migration.md)을 따라 문서와 설정 위치를 변경합니다.
 
 ## Your first site
 
-`0.13.1`을 설치했다면 `docs/README.md`를 만들고 홈에 표시할 내용을 작성합니다.
+`content/public` 폴더를 만들고, `content/README.md`에 홈에 표시할 내용을 작성합니다. 기본 파일을 복사해서 시작하려면 아래 [Content layout](#content-layout)을 참고합니다.
 
 ```markdown
 # Project notes
 
 프로젝트 소개와 사용 안내입니다.
 
-[시작하기](guide.md)
+[시작하기](public/guide.md)
 ```
 
-`docs/guide.md`에는 문서 정보와 본문을 작성합니다.
+`content/public/guide.md`에는 문서 정보와 본문을 작성합니다.
 
 ```markdown
 ---
@@ -49,25 +48,24 @@ order: 10
 프로젝트 루트에서 실행합니다.
 
 ```sh
-pnpm exec for-humanity dev docs
+pnpm exec for-humanity dev
 ```
 
 `http://localhost:4321/`에서 홈과 Guide 문서를 확인합니다. Markdown을 저장하면 열린 페이지가 새로고침됩니다.
-문서 폴더 이름은 자유롭게 정할 수 있습니다. 설정을 추가할 때는 이 버전의 문서 폴더 안에 `for-humanity.config.ts`를 둡니다.
+설정 없이도 기본 경로로 실행할 수 있습니다. 설정을 추가할 때는 프로젝트 루트에 `for-humanity.config.ts`를 둡니다.
 
 배포할 결과를 만들고 확인합니다.
 
 ```sh
-pnpm exec for-humanity build docs
-pnpm exec for-humanity preview docs
+pnpm exec for-humanity build
+pnpm exec for-humanity preview
 ```
 
-위 예시의 출력은 `docs/dist`입니다. `0.13.1`에는 공개·내부 폴더 분리가 없으므로 배포할 문서만 `docs`에 넣습니다.
+출력은 `content/dist`입니다. 홈과 `content/public`의 문서만 배포 결과에 포함합니다.
 
-## Content layout — Unreleased
+## Content layout
 
-다음 릴리스용 패키지에서는 설정을 프로젝트 루트에 두고 공개·내부 문서를 구분합니다. 기존 사용자는 [Migration](migration.md)의 순서대로 이전합니다.
-미공개 패키지 파일을 별도로 받은 경우에는 `pnpm add -D /path/to/for-humanity.tgz`로 설치한 뒤 이 구조를 사용할 수 있습니다.
+설정은 프로젝트 루트에 두고, 문서는 공개·내부 폴더로 구분합니다. 기존 사용자는 [Migration](migration.md)의 순서대로 이전합니다.
 
 설치된 `node_modules/for-humanity/template`에서 설정 파일과 `content` 폴더를 자신의 프로젝트로 복사합니다. 기존 파일이 있다면 필요한 항목만 병합합니다.
 

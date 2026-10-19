@@ -5,7 +5,7 @@ group: Getting started
 order: 15
 ---
 
-**Unreleased:** 프로젝트 설정과 content 구조는 다음 릴리스용 변경입니다. 현재 공개 패키지 `0.13.1`에는 적용되지 않습니다. 공개 전에는 별도로 제공된 미공개 패키지를 설치한 경우에만 사용할 수 있습니다. [Commands](commands.md#content-layout--unreleased).
+`0.14.0`부터 설정 위치와 문서 수집 방식이 바뀝니다. `0.13.1` 이하에서 업데이트할 때 이 절차를 따릅니다. 새 프로젝트는 [Commands](commands.md#your-first-site)에서 시작합니다.
 
 ## Before and after
 

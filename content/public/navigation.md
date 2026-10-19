@@ -10,8 +10,6 @@ order: 10
 `parent`는 문서를 다른 문서 아래에 배치하며 `0.3.0`부터 지원.
 이 안내도 사이드바에서 [Writing](writing.md) 아래에 있는 하위 문서.
 
-**Unreleased:** 아래 content 경로와 `/private/` URL은 다음 릴리스 기준입니다. npm `0.13.1`에서는 문서 폴더 기준 경로를 사용하며 private 구분이 없습니다. 그룹과 부모 문서 설정은 기존 버전에서도 사용할 수 있습니다.
-
 ## Group and parent
 
 `group`은 문서가 속한 분류 경로, `parent`는 같은 분류 안의 부모 문서 ID.

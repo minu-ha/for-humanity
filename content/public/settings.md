@@ -7,8 +7,6 @@ order: 30
 
 `for-humanity.config.ts`에서 사이트 이름과 문서 경로, 탐색 순서를 설정합니다. 파일과 각 항목은 선택 사항이며 생략한 항목에는 기본값을 사용합니다.
 
-**Unreleased:** 아래 예시는 다음 릴리스의 프로젝트 루트 설정 기준입니다. npm `0.13.1`에서는 설정을 문서 폴더 안에 두고 `content` 항목을 사용하지 않습니다. [Migration](migration.md).
-
 ## Create a configuration
 
 프로젝트 루트에 `for-humanity.config.ts`를 만듭니다.

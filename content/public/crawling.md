@@ -7,7 +7,7 @@ order: 10
 ---
 
 사이트 주소를 `url`로 설정하면 `robots.txt`와 `sitemap.xml`을 생성합니다.
-이 기능은 `0.6.0`부터 지원합니다. 아래 설정 위치와 content 경로는 다음 릴리스 기준이며, npm `0.13.1`에서는 문서 폴더의 설정을 사용합니다.
+프로젝트 루트의 설정 파일에 배포 주소를 지정합니다.
 
 ## Public site URL
 
@@ -33,7 +33,6 @@ pnpm exec for-humanity preview
 ```
 
 기본 출력은 `content/dist/robots.txt`와 `content/dist/sitemap.xml`입니다. 두 파일을 나머지 빌드 결과와 함께 배포합니다.
-npm `0.13.1`에서는 `build docs`·`preview docs`로 실행하고 `docs/dist`를 사용합니다.
 
 `url`을 생략하면 두 파일을 생성하지 않습니다. 설정을 바꾼 뒤에는 다시 빌드합니다.
 
@@ -49,7 +48,7 @@ Sitemap: https://docs.example.com/sitemap.xml
 ```
 
 사이트맵에는 홈과 공개 문서의 URL을 포함합니다. 제목 앵커·이미지·글꼴은 포함하지 않습니다.
-content 구조의 공개 빌드에서는 private 문서도 제외합니다. 로컬 dev에서는 양쪽 문서가 표시됩니다.
+공개 빌드에서는 private 문서를 제외합니다. 로컬 dev에서는 양쪽 문서가 표시됩니다.
 
 `url`을 사용하면 `robots.txt`·`sitemap.xml`은 생성 파일 전용 경로입니다. `robots.txt.md`처럼 같은 출력 경로를 만드는 문서 이름은 사용할 수 없습니다.
 

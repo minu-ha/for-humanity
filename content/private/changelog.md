@@ -12,10 +12,11 @@ order: 10
 
 ## Unreleased
 
+## 0.14.0 — 2026-10-19
+
+**Breaking change:** Configuration now belongs in the project root. CLI paths identify a project, not a Markdown folder. Move published documents into `content/public`, local-only documents into `content/private`, and the site home into `content/README.md`; use `content.root`, `content.public` and `content.private` to customize these paths. Existing flat document folders are not automatically published. See the [migration guide](https://for-humanity.fyi/migration/). Node.js 22.12.0 or later is still required.
+
 - Focus public documentation on installation, configuration, authoring and deployment. Keep internal plans, release operations, development history and fictional project studies in local-only content.
-
-**Migration:** Configuration now belongs in the project root. CLI paths identify a project, not a Markdown folder. Move published documents into `content/public`, local-only documents into `content/private`, and the site home into `content/README.md`; use `content.root`, `content.public` and `content.private` to customize these paths. Existing flat document folders are not automatically published. The current npm release remains `0.13.1`; these changes are not published yet.
-
 - Show both document collections in `dev`; build and preview only the public site in `content/dist`.
 - Preserve public document URLs and reserve `/private/` for local internal pages. Exclude internal pages, navigation data, sitemap entries and their assets from public builds.
 - Reject public references to internal Markdown, images and snippets, including raw HTML and symlink targets.

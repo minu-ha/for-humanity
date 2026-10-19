@@ -12,7 +12,7 @@ Cloudflare Pages는 구매한 도메인 없이 `<project>.pages.dev` 주소를 �
 이 저장소의 문서 주소는 [for-humanity.fyi](https://for-humanity.fyi).
 Pages 프로젝트는 `for-humanity`, 기본 주소는 [for-humanity-1i2.pages.dev](https://for-humanity-1i2.pages.dev).
 
-경로와 공개 범위 전환은 다음 릴리스용 변경입니다. 기존 npm 사용자는 [Migration](../public/migration.md)을 먼저 확인합니다.
+경로와 공개 범위 전환은 `0.14.0`부터 적용합니다. 기존 npm 사용자는 [Migration](../public/migration.md)을 먼저 확인합니다.
 
 ## Overview
 
