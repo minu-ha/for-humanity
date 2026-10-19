@@ -15,112 +15,95 @@ Write Markdown. Keep the context. Share a static site.
 [![MIT](https://img.shields.io/badge/license-MIT-1111aa?style=flat-square)](https://github.com/minu-ha/for-humanity/blob/main/LICENSE)
 [![npm](https://img.shields.io/npm/v/for-humanity?style=flat-square)](https://www.npmjs.com/package/for-humanity)
 ![Node 22.12.0+](https://img.shields.io/badge/node-22.12.0%2B-444444?style=flat-square)
-![Hono JSX](https://img.shields.io/badge/Hono-JSX-444444?style=flat-square)
 ![Prototype](https://img.shields.io/badge/status-prototype-9a6400?style=flat-square)
 
-[Quick start](#quick-start) · [Guide](public/writing.md) · [API](public/api.md) · [Deployment](public/deployment.md) · [Korean](https://github.com/minu-ha/for-humanity/blob/main/language/README.ko.md)
+[Quick start](#quick-start) · [Guide](public/writing.md) · [Reference](public/api.md) · [Deployment](public/deployment.md) · [Korean](https://github.com/minu-ha/for-humanity/blob/main/language/README.ko.md)
 
 </div>
 
-## A little structure. Room to read.
+## Write, organize, publish
 
-- **Find your place.** Pages grouped by purpose, a reading order, a tree of contents and the current reading position.
-- **Keep the detail.** Notes for context, native disclosures for implementation details, and links that open folded sections.
-- **Show the connections.** Tables, highlighted code, official Mermaid diagrams including flowcharts, sequences and directory trees, status badges and color swatches.
-- **Share the result.** Static HTML, self-hosted fonts and a small browser script. Browser interactions stay separate from Markdown rendering.
-- **Read your way.** System-matched light and dark themes, keyboard navigation and a layout for narrow screens.
+Write Markdown with code examples, tables, images and Mermaid diagrams. Organize pages into groups and nested navigation. Use notes for context and collapsible details for longer explanations.
+
+The result is a static site with bundled fonts, light and dark themes, keyboard navigation and a layout that adapts to narrow screens.
 
 ## Quick start
 
-Node.js 22.12.0 or later and pnpm.
-
-**The content layout on this branch is prepared for the next release.** The published npm package is still `0.13.1`:
+You need Node.js 22.12.0 or later and pnpm. In a project with a `package.json`, install the current published version:
 
 ```sh
 pnpm add -D --save-exact for-humanity@0.13.1
 ```
 
-That published version uses a flat Markdown folder and an explicit folder argument. For the new layout below, use a package built from this checkout until the next release. See [Commands](public/commands.md) for local package installation and [Migration](public/migration.md) for existing projects.
+Create `docs/README.md` for your home page:
 
-The next package includes a starter in `node_modules/for-humanity/template`. Copy its configuration and `content` folder into your project, preserving any existing configuration. Add `content/dist/` to your root `.gitignore`:
+```markdown
+# Project notes
 
-```text
-for-humanity.config.ts
-content/
-├── README.md
-├── public/
-│   └── getting-started.md
-├── private/
-└── asset/
+Welcome to the project documentation.
 ```
 
-Run from the project root:
+Start the local server:
 
 ```sh
-pnpm exec for-humanity dev       # Read and edit all documents locally
-pnpm exec for-humanity build     # Generate the public site in content/dist
-pnpm exec for-humanity preview   # Inspect the public build
+pnpm exec for-humanity dev docs
 ```
 
-Open [localhost:4321](http://localhost:4321). Put published documents in `content/public`, local notes in `content/private`, and the site home in `content/README.md`. Only `content/dist` is deployed. `private` controls site output, not Git repository access.
+Open [localhost:4321](http://localhost:4321). Edit the Markdown file and save to update the page. Follow [Commands](public/commands.md) to add your first document.
 
-`init` remains planned. The starter is the shared base for that future command. See [Deployment](public/deployment.md) for static hosting and [Crawling](public/crawling.md) for an optional public site URL.
-
-To read and develop this repository locally:
+Build and inspect the site before deployment:
 
 ```sh
-git clone https://github.com/minu-ha/for-humanity.git
-cd for-humanity
-pnpm install
-pnpm dev
+pnpm exec for-humanity build docs
+pnpm exec for-humanity preview docs
 ```
+
+Deploy the generated `docs/dist` directory. See [Deployment](public/deployment.md) for hosting settings.
+
+**Next release — Unreleased:** The new layout uses project-root configuration and `content/public` and `content/private` folders. This is not included in npm `0.13.1`. See [Migration](public/migration.md) before adopting that layout.
 
 ## Make it yours
 
-The default `content/public` folder is enough to get started. Without a site configuration, the sidebar shows **for humanity**. The pixel face appears in the browser tab, and follows the mouse on desktop when the site sets `cursorFace: true`.
-`content/README.md` becomes the home page at `/`, with no frontmatter required. Click the site name to return home.
-Set your own name in the project-root `for-humanity.config.ts`, using the exported `SiteConfig` type for editor completion and static checking:
+Set the site name and the order of navigation groups:
 
 ```ts
 import type {SiteConfig} from "for-humanity";
 
 export default {
     title: "Project notes",
-    content: {root: "content", public: "public", private: "private"},
-    description: "Decisions, working notes and the details behind them.",
-    navigation: ["Getting started", "Guide", "Reference", "Examples"],
+    description: "A guide to using the project.",
+    navigation: ["Getting started", "Guide", "Reference"],
 } satisfies SiteConfig;
 ```
 
-Existing `for-humanity.config.mjs` files remain supported. When migrating to TypeScript, replace the old file with the `.ts` file.
-Use one configuration file per project. The CLI validates values at startup; run `tsc --noEmit` in your project for static type checking.
+With `0.13.1`, save this as `docs/for-humanity.config.ts`. In the upcoming content layout, put it in the project root. Existing `.mjs` configuration is also supported; keep one configuration file in the selected location.
 
-See [Commands](public/commands.md) for using another project folder, and [Settings](public/settings.md) for configuration.
-Each document other than the root README chooses a `group` and optional `order`. Pages stay independent; groups do not need parent documents or nested folders. Document names may share the same first letter.
-Use `group: Guide` for one group or `group: [Projects, Example project, Research]` for nested navigation. Group paths do not change document URLs.
-Use `parent: writing` to place a document below another document in the same group. File-relative references such as `parent: ./readme` also work. Parent pages remain clickable and each page keeps its own URL; see [Navigation](public/navigation.md).
+Each document declares a title, description and navigation group in frontmatter. See [Writing](public/writing.md) for a complete example and [Settings](public/settings.md) for available options.
 
-## Write with context
+## Keep useful detail
 
 ```markdown
-:::note[Scope]
-What this document covers and what still needs a decision.
+:::note[Before you start]
+Check the requirements before following the steps.
 :::
 
-:::details[Implementation]
-The contract, code or reasoning behind the visible result.
+:::details[More information]
+Add examples or explanations readers can open when needed.
 :::
 ```
 
+[Parts](public/parts.md) shows the syntax alongside its rendered output.
 
 ## Documentation
 
-| Group | Read |
-| ----- | ---- |
-| Getting started | [Commands](public/commands.md) · [Deployment](public/deployment.md) |
-| Guide | [Writing](public/writing.md) · [Parts](public/parts.md) · [Settings](public/settings.md) |
-| Reference | [API](public/api.md) |
-| Releases | [Official releases](public/releases.md) |
+| Task | Guide |
+| --- | --- |
+| Install and run | [Commands](public/commands.md) |
+| Write and organize pages | [Writing](public/writing.md) · [Navigation](public/navigation.md) |
+| Add rich content | [Parts](public/parts.md) · [Diagrams](public/diagrams.md) · [Images](public/images.md) |
+| Configure the site | [Settings](public/settings.md) · [Reference](public/api.md) |
+| Publish | [Deployment](public/deployment.md) · [Crawling](public/crawling.md) |
+| Update | [Releases](public/releases.md) · [Migration](public/migration.md) |
 
 ## License
 

@@ -1,39 +1,45 @@
 ---
 name: Crawling
-label: 공개 사이트의 robots.txt와 사이트맵
+label: 검색 엔진에 공개 문서 주소 알리기
 group: Guide
 parent: settings
 order: 10
 ---
 
-검색 엔진과 AI 에이전트가 공개 문서의 위치를 찾도록 안내합니다.
-`url`을 설정한 사이트에서만 `robots.txt`와 `sitemap.xml`을 생성합니다. **npm `0.6.0`부터 지원하는 기능입니다.**
+사이트 주소를 `url`로 설정하면 `robots.txt`와 `sitemap.xml`을 생성합니다.
+이 기능은 `0.6.0`부터 지원합니다. 아래 설정 위치와 content 경로는 다음 릴리스 기준이며, npm `0.13.1`에서는 문서 폴더의 설정을 사용합니다.
 
 ## Public site URL
 
-프로젝트 루트의 `for-humanity.config.ts`에 배포할 사이트의 루트 URL을 지정합니다.
+`for-humanity.config.ts`에 배포할 주소를 지정합니다.
 
-```js
+```ts
+import type {SiteConfig} from "for-humanity";
+
 export default {
-    title: "My documentation",
+    title: "Project notes",
     url: "https://docs.example.com",
-};
+} satisfies SiteConfig;
 ```
 
-`http:`·`https:` URL을 지원하고 끝의 `/`는 정규화합니다. 사용자 이름·비밀번호, 하위 경로, query, hash는 허용하지 않습니다. 현재 정적 출력은 도메인 루트(`/`) 배포만 지원합니다.
+`url`에는 HTTP(S) 도메인의 루트 주소를 사용합니다. 하위 경로·사용자 이름·비밀번호·query·hash는 넣지 않습니다.
+예를 들어 `https://docs.example.com`은 가능하고 `https://example.com/docs/`는 사용할 수 없습니다.
+
+## Build the files
 
 ```sh
 pnpm exec for-humanity build
 pnpm exec for-humanity preview
 ```
 
-빌드 결과의 `content/dist/robots.txt`와 `content/dist/sitemap.xml`을 다른 파일과 함께 배포합니다. `dev`에서도 같은 루트 주소로 확인할 수 있고, 문서 추가·삭제가 사이트맵에 반영됩니다. 공개 빌드의 사이트맵에는 private 문서가 없으며 로컬 dev에서는 양쪽 문서를 포함합니다. 설정 파일을 수정했다면 개발 서버를 다시 시작합니다.
+기본 출력은 `content/dist/robots.txt`와 `content/dist/sitemap.xml`입니다. 두 파일을 나머지 빌드 결과와 함께 배포합니다.
+npm `0.13.1`에서는 `build docs`·`preview docs`로 실행하고 `docs/dist`를 사용합니다.
 
-`url`을 생략하면 두 파일을 생성하지 않습니다. 자신의 공개 URL을 명시하므로 다른 프로젝트의 도메인을 기본값으로 사용하지 않습니다. 파일 생략은 접근 제한이 아닙니다. 비공개 문서를 게시할 때는 별도의 인증·접근 제어가 필요합니다.
+`url`을 생략하면 두 파일을 생성하지 않습니다. 설정을 바꾼 뒤에는 다시 빌드합니다.
 
-## Robots and sitemap
+## What is included
 
-생성되는 `robots.txt`:
+`robots.txt`는 크롤링 안내와 사이트맵 주소를 포함합니다.
 
 ```text
 User-agent: *
@@ -42,40 +48,21 @@ Allow: /
 Sitemap: https://docs.example.com/sitemap.xml
 ```
 
-공개 페이지를 크롤링할 수 있음을 안내하고 사이트맵 위치를 제공합니다. 사이트맵에는 홈(`/`)과 실제 문서의 URL을 한 번씩 포함합니다. 중첩 폴더와 한글·공백 경로를 URL에 맞게 인코딩합니다.
+사이트맵에는 홈과 공개 문서의 URL을 포함합니다. 제목 앵커·이미지·글꼴은 포함하지 않습니다.
+content 구조의 공개 빌드에서는 private 문서도 제외합니다. 로컬 dev에서는 양쪽 문서가 표시됩니다.
 
-그룹·부모 문서 관계는 파일 URL을 바꾸지 않으며, 헤딩 앵커와 CSS·글꼴·이미지는 사이트맵에 추가하지 않습니다. 수정 시각을 정확히 알 수 없으므로 빌드 날짜를 `lastmod`로 표시하지 않습니다.
+`url`을 사용하면 `robots.txt`·`sitemap.xml`은 생성 파일 전용 경로입니다. `robots.txt.md`처럼 같은 출력 경로를 만드는 문서 이름은 사용할 수 없습니다.
 
-`url`을 지정했다면 첫 경로 `robots.txt`·`sitemap.xml`은 생성 파일 전용입니다. `robots.txt.md`·`sitemap.xml/guide.md` 같은 문서는 출력 충돌로 오류가 납니다. `url`이 없는 기존 프로젝트에는 이 추가 예약을 적용하지 않습니다.
+## Verify the deployment
 
-`robots.txt`는 크롤러에 전하는 요청이며 실제 접근을 차단하지 않습니다. [Robots Exclusion Protocol](https://www.rfc-editor.org/rfc/rfc9309) · [Sitemap XML 규격](https://www.sitemaps.org/protocol.html).
-
-## Cloudflare settings
-
-Cloudflare의 Managed robots.txt를 켰다면 Cloudflare가 자신의 내용과 사이트의 파일을 함께 제공할 수 있습니다. 배포 후 최종 응답에서 `Sitemap:` 줄이 있는지 확인합니다. [Cloudflare robots.txt 설정](https://developers.cloudflare.com/bots/additional-configurations/managed-robots-txt/).
-
-| Diagnostic item | Where to configure |
-| --- | --- |
-| robots.txt · Sitemap | 라이브러리의 `url` 설정 · 자동 생성 |
-| AI Crawler Rules | Cloudflare에서 허용·차단할 AI 봇 선택 |
-| Content Signals | 사이트 소유자가 검색·AI 입력·학습 용도의 정책 선택 |
-| Markdown Negotiation | Cloudflare Markdown for Agents 또는 호스팅 계층의 `Accept` 응답 분기 |
-| API Catalog · Auth.md · OAuth · MCP · WebMCP | API·인증·도구를 제공하는 서비스에서 필요한 항목 선택 |
-
-이 라이브러리는 학습 허용·차단 같은 콘텐츠 정책을 자동으로 선언하지 않습니다. Cloudflare 정책과 파일의 안내는 서로 다른 역할이며, 봇의 접근을 제한하려면 Cloudflare의 해당 설정을 함께 확인합니다. [AI Crawl Control](https://developers.cloudflare.com/ai-crawl-control/).
-
-## Markdown for agents
-
-Cloudflare의 Markdown for Agents는 `Accept: text/markdown` 요청에 HTML을 Markdown으로 변환해 응답하는 기능입니다. 단순히 `robots.txt`를 추가하거나 `.md` 파일을 배포하는 것과는 다릅니다. [Cloudflare 공식 안내](https://developers.cloudflare.com/fundamentals/reference/markdown-for-agents/).
-
-현재 CLI의 페이지 응답은 HTML입니다. 원본 Markdown 내보내기, `llms.txt`, Markdown content negotiation은 이번 자동 생성 기능에 포함하지 않습니다. 정적 호스팅에서 요청 헤더에 따라 응답을 바꾸려면 호스팅 기능이나 Worker·Pages Functions 같은 처리가 필요합니다.
-
-## Check the deployed output
+브라우저나 다음 명령으로 배포 결과를 확인합니다.
 
 ```sh
 curl -i https://docs.example.com/robots.txt
 curl -i https://docs.example.com/sitemap.xml
-curl -i -H 'Accept: text/markdown' https://docs.example.com/
 ```
 
-첫 두 주소는 각각 텍스트와 XML로 `200` 응답하는지 확인합니다. Markdown 협상을 사용한다면 마지막 요청의 `Content-Type`이 `text/markdown`인지 확인합니다. Cloudflare 진단은 배포와 캐시 반영 후 다시 스캔합니다.
+두 주소가 `200`을 반환하는지, 사이트맵의 주소가 실제 배포 주소와 일치하는지 확인합니다.
+호스팅 서비스가 robots.txt를 추가하거나 수정한다면 배포된 응답을 기준으로 확인합니다.
+
+이 파일은 크롤러에게 문서 위치를 알려 주며 검색 결과 노출을 보장하지 않습니다. `robots.txt`는 접근 제어 수단도 아닙니다. 공개하지 않을 문서는 배포 결과에서 제외합니다.

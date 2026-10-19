@@ -1,77 +1,75 @@
 ---
 name: Commands
-label: 설치와 실행
+label: 설치하고 첫 문서 실행하기
 group: Getting started
 order: 10
 ---
 
-프로젝트 설정과 content 폴더에서 정적 사이트까지. 설치, 개발 서버, 빌드, 미리보기.
-문서 형식은 [Writing](writing.md), 사이트 설정은 [Settings](settings.md), 배포는 [Deployment](deployment.md).
+for humanity는 Markdown 파일로 문서 사이트를 만듭니다. 작성 중에는 `dev`, 배포할 때는 `build`, 배포 결과를 확인할 때는 `preview`를 사용합니다.
+Node.js 22.12.0 이상과 pnpm이 필요합니다.
 
-**Unreleased:** 이 페이지의 content 구조는 다음 릴리스용입니다. 현재 npm `0.13.1`은 기존 평면 문서 폴더와 `dev docs` 같은 실행 방식을 사용합니다. 기존 프로젝트 전환은 [Migration](migration.md).
+## Install the package
 
-## Overview
-
-```mermaid
-flowchart LR
-    a("content") --> b("dev<br>공개 + 내부 문서")
-    a --> c("build<br>공개 문서만")
-    c --> d("preview<br>배포 결과 확인")
-```
-
-| Command | Result |
-| --- | --- |
-| `dev [project-dir]` | 공개·내부 문서를 함께 표시 · 원본 변경 시 새로고침 |
-| `build [project-dir]` | `<content.root>/dist`에 공개 HTML과 참조 자원 출력 |
-| `preview [project-dir]` | 이미 만든 공개 결과 미리보기 |
-
-위치 인자는 설정 파일이 있는 **프로젝트 루트**입니다. 생략하면 현재 폴더를 사용합니다.
-명령 생략은 `dev`. content 폴더 이름은 프로젝트 설정의 `content.root`에서 지정합니다.
-
-::part[Setup]
-
-## Local development
-
-저장소 개발은 Node.js 22.12.0 이상과 pnpm.
-
-```sh
-git clone https://github.com/minu-ha/for-humanity.git
-cd for-humanity
-pnpm install
-pnpm dev
-```
-
-접속: `http://localhost:4321/`. 저장소의 `content/public`과 `content/private`를 함께 표시합니다.
-
-```sh
-pnpm build
-pnpm preview
-```
-
-### Use in another project
-
-현재 공개 패키지 설치:
+`package.json`이 있는 프로젝트에서 설치합니다.
 
 ```sh
 pnpm add -D --save-exact for-humanity@0.13.1
 ```
 
-위 버전은 기존 문서 폴더 안에 설정·README·일반 문서를 두고 `pnpm exec for-humanity dev docs`로 실행합니다.
-새 구조를 먼저 사용하려면 아래 방법으로 이 저장소에서 만든 패키지를 설치합니다.
+**현재 공개 버전은 `0.13.1`입니다.** 이 버전은 아래의 평면 문서 폴더를 사용합니다.
+이 사이트의 `content/public`·`content/private` 구조는 다음 릴리스용이며 아직 npm에 공개되지 않았습니다.
 
-### Test a local package
+## Your first site
 
-```sh
-# for humanity 저장소
-pnpm pack
+`0.13.1`을 설치했다면 `docs/README.md`를 만들고 홈에 표시할 내용을 작성합니다.
 
-# 문서 프로젝트
-pnpm add -D /path/to/for-humanity-0.13.1.tgz
+```markdown
+# Project notes
+
+프로젝트 소개와 사용 안내입니다.
+
+[시작하기](guide.md)
 ```
 
-설치된 `node_modules/for-humanity/template`의 `for-humanity.config.ts`와 `content`를 프로젝트에 복사합니다. 기존 파일이 있다면 필요한 항목만 병합합니다.
-기본형에는 홈, 시작 문서, `.gitkeep`으로 유지하는 private·asset 폴더가 포함되어 있습니다. 폴더별 역할은 시작 문서에서 설명합니다.
-루트 `.gitignore`에 `content/dist/`를 추가합니다. 아직 `init` 명령은 제공하지 않습니다.
+`docs/guide.md`에는 문서 정보와 본문을 작성합니다.
+
+```markdown
+---
+name: Guide
+label: 처음 사용하는 사람을 위한 안내
+group: Guide
+order: 10
+---
+
+## Getting started
+
+첫 번째 문서입니다.
+```
+
+프로젝트 루트에서 실행합니다.
+
+```sh
+pnpm exec for-humanity dev docs
+```
+
+`http://localhost:4321/`에서 홈과 Guide 문서를 확인합니다. Markdown을 저장하면 열린 페이지가 새로고침됩니다.
+문서 폴더 이름은 자유롭게 정할 수 있습니다. 설정을 추가할 때는 이 버전의 문서 폴더 안에 `for-humanity.config.ts`를 둡니다.
+
+배포할 결과를 만들고 확인합니다.
+
+```sh
+pnpm exec for-humanity build docs
+pnpm exec for-humanity preview docs
+```
+
+위 예시의 출력은 `docs/dist`입니다. `0.13.1`에는 공개·내부 폴더 분리가 없으므로 배포할 문서만 `docs`에 넣습니다.
+
+## Content layout — Unreleased
+
+다음 릴리스용 패키지에서는 설정을 프로젝트 루트에 두고 공개·내부 문서를 구분합니다. 기존 사용자는 [Migration](migration.md)의 순서대로 이전합니다.
+미공개 패키지 파일을 별도로 받은 경우에는 `pnpm add -D /path/to/for-humanity.tgz`로 설치한 뒤 이 구조를 사용할 수 있습니다.
+
+설치된 `node_modules/for-humanity/template`에서 설정 파일과 `content` 폴더를 자신의 프로젝트로 복사합니다. 기존 파일이 있다면 필요한 항목만 병합합니다.
 
 ```text
 project/
@@ -84,12 +82,31 @@ project/
     └── asset/
 ```
 
-프로젝트 루트에서 `pnpm exec for-humanity dev`를 실행합니다.
-`content/dist`는 첫 빌드에서 생성되므로 기본형에는 포함하지 않습니다.
+- `README.md`: 사이트 홈에 표시할 소개
+- `public`: 배포할 문서
+- `private`: 로컬에서만 읽을 문서
+- `asset`: 공개 문서에서 사용할 이미지·첨부
 
-### Help and version
+프로젝트 루트에서 실행합니다. `.gitignore`에 `content/dist/`를 추가합니다.
 
-도움말과 버전 조회는 설정을 실행하거나 서버를 시작하지 않습니다.
+| Command | Result |
+| --- | --- |
+| `pnpm exec for-humanity dev` | 공개·내부 문서를 함께 확인 |
+| `pnpm exec for-humanity build` | 공개 문서를 `content/dist`에 생성 |
+| `pnpm exec for-humanity preview` | 생성된 공개 사이트 확인 |
+
+`dist`는 빌드할 때 생성됩니다. 다른 폴더에서 실행하려면 `for-humanity dev ../my-project`처럼 **프로젝트 경로**를 지정합니다. 경로를 바꾸는 설정은 [Settings](settings.md#content-paths)를 참고합니다.
+`init` 명령은 아직 지원하지 않습니다.
+
+## While editing
+
+`dev`는 Markdown·홈·그림·스니펫의 변경을 반영합니다. 잘못된 문서를 저장하면 터미널에 오류를 표시하고 직전 정상 문서를 유지합니다. 오류를 고쳐 저장하면 다시 반영됩니다.
+설정 파일을 바꾼 경우에는 서버를 종료하고 다시 실행합니다. 포트는 `port`로 바꿀 수 있습니다.
+
+`preview`는 마지막 빌드 결과를 보여 줍니다. 문서를 수정했다면 다시 `build`해야 합니다.
+두 서버는 기본적으로 localhost와 포트 `4321`을 사용합니다. 포트가 사용 중이면 기존 서버를 종료하거나 다른 포트를 지정합니다.
+
+## Help and troubleshooting
 
 ```sh
 pnpm exec for-humanity --help
@@ -97,69 +114,12 @@ pnpm exec for-humanity build --help
 pnpm exec for-humanity --version
 ```
 
-`-h`, `-v`도 사용 가능. 지원하지 않는 옵션과 프로젝트 경로를 여러 개 지정한 입력은 종료 코드 `1`로 실패합니다.
+| 상황 | 확인할 내용 |
+| --- | --- |
+| 문서 폴더를 찾을 수 없음 | 설치 버전, 명령의 위치 인자, `content.root` 설정 |
+| frontmatter 오류 | 문서의 `name`·`label`·`group` 존재 여부 |
+| 설정 파일 중복 | 같은 위치에 `.ts`와 `.mjs`를 함께 두었는지 |
+| private 참조 오류 | 홈이나 공개 문서가 내부 자료를 링크하는지 |
+| preview에 수정 내용이 없음 | 수정 후 다시 빌드했는지 |
 
-::part[Commands]
-
-## dev
-
-```sh
-pnpm exec for-humanity dev
-```
-
-- 포트: 설정 `port` · 기본 `4321` · localhost 접속
-- public과 private 문서를 함께 처리 · private 문서는 `/private/` 아래 표시
-- Markdown·홈·로컬 그림·스니펫 추가·수정·삭제 → 다시 처리 → 열린 페이지 새로고침
-- 잘못된 문서 → 터미널 오류 · 직전 정상 문서 유지
-- 설정 변경 → 서버 재시작
-- 저장소 `pnpm dev`: TS·TSX 변경은 페이지 갱신, CSS는 HMR 반영
-- 설치 패키지 변경 → 다시 설치한 뒤 서버 재시작
-
-## build
-
-```sh
-pnpm exec for-humanity build
-```
-
-기본 출력은 `content/dist`. 이전 결과를 지우고 공개 HTML·CSS·스크립트·글꼴·favicon과 참조된 자원을 생성합니다.
-private 문서는 렌더링·목록·사이트맵·자원 수집에서 제외됩니다. 홈과 공개 문서가 private 파일을 참조하면 오류로 중단합니다.
-배포 대상은 이 출력 폴더 전체이며, URL 기준은 사이트 루트 `/`입니다.
-
-### Errors and warnings
-
-| Kind | Trigger | Result |
-| --- | --- | --- |
-| Error | 설정·frontmatter 오류, 문서 ID 충돌, 공개 폴더 누락, 내부 자료 참조, 잘못된 블록 문법 | 종료 코드 `1` |
-| Warning | 없는 공개 Markdown 링크, 설정에 없는 날짜 상태 문구 | 터미널 경고 · 빌드 계속 |
-
-오류는 원본 파일과 줄 위치를 포함합니다. 성공은 표준 출력, 경고·오류는 표준 오류에 표시합니다.
-Mermaid 문법 오류는 브라우저에서 표시하며 원본 코드를 남깁니다.
-
-## preview
-
-```sh
-pnpm exec for-humanity preview
-```
-
-Vite preview가 `<content.root>/dist`의 빌드 결과를 제공합니다. 원본을 수정했다면 다시 `build`합니다.
-
-- 접속: localhost · 설정 `port` 사용 · 기본 `4321`
-- 빌드 결과가 없으면 `build` 안내와 종료 코드 `1`
-- 설정 포트가 사용 중이면 다른 포트로 이동하지 않고 실패
-- 없는 문서와 private 문서는 `404`
-- 원본 감시·HMR·Hono API 실행 없음
-- 별도 Vite 설정 불필요 · 프로젝트의 Vite 설정·환경 파일 자동 로드 제외
-
-로컬 빌드 확인용입니다. 운영 배포는 [Deployment](deployment.md)를 따릅니다.
-
-### Another project directory
-
-다른 작업 폴더에서 실행할 때만 프로젝트 경로를 지정합니다.
-
-```sh
-pnpm exec for-humanity dev ../my-project
-pnpm exec for-humanity build ../my-project
-pnpm exec for-humanity preview ../my-project
-```
-
-세 명령 모두 `../my-project/for-humanity.config.ts`를 읽고 그 프로젝트의 content 경로를 사용합니다.
+문서 작성은 [Writing](writing.md), 결과 공개는 [Deployment](deployment.md)로 이어집니다.

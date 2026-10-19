@@ -5,7 +5,7 @@ group: Getting started
 order: 15
 ---
 
-**Unreleased:** 프로젝트 설정과 content 구조는 다음 릴리스용 변경입니다. 현재 공개 패키지 `0.13.1`에는 적용되지 않습니다. 공개 전에는 [Commands](commands.md#test-a-local-package)의 로컬 패키지로 확인합니다.
+**Unreleased:** 프로젝트 설정과 content 구조는 다음 릴리스용 변경입니다. 현재 공개 패키지 `0.13.1`에는 적용되지 않습니다. 공개 전에는 별도로 제공된 미공개 패키지를 설치한 경우에만 사용할 수 있습니다. [Commands](commands.md#content-layout--unreleased).
 
 ## Before and after
 

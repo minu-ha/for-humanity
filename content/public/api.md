@@ -1,25 +1,14 @@
 ---
-name: API
-label: CLI·설정·문서 형식의 공개 계약
+name: Reference
+label: 명령·설정·문서 필드 빠른 참조
 group: Reference
 order: 10
 ---
 
-현재 제공하는 사용 인터페이스: CLI 명령, 사이트 설정, Markdown frontmatter와 작성 문법.
-JavaScript용 공식 진입점은 아직 제공하지 않음. 내부 렌더러 함수는 공개 사용 계약에 포함하지 않음.
+작성 중에 자주 확인하는 명령, 설정 필드와 Markdown 문법을 모았습니다.
+처음 시작한다면 [Commands](commands.md)의 첫 문서 예시를 따라 합니다.
 
-## Overview
-
-| Interface   | Entry                     | Guide                            |
-| ----------- | ------------------------- | -------------------------------- |
-| CLI         | `for-humanity`            | [Commands](commands.md)          |
-| 사이트 설정 | `for-humanity.config.ts` · `.mjs` 호환  | [Settings](settings.md)          |
-| 문서 형식   | `.md` · `.mdx`            | [Writing](writing.md)            |
-| 본문 부품   | Note · Details            | [Parts](parts.md)                |
-| 사이트 배포 | 문서 폴더의 `dist`        | [Deployment](deployment.md)      |
-
-
-::part[CLI]
+**Unreleased:** 프로젝트 경로와 `content` 설정은 다음 릴리스 기준입니다. npm `0.13.1`의 실행 예시는 [Commands](commands.md#your-first-site), 이전 방법은 [Migration](migration.md).
 
 ## Commands
 
@@ -27,111 +16,60 @@ JavaScript용 공식 진입점은 아직 제공하지 않음. 내부 렌더러 �
 for-humanity <dev|build|preview> [project-dir]
 ```
 
-| Input       | Default   | Behavior                                  |
-| ----------- | --------- | ----------------------------------------- |
-| command     | `dev`     | `dev` · `build` · `preview`만 지원         |
-| `project-dir`  | 현재 폴더 | 설정 파일이 있는 프로젝트 루트              |
+| Command | Use |
+| --- | --- |
+| `dev` | 전체 문서 확인 · 변경 시 새로고침 · 생략 시 기본 명령 |
+| `build` | 공개 결과를 `<content.root>/dist`에 생성 |
+| `preview` | 마지막 빌드 결과 확인 |
+| `--help` · `-h` | 명령 도움말 |
+| `--version` · `-v` | 설치 버전 |
 
-- `dev`: public과 private 문서 · 설정 `port`, 기본 `4321` · 문서 변경 후 새로고침 · 잘못된 문서는 직전 정상 결과 유지
-- `build`: public 문서만 `<content.root>/dist`를 새로 생성 · 기존 출력 전체 교체
-- `preview`: 같은 `port` · 이미 만든 `dist` 제공
-- `init`: 아직 미구현 · 패키지의 `template/` 기본형 제공
-
-```sh
-pnpm exec for-humanity build
-pnpm exec for-humanity preview
-```
-
-::part[Configuration]
+`project-dir`는 설정 파일이 있는 프로젝트 루트이며 생략하면 현재 폴더입니다.
 
 ## Site configuration
 
-프로젝트 루트 설정 파일의 `export default` 객체. 경로 전환은 다음 릴리스용 변경이며 [Migration](migration.md) 참고. 파일과 각 항목 모두 선택.
+`for-humanity.config.ts` 또는 `.mjs`에서 객체를 기본 내보내기로 지정합니다. 타입은 `import type {SiteConfig} from "for-humanity"`로 가져옵니다.
 
-| Field         | Type                               | Default                   |
-| ------------- | ---------------------------------- | ------------------------- |
-| `content`     | `{root?: string, public?: string, private?: string}` | `{root: "content", public: "public", private: "private"}` |
-| `title`       | string                             | `for humanity`            |
-| `description` | string · HTML 설명 메타데이터        | 생략                      |
-| `url`         | HTTP(S) 루트 URL · 0.6.0+           | 생략 · 크롤러 파일 생성하지 않음 |
-| `port`        | 1부터 65535 사이 정수 · `dev`·`preview` 서버 · 0.8.0+ | `4321` |
-| `cursorFace`  | boolean · 데스크톱 커서 옆 픽셀 얼굴 · 0.8.0+ | `false` |
-| `navigation`  | 이름 또는 이름 배열로 구성한 경로 목록 · 중복 경로 금지 | 묶음 이름순 |
-| `status`      | 상태 문구 객체 배열                | 기본 상태 문구            |
+| Field | Value | Default |
+| --- | --- | --- |
+| `title` | string | `for humanity` |
+| `description` | string | 없음 |
+| `url` | HTTP(S) 도메인 루트 URL | 없음 |
+| `port` | 1부터 65535까지 정수 | `4321` |
+| `cursorFace` | boolean | `false` |
+| `content` | `{root?: string, public?: string, private?: string}` | `content` · `public` · `private` |
+| `navigation` | 그룹 이름 또는 이름 배열로 구성한 경로 목록 | 그룹 이름순 |
+| `status` | `{phrase, kind, date?}` 목록 | 기본 상태 문구 |
 
-`navigation: []`도 허용. 지정하지 않은 묶음은 마지막에서 이름순 배치.
-문자열은 최상위 묶음, 이름 배열은 중첩 경로. 배열의 각 이름은 비어 있지 않은 string이며 경로 배열은 빈 배열 불가.
-경로의 첫 설정 위치를 조상에도 적용. 같은 이름이라도 전체 경로가 다르면 별도 묶음. `"Guide"`와 `["Guide"]`는 같은 경로로 처리.
-상태 객체: `phrase`는 빈칸만 있지 않은 string, `kind`는 `verified` 또는 `unverified`, `date`는 선택 boolean.
-`status`를 지정하면 기본 목록 전체 교체. `status: []`는 상태 표지 비활성.
-설정 검증은 시작 시 수행. 변경한 설정을 반영하려면 서버 재시작.
-
-`url`은 npm `0.6.0`부터 지원합니다. 사용자 정보·하위 경로·query·hash를 거부하고, 도메인 루트로 정규화합니다. 지정하면 홈과 문서의 사이트맵 및 `robots.txt`를 dev·build에서 제공합니다. [Crawling](crawling.md).
-`port`는 npm `0.8.0`부터 지원합니다. `preview`도 같은 설정 파일을 읽으므로 설정 오류는 `preview`에서도 종료 코드 `1`입니다.
-`cursorFace`는 npm `0.8.0`부터 지원하는 boolean입니다. 서버 HTML과 브라우저 마운트가 같은 값을 읽어, 꺼져 있으면 장식 DOM 자체를 만들지 않습니다.
+모든 설정은 선택 사항입니다. 예시와 값의 제한은 [Settings](settings.md)를 참고합니다.
 
 ## Frontmatter
 
-public·private 문서에 적용. `content.root`의 `README.md`는 frontmatter 없이 홈(`/`)으로 렌더링.
-파일 이름의 대소문자는 구분하지 않으며, 없으면 README 작성 안내 표시.
+문서 맨 앞의 `---` 사이에 YAML로 작성합니다. 사이트 홈인 `content/README.md`에는 필요하지 않습니다.
 
-```yaml
-name: API
-label: 사용 계약
-group: Reference
-order: 10
-type: document
-```
+| Field | Value | Required |
+| --- | --- | --- |
+| `name` | 비어 있지 않은 제목 | 필수 |
+| `label` | 문서 설명 문자열 | 필수 |
+| `group` | 비어 있지 않은 그룹 이름 또는 이름 배열 | 필수 |
+| `order` | 0 이상의 정수 · 작은 값부터 표시 | 선택 |
+| `parent` | 같은 그룹의 부모 문서 ID 또는 파일 상대 참조 | 선택 |
+| `type` | 이전 문서의 `document`·`blueprint` 호환 필드 · 새 문서에서는 생략 | 선택 |
 
-| Field   | Type                    | Default                          |
-| ------- | ----------------------- | -------------------------------- |
-| `name`  | 비어 있지 않은 string   | 필수                             |
-| `label` | string                  | 필수                             |
-| `group` | 비어 있지 않은 string 또는 비어 있지 않은 string 배열 | 필수 |
-| `parent` | 비어 있지 않은 string · 같은 그룹의 부모 문서 ID | 없음 · 그룹에 직접 표시 |
-| `order` | 0 이상의 정수           | 순서 지정 문서 뒤에서 제목순      |
-| `type`  | 기존 `document` · `blueprint` 값 허용 · 생략 권장 | `document` · 렌더링 차이 없음 |
-
-같은 첫 글자로 시작하는 문서도 지원. 문서 id는 확장자를 제외한 소문자 파일 경로.
-예: `content/public/api.md` → `/api/`, `content/private/architecture.md` → 로컬 `/private/architecture/`.
-이름·순서가 같은 문서도 파일 id로 구분. id가 겹치는 파일은 빌드 오류.
-`group: [Projects, Example project, Research]`는 최상위부터 중첩한 탐색 경로. 고정된 깊이 제한 없음.
-각 이름의 앞뒤 공백은 제거. 빈 이름·빈 배열은 오류. 쉼표·슬래시는 경로 구분자로 해석하지 않음.
-단일 문자열과 배열을 내부에서는 같은 경로 배열로 정규화하며, 파일 위치와 URL은 그룹 설정과 독립적.
-예약 경로·문자의 전체 목록은 [Writing](writing.md#frontmatter).
-
-`parent`는 `0.3.0`부터 지원. 기본값 없이 생략 가능. 사이트 URL 기준 ID 또는 `./`·`../`로 시작하는 파일 위치 기준 참조.
-확장자와 앞뒤 `/`를 제외한 소문자 경로 사용. 예: `parent: guide/settings`, `parent: ./readme`.
-부모·자식은 같은 전체 `group` 경로를 사용. 형제는 `order`·제목·ID 순으로 정렬하며 URL은 파일 경로 그대로 유지.
-빈 값·부모 누락·홈 README·자기 참조·순환·다른 그룹의 부모는 오류. [Navigation](navigation.md)의 예시 참고.
-
-::part[Content]
+파일·링크 규칙은 [Writing](writing.md), 그룹·부모 구성은 [Navigation](navigation.md)에 설명합니다.
 
 ## Markdown features
 
-| Syntax                 | Result                       |
-| ---------------------- | ---------------------------- |
-| `##` · `###`           | 절·소제목과 On this page      |
-| `::part[Title]`         | 본문과 On this page의 절 묶음    |
-| `:::note[Title]`        | 보충 설명                    |
-| `:::details[Title]`     | 접힌 구현 상세               |
-| Details의 `{open}`     | 처음부터 펼친 상세           |
-| Mermaid 코드 블록      | 빌드 시 흐름도 SVG           |
-| GFM 표 · 코드 블록     | 표와 코드 강조               |
-| `// [!code highlight\|error\|warning\|++\|--]` · 메타 `{n}` · `line-numbers` | 코드 줄 표기와 줄 번호 · 0.10.0+ |
-| 메타 `bad` · `good` | 블록 바탕색 · 0.11.0+ |
-| 메타 `[파일 이름]` | 파일 이름과 언어 띠 · 0.12.0+ |
-| `<<< ./file.ext#region 메타` | 파일을 코드 블록으로 · 문서 폴더 안만 · 0.11.0+ |
-| 상대 `.md` 링크        | 문서 URL로 변환              |
+| Syntax | Result | Guide |
+| --- | --- | --- |
+| `##` · `###` | 절·소제목과 목차 | [Writing](writing.md#sections-and-parts) |
+| `::part[Title]` | 여러 절의 묶음 | [Writing](writing.md#sections-and-parts) |
+| `:::note[Title]` | 항상 보이는 보충 설명 | [Parts](parts.md#note) |
+| `:::details[Title]` · `{open}` | 펼치고 접는 상세 | [Parts](parts.md#details) |
+| Mermaid 코드 블록 | 다이어그램 | [Diagrams](diagrams.md) |
+| 코드 블록 메타·줄 주석 | 줄 강조·줄 번호·파일 이름 | [Writing](writing.md#code-notation) |
+| `<<< ./file.ext#region` | 파일 또는 region을 코드로 표시 | [Writing](writing.md#code-snippets) |
+| 상대 `.md` 링크 | 사이트 문서 링크 | [Writing](writing.md#links) |
+| `![설명](../asset/image.png)` | 로컬 그림 | [Images](images.md) |
 
-부품의 입력·닫힘·중첩·오류 계약은 [Parts](parts.md).
-`.mdx`도 Markdown으로 읽음. JSX 실행은 지원하지 않음.
-
-## Failure behavior
-
-- 시작·빌드 오류: 설정, frontmatter, 문서 id, 블록 문법, 공개 문서의 private 참조 · 종료 코드 `1`
-- 문서 변경 오류: 개발 서버는 이전 정상 문서를 유지하고 터미널에 오류 표시
-- 링크 경고: 없는 Markdown 파일은 경고 후 빌드 계속
-- 배포 기준: 사이트 루트 `/` · 하위 URL 경로의 base path 설정은 아직 미구현
-
-실행 예시는 [Commands](commands.md), 설정은 [Settings](settings.md).
+`.mdx` 파일도 Markdown으로 읽으며 JSX는 실행하지 않습니다.

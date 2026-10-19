@@ -10,6 +10,8 @@ order: 10
 `parent`는 문서를 다른 문서 아래에 배치하며 `0.3.0`부터 지원.
 이 안내도 사이드바에서 [Writing](writing.md) 아래에 있는 하위 문서.
 
+**Unreleased:** 아래 content 경로와 `/private/` URL은 다음 릴리스 기준입니다. npm `0.13.1`에서는 문서 폴더 기준 경로를 사용하며 private 구분이 없습니다. 그룹과 부모 문서 설정은 기존 버전에서도 사용할 수 있습니다.
+
 ## Group and parent
 
 `group`은 문서가 속한 분류 경로, `parent`는 같은 분류 안의 부모 문서 ID.
@@ -49,7 +51,7 @@ order: 10
 ## Parent references
 
 부모는 표시 이름이 아닌 확장자를 뺀 소문자 문서 ID로 지정.
-`guide/settings.md`의 ID는 `guide/settings`, URL은 `/guide/settings/`.
+`content/public/guide/settings.md`의 ID는 `guide/settings`, URL은 `/guide/settings/`.
 기본 참조는 사이트 URL의 문서 ID 기준. 공개 문서는 `guide`, 내부 문서는 `private/plan` 형태. 앞뒤 공백은 제거.
 
 파일 위치 기준 참조는 `./` 또는 `../`로 시작:
@@ -87,11 +89,3 @@ parent: ../research/readme
 
 `content/README.md`는 사이트 이름으로 연결하는 홈이므로 부모 문서가 될 수 없음.
 하위 폴더의 README는 일반 문서여서 frontmatter를 갖추면 부모로 사용 가능.
-
-## Sidebar layout
-
-1360px 이상에서는 같은 폭 200px의 왼쪽 문서 목록·오른쪽 목차가 각각 화면 높이를 사용. 본문은 그 사이의 나머지 폭 전체, 본문과 각 사이드바의 간격 32px 유지.
-1360px 미만에서는 목차를 숨기고 왼쪽 문서 목록에 전체 탐색 높이 제공. 1024px 미만의 모바일 드로어에도 문서 목록만 표시.
-
-스크롤 위치는 같은 탭의 `sessionStorage`에 넓은 화면·좁은 데스크톱·드로어를 나누어 저장. 문서 목록은 페이지 사이에서 유지하고, 목차는 같은 페이지에서만 복원. 저장소 차단·손상 시에도 탐색은 작동.
-JavaScript 없이도 같은 문서 링크를 사용 가능하며, 와이드 화면에서는 목차도 표시.

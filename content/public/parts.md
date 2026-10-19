@@ -6,7 +6,7 @@ order: 20
 ---
 
 보충 설명은 Note, 구현 상세는 Details. 본문·비교·결정·질문은 Markdown의 글·목록·표·section.
-아래 예시는 Note와 Details의 작성 방법을 보여줍니다.
+아래 예시는 바로 복사해서 사용할 수 있는 Note와 Details입니다.
 문서 전체 구조는 [Writing](writing.md).
 
 ## Overview
@@ -20,7 +20,6 @@ order: 20
 | 보충 설명     | `:::note[제목]`         | 읽는 범위·제약·확인할 사항       |
 | 구현 상세     | `:::details[제목]`      | 필요할 때 펼쳐 보는 규칙·계약    |
 
-Decision·Question·API reference의 전용 부품은 실제 샘플에서 추가 표현이 필요할 때 선정.
 기본 블록은 Note·Details이며 모든 문서에서 같은 문법을 사용합니다.
 [로컬 이미지·첨부](images.md), 각주·체크 목록·표·코드·흐름도를 함께 사용합니다.
 
@@ -35,20 +34,20 @@ Decision·Question·API reference의 전용 부품은 실제 샘플에서 추가
 
 ```markdown
 :::note[Scope]
-책장 탐색과 책 상세 읽기가 예시 범위.
+공개 문서를 빌드하기 전에 다음 내용을 확인합니다.
 
-- 현재 검토 범위: 책장 목록·읽기 상태·책 상세
-- 미결 사항: [Details](#details)
+- 홈과 문서의 링크가 올바른지 확인합니다.
+- 추가 설명은 [Details](#details)에 작성할 수 있습니다.
 :::
 ```
 
 #### Result
 
 :::note[Scope]
-책장 탐색과 책 상세 읽기가 예시 범위.
+공개 문서를 빌드하기 전에 다음 내용을 확인합니다.
 
-- 현재 검토 범위: 책장 목록·읽기 상태·책 상세
-- 미결 사항: [Details](#details)
+- 홈과 문서의 링크가 올바른지 확인합니다.
+- 추가 설명은 [Details](#details)에 작성할 수 있습니다.
 :::
 
 ## Details
@@ -61,24 +60,24 @@ Decision·Question·API reference의 전용 부품은 실제 샘플에서 추가
 
 ```markdown
 :::details[Implementation]
-### Response contract
+### Supported files
 
 | Field          | Use                |
 |----------------|--------------------|
-| `bookCount`    | 책장에 담긴 책 수  |
-| `name`         | 책장 표시 이름     |
+| `.md`         | Markdown 문서      |
+| `.mdx`        | Markdown으로 처리  |
 :::
 ```
 
 #### Result
 
 :::details[Implementation]
-### Response contract
+### Supported files
 
 | Field          | Use                |
 |----------------|--------------------|
-| `bookCount`    | 책장에 담긴 책 수  |
-| `name`         | 책장 표시 이름     |
+| `.md`         | Markdown 문서      |
+| `.mdx`        | Markdown으로 처리  |
 :::
 
 #### Default open
@@ -106,22 +105,22 @@ Note·Details 중첩 가능. `##` section과 `::part`는 부품 밖에 작성.
 ````markdown
 ::::details[구현 상세]
 :::note[확인할 사항]
-첫 책장을 자동 선택할지는 Q1 확인 후 결정.
+설정 파일을 수정했다면 개발 서버를 다시 시작합니다.
 :::
 
 ```text
-GET /api/shelves
+pnpm exec for-humanity --version
 ```
 ::::
 ````
 
 ::::details[구현 상세]
 :::note[확인할 사항]
-첫 책장을 자동 선택할지는 Q1 확인 후 결정.
+설정 파일을 수정했다면 개발 서버를 다시 시작합니다.
 :::
 
 ```text
-GET /api/shelves
+pnpm exec for-humanity --version
 ```
 ::::
 
@@ -130,11 +129,11 @@ GET /api/shelves
 제목은 비어 있지 않은 일반 텍스트. 제목의 링크·강조·인라인 코드는 사용 불가.
 본문은 일반 Markdown. 부품 안의 `###`도 TOC·hash 대상.
 
-[Response contract](#response-contract)로 이동하면 해당 Details가 펼쳐짐.
+[Supported files](#supported-files)로 이동하면 해당 Details가 펼쳐짐.
 상위 Details가 여러 개면 함께 펼침. 같은 링크를 다시 눌러도 접힌 대상 공개.
 접힌 제목은 현재 읽는 section·subsection 판정에서 제외.
 
-Details는 native `details`·`summary`. 제목에서 Enter·Space로 펼침, 키보드 포커스 표시.
+Details 제목에서 Enter·Space로 펼칠 수 있습니다.
 JavaScript 없이도 제목과 본문을 읽고 펼칠 수 있음.
 
 ## Errors
@@ -155,5 +154,3 @@ JavaScript 없이도 제목과 본문을 읽고 펼칠 수 있음.
 
 등록하지 않은 블록 이름은 작성 오류. 일반 문장에서 오인한 미등록 인라인 지시문은 원문 유지.
 원시 HTML의 사용 범위는 [Writing](writing.md#content-features).
-
-참조: [remark-directive](https://github.com/remarkjs/remark-directive), [HTML Details](https://html.spec.whatwg.org/multipage/interactive-elements.html#the-details-element).

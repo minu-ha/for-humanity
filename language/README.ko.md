@@ -13,115 +13,95 @@ Markdown으로 작성하고, 맥락을 남기고, 정적 사이트로 공유.
 [![MIT](https://img.shields.io/badge/license-MIT-1111aa?style=flat-square)](../LICENSE)
 [![npm](https://img.shields.io/npm/v/for-humanity?style=flat-square)](https://www.npmjs.com/package/for-humanity)
 ![Node 22.12.0+](https://img.shields.io/badge/node-22.12.0%2B-444444?style=flat-square)
-![Hono JSX](https://img.shields.io/badge/Hono-JSX-444444?style=flat-square)
 ![Prototype](https://img.shields.io/badge/status-prototype-9a6400?style=flat-square)
 
-[Quick start](#quick-start) · [Guide](../content/public/writing.md) · [API](../content/public/api.md) · [Deployment](../content/public/deployment.md) · [English](../README.md)
+[Quick start](#quick-start) · [Guide](../content/public/writing.md) · [Reference](../content/public/api.md) · [Deployment](../content/public/deployment.md) · [English](../README.md)
 
 </div>
 
-## A little structure. Room to read.
+## Write, organize, publish
 
-- **Navigation** — 목적별 문서 묶음·읽는 순서·part별 트리 TOC·현재 읽는 위치
-- **Context** — 보충 설명은 Note, 구현 상세는 Details. 접힌 section도 링크로 바로 이동
-- **Content** — 표·코드 강조·Mermaid·status badge·color swatch
-- **Static output** — 정적 HTML·자체 호스팅 폰트·작은 브라우저 스크립트. 본문은 서버 HTML로 유지하고 탐색은 Hono JSX로 동작
-- **Reading** — 시스템 설정을 따르는 밝은·어두운 테마, 키보드 이동, 좁은 화면의 배치
+Markdown에 코드 예제, 표, 이미지와 Mermaid 다이어그램을 작성합니다. 문서를 그룹과 하위 문서로 정리하고, 보충 설명은 Note에, 긴 설명은 접을 수 있는 Details에 담습니다.
+
+빌드 결과는 글꼴이 포함된 정적 사이트입니다. 밝은·어두운 테마, 키보드 탐색과 좁은 화면에 맞는 배치를 제공합니다.
 
 ## Quick start
 
-Node.js 22.12.0 이상과 pnpm.
-
-**이 브랜치의 content 구조는 다음 릴리스 준비 내용입니다.** 현재 npm 공개 버전은 `0.13.1`입니다.
+Node.js 22.12.0 이상과 pnpm이 필요합니다. `package.json`이 있는 프로젝트에서 현재 공개 버전을 설치합니다.
 
 ```sh
 pnpm add -D --save-exact for-humanity@0.13.1
 ```
 
-공개된 `0.13.1`은 Markdown 폴더를 직접 지정하는 기존 방식입니다. 아래 구조를 사용하려면 다음 릴리스 전까지 현재 체크아웃에서 만든 패키지를 설치합니다. [Commands](../content/public/commands.md)의 로컬 패키지 설치와 [Migration](../content/public/migration.md)의 이전 절차를 참고합니다.
+홈에 표시할 `docs/README.md`를 만듭니다.
 
-새 패키지의 `node_modules/for-humanity/template`에 설정과 기본 문서 구조가 포함됩니다. 기존 설정을 보존하면서 프로젝트에 복사합니다. 루트 `.gitignore`에 `content/dist/`를 추가합니다.
+```markdown
+# Project notes
 
-```text
-for-humanity.config.ts
-content/
-├── README.md
-├── public/
-│   └── getting-started.md
-├── private/
-└── asset/
+프로젝트 문서에 오신 것을 환영합니다.
 ```
 
-프로젝트 루트에서 실행합니다.
+로컬 서버를 실행합니다.
 
 ```sh
-pnpm exec for-humanity dev       # 전체 문서 읽기와 작성
-pnpm exec for-humanity build     # content/dist에 공개 사이트 생성
-pnpm exec for-humanity preview   # 공개 빌드 확인
+pnpm exec for-humanity dev docs
 ```
 
-접속은 [localhost:4321](http://localhost:4321). 공개 문서는 `content/public`, 로컬 문서는 `content/private`, 홈은 `content/README.md`에 작성합니다. 배포 대상은 `content/dist`만입니다. `private`는 사이트 배포 제외이며 Git 저장소 접근 제어가 아닙니다.
+[localhost:4321](http://localhost:4321)에 접속합니다. Markdown을 수정하고 저장하면 페이지가 갱신됩니다. [Commands](../content/public/commands.md)의 예시를 따라 첫 문서를 추가할 수 있습니다.
 
-`init`은 아직 예정 작업입니다. 기본형은 향후 init에서도 재사용합니다. 정적 호스팅은 [Deployment](../content/public/deployment.md), 공개 사이트 주소는 [Crawling](../content/public/crawling.md)을 참고합니다.
-
-이 저장소를 로컬에서 읽고 개발하려면:
+배포 전에 결과를 만들고 확인합니다.
 
 ```sh
-git clone https://github.com/minu-ha/for-humanity.git
-cd for-humanity
-pnpm install
-pnpm dev
+pnpm exec for-humanity build docs
+pnpm exec for-humanity preview docs
 ```
+
+생성된 `docs/dist`를 배포합니다. 호스팅 설정은 [Deployment](../content/public/deployment.md)를 참고합니다.
+
+**다음 릴리스 — Unreleased:** 새 구조는 프로젝트 루트 설정과 `content/public`·`content/private` 폴더를 사용합니다. npm `0.13.1`에는 포함되지 않습니다. 적용 전에 [Migration](../content/public/migration.md)을 확인합니다.
 
 ## Make it yours
 
-`content/public` 폴더로 시작. 사이트 설정을 생략하면 사이드바에 **for humanity**. 픽셀 얼굴은 탭 아이콘으로 표시하고, 설정에 `cursorFace: true`를 두면 데스크톱 마우스 옆에도 따라다님.
-`content/README.md`는 홈(`/`)으로 표시하며 frontmatter 불필요. 사이트 이름을 누르면 홈으로 이동.
-`pnpm dev`와 `pnpm build`도 시작할 때 [문서 폴더 README](../content/README.md)와 변경 기록 동기화.
-프로젝트 루트의 `for-humanity.config.ts`의 `title`로 자신의 사이트 이름 지정. 공개 `SiteConfig` 타입으로 편집기 자동완성과 정적 타입 검사 지원.
+사이트 이름과 탐색 그룹 순서를 지정합니다.
 
 ```ts
 import type {SiteConfig} from "for-humanity";
 
 export default {
     title: "Project notes",
-    content: {root: "content", public: "public", private: "private"},
-    description: "결정·작업 기록·구현의 근거를 담는 문서.",
-    navigation: ["Getting started", "Guide", "Reference", "Examples"],
+    description: "프로젝트 사용 안내.",
+    navigation: ["Getting started", "Guide", "Reference"],
 } satisfies SiteConfig;
 ```
 
-기존 `for-humanity.config.mjs`도 지원합니다. TypeScript로 전환할 때는 기존 파일을 `.ts` 파일로 교체합니다.
-프로젝트 루트에는 설정 파일을 하나만 둡니다. CLI는 시작할 때 값을 검증하며, 정적 타입 검사는 프로젝트에서 `tsc --noEmit`으로 실행합니다.
+`0.13.1`에서는 `docs/for-humanity.config.ts`에 저장합니다. 다음 릴리스의 content 구조에서는 프로젝트 루트에 둡니다. 기존 `.mjs` 설정도 지원하며, 지정 위치에는 설정 파일 하나만 둡니다.
 
-다른 프로젝트 폴더의 실행은 [Commands](../content/public/commands.md), 설정은 [Settings](../content/public/settings.md).
-루트 README를 제외한 문서마다 `group`과 선택 `order`로 묶음·읽는 순서 지정. 하위 폴더나 부모 문서 없이 각 페이지는 독립적으로 유지.
-같은 첫 글자로 시작하는 문서도 허용.
-단일 묶음은 `group: Guide`, 중첩 탐색은 `group: [Projects, Example project, Research]`처럼 이름 배열 사용. 묶음 경로를 바꿔도 문서 URL은 유지.
-같은 그룹의 문서 아래에 다른 문서를 두려면 `parent: writing` 지정. `parent: ./readme` 같은 파일 위치 기준 참조도 지원. 부모도 클릭 가능한 독립 페이지이며 각 URL 유지 · [Navigation](../content/public/navigation.md).
+각 문서는 frontmatter에 제목·설명·그룹을 지정합니다. 완성된 문서 예시는 [Writing](../content/public/writing.md), 설정 항목은 [Settings](../content/public/settings.md)를 참고합니다.
 
-## Write with context
+## Keep useful detail
 
 ```markdown
-:::note[Scope]
-문서의 범위와 아직 결정이 필요한 내용.
+:::note[Before you start]
+작업을 시작하기 전에 준비 사항을 확인합니다.
 :::
 
-:::details[Implementation]
-화면 뒤의 계약·코드·판단 근거.
+:::details[More information]
+필요할 때 펼쳐 볼 예시나 추가 설명을 작성합니다.
 :::
 ```
 
-[Parts](../content/public/parts.md)에 소스와 실제 결과.
+[Parts](../content/public/parts.md)에서 작성 문법과 표시 결과를 함께 볼 수 있습니다.
 
 ## Documentation
 
-| Group | Read |
-| ----- | ---- |
-| Getting started | [Commands](../content/public/commands.md) · [Deployment](../content/public/deployment.md) |
-| Guide | [Writing](../content/public/writing.md) · [Parts](../content/public/parts.md) · [Settings](../content/public/settings.md) |
-| Reference | [API](../content/public/api.md) |
-| Releases | [공식 릴리스](../content/public/releases.md) |
+| Task | Guide |
+| --- | --- |
+| 설치와 실행 | [Commands](../content/public/commands.md) |
+| 문서 작성과 정리 | [Writing](../content/public/writing.md) · [Navigation](../content/public/navigation.md) |
+| 표현 추가 | [Parts](../content/public/parts.md) · [Diagrams](../content/public/diagrams.md) · [Images](../content/public/images.md) |
+| 사이트 설정 | [Settings](../content/public/settings.md) · [Reference](../content/public/api.md) |
+| 배포 | [Deployment](../content/public/deployment.md) · [Crawling](../content/public/crawling.md) |
+| 업데이트 | [Releases](../content/public/releases.md) · [Migration](../content/public/migration.md) |
 
 ## License
 

@@ -77,3 +77,38 @@ AI가 정리한 정보를 사람이 판단할 수 있게 쓰는 기준과 목적
 
 구현할 예정인 시각화·테마 모듈은 [Roadmap](roadmap.md#visualization-modules).
 원시 HTML은 사용할 수 있지만 다른 사이트의 CSS·JS가 자동 이식되거나 JSX가 실행되지는 않습니다.
+
+## Writing conventions
+
+- 한 줄 한 사실
+- 제목과 요약은 명사구 중심
+- 경위보다 현재 계약·결정·제약
+- 식별자와 값은 코드, 절차는 목록, 비교는 표
+- 실제 지원 범위와 미구현 범위 구분
+
+### Language
+
+- 독자: 한국어 사용자 · 기본적인 영어와 개발 용어 이해 가능
+- 제목·내비게이션·짧은 라벨: 익숙한 영어 표현 우선
+- 본문·소개·사용법·선택 이유·오류 설명: 가능한 한 한국어
+- 기술 용어·명령·코드·식별자: 원래 표기 유지 · 어색한 직역 금지
+- 같은 개념은 같은 용어 사용 · 문서마다 다른 번역이나 별칭 사용 금지
+- 영어 제목은 sentence case · `Status badges`, `Writing conventions` · 제품명과 API 표기는 원형 유지
+
+`name`과 `group`은 짧은 영어 이름. `label`은 문서 설명이므로 한국어가 기본.
+코드 예시도 같은 기준 적용: 제목은 `Overview`, 설명문은 한국어.
+
+### Terms
+
+| Term         | Meaning                                  |
+| ------------ | ---------------------------------------- |
+| Overview     | 문서의 범위와 핵심을 모은 첫 section     |
+| Frontmatter  | 파일 맨 앞의 YAML 메타데이터             |
+| Section      | `##` 제목으로 시작하는 본문 단위   |
+| Subsection   | `###` 제목 · section 안의 하위 단위      |
+| Part         | `::part[...]`로 여러 section을 묶는 그룹 |
+| TOC          | 현재 문서의 section·subsection 목록      |
+| Status badge | 설정의 상태 문구를 강조하는 표지         |
+| Swatch       | 인라인 색 값 앞에 표시하는 색 견본       |
+| Note         | 본문과 구분되는 보충 설명               |
+| Details      | 제목을 눌러 펼치는 구현 상세             |

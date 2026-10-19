@@ -1,38 +1,32 @@
 ---
 name: Settings
-label: 사이트 설정
+label: 사이트 이름·문서 경로·탐색 순서 설정
 group: Guide
 order: 30
 ---
 
-프로젝트 루트의 `for-humanity.config.ts`. 제목, 소개, 공개 URL, 문서 묶음 순서, status badge 설정.
-설정 파일과 각 항목 모두 선택. 생략한 값은 기본값 적용.
+`for-humanity.config.ts`에서 사이트 이름과 문서 경로, 탐색 순서를 설정합니다. 파일과 각 항목은 선택 사항이며 생략한 항목에는 기본값을 사용합니다.
 
-TypeScript 설정과 공개 `SiteConfig` 타입은 `0.13.0`부터 지원합니다. 기존 `for-humanity.config.mjs`도 지원하며, 같은 폴더에 두 설정이 있으면 실행 전에 중복 오류를 표시합니다. `.ts`로 전환할 때는 기존 `.mjs` 파일을 교체합니다.
+**Unreleased:** 아래 예시는 다음 릴리스의 프로젝트 루트 설정 기준입니다. npm `0.13.1`에서는 설정을 문서 폴더 안에 두고 `content` 항목을 사용하지 않습니다. [Migration](migration.md).
 
-문서 경로 설정은 다음 릴리스용 변경입니다. npm `0.13.1` 사용자는 [Migration](migration.md)을 먼저 확인합니다.
+## Create a configuration
 
-## Overview
+프로젝트 루트에 `for-humanity.config.ts`를 만듭니다.
 
 ```ts
 import type {SiteConfig} from "for-humanity";
 
 export default {
-    title: "for humanity",
+    title: "Project notes",
+    description: "프로젝트 사용 안내와 참고 문서",
     content: {root: "content", public: "public", private: "private"},
-    description: "사람이 읽는 문서를 위한 Markdown 문서 도구",
-    navigation: ["Getting started", "Guide", "Reference", "Examples"],
-    status: [
-        {phrase: "확인됨", kind: "verified", date: true},
-        {phrase: "확인되지 않았다", kind: "unverified"},
-    ],
+    navigation: ["Getting started", "Guide", "Reference"],
 } satisfies SiteConfig;
 ```
 
-검증은 명령 시작 시 한 번. 개발 중 설정 변경은 서버 재시작 필요.
-`SiteConfig`는 기본값 적용 전 입력 타입이므로 모든 최상위 필드를 생략할 수 있습니다. `satisfies`를 사용하면 편집기에서 필드 설명과 자동완성을 확인하고 잘못된 포트 타입·상태 종류·필드 이름을 찾을 수 있습니다. CLI는 타입 문법을 제거한 뒤 실행하며, 포트 범위·URL·중복 묶음 같은 값 조건은 런타임 스키마로 검증합니다. 프로젝트 전체의 정적 검사는 별도로 `tsc --noEmit`을 실행합니다.
+`SiteConfig`를 사용하면 편집기에서 설정 항목을 자동완성하고 잘못된 타입을 확인할 수 있습니다. 설정 값은 명령을 실행할 때 검사합니다. **개발 중 설정을 수정했다면 서버를 다시 시작합니다.**
 
-JavaScript 설정을 유지하면서 타입을 확인하려면 다음처럼 작성합니다.
+JavaScript를 사용한다면 `for-humanity.config.mjs`에 같은 객체를 내보냅니다.
 
 ```js
 // @ts-check
@@ -40,7 +34,19 @@ JavaScript 설정을 유지하면서 타입을 확인하려면 다음처럼 작�
 export default {title: "Project notes"};
 ```
 
-::part[Configuration]
+한 프로젝트에는 `.ts`와 `.mjs` 중 하나만 둡니다.
+
+## Site
+
+| Key | Use | Default |
+| --- | --- | --- |
+| `title` | 사이드바와 브라우저 탭의 사이트 이름 | `for humanity` |
+| `description` | 검색 결과 등에 사용할 사이트 설명 | 없음 |
+| `url` | 배포한 사이트의 루트 주소 | 없음 |
+| `port` | dev·preview 포트 · 1부터 65535까지 정수 | `4321` |
+| `cursorFace` | 데스크톱에서 마우스를 따라다니는 픽셀 얼굴 | `false` |
+
+사이트 홈의 제목과 본문은 `content/README.md`에 작성합니다. `url`을 지정하면 검색 엔진용 파일을 생성합니다. URL 형식과 출력은 [Crawling](crawling.md)을 참고합니다.
 
 ## Content paths
 
@@ -50,9 +56,10 @@ export default {title: "Project notes"};
 | `content.public` | content 루트 | `public` |
 | `content.private` | content 루트 | `private` |
 
-설정 파일은 CLI에 지정한 프로젝트 루트에 둡니다. 문서 폴더 이름을 바꿔도 설정 위치는 같습니다.
-기본형은 `content/README.md`, `content/public`, `content/private`, `content/asset`을 함께 제공합니다.
-공개 폴더는 필수이며 내부 폴더와 자원 폴더는 필요 없으면 지워도 됩니다. `asset`은 참조한 파일만 수집하므로 이름을 바꿔도 별도 설정은 필요하지 않습니다.
+기본값을 사용하면 홈은 `content/README.md`, 공개 문서는 `content/public`, 내부 문서는 `content/private`입니다.
+공개 폴더는 필수입니다. 내부 문서가 없으면 private 폴더는 생략할 수 있습니다.
+
+다른 이름을 사용하려면:
 
 ```ts
 import type {SiteConfig} from "for-humanity";
@@ -62,114 +69,73 @@ export default {
 } satisfies SiteConfig;
 ```
 
-이 경우 홈은 `knowledge/README.md`, 문서는 `knowledge/published`와 `knowledge/internal`, 출력은 `knowledge/dist`입니다.
-공개 문서 `published/guide.md`의 URL은 `/guide/`, 내부 문서 `internal/plan.md`의 로컬 URL은 `/private/plan/`입니다. 폴더 이름을 바꿔도 URL 접두어 규칙은 같습니다.
+이 경우 홈은 `knowledge/README.md`, 문서는 `knowledge/published`와 `knowledge/internal`, 출력은 `knowledge/dist`입니다. 설정 파일은 계속 프로젝트 루트에 둡니다.
+공개 문서 `published/guide.md`의 URL은 `/guide/`, 내부 문서 `internal/plan.md`의 로컬 URL은 `/private/plan/`입니다.
 
-경로는 프로젝트 내부 상대 경로만 허용합니다. `content.root: "."`는 가능하지만 공개·내부 문서는 각각 별도 하위 폴더가 필요합니다.
-공개·내부 경로는 같거나 중첩될 수 없고, `..`, `dist`, `.git`, `node_modules` 경로는 거부합니다. 바깥이나 예약 폴더를 가리키는 symlink도 사용할 수 없습니다. 공개·내부 폴더 자체는 symlink로 지정하지 않습니다.
+경로는 프로젝트 내부의 상대 경로를 사용합니다. `content.root: "."`도 가능하지만 public과 private은 서로 다른 하위 폴더여야 합니다. 두 경로가 같거나 한쪽이 다른 쪽 안에 들어갈 수 없습니다.
+`..`, `dist`, `.git`, `node_modules`가 포함된 경로는 사용할 수 없습니다. 공개·내부 폴더 자체를 symlink로 지정하거나, symlink로 프로젝트 밖 또는 예약 폴더를 가리킬 수도 없습니다.
 
-`dev`는 양쪽 문서를 표시하고 `build`는 공개 문서만 처리합니다. `preview`는 이미 생성된 공개 결과를 확인합니다.
-홈은 항상 공개됩니다. 공개 문서나 홈에서 내부 Markdown·그림·첨부·스니펫을 참조하면 빌드가 실패합니다.
-내부 자료는 내부 폴더 아래, 공용 자료는 `asset` 아래에 둡니다. 공개·내부 폴더 밖의 일반 Markdown은 수집하지 않습니다.
-`private`는 정적 사이트 출력에서 제외하는 규칙이며 Git 저장소의 접근 권한을 바꾸지 않습니다.
+### Public and private content
 
-## Site
+`dev`는 양쪽 문서를 보여 줍니다. `build`는 홈과 공개 문서만 생성하며 `preview`로 그 결과를 확인합니다.
+홈이나 공개 문서에서 private 문서·이미지·첨부·스니펫을 참조하면 빌드가 실패합니다.
 
-| Key           | Use                     | Default        |
-| ------------- | ----------------------- | -------------- |
-| `title`       | 사이드바 이름 · 탭 제목 | `for humanity` |
-| `description` | HTML 설명 메타데이터     | 생략           |
-| `url`         | 공개 HTTP(S) 루트 URL · robots.txt와 sitemap.xml 생성 · 0.6.0+ | 생략 · 생성하지 않음 |
-| `port`        | `dev`·`preview` 서버 포트 · 0.8.0+ | `4321` |
-| `cursorFace`  | 데스크톱 커서 옆 픽셀 얼굴 · 0.8.0+ | `false` |
-
-`url`은 npm `0.6.0`부터 지원합니다. 설정·출력·Cloudflare 정책은 [Crawling](crawling.md).
-`port`는 npm `0.8.0`부터 지원합니다. 문서 프로젝트 둘을 같은 기계에서 나란히 띄울 때 한쪽에 다른 값을 지정합니다.
-`cursorFace`도 npm `0.8.0`부터 지원합니다. 기본은 꺼짐이고 `true`로 켜면 데스크톱에서 마우스를 따라다니는 픽셀 얼굴이 보입니다. 이 문서 사이트는 켜 둡니다.
-
-설정을 생략하면 기본 이름 `for humanity`.
-`title`을 지정하면 탭·사이드바에 같은 사이트 이름 적용. 홈의 제목과 소개는 `README.md`에서 작성.
-픽셀 얼굴은 탭의 favicon에 쓰고, `cursorFace: true`면 데스크톱 커서 옆 장식에도 같은 파일 사용.
-사이트 이름과 문서 목록은 왼쪽 사이드바에 텍스트로 표시.
-데스크톱에서는 사이트 이름을 고정하고 아래 목록만 스크롤. 사이트 이름은 Architects Daughter Regular, 미지원 글자는 본문 폰트로 표시.
-1360px 이상에서는 문서 목록은 왼쪽, 현재 문서 목차는 오른쪽에 같은 폭 200px로 배치. 1360px 미만에서는 목차를 숨김. 와이드 화면의 두 목록은 각각 독립 스크롤.
-데스크톱의 본문 제목과 문서 목록 첫 묶음 라벨은 글자의 위쪽 시작선을 맞춤. 사이드바와 본문 사이의 간격은 32px이며 본문 좌우 패딩은 32px 유지.
-본문 `main`은 양쪽 보더와 패딩을 포함해 사이드바와 간격을 뺀 나머지 폭 전체. 페이지는 최대 `1920px`, 더 넓은 화면에서는 가운데 정렬. 사이드바 자체의 패딩과 세로 보더는 없음.
-
-모바일에서는 브랜드와 메뉴 버튼만 위에 고정. 버튼을 누르면 문서 목록만 왼쪽 드로어에 표시. 닫기·Escape·배경 클릭 또는 문서 선택으로 닫음. JavaScript가 없으면 목록을 본문 위에서 표시.
+공용 자료는 `content/asset`, 내부 자료는 `content/private/asset`에 보관합니다. `asset` 이름은 자유롭게 바꿀 수 있으며 링크를 수정하면 됩니다. 별도 설정은 필요하지 않습니다.
+`private`는 사이트 배포 제외 규칙입니다. Git 저장소에 올린 파일의 접근 권한을 바꾸지는 않습니다.
 
 ## Navigation
 
-`navigation`은 frontmatter의 `group` 이름 또는 경로를 읽는 순서대로 나열한 배열.
-사이드바의 각 단계에서 형제 묶음의 순서에 적용. 홈은 `README.md`에 작성한 내용으로 표시.
+`navigation`에는 사이드바 그룹을 표시할 순서를 적습니다. 각 이름은 문서 frontmatter의 `group`과 일치해야 합니다.
 
-```js
+```ts
 export default {
-    navigation: ["Getting started", "Guide", "Reference", "Examples", "Development"],
+    navigation: ["Getting started", "Guide", "Reference"],
 };
 ```
 
-- 묶음 이름: frontmatter의 `group`과 대소문자까지 일치
-- 같은 묶음을 두 번 지정하면 설정 오류
-- 설정에 없는 묶음: 지정한 묶음 뒤에서 이름순
-- 문서가 없는 묶음: 표시하지 않음
-- `navigation` 생략: 모든 묶음을 이름순
-- 묶음 안의 순서: frontmatter의 `order` · [Writing](writing.md#navigation-groups)
+설정에 없는 그룹은 지정한 그룹 뒤에서 이름순으로 표시합니다. 문서가 없는 그룹은 표시하지 않습니다. 같은 그룹을 두 번 지정하면 오류입니다.
+그룹 안의 문서 순서는 문서의 `order`로 지정합니다.
 
-중첩 묶음의 순서는 이름 배열로 지정. 최상위는 기존 문자열 문법도 사용 가능.
+중첩 그룹의 순서는 이름 배열로 지정합니다.
 
-```js
+```ts
 export default {
     navigation: [
         "Projects",
-        ["Projects", "Example project", "Research"],
-        ["Projects", "Example project", "Decisions"],
-        "Personal",
+        ["Projects", "Research"],
+        ["Projects", "Decisions"],
+        "Guide",
     ],
 };
 ```
 
-위 설정은 Projects 안의 Example project에서 Research를 Decisions보다 먼저 표시.
-하위 경로를 지정하면 조상 묶음도 그 경로의 최초 설정 위치를 사용. 지정하지 않은 형제는 지정한 형제 뒤에서 이름순.
-`"Guide"`와 `["Guide"]`는 같은 경로이므로 둘을 함께 지정하면 중복 오류. 이름이 같은 하위 묶음도 부모 경로가 다르면 별도로 정렬.
-
-하위 문서 없이도 묶음 안에 여러 페이지 배치 가능. 탐색 영역에서는 모든 묶음과 문서 링크를 표시.
-문서는 이름으로 표시하고 하위 문서는 들여쓰기. 클릭할 수 없는 묶음은 회색 `11px`, 문서 링크는 방문 여부와 무관하게 링크색 `12px`. 현재 문서는 링크색을 유지하고 굵기 `600`으로 구분.
-문서 링크와 사이트 이름은 hover 시 글색·굵기를 유지하고 밑줄 표시.
-사이트 이름·문서 탐색·TOC·하위 TOC는 Tab 포커스에도 각 링크의 hover와 같은 밑줄·색을 사용하며 박스 테두리는 표시하지 않음.
-`parent`로 연결한 하위 문서는 부모 아래에 표시. 부모 문서는 링크색을 유지하며, 현재 문서 한 곳만 굵게 표시 · [Navigation](navigation.md).
-목차 제목은 `On this page` · 문서 탐색의 묶음 라벨과 같은 회색 `11px`. 클릭할 수 없는 part 묶음도 같은 표현, 절·소제목 링크는 본문 글색 `12px`로 구분.
-목차는 작성한 제목과 들여쓴 소제목으로 표시하며 자동 번호 없음. 현재 절·소제목 하나만 진한 글·굵기 `600`, 상위 절은 기본 굵기 유지.
-한 줄 항목의 높이는 데스크톱 16.8px, 모바일 드로어 약 31px. 긴 제목은 여러 줄로 줄바꿈.
+위 설정은 Projects 안에서 Research를 Decisions보다 먼저 표시합니다. 같은 이름이라도 전체 경로가 다르면 별도 그룹입니다.
+문서의 `group`과 `parent`를 작성하는 방법은 [Navigation](navigation.md)을 참고합니다.
 
 ## Status badges
 
-| Key      | Value                     | Use                              |
-| -------- | ------------------------- | -------------------------------- |
-| `phrase` | 비어 있지 않은 상태 문구  | 본문에서 찾을 글                 |
-| `kind`   | `verified` / `unverified` | 초록 / amber                     |
-| `date`   | 선택 boolean              | 뒤의 `YYYY-MM-DD` 날짜 포함 여부 |
+본문의 특정 문구를 상태 표지로 표시할 수 있습니다. 기본 문구는 `확인됨`과 `확인되지 않았다`입니다.
 
-- 기본 문구: `확인됨`, `확인되지 않았다`
-- `status` 지정 시 기본 목록 전체 교체
-- `status: []` = status badge 없음
-- 괄호로 감싼 문구 → 괄호 없이 badge 표시
-- 제목, 링크, 코드 안 문구 → 원문 유지
+```ts
+export default {
+    status: [
+        {phrase: "검토 완료", kind: "verified", date: true},
+        {phrase: "확인 필요", kind: "unverified"},
+    ],
+};
+```
 
-### Examples
+| Key | Use |
+| --- | --- |
+| `phrase` | 본문에서 찾을 비어 있지 않은 문구 |
+| `kind` | `verified`: 초록 · `unverified`: amber |
+| `date` | `true`이면 뒤의 `YYYY-MM-DD` 날짜도 함께 표시 |
 
-| Source              | Result            |
-| ------------------- | ----------------- |
-| `확인됨 2026-10-01` | 확인됨 2026-10-01 |
-| `(확인되지 않았다)` | (확인되지 않았다) |
+위 설정을 사용한 문서에 `검토 완료 2026-10-01`을 쓰면 날짜까지 하나의 표지로 표시합니다.
+괄호로 감싼 문구도 인식합니다. 제목·링크·코드 안의 문구는 바꾸지 않습니다.
+`status`를 지정하면 기본 목록을 교체합니다. 표지를 끄려면 `status: []`를 사용합니다.
 
-::part[Appearance]
+## Appearance
 
-## Themes and fonts
-
-테마는 읽는 사람의 시스템 설정에 따라 밝게·어둡게 자동 적용.
-
-- 본문·라벨·인라인 코드: 한글 IBM Plex Sans KR · 영문 Monoplex KR
-- 코드 블록·흐름도: Monoplex KR
-- 폰트 파일: 빌드 결과 포함 · CDN 요청 없음
-- 색과 간격: `src/style/token.css` · [Design](https://github.com/minu-ha/for-humanity/blob/main/content/private/design.md)
+밝은 테마와 어두운 테마는 독자의 시스템 설정을 따릅니다. 글꼴은 빌드 결과에 포함됩니다.
+사이트 테마나 글꼴을 교체하는 설정은 현재 제공하지 않습니다.

@@ -32,6 +32,27 @@ git diff --check
 | `pnpm sync:docs` | README 홈 · Changelog 문서 동기화 |
 | `pnpm lint:fix`  | 자동 린트·포맷 수정                |
 
+## Repository development
+
+```sh
+git clone https://github.com/minu-ha/for-humanity.git
+cd for-humanity
+pnpm install
+pnpm dev
+```
+
+개발 서버는 `content/public`과 `content/private`를 함께 읽습니다. 소스 변경은 개발 서버에 반영하고, 배포 결과는 `pnpm build` 후 `pnpm preview`로 확인합니다.
+홈의 정본은 루트 `README.md`, 상세 변경 기록의 정본은 루트 `CHANGELOG.md`입니다. `pnpm sync:docs`는 각각 `content/README.md`와 `content/private/changelog.md`를 생성합니다. dev·build 시작 시에도 동기화합니다.
+
+공개 전 패키지를 소비 프로젝트에 설치하려면 저장소에서 `pnpm pack`을 실행하고, 별도 프로젝트에서 `pnpm add -D /path/to/for-humanity-0.13.1.tgz`로 설치합니다. 실제 공개 전까지 패키지 버전은 마지막 공개 버전을 유지합니다.
+공식 사이트의 Cloudflare 프로젝트·출력 경로·헤더 운영은 [Site deployment](site-deployment.md)를 따릅니다.
+
+### Documentation audience
+
+public은 라이브러리를 설치하고 사용하는 독자를 위한 안내입니다. 설치·설정·문서 문법·배포·업데이트를 설명하며 실행 가능한 예시와 필요한 제한을 함께 적습니다.
+내부 함수·CSS 치수·라이브러리 선택 근거·개발 명령·릴리스 절차·로드맵·가상 업무 사례는 private에서 관리합니다. 사용자 문서에 내부 구현을 이해해야만 사용할 수 있는 설명을 추가하지 않습니다.
+공개 전 변경은 Unreleased로 구분하고 현재 공개 버전의 사용법을 함께 안내합니다. 상세 변경 이력은 원본 CHANGELOG와 GitHub Release에 보존하고, 공개 Releases 문서는 설치·업데이트 판단에 집중합니다.
+
 ::part[Code]
 
 ## Conventions
@@ -44,7 +65,7 @@ git diff --check
 - Props: 구조분해 없이 `props.*` 접근
 - Classes: `scope_slug__element--modifier` · 조합은 `clsx`
 - Comments: 명사구 · 목적·계약·제약 · 구현 반복 설명 제거
-- Language: 제목·짧은 라벨은 영어 우선 · 본문·설명은 한국어 · [Writing](../public/writing.md#language)
+- Language: 제목·짧은 라벨은 영어 우선 · 본문·설명은 한국어 · [Authoring](authoring.md#language)
 - Commits: 영어 동사로 시작 · AI 도움을 받은 제목의 마지막은 ` | aa` · 저장소 루트 `AGENTS.md`·`CLAUDE.md`
 
 주석 앞에는 빈 줄을 둡니다. 블록·객체·배열·JSX의 첫 줄과 연속 주석은 예외입니다. 선언 설명은 여러 줄 JSDoc, 본문의 의도·절차 설명은 `//`를 사용합니다. JSDoc의 본문은 제목 다음 빈 줄과 들여쓴 목록으로 작성하고, 직접 선언한 타입·스키마에는 헤더와 필드 설명을 남깁니다. 테스트의 GIVEN·WHEN·THEN은 [테스트 작성 기준](https://github.com/minu-ha/for-humanity/blob/main/test/README.md)에 따른 별도 블록을 사용합니다.

@@ -1,283 +1,211 @@
 ---
 name: Writing
-label: 문서 작성
+label: Markdown으로 홈과 문서 작성하기
 group: Guide
 order: 10
 ---
 
-문서 한 장 = Markdown 파일 하나. frontmatter, section, part, 본문 기능의 작성 기준.
-Note와 Details의 작성 예시는 [Parts](parts.md)에서 확인합니다.
+문서 한 장을 Markdown 파일 하나로 작성합니다. 파일 앞에는 문서 정보를, 그 아래에는 본문을 적습니다.
 
-## Overview
+**Unreleased:** 아래 파일 위치는 다음 릴리스의 content 구조 기준입니다. npm `0.13.1`에서는 문서 폴더에 파일을 직접 둡니다. Markdown 문법은 같은 방식으로 사용할 수 있습니다. [첫 문서 만들기](commands.md#your-first-site).
+
+## Your first document
+
+`content/public/guide.md`를 만들고 다음 내용을 작성합니다.
 
 ```markdown
 ---
 name: Guide
-label: 사용 안내
+label: 프로젝트 시작 안내
 group: Guide
 order: 10
 ---
 
-문서의 범위와 핵심.
-
-## Overview
-
-::part[Setup]
+프로젝트를 처음 사용하는 사람을 위한 안내입니다.
 
 ## Installation
 
-### Requirements
+설치에 필요한 준비 사항을 적습니다.
+
+## Usage
+
+### First step
+
+첫 번째 작업을 설명합니다.
 ```
 
-설정은 프로젝트 루트, Markdown은 `content/public`과 `content/private`에 작성합니다. `content/README.md`는 홈(`/`)으로 표시하며 문서 목록에서 제외합니다.
-`dev`는 양쪽 문서, `build`는 public 문서만 처리합니다. 경로는 [Settings](settings.md#content-paths)에서 변경할 수 있습니다.
-public·private 밖의 일반 Markdown은 수집하지 않습니다. 두 폴더 안의 `README.md`·`AGENTS.md`·`CLAUDE.md`는 일반 문서이므로 frontmatter가 필요합니다.
-`node_modules`, `dist`, `.git`은 읽지 않습니다. `.mdx`도 Markdown으로 처리하며 JSX를 실행하지 않습니다.
+`dev`를 실행하면 사이드바의 Guide 그룹에 문서가 나타납니다. 문서 주소는 `/guide/`입니다.
+`##`와 `###` 제목은 페이지 목차에 표시됩니다. 문서 제목은 `name`으로 표시하므로 본문에 같은 `#` 제목을 반복할 필요가 없습니다.
 
-::part[Structure]
+public은 배포할 문서, private은 로컬에서만 읽을 문서를 담습니다. 두 폴더 밖의 일반 Markdown은 자동으로 문서 목록에 추가하지 않습니다.
 
 ## Home page
 
-`content/README.md`가 기본 홈. 파일 이름의 대소문자는 구분하지 않음.
-frontmatter 없이 `#` 제목부터 일반 Markdown으로 작성. 제목·목차·코드 강조는 문서와 같은 처리 과정.
-README가 없으면 추가 안내를 표시. 사이드바의 사이트 이름을 누르면 홈으로 이동.
+`content/README.md`는 사이트 홈(`/`)입니다. frontmatter 없이 제목과 소개를 작성합니다.
 
 ```markdown
-# My library
+# Project notes
 
-라이브러리 소개.
+프로젝트 소개와 문서 안내입니다.
 
-## Getting started
-
-[설치 안내](public/commands.md)
+[시작하기](public/guide.md)
 ```
 
-하위 폴더의 README는 일반 문서로 처리하며 frontmatter 필수.
-홈 템플릿을 선택하는 별도 설정은 아직 없음.
-이 저장소 자체의 문서 홈은 최상위 README와 동기화. 최상위 `README.md` 수정 후 `pnpm sync:readme` 실행.
-저장소의 `pnpm dev`·`pnpm build`도 시작할 때 동기화하며, 패키지를 쓰는 다른 프로젝트의 README에는 관여하지 않음.
+사이트 이름을 누르면 홈으로 이동합니다. README가 없으면 홈 작성 안내가 표시됩니다.
+public·private 안의 README는 일반 문서이므로 다른 문서처럼 frontmatter를 작성합니다.
 
 ## Frontmatter
 
-| Key     | Use                               | Required                   |
-| ------- | --------------------------------- | -------------------------- |
-| `name`  | 제목 · 문서 목록                  | 필수 · 비어 있지 않은 이름 |
-| `label` | 짧은 문서 설명 · 목록 툴팁        | 필수                       |
-| `group` | 사이드바 묶음 경로                | 필수 · 이름 또는 이름 배열 |
-| `parent` | 같은 묶음 안의 부모 문서 ID       | 선택 · 비어 있지 않은 문자열 |
-| `order` | 묶음 안의 읽는 순서               | 선택 · 0 이상의 정수       |
-| `type`  | 기존 파일의 호환 필드             | 생략 권장 · 렌더링 차이 없음 |
+| Field | Use | Required |
+| --- | --- | --- |
+| `name` | 본문과 사이드바에 표시할 제목 | 필수 · 비어 있지 않은 문자열 |
+| `label` | 문서를 설명하는 문자열 | 필수 |
+| `group` | 사이드바 그룹 이름 또는 이름 배열 | 필수 · 비어 있지 않은 값 |
+| `order` | 같은 그룹 안에서 읽을 순서 | 선택 · 0 이상의 정수 |
+| `parent` | 같은 그룹 안의 부모 문서 ID | 선택 |
 
-같은 첫 글자로 시작하는 이름도 허용. `API`와 `Architecture`는 각각 별도 문서.
-새 문서는 `type`을 생략합니다. 기존 `document`·`blueprint` 값은 호환을 위해 읽으며 동일하게 렌더링합니다. 별도 Blueprint 렌더러를 요구하지 않습니다.
-로컬 그림·첨부는 [Images](images.md).
-공개 폴더 기준 파일 경로는 확장자를 뺀 소문자 id로 사용. 내부 폴더 기준 경로에는 `private/`를 붙임. `.md`와 `.mdx`, 대소문자만 다른 경로의 id 중복 금지.
-YAML 영역은 `remark-frontmatter`, 값은 `yaml`, 필드 검증은 Zod로 처리.
-빈 경로와 예약 문자 `#`, `?`, `%`, `*`, `:`, `\`는 사용 불가. 첫 경로 `/_fh/`는 패키지 자원 전용, `/private/`는 로컬 내부 문서 전용.
-`.`·`..`·`index.html` 경로 조각, 제어문자, 첫 경로 `/favicon.svg/`는 정적 출력과 충돌하므로 사용 불가.
-공개 `url`을 지정하면 첫 경로 `robots.txt`·`sitemap.xml`도 생성 파일 전용으로 예약됩니다. [Crawling](crawling.md).
+새 문서는 `type`을 지정할 필요가 없습니다. 기존 `document`와 `blueprint` 값은 계속 읽으며 같은 문서로 표시합니다.
+제목과 그룹에는 원하는 언어를 사용할 수 있습니다.
 
 ### Navigation groups
 
-하위 폴더를 만들지 않아도 `group`으로 문서를 묶음. 묶음은 페이지가 아닌 탐색 제목.
-그 안의 각 문서는 독립적인 파일·URL·목차를 가짐.
-
-단일 묶음은 `group: Guide`. 여러 단계는 최상위부터 이름 배열로 지정.
+같은 `group`을 지정한 문서는 함께 표시됩니다. `order`가 작을수록 먼저 표시되며, 생략한 문서는 순서를 지정한 문서 뒤에서 제목순으로 표시됩니다.
 
 ```yaml
-group: [Projects, Example project, Research]
+group: [Projects, Research]
+order: 10
 ```
 
-여러 줄로 작성해도 같은 경로.
+위 문서는 Projects 안의 Research 그룹에 표시됩니다. 그룹의 표시 순서는 사이트 설정의 `navigation`으로 지정합니다.
+그룹 이름이나 순서를 바꿔도 문서 URL은 바뀌지 않습니다. 문서 아래에 하위 문서를 배치하려면 [Navigation](navigation.md)의 `parent` 예시를 참고합니다.
 
-```yaml
-group:
-  - Projects
-  - Example project
-  - Research
-```
+### File names
 
-위 문서는 `Projects → Example project → Research` 아래에 표시. 필요한 만큼 단계를 추가할 수 있으며 같은 경로를 쓰는 문서는 함께 묶음.
-`[Projects, Another project, Research]`의 Research는 다른 묶음.
-각 이름은 빈칸만 있지 않은 문자열. 빈 배열·빈 단계는 오류. 쉼표·슬래시는 이름의 일부로 유지하므로 문자열을 경로 구분자로 나누지 않음.
-폴더와 탐색 경로는 독립적. `research.md`처럼 루트에 둔 문서도 위 경로로 묶을 수 있으며, 그룹을 바꿔도 파일 URL과 상대 링크는 유지.
+공개 문서의 ID는 public 폴더 기준 경로에서 확장자를 뺀 소문자입니다. `public/guide/setup.md`는 `/guide/setup/`로 표시됩니다.
+private 문서에는 `/private/`가 붙습니다. `.mdx`도 Markdown으로 읽으며 JSX는 실행하지 않습니다.
 
-| File              | Name         | Group       | Order |
-| ----------------- | ------------ | ----------- | ----- |
-| `writing.md`      | Writing      | Guide       | 10    |
-| `parts.md`        | Parts        | Guide       | 20    |
-| `api.md`          | API          | Reference   | 10    |
-| `architecture.md` | Architecture | Development | 10    |
-
-각 단계의 형제 묶음 순서는 [Settings](settings.md#navigation)의 `navigation`. 묶음 안의 직접 문서는 작은 `order` 먼저.
-`order`를 생략한 문서는 순서를 지정한 문서 뒤에서 제목순, 제목도 같으면 파일 id순.
-한 묶음에 직접 문서와 하위 묶음이 함께 있으면 직접 문서를 먼저 표시. 프로젝트 소개 문서는 `[Projects, Example project]`, 조사 문서는 `[Projects, Example project, Research]`로 묶으면 됨.
-파일 이름에 번호나 알파벳을 붙여 순서를 맞출 필요 없음.
-모든 문서 묶음은 항상 표시. 문서는 이름으로 표시하고 하위 문서는 들여쓰기.
-같은 그룹 안에서 문서 아래에 다른 문서를 두려면 `parent` 지정. 부모도 클릭 가능한 독립 문서이며 파일 URL은 유지.
-`parent: writing`은 사이트 URL 기준 ID, `parent: ./readme`는 현재 파일 위치 기준 참조. 확장자는 제외.
-부모·자식의 전체 `group` 경로는 같아야 하며, 같은 부모 아래에서는 `order`로 순서 지정.
-예시와 오류 조건은 [Navigation](navigation.md).
-`On this page`는 현재 문서 안의 절만 표시.
+같은 ID가 되는 파일 두 개는 함께 사용할 수 없습니다. 예를 들어 `Guide.md`와 `guide.mdx`는 충돌합니다.
+파일 이름에는 `#`, `?`, `%`, `*`, `:`, `\`나 제어문자를 사용하지 않습니다. `.`·`..`·`index.html` 경로 조각도 사용할 수 없습니다.
+첫 경로 `_fh`·`favicon.svg`는 기본 자원용, `private`는 내부 문서용입니다. `url`을 설정하면 `robots.txt`·`sitemap.xml`도 예약됩니다.
 
 ## Sections and parts
 
-- `##` → section · On this page의 상위 항목
-- `###` → subsection · 해당 section 아래 중첩 항목
-- 첫 section 앞의 글 → 문서 header
-- `::part[Setup]` → 여러 section을 묶는 part · TOC 그룹
-- 제목 id → GitHub 방식 · 같은 제목은 `-1`, `-2` 접미사
+`##`는 큰 절, `###`는 그 아래 소제목입니다. 관련 절 여러 개를 묶으려면 `::part[제목]`을 앞에 둡니다.
 
-제목과 Contents에는 자동 번호를 붙이지 않음. 번호가 필요하면 `## 01. Setup`처럼 제목에 직접 작성.
+```markdown
+::part[Getting started]
+
+## Installation
+
+설치 안내.
+
+## Usage
+
+### First step
+
+실행 안내.
+```
+
+part는 본문과 목차에서 절의 묶음을 표시합니다. 제목에 자동 번호는 붙지 않으며, 번호가 필요하면 제목에 직접 적습니다.
 
 ### Links
 
+`content/public/guide.md`에서 다른 문서와 홈을 연결하려면:
+
 ```markdown
-[Settings](settings.md)
-[Settings with query](settings.md?view=compact#navigation)
-[Status badges](settings.md#status-badges)
-[Home](../README.md)
+[설정](settings.md)
+[탐색 설정](settings.md#navigation)
+[홈](../README.md)
 ```
 
-상대 Markdown 링크 → 사이트 문서 URL. GitHub에서도 같은 파일로 이동.
-`content/README.md` 링크는 `/`로 변환. 하위 문서의 `../README.md#start`도 `/#start`로 변환.
-외부 URL, 절대 URL, 같은 문서의 hash는 원문 유지. 단, 공개 빌드에서 `/private/` URL이나 내부 파일을 가리키는 링크는 오류.
-앵커로 이동한 제목은 약 3초 동안 형광색으로 강조한 뒤 서서히 해제.
-같은 앵커를 다시 누르면 강조 시간을 다시 시작. 접힌 Details의 제목도 펼친 뒤 표시.
-움직임 감소 설정에서는 전환 효과 없이 강조만 표시·해제.
+상대 `.md` 링크는 사이트 URL로 바뀌며 query와 hash를 유지합니다. 위의 `settings.md#navigation`은 `/settings/#navigation`으로 연결됩니다.
+일반 문서의 README 링크는 해당 문서로, `content/README.md` 링크는 홈으로 연결됩니다.
 
-::part[Content]
+제목 앵커는 제목으로부터 자동 생성됩니다. 같은 제목이 반복되면 `-1`, `-2`가 붙습니다.
+Details 안의 제목으로 이동하면 접힌 내용이 펼쳐집니다.
+공개 문서와 홈에서는 private 파일이나 `/private/` 경로를 링크하지 않습니다.
 
 ## Flowcharts
 
+코드 블록의 언어를 `mermaid`로 지정합니다.
+
 ````markdown
 ```mermaid
 flowchart LR
-    a("작성") --> b("확인")
-    b --> c("배포")
+    Draft[작성] --> Review[확인]
+    Review --> Publish[배포]
 ```
 ````
 
 ```mermaid
 flowchart LR
-    a("작성") --> b("확인")
-    b --> c("배포")
+    Draft[작성] --> Review[확인]
+    Review --> Publish[배포]
 ```
 
-공식 Mermaid가 브라우저에서 SVG를 생성합니다. 기존 `mermaid` 펜스는 그대로 사용합니다.
-순서·분기는 flowchart, 요청 왕복은 sequence, 상태 전이는 state, 데이터 관계는 ER, 폴더 구조는 Tree View가 적합합니다.
-유형별 소스·결과, 테마와 오류 표시는 [Diagrams](diagrams.md).
+순서·상태·관계·폴더 구조에 맞는 작성 예시는 [Diagrams](diagrams.md)를 참고합니다.
 
 ## Code notation
 
+코드 블록에 언어 이름을 적으면 문법을 강조합니다. `line-numbers`는 줄 번호, `[파일 이름]`은 파일 제목을 표시합니다.
+
 ````markdown
-```ts line-numbers
-const name = user.name ?? ""; // [!code error]
-const name = user.name ?? user_name_default; // [!code ++]
+```ts line-numbers [example.ts]
+const title = "Project notes"; // [!code highlight]
+const count = 3;
 ```
 ````
 
-```ts line-numbers
-const name = user.name ?? ""; // [!code error]
-const name = user.name ?? user_name_default; // [!code ++]
+```ts line-numbers [example.ts]
+const title = "Project notes"; // [!code highlight]
+const count = 3;
 ```
 
 | Notation | Result |
 | --- | --- |
-| `// [!code highlight]` 또는 메타 `{2,4-6}` | 강조 줄 |
-| `// [!code error]`, `// [!code warning]` | 붉은, 노란 줄 바탕 |
-| `// [!code ++]`, `// [!code --]` | 추가, 삭제 줄 |
-| `// [!code word:name]` | 그 줄의 낱말 강조 |
+| `// [!code highlight]` 또는 코드 블록 메타 `{2,4-6}` | 해당 줄 강조 |
+| `// [!code error]` · `// [!code warning]` | 오류·주의 줄 표시 |
+| `// [!code ++]` · `// [!code --]` | 추가·삭제 줄 표시 |
+| `// [!code word:title]` | 해당 줄의 낱말 강조 |
 | 메타 `line-numbers` | 줄 번호 |
-| 메타 `bad`, `good` | 블록 바탕을 붉은, 초록 톤으로. 잘못된 예와 올바른 예 |
-| 메타 `[파일 이름]` | 코드 위에 파일 이름과 언어 띠 |
+| 메타 `bad` · `good` | 잘못된 예·올바른 예의 배경 구분 |
+| 메타 `[파일 이름]` | 코드 위 파일 이름 |
 
-주석은 그 언어의 주석 문법으로 쓰고 결과에서는 사라집니다. 잘못된 줄과 고친 줄을 코드 안에서 바로 가리킬 때 씁니다.
-블록 색 위의 줄 표기는 바탕보다 한 단계 진하게 그려져 어느 줄이 핵심인지 보입니다.
+표시용 주석은 결과에서 숨겨집니다. 언어별 주석 문법을 사용합니다.
 
 ## Code snippets
 
+예제 코드를 별도 파일로 관리한다면 `<<<`로 가져올 수 있습니다.
+
 ```markdown
 <<< ./example/response.ts
-<<< ./example/response.ts#contract bad line-numbers [example/response.ts]
+<<< ./example/response.ts#contract line-numbers [response.ts]
 ```
 
-`<<<` 줄 하나가 파일을 코드 블록으로 불러옵니다. 경로는 문서 파일 위치 기준이고 content 루트 밖은 거부합니다. 공개 빌드에서 private 스니펫 참조도 거부합니다.
-언어는 확장자로 정합니다. `#이름`을 붙이면 파일 안의 `// #region 이름`과 `// #endregion 이름` 사이만 가져오고 공통 들여쓰기를 지웁니다.
-region 표시 줄은 항상 지웁니다. 그 뒤의 글은 펜스 메타로 넘어가 줄 표기, `line-numbers`, `bad`, `good`을 그대로 씁니다.
-dev 서버는 불러온 파일이 바뀌어도 새로고침합니다. 예제 코드를 실제 파일로 두고 lint, typecheck 를 받게 할 때 씁니다.
+경로는 현재 Markdown 파일 기준입니다. 파일은 content 루트 안에 있어야 하며, 공개 문서에서는 private 파일을 불러올 수 없습니다.
+`#contract`를 붙이면 파일의 `// #region contract`와 `// #endregion contract` 사이만 표시합니다. region 표시 줄과 공통 들여쓰기는 제거합니다.
+언어는 파일 확장자로 정합니다. 경로 뒤에는 코드 블록과 같은 메타를 사용할 수 있습니다. dev에서는 불러온 파일의 변경도 반영합니다.
 
 ## Content features
 
-| Source                 | Result                     |
-| ---------------------- | -------------------------- |
-| GFM 표                 | 넓은 표의 내부 가로 스크롤 |
-| 언어 지정 코드 블록    | Shiki 코드 강조            |
-| 코드 줄 표기 `[!code …]` · 메타 `{n}` · `line-numbers` | 강조·오류·추가·삭제 줄과 줄 번호 |
-| 인라인 색 값 `#e80030` | swatch                     |
-| 설정의 상태 문구       | status badge               |
-
-상태 문구는 [Settings](settings.md#status-badges)에서 변경.
-원시 HTML은 그대로 반영되는 작성 형식. 외부 콘텐츠의 실행·격리 환경은 제공하지 않음.
+표, 목록, 체크 목록, 링크, 인라인 코드와 일반 Markdown 서식을 사용할 수 있습니다.
+그림과 첨부의 경로는 [Images](images.md), 본문 상태 문구의 강조는 [Status badges](settings.md#status-badges)를 참고합니다.
+인라인 색 값 `#e80030`은 색 견본과 함께 표시됩니다.
+원시 HTML도 사용할 수 있지만 다른 사이트의 CSS·JavaScript를 자동으로 가져오지는 않습니다.
 
 ## Block components
 
+보충 설명을 계속 보여 주려면 Note, 필요할 때 펼치게 하려면 Details를 사용합니다.
+
 ```markdown
-:::note[Scope]
-보충 설명과 제약.
+:::note[Before you start]
+Node.js 22.12.0 이상이 필요합니다.
 :::
 
-:::details[Implementation]
-### Response contract
-
-필요할 때 펼쳐 보는 구현 상세.
+:::details[More information]
+설정 파일은 프로젝트마다 하나를 사용합니다.
 :::
 ```
 
-- Note: 항상 표시되는 보충 설명 · 제목·본문 필수 · 속성 없음
-- Details: 기본 접힘 · 제목·본문 필수 · `{open}`으로 기본 펼침
-- 속성의 값 표기·중복 `open`, 주석·빈 코드·빈 목록만 있는 본문은 오류
-- 제목: 일반 텍스트 · 링크·강조·인라인 코드 미지원
-- 본문: 일반 Markdown · `###` 이하 제목과 Note·Details 중첩
-- 문서 구획: `##`와 `::part`는 부품 밖
-- 닫는 fence: 필수 · 중첩하거나 코드에 `:::`가 있으면 바깥 fence를 더 길게 작성
-- 부품 내부 제목: TOC·hash 지원 · hash 이동 시 상위 Details 공개
-- 미지원 형태·속성·빈 입력: 빌드 오류 · [Errors](parts.md#errors)
-
-Decision·Question·API reference는 section·표·링크로 작성.
-전용 부품의 필요성은 실제 샘플을 기준으로 판단.
-
-## Writing conventions
-
-- 한 줄 한 사실
-- 제목과 요약은 명사구 중심
-- 경위보다 현재 계약·결정·제약
-- 식별자와 값은 코드, 절차는 목록, 비교는 표
-- 실제 지원 범위와 미구현 범위 구분
-
-### Language
-
-- 독자: 한국어 사용자 · 기본적인 영어와 개발 용어 이해 가능
-- 제목·내비게이션·짧은 라벨: 익숙한 영어 표현 우선
-- 본문·소개·사용법·선택 이유·오류 설명: 가능한 한 한국어
-- 기술 용어·명령·코드·식별자: 원래 표기 유지 · 어색한 직역 금지
-- 같은 개념은 같은 용어 사용 · 문서마다 다른 번역이나 별칭 사용 금지
-- 영어 제목은 sentence case · `Status badges`, `Writing conventions` · 제품명과 API 표기는 원형 유지
-
-`name`과 `group`은 짧은 영어 이름. `label`은 문서 설명이므로 한국어가 기본.
-코드 예시도 같은 기준 적용: 제목은 `Overview`, 설명문은 한국어.
-
-### Terms
-
-| Term         | Meaning                                  |
-| ------------ | ---------------------------------------- |
-| Overview     | 문서의 범위와 핵심을 모은 첫 section     |
-| Frontmatter  | 파일 맨 앞의 YAML 메타데이터             |
-| Section      | `##` 제목으로 시작하는 본문 단위   |
-| Subsection   | `###` 제목 · section 안의 하위 단위      |
-| Part         | `::part[...]`로 여러 section을 묶는 그룹 |
-| TOC          | 현재 문서의 section·subsection 목록      |
-| Status badge | 설정의 상태 문구를 강조하는 표지         |
-| Swatch       | 인라인 색 값 앞에 표시하는 색 견본       |
-| Note         | 본문과 구분되는 보충 설명               |
-| Details      | 제목을 눌러 펼치는 구현 상세             |
+제목과 본문은 필수입니다. Details에 `{open}`을 붙이면 처음부터 펼칩니다.
+작성 예시와 중첩·오류 규칙은 [Parts](parts.md)를 참고합니다.
