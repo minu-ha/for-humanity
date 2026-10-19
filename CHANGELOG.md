@@ -6,6 +6,7 @@
 - Let the mouse wheel scroll the document over the document list and the outline when they fit on screen. Chrome previously kept the wheel inside them.
 - Restore the scroll position instantly when reloading or going back to an address with a heading, without first jumping to the heading or sliding down from the top.
 - End documents with a regular section margin instead of nearly a screen of blank space. Over the last screen, the outline steps through the remaining headings in order, and a heading opened from a link stays marked until you scroll.
+- Land anchor links with the heading at 40% of the screen height instead of near the top, and switch the outline at the same line.
 
 ## 0.14.0 — 2026-10-19
 

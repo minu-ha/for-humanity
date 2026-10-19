@@ -122,8 +122,8 @@
     --app-size-drawer: 320px;
     --app-size-navigation-fade: 28px;
 
-    /* 화면 위쪽 제목 여백, hash 도착점과 목차 읽는 선의 공통 기준 */
-    --app-space-anchor: 80px;
+    /* 화면 높이 40%의 제목 위치, hash 도착점과 목차 읽는 선의 공통 기준, 모바일 고정 헤더 아래 포함 */
+    --app-space-anchor: 40vh;
 
     /* 모서리, 직각 기본값 */
     --app-radius-box: 0;
@@ -161,7 +161,6 @@
         --app-space-page-top: 24px;
         --app-space-gutter: 20px;
         --app-space-tree-row: 7px;
-        --app-space-anchor: calc(var(--app-size-mobile-header) + var(--app-space-block));
     }
 }
 
