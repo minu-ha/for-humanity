@@ -13,6 +13,7 @@ describe("다이어그램", () => {
              */
             const directory = join(root, "dist/mermaid");
             const names = ["mermaid-HASH.js", "chunk-HASH.js", "THIRD-PARTY-NOTICES.txt"];
+
             await mkdir(directory, {recursive: true});
             await Promise.all(names.map((name) => writeFile(join(directory, name), name)));
 

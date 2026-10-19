@@ -29,10 +29,12 @@ export const contentConfigSchema = z
          * 프로젝트 루트 기준 문서 폴더, 점 하나는 프로젝트 루트
          */
         root: contentPathSchema.transform((value) => (value === "" ? "." : value)).default(content_default.root),
+
         /**
          * 문서 루트 아래 공개 문서 폴더
          */
         public: contentPathSchema.refine((value) => value !== "", "공개 문서는 별도 하위 폴더가 필요합니다").default(content_default.public),
+
         /**
          * 문서 루트 아래 로컬 전용 문서 폴더
          */
@@ -41,5 +43,6 @@ export const contentConfigSchema = z
     .refine((value) => {
         const published = value.public.toLowerCase();
         const internal = value.private.toLowerCase();
+
         return published !== internal && !published.startsWith(`${internal}/`) && !internal.startsWith(`${published}/`);
     }, "공개 문서와 내부 문서 폴더는 같거나 중첩될 수 없습니다");

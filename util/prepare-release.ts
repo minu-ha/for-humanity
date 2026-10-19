@@ -15,6 +15,7 @@ if (tag !== `v${metadata.version}`) {
 
 for (const file of ["README.md", "language/README.ko.md"]) {
     const readme = await readFile(file, "utf8");
+
     if (!readme.includes(`pnpm add -D --save-exact ${metadata.name}@${metadata.version}\n`)) {
         throw new Error(`${file} must install ${metadata.name}@${metadata.version}`);
     }

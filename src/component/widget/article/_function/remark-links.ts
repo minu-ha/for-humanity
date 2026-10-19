@@ -42,18 +42,24 @@ export const remarkLinks = (options: LinkOptions) => (tree: Root, file: VFile) =
         if (match) {
             if (options.scope !== undefined) {
                 const target = resolve(dirname(file.path), decodeURIComponent(`${match[1]}${match[2]}`));
+
                 try {
                     assertContentPath({scope: options.scope, path: target});
+
                     const id = toContentId({scope: options.scope, path: target});
+
                     if (!existsSync(target)) {
                         file.message(`${copy_warn_broken_link}: ${node.url}`, node);
                     }
+
                     node.url = `${id === "" ? "/" : `/${id}/`}${match[3]}`;
                 } catch (error) {
                     file.fail(error instanceof Error ? error.message : String(error), node);
                 }
+
                 return;
             }
+
             if (!existsSync(resolve(dirname(file.path), `${match[1]}${match[2]}`))) {
                 file.message(`${copy_warn_broken_link}: ${node.url}`, node);
             }

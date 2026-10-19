@@ -13,14 +13,18 @@ describe("변경 처리 큐", () => {
         const errors: unknown[] = [];
         let version = 1;
         let running = 0;
+
         const queue = toChangeQueue({
             run: async () => {
                 running += 1;
                 concurrency.push(running);
+
                 const current = version;
+
                 if (current === 1) {
                     await gate.promise;
                 }
+
                 renders.push(current);
                 running -= 1;
             },
@@ -34,10 +38,12 @@ describe("변경 처리 큐", () => {
          * 첫 작업이 진행 중인 상태에서 연속 변경 후 완료
          */
         const first = queue();
+
         for (const next of [2, 3, 4, 5]) {
             version = next;
             await queue();
         }
+
         gate.resolve();
         await first;
 
@@ -60,13 +66,17 @@ describe("변경 처리 큐", () => {
         const renders: number[] = [];
         const failure = new Error("Invalid source");
         let version = 1;
+
         const queue = toChangeQueue({
             run: async () => {
                 const current = version;
+
                 if (current === 1) {
                     await gate.promise;
+
                     throw failure;
                 }
+
                 renders.push(current);
             },
             onError: (error) => {
@@ -79,6 +89,7 @@ describe("변경 처리 큐", () => {
          * 실패 전 예약과 실패 후 추가 변경
          */
         const first = queue();
+
         version = 2;
         await queue();
         gate.resolve();

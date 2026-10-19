@@ -7,8 +7,10 @@ import {navigation_scroll_storage_key} from "@/store/navigation/navigation-stora
  */
 export const readNavigationScroll = async (page: Page) => {
     const serialized = await page.evaluate((key) => sessionStorage.getItem(key), navigation_scroll_storage_key);
+
     if (serialized === null) {
         return undefined;
     }
+
     return z.object({state: z.object({positions: z.record(z.string(), z.object({documents: z.number(), outline: z.number()}))})}).parse(JSON.parse(serialized)).state.positions;
 };

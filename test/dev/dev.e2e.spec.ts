@@ -42,6 +42,7 @@ test.describe("개발 서버", () => {
              * 마지막 정상 응답 유지
              */
             const response = await page.request.get("/guide/");
+
             expect(response.status()).toBe(200);
             expect(await response.text()).toContain("Added section");
         });
@@ -108,9 +109,11 @@ test.describe("개발 서버", () => {
          * 연결된 개발 페이지와 아직 없는 로컬 참조
          */
         await Promise.all([page.waitForEvent("console", (message) => message.text().includes("[vite] connected")), page.goto("/")]);
+
         const home = join(devSite.root, "README.md");
         const snippet = join(devSite.root, "example.ts");
         const picture = join(devSite.root, "picture.svg");
+
         await writeFile(home, "# Assets\n\n<<< ./example.ts\n\n![Illustration](./picture.svg)\n\n```mermaid\ngraph LR\nA[Start] --> B[End]\n```\n");
         await expect.poll(() => devSite.errors.length).toBeGreaterThan(0);
         await expect(page.getByText("Initial content.", {exact: true})).toBeVisible();
@@ -133,6 +136,7 @@ test.describe("개발 서버", () => {
         });
 
         const previousImage = await page.getByRole("img", {name: "Illustration"}).getAttribute("src");
+
         if (previousImage === null) {
             throw new Error("등록 이미지 URL이 없습니다");
         }
@@ -160,6 +164,7 @@ test.describe("개발 서버", () => {
              * 참조 파일 삭제 후 README 제거
              */
             const previousErrors = devSite.errors.length;
+
             await rm(snippet);
             await rm(picture);
             await expect.poll(() => devSite.errors.length).toBeGreaterThan(previousErrors);
@@ -189,6 +194,7 @@ test.describe("개발 서버", () => {
          * 변경 예약 직후 개발 서버 종료
          */
         const changed = once(devSite.server.watcher, "change");
+
         await writeFile(join(devSite.root, "README.md"), "# Closing server\n");
         await changed;
         await devSite.server.close();
@@ -208,6 +214,7 @@ test.describe("개발 서버", () => {
          * 첫 요청 전부터 잘못된 frontmatter가 있는 문서
          */
         const document = join(devSite.root, "public/guide.md");
+
         await writeFile(document, "---\nname: [\n---\n");
 
         await test.step("정상 스냅샷이 없으면 오류 응답을 제공한다", async () => {
@@ -278,6 +285,7 @@ test.describe("저장소 소스 개발", () => {
                  * 패키지 재빌드 없이 CSS 수정 후 페이지 새로고침
                  */
                 const changed = once(devSite.server.watcher, "change");
+
                 await writeFile(path, (await readFile(path, "utf8")).replace("margin: 0 auto;", "margin: 7px auto;"));
                 await changed;
                 await page.reload();
@@ -298,6 +306,7 @@ test.describe("저장소 소스 개발", () => {
          * 소스 스타일 목록을 사용하는 개발 페이지
          */
         const path = join(devSite.kitRoot, "src/component/widget/shell/_wg-shell-test.css");
+
         await page.goto("/");
         await expect(page.getByRole("main")).toHaveCSS("outline-style", "none");
 
@@ -339,6 +348,7 @@ test.describe("저장소 소스 개발", () => {
          */
         await writeFile(join(devSite.root, "for-humanity.config.ts"), 'export default {description: "private-config-value"};');
         await writeFile(join(devSite.root, "snippet.ts"), 'export const token = "private-snippet-value";');
+
         const paths = ["README.md", "for-humanity.config.ts", "snippet.ts"].map((name) => `/@fs/${join(devSite.root, name).replaceAll("\\", "/").replace(/^\//, "")}`);
 
         /**
@@ -355,9 +365,12 @@ test.describe("저장소 소스 개발", () => {
          */
         expect(entry.status()).toBe(200);
         expect(source.status()).toBe(200);
+
         for (const response of responses) {
             expect([403, 404]).toContain(response.status());
+
             const body = await response.text();
+
             expect(body).not.toContain("Initial content.");
             expect(body).not.toContain("private-config-value");
             expect(body).not.toContain("private-snippet-value");
@@ -371,8 +384,11 @@ test.describe("저장소 소스 개발", () => {
          */
         const path = join(devSite.kitRoot, "src/component/widget/shell/wg-shell.css");
         const original = await readFile(path, "utf8");
+
         await writeFile(path, `${original}\n.wg_shell__main { outline: 3px solid rgb(1, 2, 3); }\n`);
+
         const errors: string[] = [];
+
         page.on("pageerror", (error) => errors.push(error.message));
         await page.setViewportSize({width: 760, height: 900});
         await page.goto("/");
@@ -404,6 +420,7 @@ test.describe("저장소 소스 개발", () => {
              * 서버 셸의 언어 속성 변경
              */
             const path = join(devSite.kitRoot, "src/component/widget/shell/wg-shell.tsx");
+
             await writeFile(path, (await readFile(path, "utf8")).replace('<html lang="ko">', '<html lang="en">'));
 
             /**
@@ -421,6 +438,7 @@ test.describe("저장소 소스 개발", () => {
              * 클라이언트가 마운트하는 탐색 버튼 이름 변경
              */
             const path = join(devSite.kitRoot, "src/component/widget/sidebar/wg-sidebar.tsx");
+
             await writeFile(path, (await readFile(path, "utf8")).replace("aria-label={copy_nav_open}", 'aria-label="Updated navigation"'));
 
             /**

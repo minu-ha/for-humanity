@@ -33,11 +33,14 @@ export const WgSidebar = (props: WgSidebarProps) => {
         if (props.stores === undefined) {
             return "desktop";
         }
+
         if (matchMedia(navigation_mobile_query).matches) {
             return "drawer";
         }
+
         return matchMedia(navigation_wide_query).matches ? "wide" : "desktop";
     });
+
     const [drawerOpen, setDrawerOpen] = useState(false);
     const navigationRef = useRef<HTMLDivElement | null>(null);
     const documentsRef = useRef<HTMLDivElement | null>(null);
@@ -63,9 +66,11 @@ export const WgSidebar = (props: WgSidebarProps) => {
         if (mobileRef.current === null || wideRef.current === null) {
             return layoutRef.current;
         }
+
         if (mobileRef.current.matches) {
             return "drawer";
         }
+
         return wideRef.current.matches ? "wide" : "desktop";
     };
 
@@ -89,6 +94,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
     const saveScroll = () => {
         const documents = getDocumentsPort();
         const outline = outlineRef.current;
+
         if (
             props.stores === undefined ||
             documents === null ||
@@ -99,6 +105,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
         ) {
             return;
         }
+
         props.stores.scroll.setState((state) => {
             return {
                 positions: {
@@ -119,13 +126,17 @@ export const WgSidebar = (props: WgSidebarProps) => {
      */
     const restoreScroll = () => {
         layoutRef.current = getNavigationLayout();
+
         const documents = getDocumentsPort();
+
         if (props.stores === undefined || documents === null || outlineRef.current === null) {
             return;
         }
+
         if (layoutRef.current === "drawer" && dialogRef.current?.open !== true) {
             return;
         }
+
         const position = props.stores.scroll.getState().positions[layoutRef.current];
 
         if (position?.navigation === navigationSignature) {
@@ -151,6 +162,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
         if (dialogRef.current?.open === true) {
             return;
         }
+
         document.body.classList.remove("wg_shell__root--drawerOpen");
         setDrawerOpen(false);
     };
@@ -172,6 +184,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
         if (getNavigationLayout() !== "drawer" || dialogRef.current === null || dialogRef.current.open) {
             return;
         }
+
         dialogRef.current.showModal();
         document.body.classList.add("wg_shell__root--drawerOpen");
         setDrawerOpen(true);
@@ -197,7 +210,9 @@ export const WgSidebar = (props: WgSidebarProps) => {
         if (dialogRef.current === null || event.target !== dialogRef.current) {
             return;
         }
+
         const bounds = dialogRef.current.getBoundingClientRect();
+
         if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) {
             closeNavigation();
         }
@@ -208,6 +223,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
      */
     const handleNavigationClick: DOMAttributes["onClick"] = (event) => {
         saveScroll();
+
         if (
             dialogRef.current?.open !== true ||
             event.defaultPrevented ||
@@ -220,13 +236,18 @@ export const WgSidebar = (props: WgSidebarProps) => {
         ) {
             return;
         }
+
         const link = event.target.closest("a[href]");
+
         if (!(link instanceof HTMLAnchorElement) || (link.target !== "" && link.target !== "_self") || link.hasAttribute("download")) {
             return;
         }
+
         closeNavigation();
+
         if (link.origin === location.origin && link.pathname === location.pathname && link.search === location.search && link.hash) {
             const target = revealHashTarget(link.hash);
+
             if (target !== null) {
                 target.tabIndex = -1;
                 target.focus({preventScroll: true});
@@ -239,9 +260,11 @@ export const WgSidebar = (props: WgSidebarProps) => {
      */
     const handleLayoutChange = () => {
         const nextLayout = getNavigationLayout();
+
         if (nextLayout === layoutRef.current) {
             return;
         }
+
         if (document.activeElement instanceof HTMLElement) {
             focusRef.current = {
                 navigation: document.activeElement.closest("[data-sidebar-docs]") !== null,
@@ -249,9 +272,11 @@ export const WgSidebar = (props: WgSidebarProps) => {
                 href: document.activeElement.getAttribute("href"),
             };
         }
+
         if (nextLayout !== "drawer") {
             closeNavigation();
         }
+
         restorePendingRef.current = true;
         layoutRef.current = nextLayout;
         flushSync(() => setLayout(nextLayout));
@@ -264,6 +289,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
         if (!event.persisted || props.stores === undefined) {
             return;
         }
+
         restorePendingRef.current = true;
         props.stores.scroll.persist.rehydrate();
         handleLayoutChange();
@@ -277,12 +303,14 @@ export const WgSidebar = (props: WgSidebarProps) => {
         if (props.stores === undefined) {
             return;
         }
+
         mobileRef.current = matchMedia(navigation_mobile_query);
         wideRef.current = matchMedia(navigation_wide_query);
         mobileRef.current.addEventListener("change", handleLayoutChange);
         wideRef.current.addEventListener("change", handleLayoutChange);
         addEventListener("pagehide", saveScroll);
         addEventListener("pageshow", handlePageShow);
+
         return () => {
             mobileRef.current?.removeEventListener("change", handleLayoutChange);
             wideRef.current?.removeEventListener("change", handleLayoutChange);
@@ -301,16 +329,22 @@ export const WgSidebar = (props: WgSidebarProps) => {
         if (props.stores === undefined) {
             return;
         }
+
         let active = true;
+
         const restoreNavigation = () => {
             if (!active) {
                 return;
             }
+
             restoreScroll();
+
             if (focusRef.current === null) {
                 return;
             }
+
             const navigation = getNavigationPort();
+
             if (layout === "drawer") {
                 if (focusRef.current.navigation) {
                     openButtonRef.current?.focus({preventScroll: true});
@@ -318,18 +352,22 @@ export const WgSidebar = (props: WgSidebarProps) => {
             } else if (focusRef.current.navigation && navigation !== null) {
                 const href = focusRef.current.href;
                 const target = [...navigation.querySelectorAll<HTMLElement>("a[href]")].find((element) => element.getAttribute("href") === href);
+
                 target?.focus({preventScroll: true});
             } else if (focusRef.current.drawer) {
                 brandRef.current?.focus({preventScroll: true});
             }
+
             focusRef.current = null;
         };
+
         if (getDocumentsPort()?.isConnected) {
             restoreNavigation();
         } else {
             // Hono 최초 레이아웃 효과는 분리된 fragment에서 실행, DOM 연결 후 첫 페인트 전 보정
             queueMicrotask(restoreNavigation);
         }
+
         return () => {
             active = false;
         };

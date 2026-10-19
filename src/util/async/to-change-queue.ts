@@ -23,13 +23,17 @@ export const toChangeQueue = (options: ChangeQueueOptions) => {
 
     return async () => {
         state.requested += 1;
+
         if (state.running) {
             return;
         }
+
         state.running = true;
+
         try {
             while (state.completed !== state.requested) {
                 const requested = state.requested;
+
                 try {
                     await options.run();
                 } catch (error) {

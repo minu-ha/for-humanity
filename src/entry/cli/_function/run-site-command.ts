@@ -42,13 +42,17 @@ export const runSiteCommand = async (params: CliCommandParams) => {
         if (params.command === "preview") {
             const vite = await import("vite");
             const server = await vite.preview(toPreviewConfig({root: project.root, port: project.site.port}));
+
             server.printUrls();
+
             return;
         }
 
         if (params.command === "dev") {
             const dev = await import("@/entry/dev/start-dev-server");
+
             await dev.startDevServer({root: project.root, kitRoot, site: project.site, source: false, includePrivate: true});
+
             return;
         }
 
@@ -56,11 +60,15 @@ export const runSiteCommand = async (params: CliCommandParams) => {
 
         // 삭제된 문서와 자원의 잔여 파일 방지
         await rm(outDir, {recursive: true, force: true});
+
         const result = await toSSG(snapshot.pages, {writeFile, mkdir}, {dir: outDir});
+
         if (!result.success) {
             throw result.error;
         }
+
         const crawling = snapshot.crawling === undefined ? undefined : await toSSG(snapshot.crawling, {writeFile, mkdir}, {dir: outDir});
+
         if (crawling?.success === false) {
             throw crawling.error;
         }
@@ -69,6 +77,7 @@ export const runSiteCommand = async (params: CliCommandParams) => {
             await mkdir(dirname(join(outDir, url)), {recursive: true});
             await copyFile(file, join(outDir, url));
         }
+
         logger.success(
             `${crawling === undefined ? result.files.length : result.files.length + crawling.files.length} files, ${snapshot.files.size} assets → ${relative(process.cwd(), outDir)}`,
         );

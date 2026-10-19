@@ -17,10 +17,12 @@ describe("공개와 내부 문서", () => {
         await writeFile(join(root, "for-humanity.config.ts"), 'export default {url: "https://example.org"};');
         await writeFile(join(root, "content/README.md"), "# Home\n\n[Guide](public/guide.md)");
         await writeFile(join(root, "content/public/guide.md"), "---\nname: Guide\nlabel: Public\ngroup: Guide\n---\n\nPUBLIC_BODY");
+
         await writeFile(
             join(root, "content/private/maintenance.md"),
             "---\nname: INTERNAL_TITLE\nlabel: INTERNAL_LABEL\ngroup: Internal\n---\n\nINTERNAL_BODY\n\n![Secret](asset/secret.svg)\n\n```mermaid\nflowchart LR\n A --> B\n```",
         );
+
         await writeFile(join(root, "content/private/asset/secret.svg"), '<svg xmlns="http://www.w3.org/2000/svg"><text>INTERNAL_IMAGE</text></svg>');
         await writeFile(join(root, "content/scratch.md"), "Not a published document");
 
@@ -29,7 +31,9 @@ describe("공개와 내부 문서", () => {
          * 프로젝트 루트에서 기본 빌드, 로컬 전체 문서 스냅샷
          */
         const result = spawnSync(process.execPath, [resolve("dist/cli.js"), "build"], {cwd: root, encoding: "utf8"});
+
         expect(result.status, result.stderr).toBe(0);
+
         const output = join(root, "content/dist");
         const entries = await readdir(output, {recursive: true});
         const html = await readFile(join(output, "index.html"), "utf8");
@@ -64,6 +68,7 @@ describe("공개와 내부 문서", () => {
             await mkdir(join(root, "content/public"), {recursive: true});
             await mkdir(join(root, "content/private"), {recursive: true});
             await writeFile(join(root, "content/public/guide.md"), `---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n${source}`);
+
             for (const name of ["secret.md", "secret.svg", "secret.ts"]) {
                 await writeFile(join(root, "content/private", name), "SECRET");
             }
@@ -73,6 +78,7 @@ describe("공개와 내부 문서", () => {
              * 빌드 종료 코드와 작성 위치
              */
             const result = spawnSync(process.execPath, [resolve("dist/cli.js"), "build", root], {encoding: "utf8"});
+
             expect(result.status).toBe(1);
             expect(result.stderr).toContain("guide.md");
             expect(result.stderr).toContain("private");
@@ -94,6 +100,7 @@ describe("공개와 내부 문서", () => {
          * 내부 폴더 없이도 사용자 경로 빌드 성공
          */
         const result = spawnSync(process.execPath, [resolve("dist/cli.js"), "build", root], {encoding: "utf8"});
+
         expect(result.status, result.stderr).toBe(0);
         expect(await readFile(join(root, "knowledge/dist/index.html"), "utf8")).toContain('href="/guide/setup/"');
         expect(await readFile(join(root, "knowledge/dist/guide/setup/index.html"), "utf8")).toContain('href="/"');
@@ -111,6 +118,7 @@ describe("공개와 내부 문서", () => {
          * 마이그레이션이 필요한 입력의 명시적 실패
          */
         const result = spawnSync(process.execPath, [resolve("dist/cli.js"), "build", root], {encoding: "utf8"});
+
         expect(result.status).toBe(1);
         expect(result.stderr).toContain("content");
     });
@@ -131,9 +139,11 @@ describe("공개와 내부 문서", () => {
          * 실제 파일 경로 기준 공개 범위 검사
          */
         const result = spawnSync(process.execPath, [resolve("dist/cli.js"), "build", root], {encoding: "utf8"});
+
         expect(result.status).toBe(1);
         expect(result.stderr).toContain("private");
     });
+
     test("내부 문서의 상대 부모와 링크는 사용자 지정 공개 폴더를 해소한다", async ({root}) => {
         /**
          * GIVEN

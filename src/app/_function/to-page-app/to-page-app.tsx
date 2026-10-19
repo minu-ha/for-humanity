@@ -38,6 +38,7 @@ export const toPageApp = (options: PageParams) => {
     const app = new Hono();
 
     app.get("/", (c) => c.html(toHtml(<PgHome site={options.site} docs={options.store.docs} assets={options.assets} home={options.store.home} />)));
+
     app.get(
         "/:slug{.+}/",
         ssgParams(() => options.store.docs.map((doc) => ({slug: doc.id}))),

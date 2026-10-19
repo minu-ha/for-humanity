@@ -22,19 +22,24 @@ export const toNoticesPlugin = (): Plugin => {
                         const absolute = id.replaceAll("\\", "/");
                         const marker = absolute.lastIndexOf("/node_modules/") + "/node_modules/".length;
                         const name = absolute.slice(marker).split("/");
+
                         return absolute.slice(0, marker) + name.slice(0, name[0].startsWith("@") ? 2 : 1).join("/");
                     }),
             );
+
             const notices = await Promise.all(
                 [...packages].toSorted().map(async (directory) => {
                     const manifest = z
                         .object({name: z.string(), version: z.string(), license: z.string().optional()})
                         .parse(JSON.parse(await readFile(join(directory, "package.json"), "utf8")));
+
                     const files = (await readdir(directory, {withFileTypes: true})).filter((file) => file.isFile() && /^(licen[cs]e|copying|notice)([.-]|$)/i.test(file.name));
                     const licenses = await Promise.all(files.map(async (file) => `${file.name}\n${await readFile(join(directory, file.name), "utf8")}`));
+
                     return [`${manifest.name}@${manifest.version}`, ...(manifest.license === undefined ? [] : [`License: ${manifest.license}`]), ...licenses].join("\n\n");
                 }),
             );
+
             this.emitFile({type: "asset", fileName: "THIRD-PARTY-NOTICES.txt", source: notices.join("\n\n----------------------------------------\n\n")});
         },
     };

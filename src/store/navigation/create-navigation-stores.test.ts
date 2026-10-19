@@ -7,9 +7,11 @@ import {navigation_scroll_storage_key} from "@/store/navigation/navigation-stora
  */
 const createStorage = () => {
     const session = new Map<string, string>();
+
     const storage = {
         getItem: (key: string) => {
             const value = session.get(key);
+
             return value === undefined ? null : value;
         },
         setItem: (key: string, value: string) => {
@@ -19,6 +21,7 @@ const createStorage = () => {
             session.delete(key);
         },
     };
+
     return {
         session,
         options: {
@@ -42,6 +45,7 @@ describe("탐색 스크롤 저장", () => {
          * 탐색 스토어 생성과 저장 상태 복원
          */
         const stores = createNavigationStores(setup.options);
+
         stores.scroll.setState({
             positions: {
                 wide: {navigation: "docs", pathname: "/one/", documents: 450, outline: 300},
@@ -49,6 +53,7 @@ describe("탐색 스크롤 저장", () => {
                 drawer: {navigation: "docs", pathname: "/one/", documents: 200, outline: 800},
             },
         });
+
         const restored = createNavigationStores(setup.options).scroll.getState();
 
         /**
@@ -64,6 +69,7 @@ describe("탐색 스크롤 저장", () => {
          * 격리된 세션 저장소
          */
         const setup = createStorage();
+
         setup.session.set(navigation_scroll_storage_key, value);
 
         /**
@@ -85,6 +91,7 @@ describe("탐색 스크롤 저장", () => {
          * 격리된 세션 저장소
          */
         const setup = createStorage();
+
         setup.session.set(
             navigation_scroll_storage_key,
             JSON.stringify({
@@ -123,7 +130,9 @@ describe("탐색 스크롤 저장", () => {
         const blocked = () => {
             throw new Error("Storage blocked");
         };
+
         const stores = createNavigationStores({session: blocked});
+
         stores.scroll.setState({positions: {desktop: {navigation: "docs", pathname: "/", documents: 100, outline: 200}}});
 
         /**
@@ -145,6 +154,7 @@ describe("탐색 스크롤 저장", () => {
          * 읽기는 가능하고 쓰기는 실패하는 세션 저장소
          */
         const setup = createStorage();
+
         const stores = createNavigationStores({
             session: () => {
                 return {

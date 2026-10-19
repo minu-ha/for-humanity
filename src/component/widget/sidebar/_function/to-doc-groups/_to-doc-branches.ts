@@ -25,6 +25,7 @@ export const toDocBranches = (options: DocBranchesOptions): DocBranch[] => {
         .toSorted((a, b) => a.data.order - b.data.order || a.data.name.localeCompare(b.data.name, locale_doc_name) || a.id.localeCompare(b.id, locale_doc_name))
         .map((doc) => {
             const children = options.children.get(doc.id);
+
             return {...doc, children: children === undefined ? undefined : toDocBranches({docs: children, children: options.children})};
         });
 };

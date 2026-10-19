@@ -54,9 +54,11 @@ export const toHttpApp = (options: HttpParams) => {
 
     app.get(`/${asset_dir}/*`, handleAsset);
     app.get(asset_favicon_path, handleAsset);
+
     if (options.crawling !== undefined) {
         app.on("GET", [crawling_robots_path, crawling_sitemap_path], (c) => options.crawling?.fetch(c.req.raw, c.env) ?? c.notFound());
     }
+
     app.all("/*", (c) => options.pages.fetch(c.req.raw, c.env));
 
     return app;

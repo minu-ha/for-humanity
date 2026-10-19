@@ -16,18 +16,24 @@ export const test = base.extend<Record<never, never>, {navigationSite: string}>(
         // biome-ignore lint/correctness/noEmptyPattern: Playwright fixture 의존성 조회 계약
         async ({}, use) => {
             const root = await mkdtemp(join(tmpdir(), "for-humanity-navigation-"));
+
             try {
                 await mkdir(join(root, "public"));
+
                 const sections = range(24)
                     .map((index) => `## Section ${index}\n\n### Detail ${index}\n\n${"Readable context. ".repeat(40)}\n`)
                     .join("\n");
+
                 await writeFile(join(root, "README.md"), "# Home\n\n## Start\n\n[Guide](public/guide.md)\n");
                 await writeFile(join(root, "for-humanity.config.ts"), 'export default {content: {root: "."}, cursorFace: true};\n');
+
                 await writeFile(
                     join(root, "public/guide.md"),
                     `---\nname: Guide\nlabel: Guide\ngroup: Guide\norder: 0\n---\n\n${sections}\n:::details[Folded context]\n### Hidden detail\n\nHidden context.\n:::\n`,
                 );
+
                 await writeFile(join(root, "public/child.md"), "---\nname: Child\nlabel: Child\ngroup: Guide\nparent: guide\norder: 1\n---\n\n## Short page\n\nText.\n");
+
                 await Promise.all(
                     range(60).map((index) => {
                         return writeFile(
@@ -36,21 +42,28 @@ export const test = base.extend<Record<never, never>, {navigationSite: string}>(
                         );
                     }),
                 );
+
                 execFileSync(process.execPath, ["dist/cli.js", "build", root]);
 
                 const lifecycle = await loadBrowserScript("test/navigation/_gallery/lifecycle.tsx");
                 const browserScript = await readFile("dist/browser.js", "utf8");
+
                 const html = (await readFile(join(root, "dist/guide/index.html"), "utf8"))
                     .replace(`<script>${browserScript}</script>`, "")
                     .replace("</body>", () => `<script>${lifecycle}</script></body>`);
+
                 await mkdir(join(root, "dist/lifecycle"));
                 await writeFile(join(root, "dist/lifecycle/index.html"), html);
+
                 const server = await preview(toPreviewConfig({root, port: 0}));
+
                 try {
                     const url = server.resolvedUrls?.local[0];
+
                     if (url === undefined) {
                         throw new Error("미리보기 서버의 테스트 주소가 없습니다");
                     }
+
                     await use(new URL(url).origin);
                 } finally {
                     await server.close();

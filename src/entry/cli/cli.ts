@@ -13,6 +13,7 @@ const main = defineCommand({
     meta: async () => {
         const content: unknown = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
         const manifest = z.object({name: z.string(), version: z.string()}).parse(content);
+
         return {...manifest, description: "Markdown 문서 사이트 개발·빌드·미리보기"};
     },
     default: cli_default_command,
@@ -22,6 +23,7 @@ const main = defineCommand({
      */
     setup: (context) => {
         const option = Object.keys(context.args).find((key) => key !== "_");
+
         if (option !== undefined) {
             logger.error(`지원하지 않는 옵션: ${option}. --help로 사용법을 확인하세요`);
             process.exit(1);
@@ -37,6 +39,7 @@ const main = defineCommand({
              */
             run: async (context) => {
                 const command = await import("@/entry/cli/_function/run-site-command");
+
                 await command.runSiteCommand({command: "dev", args: context.args});
             },
         }),
@@ -49,6 +52,7 @@ const main = defineCommand({
              */
             run: async (context) => {
                 const command = await import("@/entry/cli/_function/run-site-command");
+
                 await command.runSiteCommand({command: "build", args: context.args});
             },
         }),
@@ -61,6 +65,7 @@ const main = defineCommand({
              */
             run: async (context) => {
                 const command = await import("@/entry/cli/_function/run-site-command");
+
                 await command.runSiteCommand({command: "preview", args: context.args});
             },
         }),

@@ -29,6 +29,7 @@ describe("글꼴 자원", () => {
          */
         const file = join(root, "example.woff2");
         const css = join(root, "font.css");
+
         await writeFile(css, "@font-face { font-family: Example; font-display: swap; src: url(./example.woff2); }");
         await writeFile(file, "first font bytes");
 
@@ -38,7 +39,9 @@ describe("글꼴 자원", () => {
          */
         const first = toFontCss({css, fontDir: asset_font_dir});
         const repeated = toFontCss({css, fontDir: asset_font_dir});
+
         await writeFile(file, "changed font bytes");
+
         const changed = toFontCss({css, fontDir: asset_font_dir});
 
         /**

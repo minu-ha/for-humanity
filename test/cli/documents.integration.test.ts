@@ -158,6 +158,7 @@ describe("문서 로드", () => {
          */
         expect(api?.html).toMatch(/예:이것/);
         expect(empty?.html).toMatch(/<h1[^>]*><span[^>]*>Empty<\/span><\/h1>/);
+
         for (const doc of docs) {
             expect(doc.html).not.toContain("wg_article__eyebrow");
         }
@@ -193,6 +194,7 @@ describe("문서 로드", () => {
         const site = siteConfigSchema.parse({});
 
         await mkdir(join(root, "guide"));
+
         await Promise.all([
             writeFile(join(root, "README.md"), "# Home\n"),
             writeFile(join(root, "AGENTS.md"), "# Agent instructions\n\nKeep commit titles concise.\n"),

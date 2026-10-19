@@ -19,6 +19,7 @@ describe("홈페이지", () => {
         const processor = createProcessor({site, root});
 
         await mkdir(join(root, "guide"));
+
         await Promise.all([
             writeFile(
                 join(root, "readme.md"),
@@ -32,11 +33,13 @@ describe("홈페이지", () => {
          * 홈페이지 렌더
          */
         const [docs, home] = await Promise.all([readDocs({root, processor}), readHome({root, processor})]);
+
         const app = toPageApp({
             site,
             store: {docs, home},
             assets: {stylePaths: [asset_style_path], browser: {kind: "inline" as const, code: ""}, fontCss: "", preload: []},
         });
+
         const response = await app.request("/");
         const html = await response.text();
 
@@ -72,11 +75,13 @@ describe("홈페이지", () => {
          * 홈페이지 렌더
          */
         const home = await readHome({root, processor: createProcessor({site, root})});
+
         const app = toPageApp({
             site,
             store: {docs: [], home},
             assets: {stylePaths: [asset_style_path], browser: {kind: "inline" as const, code: ""}, fontCss: "", preload: []},
         });
+
         const html = await (await app.request("/")).text();
 
         /**

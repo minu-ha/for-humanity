@@ -36,10 +36,13 @@ export const test = base.extend<{runtime: BrowserRuntime}, {mermaidSite: string}
         // biome-ignore lint/correctness/noEmptyPattern: Playwright가 구조분해 매개변수로 fixture 의존성을 조회
         async ({}, use) => {
             const root = await mkdtemp(join(tmpdir(), "for-humanity-mermaid-browser-"));
+
             try {
                 await mkdir(join(root, "public"));
                 await writeFile(join(root, "for-humanity.config.ts"), 'export default {content: {root: "."}};');
+
                 const diagrams = diagram_cases.map((diagram, index) => `## Diagram ${index}\n\n\`\`\`mermaid\n${diagram.source}\n\`\`\`\n`).join("\n");
+
                 await writeFile(join(root, "README.md"), "# Home\n\nOrdinary content.\n");
 
                 // 끝 여백 없이도 마지막 다이어그램 제목이 읽는 선에 도달하는 끝 절
@@ -47,10 +50,12 @@ export const test = base.extend<{runtime: BrowserRuntime}, {mermaidSite: string}
                     join(root, "public/guide.md"),
                     `---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n${diagrams}\n:::details[Hidden diagram]\n\n\`\`\`mermaid\nflowchart LR\n    Hidden --> Visible\n\`\`\`\n:::\n\n## Ending\n\n${"Readable context. ".repeat(400)}\n`,
                 );
+
                 await writeFile(
                     join(root, "public/hidden.md"),
                     "---\nname: Hidden\nlabel: Hidden\ngroup: Guide\n---\n\n:::details[Hidden diagram]\n\n```mermaid\nflowchart LR\n    Hidden --> Visible\n```\n:::\n",
                 );
+
                 await Promise.all(
                     diagram_cases.map((diagram) => {
                         return writeFile(
@@ -59,24 +64,33 @@ export const test = base.extend<{runtime: BrowserRuntime}, {mermaidSite: string}
                         );
                     }),
                 );
+
                 await writeFile(
                     join(root, "public/error.md"),
                     `---\nname: Errors\nlabel: Errors\ngroup: Guide\n---\n\n\`\`\`mermaid\nnot-a-diagram\n<script>window.mermaidInjected = true</script>\n\`\`\`\n\n\`\`\`mermaid\nflowchart LR\n    Good --> Diagram\n\`\`\`\n\n\`\`\`mermaid\nflowchart LR\n    a["${"x".repeat(50100)}"] --> b\n\`\`\`\n`,
                 );
+
                 execFileSync(process.execPath, ["dist/cli.js", "build", root]);
+
                 const fixture = await loadBrowserScript("test/mermaid/_gallery/lifecycle.tsx");
                 const shell = await readFile("dist/browser.js", "utf8");
+
                 const html = (await readFile(join(root, "dist/guide/index.html"), "utf8"))
                     .replace(`<script>${shell}</script>`, "")
                     .replace("</body>", () => `<script>${fixture}</script></body>`);
+
                 await mkdir(join(root, "dist/lifecycle"));
                 await writeFile(join(root, "dist/lifecycle/index.html"), html);
+
                 const server = await preview(toPreviewConfig({root, port: 0}));
+
                 try {
                     const url = server.resolvedUrls?.local[0];
+
                     if (url === undefined) {
                         throw new Error("미리보기 서버의 테스트 주소가 없습니다");
                     }
+
                     await use(new URL(url).origin);
                 } finally {
                     await server.close();
@@ -92,13 +106,16 @@ export const test = base.extend<{runtime: BrowserRuntime}, {mermaidSite: string}
     },
     runtime: async ({page}, use) => {
         const runtime: BrowserRuntime = {requests: [], errors: [], consoleErrors: []};
+
         page.on("request", (request) => runtime.requests.push(request.url()));
         page.on("pageerror", (error) => runtime.errors.push(error.message));
+
         page.on("console", (message) => {
             if (message.type() === "error") {
                 runtime.consoleErrors.push(message.text());
             }
         });
+
         await use(runtime);
     },
 });

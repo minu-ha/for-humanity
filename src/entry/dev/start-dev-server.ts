@@ -6,11 +6,13 @@ import {type DevParams, toDevConfig} from "@/entry/dev/to-dev-config";
  */
 export const startDevServer = async (params: DevParams) => {
     const server = await createServer(toDevConfig(params));
+
     try {
         await server.listen();
         server.printUrls();
     } catch (error) {
         await server.close();
+
         throw error;
     }
 
@@ -21,6 +23,7 @@ export const startDevServer = async (params: DevParams) => {
         await server.close();
         process.exit(0);
     };
+
     process.once("SIGINT", handleExit);
     process.once("SIGTERM", handleExit);
 };

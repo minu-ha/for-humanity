@@ -17,10 +17,12 @@ describe("문서 자원", () => {
         await mkdir(join(root, "img"));
         await writeFile(join(root, "img", "sample.svg"), '<svg xmlns="http://www.w3.org/2000/svg"/>');
         await writeFile(join(root, "guide", "report.csv"), "name,value\nsample,1\n");
+
         await writeFile(
             join(root, "guide", "page.md"),
             '---\nname: Media\nlabel: Media\ngroup: Guide\n---\n\n![Image](../img/sample.svg)\n\n![Reference][shot]\n\n[shot]: ../img/sample.svg\n\n<img src="../img/sample.svg" alt="Raw" />\n\n[Download](report.csv?download=1#rows)\n\n![External](https://example.com/image.png)\n',
         );
+
         const files = new Map<string, string>();
 
         /**
@@ -69,6 +71,7 @@ describe("문서 자원", () => {
          */
         await writeFile(join(root, "local image.png"), "first");
         await writeFile(join(root, "README.md"), "# Home\n\n![Home](local%20image.png)\n");
+
         const files = new Map<string, string>();
         const site = siteConfigSchema.parse({});
         const home = await readHome({root, processor: createProcessor({site, root, files})});
@@ -79,6 +82,7 @@ describe("문서 자원", () => {
          * 이미지 바이트 변경 후 홈 재처리
          */
         await writeFile(join(root, "local image.png"), "changed");
+
         const updated = new Map<string, string>();
         const changed = await readHome({root, processor: createProcessor({site, root, files: updated})});
         const after = [...updated.keys()][0];
@@ -102,6 +106,7 @@ describe("문서 자원", () => {
          */
         const outside = join(root, "outside");
         const docsRoot = join(root, "docs");
+
         await mkdir(outside);
         await mkdir(docsRoot);
         await writeFile(join(outside, "private.png"), "private");

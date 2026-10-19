@@ -17,6 +17,7 @@ describe("코드 블록", () => {
             join(root, "guide.md"),
             "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Read\n\n```ts line-numbers\nconst a = 1; // [!code error]\nconst b = 2; // [!code ++]\nconst c = 3;\n```\n\n```txt\n# [!code highlight]\nfirst\nsecond\n```\n\n```css {2}\n.a {\n  color: red;\n}\n```\n",
         );
+
         const site = siteConfigSchema.parse({});
 
         /**
@@ -47,6 +48,7 @@ describe("코드 블록", () => {
             join(root, "guide.md"),
             "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Read\n\n```ts bad [page/products.ts]\nconst a = 1;\n```\n\n```ts {1}\nconst b = 2;\n```\n",
         );
+
         const site = siteConfigSchema.parse({});
 
         /**
@@ -72,14 +74,17 @@ describe("코드 블록", () => {
          */
 
         await mkdir(join(root, "snippet"));
+
         await writeFile(
             join(root, "snippet", "example.ts"),
             "const outside = 0;\n// #region picked\n    const a = 1; // [!code error]\n    const b = 2;\n// #endregion picked\nconst after = 3;\n",
         );
+
         await writeFile(
             join(root, "guide.md"),
             "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Read\n\n<<< ./snippet/example.ts#picked bad line-numbers\n\n<<< ./snippet/example.ts\n",
         );
+
         const site = siteConfigSchema.parse({});
 
         /**
@@ -95,6 +100,7 @@ describe("코드 블록", () => {
         expect(doc.html).toMatch(
             /<pre class="[^"]*wg_article__lineNumbers[^"]*wg_article__code--bad[^"]*"|<pre class="[^"]*wg_article__code--bad[^"]*wg_article__lineNumbers[^"]*"/,
         );
+
         expect(doc.html).toMatch(/<span class="line highlighted error">[^\n]*const<\/span>[^\n]* a/);
         expect(doc.html).not.toContain("#region");
         expect(doc.html.split("const</span>").length - 1, "the region block has two lines and the whole-file block four").toBe(2 + 4);
@@ -113,6 +119,7 @@ describe("코드 블록", () => {
         await mkdir(join(root, "docs"));
         await writeFile(join(root, "outside.ts"), "const x = 1;\n");
         await writeFile(join(root, "docs", "present.ts"), "const y = 2;\n");
+
         const site = siteConfigSchema.parse({});
         const docsRoot = join(root, "docs");
 

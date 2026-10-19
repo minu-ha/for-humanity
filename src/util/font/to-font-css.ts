@@ -25,6 +25,7 @@ interface FontCssOptions {
  */
 export const toFontCss = (options: FontCssOptions) => {
     const files = new Map<string, string>();
+
     const css = [...readFileSync(options.css, "utf8").matchAll(/@font-face\s*\{[^}]*\}/g)]
         .map((match) => {
             return match[0].replace(/font-display:\s*[^;]+;/g, `font-display: ${font_display_strategy};`).replace(/url\(([^)]+)\)/g, (_match: string, relativeUrl: string) => {

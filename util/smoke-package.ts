@@ -21,29 +21,37 @@ try {
     await mkdir(join(consumer, "content/public"), {recursive: true});
     await mkdir(join(consumer, "content/private"));
     await writeFile(join(consumer, "content/private/internal.md"), "---\nname: Internal only\nlabel: Internal only\ngroup: Internal\n---\n\nINTERNAL_PACKAGE_SENTINEL");
+
     const nestedGroup = ["Projects", "Example", "Guide"];
+
     await writeFile(join(consumer, "package.json"), JSON.stringify({name: "release-consumer", private: true, type: "module"}));
     await writeFile(join(consumer, "content/README.md"), "# Package home\n\n[Guide](public/guide.md)\n");
     await writeFile(join(consumer, "content/AGENTS.md"), "# Private instructions\n");
     await writeFile(join(consumer, "content/CLAUDE.md"), "# Private instructions\n");
+
     await writeFile(
         join(consumer, "content/public/guide.md"),
         "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n# Guide\n\n```mermaid\nflowchart LR\n    A[Markdown] --> B[HTML]\n```\n",
     );
+
     await mkdir(join(consumer, "content/public/guide"));
     await mkdir(join(consumer, "content/asset"));
     await writeFile(join(consumer, "content/asset", "local image.svg"), '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><rect width="10" height="10"/></svg>');
+
     await writeFile(
         join(consumer, "content/public/guide/options.md"),
         "---\nname: Options\nlabel: Options\ngroup: Guide\nparent: ../guide\n---\n\nChild page.\n\n![Local](../../asset/local%20image.svg)\n\n[Expand](../../asset/local%20image.svg)\n",
     );
+
     await writeFile(
         join(consumer, "content/public/guide/agents.md"),
         `---\nname: Nested guide\nlabel: Nested guide\ngroup: ${JSON.stringify(nestedGroup)}\n---\n\n# Nested guide\n`,
     );
+
     const configPath = join(consumer, "for-humanity.config.ts");
     const site = {url: "https://docs.example.org", navigation: [nestedGroup, "Guide"]};
     const config = `import type {SiteConfig} from "for-humanity";\nexport default ${JSON.stringify(site)} satisfies SiteConfig;\n`;
+
     await writeFile(configPath, config);
 
     // Windows의 npm.cmd 대신 Node 배포본에 포함된 CLI를 직접 실행
@@ -62,6 +70,7 @@ try {
 
     const packageRoot = join(consumer, "node_modules", pack.name);
     const installed = packageMetadataSchema.parse(JSON.parse(await readFile(join(packageRoot, "package.json"), "utf8")));
+
     assert.equal(installed.version, pack.version);
     assert.equal(await readFile(join(packageRoot, "README.md"), "utf8"), await readFile("README.md", "utf8"));
 
@@ -71,66 +80,91 @@ try {
 
     // 저장소 별칭, 개발 의존성이 없는 소비자에서 공개 선언과 중첩 입력 타입 검증
     const compiler = resolve("node_modules/typescript/bin/tsc");
+
     await writeFile(
         join(consumer, "tsconfig.json"),
         JSON.stringify({compilerOptions: {strict: true, noEmit: true, target: "ESNext", module: "NodeNext", types: []}, files: ["for-humanity.config.ts"]}),
     );
+
     execFileSync(process.execPath, [compiler, "--project", "tsconfig.json"], {cwd: consumer, stdio: "inherit"});
+
     for (const invalid of [{port: "4321"}, {navigation: [false]}, {status: [{phrase: "Reviewed", kind: "unknown"}]}, {titel: "Typo"}, {content: {root: false}}]) {
         await writeFile(configPath, `import type {SiteConfig} from "for-humanity";\nexport default ${JSON.stringify(invalid)} satisfies SiteConfig;\n`);
+
         const checked = spawnSync(process.execPath, [compiler, "--project", "tsconfig.json"], {cwd: consumer, encoding: "utf8"});
+
         assert.equal(checked.error, undefined);
         assert.notEqual(checked.status, 0, `Invalid config must fail type checking: ${JSON.stringify(invalid)}`);
         assert.match(checked.stdout, /for-humanity\.config\.ts/);
     }
+
     await writeFile(configPath, config);
+
     const packageFiles = await readdir(packageRoot, {recursive: true});
+
     assert.ok(!packageFiles.some((file) => /\.(test|spec)\.[cm]?[jt]sx?$/.test(file)), "consumer package must exclude repository tests");
     execFileSync(process.execPath, [join(packageRoot, "dist/cli.js"), "build", "."], {cwd: consumer, stdio: "inherit"});
 
     const output = join(consumer, "content/dist");
     const home = await readFile(join(output, "index.html"), "utf8");
+
     assert.match(home, /Package home/);
     assert.doesNotMatch(home, /INTERNAL_PACKAGE_SENTINEL|Internal only/);
     assert.ok(!(await readdir(output)).includes("private"));
     assert.equal(await readFile(join(output, "robots.txt"), "utf8"), "User-agent: *\nAllow: /\n\nSitemap: https://docs.example.org/sitemap.xml\n");
+
     const sitemap = await readFile(join(output, "sitemap.xml"), "utf8");
+
     assert.deepEqual(
         [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((entry) => entry[1]).toSorted(),
         ["https://docs.example.org/", "https://docs.example.org/guide/", "https://docs.example.org/guide/agents/", "https://docs.example.org/guide/options/"].toSorted(),
     );
+
     const stylePath = home.match(/rel="stylesheet" href="([^"]+)"/)?.[1];
+
     assert.ok(stylePath);
     assert.doesNotMatch(home, /<script\b[^>]*\bsrc=/);
     assert.match(stylePath, /^\/_fh\/style\.[a-f0-9]+\.css$/);
     assert.equal(await readFile(join(output, stylePath), "utf8"), await readFile(join(packageRoot, "dist/cli.css"), "utf8"));
+
     const browserScript = await readFile(join(packageRoot, "dist/browser.js"), "utf8");
+
     assert.ok(home.includes(`<script>${browserScript}</script>`));
     assert.ok(home.indexOf(`<script>${browserScript}</script>`) < home.indexOf('<main class="wg_shell__main">'));
+
     const guide = await readFile(join(output, "guide/index.html"), "utf8");
     const mermaidPath = guide.match(/data-mermaid-module="([^"]+)"/)?.[1];
+
     assert.ok(mermaidPath);
     assert.match(mermaidPath, /^\/_fh\/mermaid\/mermaid-[A-Za-z0-9_-]+\.js$/);
     assert.match(guide, /data-mermaid-source/);
     assert.doesNotMatch(guide, /ascii-flow/);
     assert.equal(installed.dependencies?.mermaid, undefined, "the prebuilt runtime must not require a second Mermaid installation");
+
     const mermaidFiles = await readdir(join(packageRoot, "dist/mermaid"));
+
     for (const name of mermaidFiles) {
         assert.equal(await readFile(join(output, "_fh/mermaid", name), "utf8"), await readFile(join(packageRoot, "dist/mermaid", name), "utf8"));
     }
+
     const nested = await readFile(join(output, "guide/agents/index.html"), "utf8");
     const nestedNavigation = nested.match(/<nav\b[^>]*class="wg_docTree__root"[\s\S]*?<\/nav>/)?.[0];
+
     assert.ok(nestedNavigation);
     assert.match(nested, /Example<\/span><ul\b/);
     assert.match(nested, /Guide<\/span><ul\b/);
     assert.match(nested, /href="\/guide\/agents\/"[^>]*aria-current="page"/);
     assert.equal([...nestedNavigation.matchAll(/wg_docList__link--active/g)].length, 1);
+
     const child = await readFile(join(output, "guide/options/index.html"), "utf8");
     const childNavigation = child.match(/<nav\b[^>]*class="wg_docTree__root"[\s\S]*?<\/nav>/)?.[0];
+
     assert.ok(childNavigation);
     assert.match(child, /href="\/guide\/"[^>]*>Guide<\/a><ul\b[^>]*aria-label="Guide"/);
     assert.match(child, /href="\/guide\/options\/"[^>]*aria-current="page"/);
+
     const imagePath = child.match(/src="(\/_fh\/media\/asset\.[a-f0-9]+\.svg)"/)?.[1];
+
     assert.ok(imagePath);
     assert.equal(await readFile(join(output, imagePath), "utf8"), await readFile(join(consumer, "content/asset", "local image.svg"), "utf8"));
     assert.ok(child.includes(`href="${imagePath}"`));
@@ -138,29 +172,39 @@ try {
     assert.equal([...child.matchAll(/aria-current="page"/g)].length, 1);
     assert.equal([...childNavigation.matchAll(/wg_docList__link--active/g)].length, 1);
     assert.ok(nested.indexOf('aria-label="Projects"') < nested.indexOf('aria-label="Guide"'));
+
     const entries = (await readdir(output, {recursive: true})).map((path) => path.replaceAll("\\", "/"));
+
     assert.ok(!entries.includes("agents/index.html"));
     assert.ok(!entries.includes("claude/index.html"));
+
     for (const extension of [".woff2", ".css", ".svg"]) {
         assert.ok(
             entries.some((file) => file.endsWith(extension)),
             `Missing ${extension} assets`,
         );
     }
+
     for (const command of ["dev", "preview"] as const) {
         await checkPackageServer({root: consumer, cli: join(packageRoot, "dist/cli.js"), command, site});
     }
+
     const changedBrowserScript = `${browserScript}\n/* changed package bytes */\n`;
+
     await writeFile(join(packageRoot, "dist/browser.js"), changedBrowserScript);
 
     // 같은 설치에서 기존 ESM 설정도 계속 지원
     await rm(configPath);
     await writeFile(join(consumer, "for-humanity.config.mjs"), `export default ${JSON.stringify({navigation: [nestedGroup, "Guide"]})};\n`);
     execFileSync(process.execPath, [join(packageRoot, "dist/cli.js"), "build", "."], {cwd: consumer, stdio: "inherit"});
+
     const rebuilt = await readFile(join(output, "index.html"), "utf8");
+
     assert.equal(rebuilt.match(/rel="stylesheet" href="([^"]+)"/)?.[1], stylePath);
     assert.ok(rebuilt.includes(`<script>${changedBrowserScript}</script>`));
+
     const rebuiltEntries = (await readdir(output, {recursive: true})).map((path) => path.replaceAll("\\", "/"));
+
     assert.ok(!rebuiltEntries.includes("robots.txt"), "removing the public URL must also remove previous crawler files");
     assert.ok(!rebuiltEntries.includes("sitemap.xml"), "projects without a public URL must not emit a sitemap");
     assert.ok(!rebuiltEntries.some((file) => file.endsWith(".js") && !file.startsWith("_fh/mermaid/")), "only the lazy Mermaid graph may emit script assets");
@@ -172,7 +216,9 @@ try {
     for (const file of ["template/content/private/.gitkeep", "template/content/asset/.gitkeep"]) {
         assert.equal(await readFile(join(packageRoot, file), "utf8"), "");
     }
+
     const starter = join(consumer, "starter");
+
     await cp(join(packageRoot, "template"), starter, {recursive: true});
     await writeFile(join(starter, "content/private/draft.md"), "PRIVATE_STARTER_SENTINEL");
     execFileSync(process.execPath, [join(packageRoot, "dist/cli.js"), "build"], {cwd: starter, stdio: "inherit"});
@@ -182,19 +228,23 @@ try {
     await rename(join(starter, "knowledge/public"), join(starter, "knowledge/published"));
     await rename(join(starter, "knowledge/private"), join(starter, "knowledge/internal"));
     await writeFile(join(starter, "knowledge/README.md"), "# Custom starter\n\n[Start](published/getting-started.md)\n");
+
     await writeFile(
         join(starter, "for-humanity.config.ts"),
         'import type {SiteConfig} from "for-humanity";\nexport default {content: {root: "knowledge", public: "published", private: "internal"}} satisfies SiteConfig;\n',
     );
+
     await writeFile(
         join(starter, "tsconfig.json"),
         JSON.stringify({compilerOptions: {strict: true, noEmit: true, target: "ESNext", module: "NodeNext", types: []}, files: ["for-humanity.config.ts"]}),
     );
+
     execFileSync(process.execPath, [compiler, "--project", "tsconfig.json"], {cwd: starter, stdio: "inherit"});
     execFileSync(process.execPath, [join(packageRoot, "dist/cli.js"), "build", starter], {cwd: consumer, stdio: "inherit"});
     assert.match(await readFile(join(starter, "knowledge/dist/index.html"), "utf8"), /Custom starter/);
     assert.match(await readFile(join(starter, "knowledge/dist/getting-started/index.html"), "utf8"), /Getting started/);
     assert.ok(!(await readdir(join(starter, "knowledge/dist"))).some((file) => file === "private" || file === "internal"));
+
     console.log(
         `Installed ${pack.name}@${pack.version} on ${process.version}: dev/preview browsers, config types, TS/ESM settings, assets, navigation, images, Mermaid, README, crawler files and default/custom content starters passed`,
     );

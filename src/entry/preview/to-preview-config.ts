@@ -27,9 +27,11 @@ export interface PreviewParams {
  */
 export const toPreviewConfig = (params: PreviewParams): InlineConfig => {
     const outDir = resolve(params.root, "dist");
+
     if (!existsSync(join(outDir, "index.html"))) {
         throw new Error(`${copy_error_missing_build}: ${outDir}`);
     }
+
     return {
         configFile: false,
         envDir: false,
@@ -46,6 +48,7 @@ export const toPreviewConfig = (params: PreviewParams): InlineConfig => {
                         if (request.url?.startsWith(`${asset_font_dir}/`)) {
                             response.setHeader("Cache-Control", font_cache_control);
                         }
+
                         next();
                     });
 
@@ -58,6 +61,7 @@ export const toPreviewConfig = (params: PreviewParams): InlineConfig => {
                             if (request.url !== undefined && request.url.split("?")[0] === request.originalUrl?.split("?")[0]) {
                                 request.url = request.url.replace(/\/?(?=\?|$)/, "/index.html");
                             }
+
                             next();
                         });
                     };

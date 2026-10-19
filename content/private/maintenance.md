@@ -63,6 +63,7 @@ public은 라이브러리를 설치하고 사용하는 독자를 위한 안내�
 - Imports: `@/` · 같은 폴더 CSS 부수효과 import만 `./`
 - Ownership: 소유자 전용 파일 `_` · `_function`, `_type`, `_constant` 역할 폴더
 - Functions: 이름 붙인 `const` 화살표 · 블록 본문 · 명시적 반환
+- Statements: `if`·`for`·`while`은 한 줄이어도 중괄호 · 선언 묶음, 블록 문, 여러 줄 문장의 앞뒤와 `return`·`throw` 앞에 빈 줄
 - Props: 구조분해 없이 `props.*` 접근
 - Classes: `scope_slug__element--modifier` · 조합은 `clsx`
 - Comments: 명사구 · 목적·계약·제약 · 구현 반복 설명 제거
@@ -73,12 +74,12 @@ public은 라이브러리를 설치하고 사용하는 독자를 위한 안내�
 
 ### Lint coverage
 
-Biome: 포맷, import, 타입·이름·레이어 규칙.
+Biome: 포맷, import, 중괄호, 타입·이름·레이어 규칙.
 Stylelint: CSS 클래스, 선택자, 중첩, 토큰 규칙.
 `no-literal-fallback.grit`: `??`, `||` 오른쪽의 리터럴 검사.
 Biome와 Grit의 커스텀 진단 메시지는 영어.
 
-의미·소유권·주석·접근성은 수동 리뷰 대상. 린트만으로 컨벤션 충족 판정 불가.
+의미·소유권·주석·접근성·문장 사이 빈 줄은 수동 리뷰 대상. 린트만으로 컨벤션 충족 판정 불가.
 
 공통 문서 읽기·Markdown 조립·Hono 앱은 `src/app`, 인자·정적 출력·실행기 선택은 `src/entry/cli`, Vite 개발 서버 연결은 `src/entry/dev`, 정적 미리보기 설정은 `src/entry/preview`가 소유합니다. 문서 그룹과 부모 트리 계산은 `navigation` 위젯, 서버와 브라우저가 공유하는 제어 UI는 `shell-controls` 위젯이 소유합니다. `src/entry/browser`는 자료 검증·스토어 생성·root 마운트를 연결하며 위젯의 생명주기를 복제하지 않습니다. 실행 시점과 폴더 경계는 [Architecture](architecture.md#document-processing-lifetime)를 참고합니다.
 

@@ -3,5 +3,6 @@
  */
 export const isRestoringNavigation = (): boolean => {
     const navigation = performance.getEntriesByType("navigation")[0];
+
     return navigation instanceof PerformanceNavigationTiming && (navigation.type === "reload" || navigation.type === "back_forward");
 };

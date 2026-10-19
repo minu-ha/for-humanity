@@ -88,6 +88,7 @@ describe("설정 파일 조회", () => {
          * 최초 실행만 실패하고 재실행하면 성공하는 설정
          */
         const marker = join(root, "executions.txt");
+
         await writeFile(
             join(root, `for-humanity.config.${extension}`),
             `

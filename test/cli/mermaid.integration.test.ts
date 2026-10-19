@@ -15,7 +15,9 @@ describe("다이어그램", () => {
              * 한글과 HTML 문자가 포함된 Markdown 문서
              */
             const source = 'treeView-beta\n    docs/\n        "한글 <script>alert(1)</script> & guide.md"';
+
             await writeFile(join(root, "guide.md"), `---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n\`\`\`mermaid\n${source}\n\`\`\`\n`);
+
             const site = siteConfigSchema.parse({});
 
             /**
@@ -42,6 +44,7 @@ describe("다이어그램", () => {
              */
             const site = siteConfigSchema.parse({});
             const mermaid = {entry: "/_fh/mermaid/mermaid-HASH.js", files: new Map([["/_fh/mermaid/mermaid-HASH.js", "/kit/mermaid-HASH.js"]])};
+
             await writeFile(join(root, "README.md"), "# Home\n\n```mermaid\nsequenceDiagram\n User->>Docs: Read\n```\n");
 
             /**

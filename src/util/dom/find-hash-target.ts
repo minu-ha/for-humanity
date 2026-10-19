@@ -5,5 +5,6 @@ import {toHashId} from "@/util/dom/to-hash-id";
  */
 export const findHashTarget = (hash: string): HTMLElement | null => {
     const id = toHashId(hash);
+
     return id === undefined ? null : document.getElementById(id);
 };

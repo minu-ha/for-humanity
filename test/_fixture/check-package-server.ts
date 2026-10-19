@@ -37,16 +37,22 @@ interface PackageServerParams {
  */
 export const checkPackageServer = async (params: PackageServerParams) => {
     const reservation = createServer();
+
     reservation.listen(0, "localhost");
     await once(reservation, "listening");
+
     const address = reservation.address();
+
     assert.ok(address !== null && typeof address !== "string");
     await new Promise<void>((resolve, reject) => reservation.close((error) => (error === undefined ? resolve() : reject(error))));
+
     const configPath = join(params.root, "for-humanity.config.ts");
     const homePath = join(params.root, "content/README.md");
     const originalConfig = await readFile(configPath, "utf8");
     const originalHome = await readFile(homePath, "utf8");
+
     await writeFile(configPath, `import type {SiteConfig} from "for-humanity";\nexport default ${JSON.stringify({...params.site, port: address.port})} satisfies SiteConfig;\n`);
+
     const server = spawn(process.execPath, [params.cli, params.command, "."], {
         cwd: params.root,
 
@@ -54,21 +60,27 @@ export const checkPackageServer = async (params: PackageServerParams) => {
         env: {...process.env, DEBUG: "vite:resolve*,vite:load*"},
         stdio: ["ignore", "pipe", "pipe"],
     });
+
     let output = "";
+
     server.stdout.on("data", (chunk) => {
         output += String(chunk);
     });
+
     server.stderr.on("data", (chunk) => {
         output += String(chunk);
     });
+
     try {
         const url = `http://localhost:${address.port}`;
+
         await expect
             .poll(
                 async () => {
                     if (server.exitCode !== null) {
                         throw new Error(output);
                     }
+
                     try {
                         return (await fetch(url, {signal: AbortSignal.timeout(1000)})).status;
                     } catch {
@@ -78,54 +90,72 @@ export const checkPackageServer = async (params: PackageServerParams) => {
                 {timeout: 20000, message: `${params.command} server must become ready`},
             )
             .toBe(200);
+
         const browser = await chromium.launch({channel: process.env.FH_TEST_BROWSER_CHANNEL});
+
         try {
             const page = await browser.newPage();
             const errors: string[] = [];
+
             page.on("pageerror", (error) => errors.push(error.message));
+
             page.on("requestfailed", (request) => {
                 output += `\n${request.method()} ${request.url()}: ${request.failure()?.errorText}`;
             });
+
             page.on("response", (response) => {
                 if (!response.ok()) {
                     output += `\n${response.status()} ${response.url()}`;
                 }
             });
+
             if (params.command === "dev") {
                 const client = await page.request.get(`${url}/@vite/client`);
+
                 assert.equal(client.status(), 200, `Vite client response: ${await client.text()}`);
+
                 const connected = page.waitForEvent("console", {
                     predicate: (message) => {
                         return message.text().includes("[vite] connected");
                     },
                     timeout: 10000,
                 });
+
                 assert.equal((await page.request.get(`${url}/private/internal/`)).status(), 200);
                 await page.goto(url);
                 await connected;
                 await writeFile(homePath, "# Installed development\n\nLive package update.\n");
                 await expect(page.getByText("Live package update.", {exact: true})).toBeVisible();
+
                 for (const path of ["/README.md", "/for-humanity.config.ts", "/_fh/reload"]) {
                     assert.equal((await page.request.get(`${url}${path}`)).status(), 404);
                 }
             } else {
                 const response = await page.goto(url);
+
                 assert.ok(response !== null);
                 assert.doesNotMatch(await response.text(), /\/@vite\/client/);
                 await expect(page.getByRole("heading", {name: "Package home", exact: true})).toBeVisible();
+
                 const fontPath = (await response.text()).match(/href="([^"]+\.woff2)"/)?.[1];
+
                 assert.ok(fontPath);
+
                 const font = await page.request.get(`${url}${fontPath}`);
+
                 assert.equal(font.status(), 200);
                 assert.equal(font.headers()["cache-control"], "public, max-age=31536000, immutable");
+
                 for (const path of ["/private/internal/", "/missing/", "/README.md", "/for-humanity.config.ts", "/@vite/client"]) {
                     assert.equal((await page.request.get(`${url}${path}`)).status(), 404);
                 }
+
                 assert.equal((await page.request.get(`${url}/guide/options?from=preview`)).status(), 200);
                 await writeFile(homePath, "# Source changed after build\n");
                 await page.reload();
                 await expect(page.getByRole("heading", {name: "Package home", exact: true})).toBeVisible();
             }
+
             await page.goto(`${url}/guide/`);
             await expect(page.locator('[data-mermaid-status="rendered"]')).toHaveCount(1);
             await page.goto(`${url}/guide/options/`);
@@ -139,7 +169,9 @@ export const checkPackageServer = async (params: PackageServerParams) => {
     } finally {
         if (server.exitCode === null && server.signalCode === null) {
             const stopped = once(server, "exit", {signal: AbortSignal.timeout(5000)});
+
             server.kill("SIGTERM");
+
             try {
                 await stopped;
             } finally {
@@ -148,6 +180,7 @@ export const checkPackageServer = async (params: PackageServerParams) => {
                 }
             }
         }
+
         await writeFile(configPath, originalConfig);
         await writeFile(homePath, originalHome);
     }

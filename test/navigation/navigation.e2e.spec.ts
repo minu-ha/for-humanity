@@ -13,14 +13,18 @@ test.describe("문서 탐색", () => {
          */
         const errors: string[] = [];
         const scriptRequests: string[] = [];
+
         page.on("pageerror", (error) => errors.push(error.message));
+
         page.on("request", (request) => {
             if (request.resourceType() === "script") {
                 scriptRequests.push(request.url());
             }
         });
+
         await page.goto("/guide/");
         await page.bringToFront();
+
         const documents = page.locator('[data-sidebar-scroll="documents"]');
         const outline = page.locator('[data-sidebar-scroll="outline"]');
         const cursor = page.locator("[data-cursor-face]");
@@ -30,6 +34,7 @@ test.describe("문서 탐색", () => {
 
         // 소수 높이와 scroll anchoring의 반올림만 허용
         const roundingTolerance = 1;
+
         await test.step("새로고침 첫 프레임부터 저장한 두 위치가 복원된다", async () => {
             /**
              * WHEN
@@ -40,17 +45,21 @@ test.describe("문서 탐색", () => {
             await page.mouse.down();
             await page.mouse.up();
             await expect(cursor).toHaveCSS("visibility", "visible");
+
             await documents.evaluate((element) => {
                 element.scrollTop = 200;
             });
+
             await outline.evaluate((element) => {
                 element.scrollTop = 250;
             });
+
             await expect.poll(async () => (await readNavigationScroll(page))?.wide).toStrictEqual({documents: 200, outline: 250});
 
             // 외부 스크립트 수신 전 첫 프레임의 저장 위치 복원
             await page.addInitScript(() => {
                 window.navigationFrames = [];
+
                 let frames = 0;
 
                 /**
@@ -59,13 +68,16 @@ test.describe("문서 탐색", () => {
                 const sample = () => {
                     const documents = document.querySelector<HTMLElement>('[data-sidebar-scroll="documents"]');
                     const outline = document.querySelector<HTMLElement>('[data-sidebar-scroll="outline"]');
+
                     if (documents && outline) {
                         window.navigationFrames.push({documents: documents.scrollTop, outline: outline.scrollTop});
                     }
+
                     if (++frames < 45) {
                         requestAnimationFrame(sample);
                     }
                 };
+
                 requestAnimationFrame(sample);
             });
 
@@ -80,12 +92,15 @@ test.describe("문서 탐색", () => {
              * 첫 프레임부터 원위치와 커서 표시 유지
              */
             await expect(cursor).toHaveCSS("visibility", "visible");
+
             const frames = await page.evaluate(() => window.navigationFrames);
+
             for (const frame of frames) {
                 expect(Math.abs(frame.documents - 200)).toBeLessThanOrEqual(roundingTolerance);
                 expect(Math.abs(frame.outline - 250)).toBeLessThanOrEqual(roundingTolerance);
             }
         });
+
         await test.step("다른 문서는 목차만 초기화하고 해시의 하위 제목을 선택한다", async () => {
             await page.goto("/page-1/");
             expect(Math.abs((await documents.evaluate((element) => element.scrollTop)) - 200)).toBeLessThanOrEqual(roundingTolerance);
@@ -100,22 +115,32 @@ test.describe("문서 탐색", () => {
             await page.getByRole("link", {name: "Hidden detail", exact: true}).click();
             await expect(details).toHaveJSProperty("open", true);
             await expect(hiddenHeading).toHaveClass(/wg_article__headingText--highlighted/);
+
             const body = await page.locator("main").elementHandle();
+
             await page.setViewportSize({width: 1280, height: 600});
             await expect(navigation).toHaveAttribute("data-sidebar-layout", "desktop");
+
             await documents.evaluate((element) => {
                 element.scrollTop = 80;
             });
+
             await expect.poll(async () => (await readNavigationScroll(page))?.desktop?.documents).toBe(80);
+
             const focused = page.getByRole("link", {name: "Page 10", exact: true});
+
             await focused.focus();
+
             const desktopPosition = await page.locator('[data-sidebar-scroll="documents"]').evaluate((element) => element.scrollTop);
+
             await page.setViewportSize({width: 390, height: 844});
             await expect(page.getByRole("button", {name: "Open navigation", exact: true})).toBeFocused();
             await page.getByRole("button", {name: "Open navigation", exact: true}).click();
+
             await documents.evaluate((element) => {
                 element.scrollTop = 180;
             });
+
             await expect.poll(async () => (await readNavigationScroll(page))?.drawer?.documents).toBe(180);
             await page.getByRole("link", {name: "Page 10", exact: true}).focus();
             await page.setViewportSize({width: 1280, height: 600});
@@ -125,6 +150,7 @@ test.describe("문서 탐색", () => {
             await expect(page.locator("dialog")).toHaveJSProperty("open", false);
             expect(await body.evaluate((element) => element === document.querySelector<HTMLElement>("main"))).toBe(true);
         });
+
         await test.step("접힌 제목으로 이동하면 내용을 공개하고 강조를 정리한다", async () => {
             await page.setViewportSize({width: 1920, height: 600});
             await expect(navigation).toHaveAttribute("data-sidebar-layout", "wide");
@@ -135,11 +161,14 @@ test.describe("문서 탐색", () => {
             await expect(hiddenHeading).toHaveClass(/wg_article__headingText--highlighted/);
             await expect(hiddenHeading).not.toHaveClass(/wg_article__headingText--highlighted/);
         });
+
         expect(scriptRequests, "one inline entry must provide every browser behavior").toStrictEqual([]);
         expect(errors).toStrictEqual([]);
     });
+
     test.describe("움직임 줄이기", () => {
         test.use({reducedMotion: "reduce"});
+
         test("[NAV-011] 움직임 줄이기 설정에서는 커서 장식을 숨긴다", {tag: "@mid"}, async ({page}) => {
             /**
              * WHEN
@@ -155,15 +184,18 @@ test.describe("문서 탐색", () => {
             await expect(page.locator("[data-cursor-face]")).toHaveCSS("visibility", "hidden");
         });
     });
+
     test("[NAV-015] 구형 저장 키의 좌표는 복원하지 않는다", {tag: ["@high", "@negative"]}, async ({page}) => {
         /**
          * GIVEN
          * 현재 문서 목록과 일치하는 구형 배치별 저장값
          */
         await page.goto("/guide/");
+
         const signature = await page.locator("[data-sidebar-docs]").evaluate((element) => {
             return [...element.querySelectorAll<HTMLAnchorElement>(".wg_docTree__root a[href]")].map((link) => `${link.pathname}:${link.textContent}`).join("\n");
         });
+
         await page.addInitScript(
             (options) => {
                 sessionStorage.removeItem(options.key);
@@ -186,6 +218,7 @@ test.describe("문서 탐색", () => {
         await expect(page.locator('[data-sidebar-scroll="outline"]')).toHaveJSProperty("scrollTop", 0);
         await expect.poll(async () => (await readNavigationScroll(page))?.wide).toStrictEqual({documents: 0, outline: 0});
     });
+
     for (const storage of ["blocked", "corrupt"]) {
         test(`[NAV-${storage === "blocked" ? "012" : "013"}] 저장소 ${storage} 상태에서도 문서를 이동한다`, {tag: ["@high", "@negative"]}, async ({page}) => {
             /**
@@ -205,7 +238,9 @@ test.describe("문서 탐색", () => {
                     sessionStorage.setItem("for-humanity:navigation-scroll", "{broken");
                 }
             }, storage);
+
             const errors: string[] = [];
+
             page.on("pageerror", (error) => errors.push(error.message));
 
             /**
@@ -213,9 +248,11 @@ test.describe("문서 탐색", () => {
              * 탐색 스크롤과 다른 문서로 이동
              */
             await page.goto("/guide/");
+
             await page.locator('[data-sidebar-scroll="documents"]').evaluate((element) => {
                 element.scrollTop = 120;
             });
+
             await page.getByRole("link", {name: "Page 10", exact: true}).click();
 
             /**
@@ -226,21 +263,27 @@ test.describe("문서 탐색", () => {
             expect(errors).toStrictEqual([]);
         });
     }
+
     test("[NAV-016] 문서 끝 구간의 목차는 제목을 건너뛰지 않고 이동한 제목은 스크롤 전까지 유지한다", {tag: "@high"}, async ({page}) => {
         await page.goto("/guide/");
+
         const current = page.locator('[aria-current="location"]');
         const order = await page.locator("[data-toc-link], [data-toc-sub-link]").evaluateAll((links) => links.map((link) => link.getAttribute("href")));
         const scrollEnd = await page.evaluate(() => document.documentElement.scrollHeight - innerHeight);
+
         await test.step("마지막 화면을 내려가면 남은 제목을 차례로 표시한다", async () => {
             /**
              * WHEN
              * 마지막 화면을 작은 간격으로 스크롤
              */
             const seen: (string | null)[] = [];
+
             for (let position = scrollEnd - 600; position <= scrollEnd; position += 20) {
                 await page.evaluate((top) => scrollTo({top, behavior: "instant"}), position);
                 await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+
                 const href = await current.getAttribute("href");
+
                 if (seen.at(-1) !== href) {
                     seen.push(href);
                 }
@@ -251,9 +294,11 @@ test.describe("문서 탐색", () => {
              * 목차 순서대로 이어지고 접힌 제목을 제외한 마지막 제목에서 끝남
              */
             const indexes = seen.map((href) => order.indexOf(href));
+
             expect(indexes).toStrictEqual(indexes.map((_index, step) => indexes[0] + step));
             expect(seen.at(-1)).toBe("#detail-23");
         });
+
         await test.step("끝 구간 제목으로 이동하면 다른 제목을 거치지 않고 도착 위치와 목차가 같다", async () => {
             /**
              * GIVEN
@@ -261,14 +306,19 @@ test.describe("문서 탐색", () => {
              */
             await page.getByRole("link", {name: "Detail 22", exact: true}).click();
             await expect(current).toHaveAttribute("href", "#detail-22");
+
             await page.evaluate(() => {
                 window.tocChanges = [];
+
                 const toc = document.querySelector("[data-sidebar-toc]");
+
                 if (toc === null) {
                     return;
                 }
+
                 new MutationObserver(() => {
                     const href = document.querySelector('[aria-current="location"]')?.getAttribute("href");
+
                     if (href) {
                         window.tocChanges.push(href);
                     }
@@ -297,24 +347,31 @@ test.describe("문서 탐색", () => {
                         .evaluate((element) => Math.abs(element.getBoundingClientRect().top - Number.parseFloat(getComputedStyle(element).scrollMarginTop)));
                 })
                 .toBeLessThanOrEqual(1);
+
             await expect.poll(() => page.evaluate(() => window.tocChanges)).toStrictEqual(["#section-23"]);
             await page.mouse.move(800, 300);
             await page.mouse.wheel(0, 10);
             await expect(current).toHaveAttribute("href", "#section-23");
         });
     });
+
     test("[NAV-017] hash로 연 문서를 새로고침하면 앵커로 갔다가 다시 이동하지 않는다", {tag: "@high"}, async ({page}) => {
         /**
          * GIVEN
          * hash 제목으로 연 뒤 휠로 다른 위치에 이동한 문서
          */
         await page.goto("/guide/#detail-10");
+
         const heading = page.locator("#detail-10");
+
         await expect
             .poll(() => heading.evaluate((element) => Math.abs(element.getBoundingClientRect().top - Number.parseFloat(getComputedStyle(element).scrollMarginTop))))
             .toBeLessThanOrEqual(1);
+
         await expect(page.locator("html")).toHaveCSS("scroll-behavior", "smooth");
+
         const anchorPosition = await page.evaluate(() => scrollY);
+
         await page.mouse.move(800, 300);
         await page.mouse.wheel(0, -1000);
         await expect.poll(() => page.evaluate(() => scrollY)).toBe(anchorPosition - 1000);
@@ -328,10 +385,12 @@ test.describe("문서 탐색", () => {
              */
             const sample = () => {
                 window.readingFrames.push(scrollY);
+
                 if (window.readingFrames.length < 45) {
                     requestAnimationFrame(sample);
                 }
             };
+
             requestAnimationFrame(sample);
         });
 
@@ -349,6 +408,7 @@ test.describe("문서 탐색", () => {
          *   - 제약: 이전 위치와 앵커 중 복원 대상은 Chromium의 탐색 상태 저장 시점이 결정
          */
         const frames = await page.evaluate(() => window.readingFrames);
+
         expect(new Set(frames.filter((position) => position !== 0)).size).toBe(1);
 
         // 강조 유지 시간 종료 전의 즉시 조회
@@ -357,9 +417,11 @@ test.describe("문서 탐색", () => {
         await page.mouse.wheel(0, 100);
         await expect(page.locator("html")).toHaveCSS("scroll-behavior", "smooth");
     });
+
     test("[NAV-018] 화면에 들어가는 탐색 영역의 휠은 본문을 스크롤하고 넘치는 목록은 끝에서 휠을 가둔다", {tag: "@high"}, async ({page}) => {
         await page.setViewportSize({width: 1920, height: 1600});
         await page.goto("/guide/");
+
         for (const area of [
             {kind: "documents", name: "문서 목록"},
             {kind: "outline", name: "목차"},
@@ -370,8 +432,11 @@ test.describe("문서 탐색", () => {
                  * 화면 높이 안에 모두 들어가는 탐색 영역
                  */
                 const list = page.locator(`[data-sidebar-scroll="${area.kind}"]`);
+
                 await expect(list).not.toHaveClass(/wg_sidebar__scroll--overflow/);
+
                 const center = await list.evaluate((element) => element.getBoundingClientRect().left + element.getBoundingClientRect().width / 2);
+
                 for (const point of [
                     {name: "링크", y: 200},
                     {name: "빈 영역", y: 1550},
@@ -393,6 +458,7 @@ test.describe("문서 탐색", () => {
                 }
             });
         }
+
         await test.step("넘치는 문서 목록의 끝", async () => {
             /**
              * GIVEN
@@ -400,8 +466,11 @@ test.describe("문서 탐색", () => {
              */
             await page.setViewportSize({width: 1920, height: 600});
             await page.evaluate(() => scrollTo({top: 0, behavior: "instant"}));
+
             const documents = page.locator('[data-sidebar-scroll="documents"]');
+
             await expect(documents).toHaveClass(/wg_sidebar__scroll--overflow/);
+
             await documents.evaluate((element) => {
                 element.scrollTop = element.scrollHeight;
             });
@@ -421,8 +490,10 @@ test.describe("문서 탐색", () => {
             expect(await page.evaluate(() => scrollY)).toBe(0);
         });
     });
+
     test.describe("스크립트 없음", () => {
         test.use({javaScriptEnabled: false});
+
         test("[NAV-019] 스크립트 연결 전 문서 스크롤은 즉시 이동한다", {tag: "@mid"}, async ({page}) => {
             /**
              * WHEN

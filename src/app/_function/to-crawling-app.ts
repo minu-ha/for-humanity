@@ -26,6 +26,7 @@ export const toCrawlingApp = (params: CrawlingParams) => {
     const app = new Hono();
 
     app.get(crawling_robots_path, (c) => c.text(`User-agent: *\nAllow: /\n\nSitemap: ${params.url}${crawling_sitemap_path}\n`));
+
     app.get(crawling_sitemap_path, (_c) => {
         return new Response(
             html`<?xml version="1.0" encoding="UTF-8"?>

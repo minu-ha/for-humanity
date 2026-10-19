@@ -99,11 +99,13 @@ export const remarkBlocks = () => (tree: Root, file: VFile) => {
         });
 
         label.children = [{type: "text", value: title}];
+
         label.data = {
             ...label.data,
             hName: node.name === "note" ? "strong" : "summary",
             hProperties: {className: [node.name === "note" ? "wg_article__noteTitle" : "wg_article__detailsSummary"]},
         };
+
         node.data = {
             ...node.data,
             hName: node.name === "note" ? "aside" : "details",

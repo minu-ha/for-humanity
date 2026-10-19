@@ -46,6 +46,7 @@ export const remarkSnippets = (options: SnippetOptions) => (tree: Root, file: VF
 
         const [, path = "", region, meta] = match;
         const target = resolve(dirname(file.path), path);
+
         if (options.scope !== undefined) {
             try {
                 assertContentPath({scope: options.scope, path: target});
@@ -53,6 +54,7 @@ export const remarkSnippets = (options: SnippetOptions) => (tree: Root, file: VF
                 file.fail(error instanceof Error ? error.message : String(error), node);
             }
         }
+
         const location = relative(options.root, target);
 
         if (location === ".." || location.startsWith(`..${sep}`) || isAbsolute(location)) {
@@ -74,6 +76,7 @@ export const remarkSnippets = (options: SnippetOptions) => (tree: Root, file: VF
 
         if (body === undefined) {
             file.fail(`${copy_error_snippet}: region 이 없다 · ${path}#${region}`, node);
+
             return;
         }
 

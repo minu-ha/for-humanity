@@ -26,8 +26,10 @@ interface ReleaseRun {
  */
 const runRelease = (options: ReleaseRun) => {
     const env = {...process.env};
+
     env.TSX_TSCONFIG_PATH = resolve("tsconfig.json");
     env.GITHUB_OUTPUT = join(options.root, "outputs");
+
     return spawnSync(
         process.execPath,
         ["--import", import.meta.resolve("tsx"), fileURLToPath(new URL("prepare-release.ts", import.meta.url)), options.tag, join(options.root, "release")],
@@ -45,9 +47,11 @@ describe("릴리스 산출물", () => {
         await mkdir(join(root, "release"));
         await writeFile(join(root, "package.json"), JSON.stringify({name: "for-humanity", version: "0.1.1", homepage: "https://for-humanity.fyi"}));
         await writeFile(join(root, "CHANGELOG.md"), "# Changelog\n\n## 0.1.1 — 2026-10-03\n\n- Updated documentation.\n\n## 0.1.0 — 2026-10-03\n\n- First release.\n");
+
         for (const file of ["README.md", "language/README.ko.md"]) {
             await writeFile(join(root, file), "pnpm add -D --save-exact for-humanity@0.1.1\n");
         }
+
         await writeFile(
             join(root, "release/pack.json"),
             JSON.stringify([
@@ -101,6 +105,7 @@ describe("릴리스 산출물", () => {
          * npm의 객체 형태 패키지 보고서
          */
         const pack = packReportSchema.parse(JSON.parse(await readFile(join(root, "release/pack.json"), "utf8")));
+
         await writeFile(join(root, "release/pack.json"), JSON.stringify({[pack.name]: pack}));
 
         /**
@@ -168,6 +173,7 @@ describe("릴리스 산출물", () => {
          * 필수 파일이 누락된 패키지 보고서
          */
         const pack = packReportSchema.parse(JSON.parse(await readFile(join(root, "release/pack.json"), "utf8")));
+
         await writeFile(join(root, "release/pack.json"), JSON.stringify([{...pack, files: pack.files.filter((file) => file.path !== missing)}]));
 
         /**

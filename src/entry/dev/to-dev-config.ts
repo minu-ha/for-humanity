@@ -36,10 +36,12 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
     let prepare: (() => Promise<void>) | undefined;
     let ready: Promise<void> | undefined;
     const viteEnvPath = fileURLToPath(new URL("./dist/client/env.mjs", import.meta.resolve("vite/package.json")));
+
     const viteClientPaths = [
         /^\/@vite\/(client|env)(?:\?|$)/,
         ...[`/${relative(kitRoot, viteEnvPath)}`, `/@fs/${viteEnvPath.replace(/^\//, "")}`].map((path) => new RegExp(`^${escapeRegExp(path.replaceAll("\\", "/"))}(?:\\?|$)`)),
     ];
+
     return {
         configFile: false,
         envDir: false,
@@ -85,16 +87,19 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                 },
                 configureServer: (server) => {
                     const state = {generation: 0, closed: false};
+
                     const refresh = toChangeQueue({
                         run: async () => {
                             if (state.closed) {
                                 return;
                             }
+
                             const generation = state.generation;
 
                             // 저장소 자체 모듈의 공개 계약, Vite가 캐시를 무효화한 소스에서 로드
                             const module = params.source ? await server.ssrLoadModule("/src/app/load-site.ts") : await import(pathToFileURL(join(kitRoot, "dist/site.js")).href);
                             const load = z.custom<typeof loadSite>((value) => typeof value === "function").parse(module.loadSite);
+
                             const nextSite = await load({
                                 ...params,
                                 root,
@@ -102,9 +107,11 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                                 browser: params.source ? {kind: "module", path: "/src/entry/browser/browser.tsx"} : undefined,
                                 stylePaths: params.source ? z.array(z.string()).parse((await server.ssrLoadModule("/src/entry/dev/_constant/style.ts")).style_paths) : undefined,
                             });
+
                             if (state.closed || generation !== state.generation) {
                                 return;
                             }
+
                             currentSite = nextSite;
 
                             // Vite는 연결 전 갱신도 보관, 최초 응답의 불필요한 재접속 제외
@@ -116,6 +123,7 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                             return server.config.logger.error(`${copy_error_prefix}: ${toErrorMessage(error)}`);
                         },
                     });
+
                     const reload = debounce(refresh, dev_reload_delay_ms);
 
                     /**
@@ -124,24 +132,31 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                     const handleChange = (event: string, file: string) => {
                         const documentPath = relative(root, file);
                         const segments = documentPath.split(sep);
+
                         const isDocument =
                             documentPath !== ".." &&
                             !isAbsolute(documentPath) &&
                             !documentPath.startsWith(`..${sep}`) &&
                             !segments.some((part) => ["dist", "node_modules", ".git", ".cache"].includes(part));
+
                         const extension = extname(file);
+
                         const isSource =
                             params.source &&
                             file.startsWith(`${join(kitRoot, "src")}${sep}`) &&
                             ([".ts", ".tsx"].includes(extension) || (extension === ".css" && event !== "change"));
+
                         if (ready === undefined || (!isDocument && !isSource) || config_file_names.some((name) => documentPath === name)) {
                             return;
                         }
+
                         state.generation += 1;
                         reload();
                     };
+
                     server.watcher.add(root);
                     server.watcher.on("all", handleChange);
+
                     dispose = () => {
                         state.closed = true;
                         reload.cancel();
@@ -173,10 +188,13 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                 loadModule: async () => {
                     ready ??= prepare?.();
                     await ready;
+
                     if (currentSite === undefined) {
                         throw new Error("문서 준비에 실패했습니다. 위 오류를 수정하면 다시 반영합니다.");
                     }
+
                     const app = currentSite.app;
+
                     return {
                         fetch: async (request, env) => {
                             return app.fetch(request, env);

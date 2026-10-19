@@ -34,7 +34,9 @@ const test = base.extend<PreviewFixture>({
         await writeFile(join(root, "README.md"), "# Source home\n");
         await writeFile(join(root, "vite.config.ts"), 'throw new Error("Consumer Vite config must not run");\n');
         await writeFile(join(root, ".env.production"), "VITE_PREVIEW_PRIVATE=private-value\n");
+
         const server = await preview(toPreviewConfig({root, port: 0}));
+
         try {
             await use(server);
         } finally {
@@ -43,9 +45,11 @@ const test = base.extend<PreviewFixture>({
     },
     previewUrl: async ({previewServer}, use) => {
         const url = previewServer.resolvedUrls?.local[0];
+
         if (url === undefined) {
             throw new Error("미리보기 서버의 테스트 주소가 없습니다");
         }
+
         await use(url);
     },
 });
@@ -80,6 +84,7 @@ describe("정적 미리보기", () => {
         expect(responses.map((response) => response.status)).toStrictEqual([200, 200, 200]);
         expect(previewServer.config.env).not.toHaveProperty("VITE_PREVIEW_PRIVATE");
         expect(await responses[0].text()).toBe(await readFile(join(root, "dist/index.html"), "utf8"));
+
         for (const response of responses.slice(1)) {
             expect(await response.text()).toBe(await readFile(join(root, "dist/guide/nested/index.html"), "utf8"));
         }
@@ -101,6 +106,7 @@ describe("정적 미리보기", () => {
          * 모든 요청 거부, 없는 폰트의 장기 캐시 방지
          */
         expect(responses.map((response) => response.status)).toStrictEqual([404, 404, 404, 404, 404, 404]);
+
         for (const response of responses) {
             expect(response.headers.get("cache-control")).toBeNull();
             expect(await response.text()).not.toContain("Built home");
@@ -119,6 +125,7 @@ describe("정적 미리보기", () => {
          * 기존 정적 서버의 폴더 index.html 조회 유지
          */
         expect(responses.map((response) => response.status)).toStrictEqual([200, 200]);
+
         for (const response of responses) {
             expect(await response.text()).toBe(await readFile(join(root, "dist/guide/nested/index.html"), "utf8"));
         }

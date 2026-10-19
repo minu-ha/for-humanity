@@ -7,6 +7,7 @@ for (const source of [false, true]) {
             title: 'Site </title><script id="injected">bad</script> &copy;',
             description: 'Description "><script id="injected">bad</script> &copy;',
         };
+
         test.use({source, site, javaScriptEnabled: false});
 
         test("[HEAD-001] JavaScript 없이 제목·설명을 원문으로 표시하고 스타일을 적용한다", {tag: "@high"}, async ({page, devSite}) => {

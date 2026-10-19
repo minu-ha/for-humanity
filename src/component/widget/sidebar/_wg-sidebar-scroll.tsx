@@ -45,11 +45,14 @@ export const WgSidebarScroll = (props: WgSidebarScrollProps) => {
      */
     const updateOverflow = () => {
         frameRef.current = 0;
+
         if (props.portRef.current === null) {
             return;
         }
+
         const above = props.portRef.current.scrollTop > 1;
         const below = props.portRef.current.scrollHeight - props.portRef.current.clientHeight - props.portRef.current.scrollTop > 1;
+
         setOverflow((state) => (state.above === above && state.below === below ? state : {above, below}));
     };
 
@@ -77,13 +80,19 @@ export const WgSidebarScroll = (props: WgSidebarScrollProps) => {
         if (!props.ready || props.portRef.current === null) {
             return;
         }
+
         const observer = new ResizeObserver(scheduleOverflow);
+
         observer.observe(props.portRef.current);
+
         if (props.portRef.current.firstElementChild !== null) {
             observer.observe(props.portRef.current.firstElementChild);
         }
+
         let active = true;
+
         addEventListener("pageshow", scheduleOverflow);
+
         if (props.portRef.current.isConnected) {
             updateOverflow();
         } else {
@@ -94,6 +103,7 @@ export const WgSidebarScroll = (props: WgSidebarScrollProps) => {
                 }
             });
         }
+
         return () => {
             active = false;
             observer.disconnect();

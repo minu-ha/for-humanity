@@ -6,6 +6,7 @@ import {remarkLinks} from "@/component/widget/article/_function/remark-links";
 // 운영체제 경로 계약의 재현, 실행 중인 macOS와 Linux에서도 Windows 구분자 검증
 vi.mock("node:path", async (importOriginal) => {
     const path = await importOriginal<typeof import("node:path")>();
+
     return {...path, dirname: path.win32.dirname, relative: path.win32.relative, resolve: path.win32.resolve, sep: path.win32.sep};
 });
 
@@ -27,6 +28,7 @@ describe("Windows 문서 링크", () => {
          * Markdown 상대 링크 변환
          */
         remarkLinks({root: "C:\\docs"})(tree, file);
+
         const result = tree.children[0];
 
         /**

@@ -10,6 +10,7 @@ export const test = base.extend<{root: string}>({
     // biome-ignore lint/correctness/noEmptyPattern: Vitest가 구조분해 매개변수로 fixture 의존성을 조회
     root: async ({}, use) => {
         const root = await mkdtemp(join(tmpdir(), "for-humanity-test-"));
+
         try {
             await use(root);
         } finally {

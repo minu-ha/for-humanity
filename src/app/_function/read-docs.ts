@@ -57,6 +57,7 @@ export const readDocs = async (options: ReadDocsParams): Promise<Doc[]> => {
         options.scope === undefined
             ? [options.root]
             : [options.scope.publicRoot, ...(options.scope.includePrivate && existsSync(options.scope.privateRoot) ? [options.scope.privateRoot] : [])];
+
     const paths = (await Promise.all(roots.map(async (root) => (await readdir(root, {recursive: true})).map((path) => relative(options.root, join(root, path))))))
         .flat()
         .filter((path) => /\.mdx?$/i.test(path) && !/^(readme|agents|claude)\.md$/i.test(path) && !path.split(sep).includes("node_modules") && !path.startsWith(`dist${sep}`));
@@ -66,6 +67,7 @@ export const readDocs = async (options: ReadDocsParams): Promise<Doc[]> => {
             if (options.scope !== undefined) {
                 assertContentPath({scope: options.scope, path: join(options.root, path)});
             }
+
             const id =
                 options.scope === undefined
                     ? path
@@ -74,6 +76,7 @@ export const readDocs = async (options: ReadDocsParams): Promise<Doc[]> => {
                           .join("/")
                           .toLowerCase()
                     : toContentId({scope: options.scope, path: join(options.root, path)});
+
             const segments = id.split("/");
 
             // Hono, SSG, 정적 제공의 공통 URL 계약. 예약 문자에 의한 페이지 누락 방지
@@ -107,10 +110,12 @@ export const readDocs = async (options: ReadDocsParams): Promise<Doc[]> => {
 
             // 플러그인의 제목, 절 정보 공유
             const fh: DocFileData = {frontmatter: data, headings: [], sections: []};
+
             file.data.fh = fh;
 
             // YAML 노드만 제외. 본문 위치와 오류의 원본 줄, 열, offset 유지
             tree.children = tree.children.filter((node) => node.type !== "yaml");
+
             const rendered = await options.processor.run(tree, file);
 
             return {
@@ -134,17 +139,22 @@ export const readDocs = async (options: ReadDocsParams): Promise<Doc[]> => {
 
     return docs.map((doc) => {
         const ancestors = new Set([doc.id]);
+
         for (let parentId = doc.data.parent; parentId !== undefined; ) {
             const parent = docsById.get(parentId);
+
             if (parent === undefined) {
                 throw new Error(`${copy_error_doc_parent_missing}: ${doc.id} → ${parentId}`);
             }
+
             if (ancestors.has(parent.id)) {
                 throw new Error(`${copy_error_doc_parent_cycle}: ${[...ancestors, parent.id].join(" → ")}`);
             }
+
             if (!isEqual(parent.data.group, doc.data.group)) {
                 throw new Error(`${copy_error_doc_parent_group}: ${doc.id} → ${parent.id}`);
             }
+
             ancestors.add(parent.id);
             parentId = parent.data.parent;
         }

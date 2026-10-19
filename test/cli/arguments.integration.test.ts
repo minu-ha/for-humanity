@@ -12,6 +12,7 @@ describe("CLI 인자와 출력", () => {
          * 실행하면 실패하는 소비자 설정
          */
         await writeFile(join(root, "for-humanity.config.ts"), 'throw new Error("CONFIG_MUST_NOT_RUN");');
+
         const cli = resolve("dist/cli.js");
         const manifest = z.object({version: z.string()}).parse(JSON.parse(await readFile("package.json", "utf8")));
 
@@ -21,13 +22,16 @@ describe("CLI 인자와 출력", () => {
          */
         for (const args of [["--help"], ["-h"], ["dev", "--help"], ["build", "--help"], ["preview", "--help"]]) {
             const result = spawnSync(process.execPath, [cli, ...args], {cwd: root, encoding: "utf8", timeout: 5000});
+
             expect(result.status, result.stderr).toBe(0);
             expect(result.stdout).toContain("USAGE");
             expect(result.stdout).toContain(args.length === 1 ? "COMMANDS" : "[DIR]");
             expect(result.stderr).toBe("");
         }
+
         for (const flag of ["--version", "-v"]) {
             const result = spawnSync(process.execPath, [cli, flag], {cwd: root, encoding: "utf8", timeout: 5000});
+
             expect(result.status, result.stderr).toBe(0);
             expect(result.stdout.trim()).toBe(manifest.version);
         }
@@ -39,6 +43,7 @@ describe("CLI 인자와 출력", () => {
          * 인자 검증 뒤에만 읽을 설정
          */
         await writeFile(join(root, "for-humanity.config.ts"), 'throw new Error("CONFIG_MUST_NOT_RUN");');
+
         const cli = resolve("dist/cli.js");
 
         /**
@@ -47,6 +52,7 @@ describe("CLI 인자와 출력", () => {
          */
         for (const args of [["unknown"], ["build", "--unknown"], ["--unknown", "build"], ["build", ".", "extra"]]) {
             const result = spawnSync(process.execPath, [cli, ...args], {cwd: root, encoding: "utf8", timeout: 5000});
+
             expect(result.status, JSON.stringify(args)).toBe(1);
             expect(result.stderr).not.toContain("CONFIG_MUST_NOT_RUN");
             expect(result.stderr).not.toBe("");

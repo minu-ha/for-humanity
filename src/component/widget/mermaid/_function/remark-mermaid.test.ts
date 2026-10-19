@@ -16,6 +16,7 @@ describe("다이어그램", () => {
              * 다이어그램 영역 변환
              */
             remarkMermaid({files: new Map()})(tree);
+
             const result = tree.children[0];
 
             /**
@@ -41,6 +42,7 @@ describe("다이어그램", () => {
              * 다이어그램 영역 변환
              */
             remarkMermaid({files: new Map()})(tree);
+
             const result = tree.children;
 
             /**
@@ -56,6 +58,7 @@ describe("다이어그램", () => {
              * 다이어그램과 자체 호스팅 모듈 목록
              */
             const tree: Root = {type: "root", children: [{type: "code", lang: "mermaid", value: "flowchart LR\n A --> B"}]};
+
             const assets = {
                 entry: "/_fh/mermaid/mermaid-HASH.js",
                 files: new Map([
@@ -64,6 +67,7 @@ describe("다이어그램", () => {
                     ["/_fh/mermaid/THIRD-PARTY-NOTICES.txt", "/kit/THIRD-PARTY-NOTICES.txt"],
                 ]),
             };
+
             const files = new Map([["/_fh/existing.css", "/kit/existing.css"]]);
 
             /**
@@ -71,6 +75,7 @@ describe("다이어그램", () => {
              * 다이어그램 영역 변환
              */
             remarkMermaid({assets, files})(tree);
+
             const result = {markup: tree.children[0], files};
 
             /**
@@ -95,6 +100,7 @@ describe("다이어그램", () => {
              * 다이어그램 영역 변환
              */
             remarkMermaid({assets, files})(tree);
+
             const result = files;
 
             /**

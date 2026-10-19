@@ -9,6 +9,7 @@ export const findHashLink = (event: MouseEvent): HTMLAnchorElement | null => {
     }
 
     const link = event.target instanceof Element ? event.target.closest("a[href]") : null;
+
     const sameDocumentHash =
         link instanceof HTMLAnchorElement &&
         (link.target === "" || link.target === "_self") &&
@@ -17,5 +18,6 @@ export const findHashLink = (event: MouseEvent): HTMLAnchorElement | null => {
         link.pathname === location.pathname &&
         link.search === location.search &&
         link.hash !== "";
+
     return sameDocumentHash ? link : null;
 };

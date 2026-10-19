@@ -44,6 +44,7 @@ describe("크롤러 파일", () => {
         await mkdir(join(root, "guide"));
         await writeFile(join(root, "guide.md"), "---\nname: Start\nlabel: Start\ngroup: Guide\n---\n\nStart here.\n");
         await writeFile(join(root, "guide/한국어 & tools.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Read\n\nText.\n");
+
         const url = "https://docs.example.org";
         const site = siteConfigSchema.parse({url});
 
@@ -82,6 +83,7 @@ describe("크롤러 파일", () => {
          * 개발 중 문서 삭제 후 사이트맵 재요청
          */
         store.docs = [];
+
         const updated = await (await app.request("/sitemap.xml")).text();
 
         /**
@@ -99,6 +101,7 @@ describe("크롤러 파일", () => {
         await mkdir(join(root, "guide"));
         await writeFile(join(root, "guide.md"), "---\nname: Start\nlabel: Start\ngroup: Guide\n---\n\nStart here.\n");
         await writeFile(join(root, "guide/details.md"), "---\nname: Details\nlabel: Details\ngroup: Guide\n---\n\nNested details.\n");
+
         const url = "https://docs.example.org";
         const site = siteConfigSchema.parse({url});
 
@@ -134,6 +137,7 @@ describe("크롤러 파일", () => {
         await mkdir(join(root, "sitemap.xml"));
         await writeFile(join(root, "Robots.txt.md"), "---\nname: Robots\nlabel: Robots\ngroup: Guide\n---\n\nText.\n");
         await writeFile(join(root, "sitemap.xml/guide.md"), "---\nname: Sitemap\nlabel: Sitemap\ngroup: Guide\n---\n\nText.\n");
+
         const site = siteConfigSchema.parse({});
         const processor = createProcessor({site, root});
         const params = {root, processor, reserved: reserved ? ["robots.txt", "sitemap.xml"] : undefined};

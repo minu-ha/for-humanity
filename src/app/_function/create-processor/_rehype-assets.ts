@@ -46,20 +46,24 @@ export const rehypeAssets = (options: AssetOptions) => (tree: Root, file: VFile)
         }
 
         const match = /^([^?#]+)([?#].*)?$/.exec(url);
+
         if (match === null) {
             return;
         }
 
         const path = decodeURIComponent(match[1]);
         const extension = extname(path).toLowerCase();
+
         if (!asset_media_extensions.has(extension)) {
             if (node.tagName === "img") {
                 file.fail(`${copy_error_asset}: 지원하지 않는 이미지 형식 · ${url}`, node);
             }
+
             return;
         }
 
         const target = resolve(dirname(file.path), path);
+
         if (options.scope !== undefined) {
             try {
                 assertContentPath({scope: options.scope, path: target});
@@ -67,20 +71,26 @@ export const rehypeAssets = (options: AssetOptions) => (tree: Root, file: VFile)
                 file.fail(error instanceof Error ? error.message : String(error), node);
             }
         }
+
         const location = relative(options.root, target);
+
         if (location === ".." || location.startsWith(`..${sep}`) || isAbsolute(location)) {
             file.fail(`${copy_error_asset}: 문서 폴더 밖 · ${url}`, node);
         }
+
         if (!existsSync(target)) {
             file.fail(`${copy_error_asset}: 파일이 없다 · ${url}`, node);
         }
+
         const actual = realpathSync(target);
         const actualLocation = relative(realpathSync(options.root), actual);
+
         if (actualLocation === ".." || actualLocation.startsWith(`..${sep}`) || isAbsolute(actualLocation) || !statSync(actual).isFile()) {
             file.fail(`${copy_error_asset}: 문서 폴더 밖이거나 일반 파일이 아니다 · ${url}`, node);
         }
 
         const assetUrl = toAssetPath({path: `${asset_media_dir}/asset${extension}`, file: actual});
+
         options.files.set(assetUrl, actual);
         node.properties[property] = match[2] === undefined ? assetUrl : `${assetUrl}${match[2]}`;
     });

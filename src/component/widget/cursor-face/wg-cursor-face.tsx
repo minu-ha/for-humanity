@@ -45,17 +45,22 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
         if (positionRef.current.frame !== 0) {
             return;
         }
+
         positionRef.current.frame = requestAnimationFrame(() => {
             positionRef.current.frame = 0;
+
             const face = faceRef.current;
+
             if (face === null) {
                 return;
             }
+
             face.style.transform = `translate3d(
                 ${Math.max(0, Math.min(positionRef.current.x + cursor_face_offset_px, document.documentElement.clientWidth - face.width - cursor_face_offset_px))}px,
                 ${Math.max(0, Math.min(positionRef.current.y + cursor_face_offset_px, document.documentElement.clientHeight - face.height - cursor_face_offset_px))}px,
                 0
             )`;
+
             face.classList.add("wg_cursorFace__root--visible");
         });
     };
@@ -67,8 +72,10 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
         if (!mediaRef.current?.matches || event.pointerType !== "mouse") {
             positionRef.current.hasPointer = false;
             handleCursorHide();
+
             return;
         }
+
         positionRef.current.x = event.clientX;
         positionRef.current.y = event.clientY;
         positionRef.current.hasPointer = true;
@@ -91,6 +98,7 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
         if (!positionRef.current.hasPointer) {
             return;
         }
+
         try {
             sessionStorage.setItem(cursor_face_storage_key, JSON.stringify({x: positionRef.current.x, y: positionRef.current.y}));
         } catch {
@@ -104,11 +112,15 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
     const handlePageShow = () => {
         try {
             const stored = sessionStorage.getItem(cursor_face_storage_key);
+
             sessionStorage.removeItem(cursor_face_storage_key);
+
             if (stored === null || !mediaRef.current?.matches) {
                 return;
             }
+
             const point: unknown = JSON.parse(stored);
+
             if (
                 typeof point === "object" &&
                 point !== null &&
@@ -136,8 +148,10 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
         if (!props.ready) {
             return;
         }
+
         const lifetime = new AbortController();
         const media = matchMedia("(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)");
+
         mediaRef.current = media;
         handlePageShow();
         document.addEventListener("pointermove", handleDocumentPointer, {passive: true, signal: lifetime.signal});
@@ -148,6 +162,7 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
         addEventListener("pagehide", handlePageHide, {signal: lifetime.signal});
         addEventListener("pageshow", handlePageShow, {signal: lifetime.signal});
         media.addEventListener("change", handleCursorMediaChange, {signal: lifetime.signal});
+
         return () => {
             lifetime.abort();
             mediaRef.current = null;

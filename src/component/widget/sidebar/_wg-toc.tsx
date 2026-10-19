@@ -46,19 +46,25 @@ export const WgToc = (props: WgTocProps) => {
             for (const heading of headings) {
                 findHashTarget(`#${heading.slug}`)?.style.removeProperty(anchor_shift_property);
             }
+
             const anchors = headings.flatMap((heading) => {
                 const target = findHashTarget(`#${heading.slug}`);
+
                 return target?.checkVisibility()
                     ? [{target, arrival: scrollY + target.getBoundingClientRect().top - Number.parseFloat(getComputedStyle(target).scrollMarginTop)}]
                     : [];
             });
+
             const last = anchors.at(-1);
             const scrollEnd = document.documentElement.scrollHeight - innerHeight;
+
             if (last === undefined || scrollEnd <= 0 || last.arrival <= scrollEnd) {
                 return;
             }
+
             const stretchFrom = Math.max(0, scrollEnd - innerHeight);
             const stretchScale = (scrollEnd - stretchFrom) / (last.arrival - stretchFrom);
+
             for (const anchor of anchors) {
                 if (anchor.arrival > stretchFrom) {
                     anchor.target.style.setProperty(anchor_shift_property, `${(anchor.arrival - stretchFrom) * (1 - stretchScale)}px`);
@@ -73,12 +79,15 @@ export const WgToc = (props: WgTocProps) => {
          */
         const updateCurrentHeading = () => {
             frame.id = 0;
+
             const visible = headings.flatMap((heading) => {
                 const target = findHashTarget(`#${heading.slug}`);
+
                 return target?.checkVisibility()
                     ? [{slug: heading.slug, top: target.getBoundingClientRect().top - Number.parseFloat(getComputedStyle(target).scrollMarginTop)}]
                     : [];
             });
+
             setCurrentSlug(
                 visible.find((heading) => heading.slug === lock.slug)?.slug ?? visible.findLast((heading) => heading.top <= reading_line_slack_px)?.slug ?? visible[0]?.slug,
             );
@@ -106,9 +115,11 @@ export const WgToc = (props: WgTocProps) => {
          */
         const handleHashLinkClick = (event: MouseEvent) => {
             const link = findHashLink(event);
+
             if (link === null) {
                 return;
             }
+
             lock.slug = toHashId(link.hash);
             handleReadingPositionChange();
         };
@@ -132,6 +143,7 @@ export const WgToc = (props: WgTocProps) => {
 
         // 글꼴, 다이어그램, 접힘 변경의 문서 크기 변화 추적
         const observer = new ResizeObserver(handleLayoutChange);
+
         observer.observe(document.body);
         addEventListener("scroll", handleReadingPositionChange, {passive: true, signal: lifetime.signal});
         addEventListener("resize", handleLayoutChange, {signal: lifetime.signal});
@@ -140,9 +152,11 @@ export const WgToc = (props: WgTocProps) => {
         addEventListener("hashchange", handleHashChange, {signal: lifetime.signal});
         document.addEventListener("DOMContentLoaded", handleLayoutChange, {signal: lifetime.signal});
         document.addEventListener("click", handleHashLinkClick, {signal: lifetime.signal});
+
         for (const type of scroll_user_input_events) {
             addEventListener(type, handleUserScroll, {passive: true, signal: lifetime.signal});
         }
+
         if (document.readyState !== "loading") {
             handleLayoutChange();
         }
@@ -151,6 +165,7 @@ export const WgToc = (props: WgTocProps) => {
             cancelAnimationFrame(frame.id);
             lifetime.abort();
             observer.disconnect();
+
             for (const heading of headings) {
                 findHashTarget(`#${heading.slug}`)?.style.removeProperty(anchor_shift_property);
             }
@@ -160,6 +175,7 @@ export const WgToc = (props: WgTocProps) => {
     return (
         <nav className={clsx("wg_toc__root")} aria-label={copy_nav_toc_label}>
             <div className={clsx("wg_toc__label")}>{copy_nav_toc_label}</div>
+
             {/**
              * 가름별 제목 이동. 하위 제목이 현재 위치여도 부모 글씨는 강조하지 않음
              */}

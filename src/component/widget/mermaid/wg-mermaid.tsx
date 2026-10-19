@@ -35,7 +35,9 @@ export const WgMermaid = (props: WgMermaidProps) => {
             if (event.target instanceof Element && event.target.closest("[title]") !== null) {
                 for (const tooltip of tooltips) {
                     tooltip.hidden = false;
+
                     const bounds = tooltip.getBoundingClientRect();
+
                     tooltip.style.left = `${scrollX + Math.max(0, Math.min(bounds.left, document.documentElement.clientWidth - bounds.width))}px`;
                 }
             }
@@ -54,32 +56,42 @@ export const WgMermaid = (props: WgMermaidProps) => {
             run: async () => {
                 const elements = [...document.querySelectorAll<HTMLElement>(".wg_mermaid__root[data-mermaid]")];
                 const path = elements[0]?.dataset.mermaidModule;
+
                 if (path === undefined || lifetime.signal.aborted) {
                     return;
                 }
+
                 const mode = theme.matches ? "dark" : "light";
                 const pending = elements.filter((element) => element.checkVisibility({visibilityProperty: true}) && element.dataset.mermaidTheme !== mode);
+
                 if (pending.length === 0) {
                     return;
                 }
 
                 // 미리 빌드한 자체 호스팅 ESM의 런타임 URL, Vite의 번들 대상 분석 제외
                 const library: typeof import("mermaid") = await import(/* @vite-ignore */ path);
+
                 await document.fonts.ready;
+
                 if (lifetime.signal.aborted) {
                     return;
                 }
+
                 for (const element of pending) {
                     if (lifetime.signal.aborted || !element.isConnected || theme.matches !== (mode === "dark")) {
                         return;
                     }
+
                     const source = element.querySelector<HTMLElement>(".wg_mermaid__source");
                     const result = element.querySelector<HTMLElement>(".wg_mermaid__result");
                     const error = element.querySelector<HTMLElement>(".wg_mermaid__error");
+
                     if (source === null || result === null || error === null) {
                         continue;
                     }
+
                     const measurement = document.createElement("div");
+
                     measurement.className = "wg_mermaid__measurement";
                     measurements.add(measurement);
                     document.body.append(measurement);
@@ -91,11 +103,13 @@ export const WgMermaid = (props: WgMermaidProps) => {
 
                         // Mermaid 설정은 렌더마다 초기화. 앞 다이어그램의 frontmatter 전파 제외
                         library.default.initialize(mode === "dark" ? render_dark_config : render_config);
+
                         const rendered = await library.default.render(
                             `fh-mermaid-${crypto.getRandomValues(new Uint32Array(render_id_words)).join("-")}`,
                             source.textContent,
                             measurement,
                         );
+
                         if (lifetime.signal.aborted || !element.isConnected || theme.matches !== (mode === "dark")) {
                             return;
                         }
@@ -103,6 +117,7 @@ export const WgMermaid = (props: WgMermaidProps) => {
                         // 생성 SVG의 공식 스타일 격리. 본문 p, code, a 선택자의 내부 라벨 개입 제외
                         const shadow = result.shadowRoot ?? result.attachShadow({mode: "open"});
                         const canvas = document.createElement("div");
+
                         canvas.innerHTML = rendered.svg;
                         shadow.replaceChildren(canvas);
 
@@ -110,11 +125,14 @@ export const WgMermaid = (props: WgMermaidProps) => {
                         rendered.bindFunctions?.(canvas);
                         canvas.addEventListener("mouseover", handleTooltipShow, {signal: lifetime.signal});
                         canvas.addEventListener("mouseout", handleTooltipHide, {signal: lifetime.signal});
+
                         const tooltip = document.querySelector<HTMLElement>(".mermaidTooltip");
+
                         if (tooltip !== null) {
                             tooltip.classList.add("wg_mermaid__tooltip");
                             tooltips.add(tooltip);
                         }
+
                         result.hidden = false;
                         source.hidden = true;
                         error.hidden = true;
@@ -123,6 +141,7 @@ export const WgMermaid = (props: WgMermaidProps) => {
                         if (lifetime.signal.aborted) {
                             return;
                         }
+
                         result.hidden = true;
                         source.hidden = false;
                         error.textContent = copy_error_render;
@@ -133,23 +152,28 @@ export const WgMermaid = (props: WgMermaidProps) => {
                         measurement.remove();
                         measurements.delete(measurement);
                     }
+
                     element.dataset.mermaidTheme = mode;
                     owned.add(element);
                 }
+
                 props.onRendered?.();
             },
             onError: (cause) => {
                 if (lifetime.signal.aborted) {
                     return;
                 }
+
                 for (const element of document.querySelectorAll<HTMLElement>(".wg_mermaid__root[data-mermaid]")) {
                     const error = element.querySelector<HTMLElement>(".wg_mermaid__error");
+
                     if (error !== null) {
                         owned.add(element);
                         error.textContent = copy_error_load;
                         error.hidden = false;
                     }
                 }
+
                 console.error("for-humanity Mermaid loading failed", cause);
             },
         });
@@ -165,6 +189,7 @@ export const WgMermaid = (props: WgMermaidProps) => {
         theme.addEventListener("change", handleRender, {signal: lifetime.signal});
         addEventListener("resize", handleTooltipHide, {signal: lifetime.signal});
         document.addEventListener("toggle", handleRender, {capture: true, signal: lifetime.signal});
+
         if (document.readyState === "loading") {
             document.addEventListener("DOMContentLoaded", handleRender, {once: true, signal: lifetime.signal});
         } else {
@@ -173,31 +198,42 @@ export const WgMermaid = (props: WgMermaidProps) => {
 
         return () => {
             lifetime.abort();
+
             for (const measurement of measurements) {
                 measurement.remove();
             }
+
             measurements.clear();
+
             for (const tooltip of tooltips) {
                 tooltip.remove();
             }
+
             tooltips.clear();
+
             for (const element of owned) {
                 const source = element.querySelector<HTMLElement>(".wg_mermaid__source");
                 const result = element.querySelector<HTMLElement>(".wg_mermaid__result");
                 const error = element.querySelector<HTMLElement>(".wg_mermaid__error");
+
                 result?.shadowRoot?.replaceChildren();
+
                 if (result !== null) {
                     result.hidden = true;
                 }
+
                 if (source !== null) {
                     source.hidden = false;
                 }
+
                 if (error !== null) {
                     error.hidden = true;
                 }
+
                 delete element.dataset.mermaidTheme;
                 delete element.dataset.mermaidStatus;
             }
+
             owned.clear();
         };
     }, [props.onRendered]);

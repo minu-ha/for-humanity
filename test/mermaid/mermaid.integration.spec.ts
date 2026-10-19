@@ -12,6 +12,7 @@ test.describe("다이어그램", () => {
             await page.goto("/lifecycle/");
             await page.evaluate(() => window.diagramFixture.mount());
             await expect(page.locator('[data-mermaid-theme="light"]')).toHaveCount(diagram_cases.length);
+
             const node = page.locator(".wg_mermaid__result").first().locator(".node rect").first();
             const authoredNode = page.locator(".wg_mermaid__result").nth(7).locator(".node rect").first();
             const light = await node.evaluate((element) => getComputedStyle(element).fill);
@@ -30,6 +31,7 @@ test.describe("다이어그램", () => {
             await expect(page.locator('[data-mermaid-theme="dark"]')).toHaveCount(diagram_cases.length);
             await expect(node).not.toHaveCSS("fill", light);
             await expect(authoredNode).toHaveCSS("fill", authored);
+
             expect(
                 await page
                     .locator(".treeView-node-label")
@@ -37,17 +39,21 @@ test.describe("다이어그램", () => {
                     .evaluate((label) => {
                         const luminance = (color: string) => {
                             const channels = color.match(/[\d.]+/g);
+
                             if (channels === null) {
                                 throw new Error(`Unsupported color: ${color}`);
                             }
+
                             return channels
                                 .slice(0, 3)
                                 .map((value) => Number(value) / 255)
                                 .map((value) => (value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4))
                                 .reduce((sum, value, index) => sum + value * [0.2126, 0.7152, 0.0722][index], 0);
                         };
+
                         const foreground = luminance(getComputedStyle(label).fill);
                         const background = luminance(getComputedStyle(document.documentElement).backgroundColor);
+
                         return (Math.max(foreground, background) + 0.05) / (Math.min(foreground, background) + 0.05);
                     }),
             ).toBeGreaterThanOrEqual(4.5);
@@ -87,19 +93,25 @@ test.describe("다이어그램", () => {
              * 실제 Mermaid 렌더의 첫 응답을 지연하는 위젯
              */
             await page.goto("/lifecycle/");
+
             await page.evaluate(async () => {
                 const path = document.querySelector<HTMLElement>("[data-mermaid-module]")?.dataset.mermaidModule;
+
                 if (path === undefined) {
                     throw new Error("테스트 Mermaid 모듈이 없습니다");
                 }
+
                 const library: typeof import("mermaid") = await import(path);
                 const original = library.default.render;
                 const gate = Promise.withResolvers<void>();
                 const completion = Promise.withResolvers<void>();
                 let held = false;
+
                 window.diagramRender = {waiting: false, release: gate.resolve, completion: completion.promise};
+
                 library.default.render = async (...args: Parameters<typeof original>) => {
                     const rendered = await original(...args);
+
                     if (!held) {
                         held = true;
                         window.diagramRender.waiting = true;
@@ -107,9 +119,11 @@ test.describe("다이어그램", () => {
                         library.default.render = original;
                         completion.resolve();
                     }
+
                     return rendered;
                 };
             });
+
             await page.evaluate(() => window.diagramFixture.mount());
             await expect.poll(() => page.evaluate(() => window.diagramRender.waiting)).toBe(true);
 
@@ -122,12 +136,17 @@ test.describe("다이어그램", () => {
                     window.diagramFixture.unmount();
                     window.diagramFixture.mount();
                 });
+
                 await expect(page.locator('[data-mermaid-status="rendered"]')).toHaveCount(diagram_cases.length);
+
                 const currentId = await page.locator(".wg_mermaid__result svg").first().getAttribute("id");
+
                 if (currentId === null) {
                     throw new Error("새 SVG의 식별자가 없습니다");
                 }
+
                 await page.evaluate(() => window.diagramRender.release());
+
                 await page.evaluate(async () => {
                     await window.diagramRender.completion;
                     await new Promise(requestAnimationFrame);
@@ -181,12 +200,16 @@ test.describe("다이어그램", () => {
              * 진입 모듈의 응답이 지연된 위젯
              */
             const gate = Promise.withResolvers<void>();
+
             await page.route("**/_fh/mermaid/mermaid-*.js", async (route) => {
                 await gate.promise;
                 await route.continue();
             });
+
             await page.goto("/lifecycle/");
+
             const loading = page.waitForRequest("**/_fh/mermaid/mermaid-*.js");
+
             await page.evaluate(() => window.diagramFixture.mount());
             await loading;
 
@@ -199,11 +222,14 @@ test.describe("다이어그램", () => {
             } finally {
                 gate.resolve();
             }
+
             await page.evaluate(async () => {
                 const path = document.querySelector<HTMLElement>("[data-mermaid-module]")?.dataset.mermaidModule;
+
                 if (path === undefined) {
                     throw new Error("Missing Mermaid module in lifecycle fixture");
                 }
+
                 await import(path);
                 await new Promise(requestAnimationFrame);
             });

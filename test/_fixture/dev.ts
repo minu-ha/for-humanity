@@ -63,16 +63,21 @@ export const test = base.extend<DevFixture>({
 
         // 저장소 개발과 같은 패키지 내부 문서 루트, Vite 허용 영역 안에서도 원본 차단 검증
         const root = source ? join(kitRoot, "docs") : join(directory, "docs");
+
         try {
             await mkdir(join(root, "public"), {recursive: true});
             await writeFile(join(root, "README.md"), "# Development home\n\nInitial content.\n");
+
             if (source) {
                 for (const name of ["src", "dist", "package.json", "tsconfig.json"]) {
                     await cp(resolve(name), join(kitRoot, name), {recursive: true});
                 }
+
                 await symlink(resolve("node_modules"), join(kitRoot, "node_modules"), "junction");
             }
+
             const errors: string[] = [];
+
             const server = await createServer(
                 mergeConfig(toDevConfig({root, kitRoot, site: siteConfigSchema.parse(site), source, includePrivate: true}), {
                     // node_modules 링크를 공유해도 서버별 의존성 캐시는 격리
@@ -88,6 +93,7 @@ export const test = base.extend<DevFixture>({
             ).catch((error: unknown) => {
                 throw new Error(errors.join("\n"), {cause: error});
             });
+
             try {
                 await server.listen();
                 await use({root, kitRoot, server, errors});
@@ -96,6 +102,7 @@ export const test = base.extend<DevFixture>({
                 if (testInfo.status !== testInfo.expectedStatus && errors.length > 0) {
                     await testInfo.attach("dev-server-errors", {body: errors.join("\n"), contentType: "text/plain"});
                 }
+
                 await server.close();
             }
         } finally {
@@ -104,9 +111,11 @@ export const test = base.extend<DevFixture>({
     },
     baseURL: async ({devSite}, use) => {
         const address = devSite.server.httpServer?.address();
+
         if (address === null || address === undefined || typeof address === "string") {
             throw new Error("개발 서버의 테스트 포트가 없습니다");
         }
+
         await use(`http://127.0.0.1:${address.port}`);
     },
 });

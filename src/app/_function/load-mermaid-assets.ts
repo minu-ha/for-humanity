@@ -10,6 +10,7 @@ export const loadMermaidAssets = (kitRoot: string): MermaidAssets => {
     const directory = join(kitRoot, "dist/mermaid");
     const names = readdirSync(directory);
     const entry = names.find((name) => name.startsWith("mermaid-") && name.endsWith(".js"));
+
     if (entry === undefined) {
         throw new Error("Missing Mermaid browser entry. Run pnpm build:kit before using the CLI.");
     }

@@ -25,6 +25,7 @@ describe("사이트 설정", () => {
                 {phrase: "확인되지 않았다", kind: "unverified"},
             ],
         });
+
         expectTypeOf<NonNullable<SiteConfig["navigation"]>[number]>().toEqualTypeOf<string | string[]>();
     });
 

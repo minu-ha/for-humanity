@@ -46,9 +46,11 @@ export const readHome = async (options: ReadHomeOptions): Promise<DocContent | u
     }
 
     const path = join(options.root, paths[0]);
+
     if (options.scope !== undefined) {
         assertContentPath({scope: options.scope, path});
     }
+
     const fh: DocFileData = {headings: [], sections: []};
 
     // 파서와 지시문 원문의 offset 일치, UTF-8 BOM 제외

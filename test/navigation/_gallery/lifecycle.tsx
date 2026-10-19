@@ -22,7 +22,9 @@ const stores = createNavigationStores({
 window.shellFixture = {
     mount: () => {
         const shell = createRoot(root);
+
         shell.render(<WgShellControls data={navigation} stores={stores} />);
+
         window.shellFixture.unmount = () => {
             return flushSync(() => shell.unmount());
         };

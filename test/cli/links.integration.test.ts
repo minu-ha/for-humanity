@@ -17,6 +17,7 @@ describe("문서 링크와 목차", () => {
         const site = siteConfigSchema.parse({});
 
         await mkdir(join(root, "guide"));
+
         await Promise.all([
             writeFile(join(root, "README.md"), "# Home\n\n## Start\n"),
             writeFile(join(root, "api.mdx"), "---\nname: API\nlabel: API\ngroup: Guide\n---\n\n## Details\n"),
@@ -76,11 +77,13 @@ describe("문서 링크와 목차", () => {
          * 문서 링크와 목차 생성
          */
         const docs = await readDocs({root, processor: createProcessor({site, root})});
+
         const app = toPageApp({
             site,
             store: {docs},
             assets: {stylePaths: [asset_style_path], browser: {kind: "inline" as const, code: ""}, fontCss: "", preload: []},
         });
+
         const html = await (await app.request("/guide/")).text();
 
         /**

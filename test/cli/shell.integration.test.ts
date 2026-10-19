@@ -139,9 +139,11 @@ describe("페이지 셸", () => {
          * 탐색 초기화는 탐색 DOM 뒤와 본문 앞에서 실행된 결과
          */
         expect(html, "server HTML must not serialize browser refs or handlers").not.toMatch(/\sref="|\sonClick="/);
+
         for (const marker of ["fh-navigation-data", "data-sidebar-drawer", "data-cursor-face", '<main class="wg_shell__main">']) {
             expect(html).toContain(marker);
         }
+
         expect(initialization).toBeGreaterThan(html.indexOf("fh-navigation-data"));
         expect(initialization).toBeGreaterThan(html.indexOf("data-sidebar-drawer"));
         expect(initialization).toBeGreaterThan(html.indexOf("data-cursor-face"));

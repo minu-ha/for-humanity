@@ -22,6 +22,7 @@ describe("문서 탐색", () => {
          */
         const title = "</script><script>window.injected=true</script>\u2028\u2029";
         const site = siteConfigSchema.parse({title});
+
         await writeFile(join(root, "guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Read\n\nPrivate body marker.\n");
 
         /**
@@ -49,6 +50,7 @@ describe("문서 탐색", () => {
          * 탐색 계층과 문서 입력
          */
         await writeFile(join(root, "README.md"), "# Home\n\n## Read here\n\n### More context\n\nText.\n");
+
         const site = siteConfigSchema.parse({});
 
         /**
@@ -162,6 +164,7 @@ describe("문서 탐색", () => {
         const site = siteConfigSchema.parse({navigation: [["Projects", "Atlas", "Guide"]]});
 
         await mkdir(join(root, "guide"));
+
         await Promise.all([
             writeFile(join(root, "settings.md"), "---\nname: Settings\nlabel: Settings\ngroup: [Projects, Atlas, Guide]\norder: 10\n---\n\nSettings introduction.\n"),
             writeFile(join(root, "guide/site.md"), "---\nname: Site\nlabel: Site\ngroup: [Projects, Atlas, Guide]\nparent: settings\norder: 20\n---\n\nSite introduction.\n"),
@@ -189,14 +192,17 @@ describe("문서 탐색", () => {
         expect(toDocGroups({docs: docs.toReversed(), navigation: site.navigation})).toStrictEqual(groups);
 
         const html = toNavigationHtml({site, docs, current: "details"});
+
         expect(html).toMatch(/href="\/settings\/"[^>]*>Settings<\/a><ul\b[^>]*aria-label="Settings"/);
         expect(html).toMatch(/href="\/guide\/site\/"[^>]*>Site<\/a><ul\b[^>]*aria-label="Site"/);
         expect(html).toMatch(/href="\/details\/"[^>]*aria-current="page"/);
         expect([...html.matchAll(/aria-current="page"/g)].length).toBe(1);
         expect([...html.matchAll(/wg_docList__link--active/g)].length).toBe(1);
+
         for (const doc of docs) {
             expect(html.split(`href="/${doc.id}/"`).length - 1).toBe(1);
         }
+
         expect(html.indexOf('href="/themes/"')).toBeLessThan(html.indexOf('href="/guide/site/"'));
         expect(toNavigationHtml({site, docs})).not.toMatch(/aria-current="page"/);
 
@@ -205,6 +211,7 @@ describe("문서 탐색", () => {
             store: {docs},
             assets: {stylePaths: [asset_style_path], browser: {kind: "inline" as const, code: ""}, fontCss: "", preload: []},
         });
+
         for (const doc of docs) {
             expect((await app.request(`/${doc.id}/`)).status).toBe(200);
         }
@@ -219,11 +226,13 @@ describe("문서 탐색", () => {
 
         await mkdir(join(root, "project/research"), {recursive: true});
         await mkdir(join(root, "project/guide"));
+
         await Promise.all([
             writeFile(join(root, "project/research/README.md"), "---\nname: Research\nlabel: Research\ngroup: Guide\n---\n\nResearch introduction.\n"),
             writeFile(join(root, "project/research/parts.md"), "---\nname: Parts\nlabel: Parts\ngroup: Guide\nparent: ./readme\n---\n\nText.\n"),
             writeFile(join(root, "project/guide/authoring.md"), "---\nname: Authoring\nlabel: Authoring\ngroup: Guide\nparent: ../research/readme\n---\n\nText.\n"),
         ]);
+
         for (const scope of [root, join(root, "project")]) {
             /**
              * WHEN

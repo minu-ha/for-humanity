@@ -50,6 +50,7 @@ export const createNavigationStores = (options: NavigationStorage) => {
                 storage,
                 merge: (persisted, current) => {
                     const result = navigationScrollStateSchema.safeParse(persisted);
+
                     return result.success ? result.data : current;
                 },
             }),

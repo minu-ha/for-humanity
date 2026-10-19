@@ -36,6 +36,7 @@ export const WgShellControls = (props: WgSidebarProps) => {
         if (event.target !== document) {
             return;
         }
+
         clearTimeout(timerRef.current);
         arrivalRef.current?.abort();
         arrivalRef.current = null;
@@ -48,9 +49,11 @@ export const WgShellControls = (props: WgSidebarProps) => {
     const highlightHeading = (target: HTMLElement | null) => {
         clearHeadingHighlight();
         headingRef.current = target === null ? null : target.querySelector<HTMLElement>(".wg_article__headingText");
+
         if (headingRef.current === null) {
             return;
         }
+
         headingRef.current.classList.add("wg_article__headingText--highlighted");
         timerRef.current = window.setTimeout(clearHeadingHighlight, heading_highlight_hold_ms);
         arrivalRef.current = new AbortController();
@@ -62,10 +65,13 @@ export const WgShellControls = (props: WgSidebarProps) => {
      */
     const handleHashClick = (event: MouseEvent) => {
         const link = findHashLink(event);
+
         if (link === null) {
             return;
         }
+
         const target = revealHashTarget(link.hash);
+
         if (link.hash === location.hash) {
             highlightHeading(target);
         }
@@ -76,6 +82,7 @@ export const WgShellControls = (props: WgSidebarProps) => {
      */
     const handleHashChange = () => {
         const target = revealHashTarget(location.hash);
+
         target?.scrollIntoView();
         highlightHeading(target);
     };
@@ -98,17 +105,22 @@ export const WgShellControls = (props: WgSidebarProps) => {
         const lifetime = lifetimeRef.current;
         const hash = location.hash;
         const target = revealHashTarget(hash);
+
         if (isRestoringNavigation()) {
             return;
         }
+
         await document.fonts.ready;
+
         if (lifetime === null || lifetime.signal.aborted) {
             return;
         }
+
         if (target !== null && !userScrollRef.current?.signal.aborted && hash === location.hash) {
             target.scrollIntoView({behavior: "instant"});
             highlightHeading(target);
         }
+
         document.documentElement.style.scrollBehavior = "smooth";
     };
 
@@ -117,6 +129,7 @@ export const WgShellControls = (props: WgSidebarProps) => {
      */
     const handleBodyReady = () => {
         revealHashTarget(location.hash);
+
         if (document.readyState === "complete") {
             void handlePageLoad();
         }
@@ -127,19 +140,23 @@ export const WgShellControls = (props: WgSidebarProps) => {
      */
     useLayoutEffect(() => {
         const lifetime = new AbortController();
+
         lifetimeRef.current = lifetime;
         userScrollRef.current = new AbortController();
         document.addEventListener("click", handleHashClick, {signal: lifetime.signal});
         addEventListener("hashchange", handleHashChange, {signal: lifetime.signal});
         addEventListener("load", handlePageLoad, {once: true, signal: lifetime.signal});
+
         for (const type of scroll_user_input_events) {
             addEventListener(type, handleUserScroll, {once: true, passive: true, signal: lifetime.signal});
         }
+
         if (document.readyState === "loading") {
             document.addEventListener("DOMContentLoaded", handleBodyReady, {once: true, signal: lifetime.signal});
         } else {
             handleBodyReady();
         }
+
         return () => {
             lifetime.abort();
             lifetimeRef.current = null;
