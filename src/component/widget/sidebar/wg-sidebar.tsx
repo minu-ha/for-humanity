@@ -75,13 +75,6 @@ export const WgSidebar = (props: WgSidebarProps) => {
     };
 
     /**
-     * 배치별 DOM 참조 분리, 이전 노드 정리 시 새 배치 참조 유지
-     */
-    const getNavigationPort = () => {
-        return layoutRef.current === "drawer" ? drawerNavigationRef.current : navigationRef.current;
-    };
-
-    /**
      * 배치별 DOM은 분리하되 좌표 저장과 복원은 현재 표시되는 한 영역을 소비
      */
     const getDocumentsPort = () => {
@@ -346,7 +339,8 @@ export const WgSidebar = (props: WgSidebarProps) => {
                 return;
             }
 
-            const navigation = getNavigationPort();
+            // 배치마다 따로 둔 목록 참조. 이전 배치 노드가 정리돼도 새 배치 참조 유지
+            const navigation = layoutRef.current === "drawer" ? drawerNavigationRef.current : navigationRef.current;
 
             if (layout === "drawer") {
                 if (focusRef.current.navigation) {
@@ -354,9 +348,8 @@ export const WgSidebar = (props: WgSidebarProps) => {
                 }
             } else if (focusRef.current.navigation && navigation !== null) {
                 const href = focusRef.current.href;
-                const target = [...navigation.querySelectorAll<HTMLElement>("a[href]")].find((element) => element.getAttribute("href") === href);
 
-                target?.focus({preventScroll: true});
+                [...navigation.querySelectorAll<HTMLElement>("a[href]")].find((element) => element.getAttribute("href") === href)?.focus({preventScroll: true});
             } else if (focusRef.current.drawer) {
                 brandRef.current?.focus({preventScroll: true});
             }

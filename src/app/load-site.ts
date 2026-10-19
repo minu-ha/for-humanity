@@ -1,9 +1,8 @@
-import {readFileSync} from "node:fs";
-import {join} from "node:path";
+import {existsSync, readFileSync, realpathSync, statSync} from "node:fs";
+import {isAbsolute, join, relative, sep} from "node:path";
 import {crawling_reserved_roots} from "@/app/_constant/crawling";
 import {createProcessor} from "@/app/_function/create-processor/create-processor";
 import {loadMermaidAssets} from "@/app/_function/load-mermaid-assets";
-import {readContentScope} from "@/app/_function/read-content-scope";
 import {readDocs} from "@/app/_function/read-docs";
 import {readHome} from "@/app/_function/read-home";
 import {toCrawlingApp} from "@/app/_function/to-crawling-app";
@@ -11,6 +10,7 @@ import {toHttpApp} from "@/app/_function/to-http-app";
 import {toPageApp} from "@/app/_function/to-page-app/to-page-app";
 import {asset_favicon_path, asset_font_dir, asset_style_path} from "@/constant/asset";
 import {font_body_css, font_brand_css, font_mono_css} from "@/constant/font";
+import type {ContentScope} from "@/type/content-scope";
 import type {SiteAssets} from "@/type/site-assets";
 import type {ResolvedSiteConfig} from "@/type/site-config";
 import {toAssetPath} from "@/util/file/to-asset-path";
@@ -68,7 +68,33 @@ export const loadSite = async (params: SiteParams) => {
         files.set(stylePaths[0], join(params.kitRoot, "dist/cli.css"));
     }
 
-    const scope = readContentScope({root: params.root, content: params.site.content, includePrivate: params.includePrivate === true});
+    // 문서 범위. 공개 폴더 필수, 내부 폴더 선택, 범위 폴더의 symlink 별칭 금지
+    if (!existsSync(params.root) || !statSync(params.root).isDirectory()) {
+        throw new Error(`content 문서 루트가 없습니다: ${params.root}`);
+    }
+
+    const root = realpathSync(params.root);
+    const publicRoot = join(root, params.site.content.public);
+    const privateRoot = join(root, params.site.content.private);
+
+    for (const path of [publicRoot, privateRoot]) {
+        if (!existsSync(path)) {
+            if (path === privateRoot) {
+                continue;
+            }
+
+            throw new Error(`공개 문서 폴더가 없습니다: ${path}. content/public 구조 또는 content 설정을 확인하세요`);
+        }
+
+        const actual = realpathSync(path);
+        const location = relative(root, actual);
+
+        if (!statSync(path).isDirectory() || actual !== path || location === ".." || location.startsWith(`..${sep}`) || isAbsolute(location)) {
+            throw new Error(`문서 폴더는 content 내부의 실제 폴더여야 합니다: ${path}`);
+        }
+    }
+
+    const scope: ContentScope = {root, publicRoot, privateRoot, includePrivate: params.includePrivate === true};
     const processor = createProcessor({site: params.site, root: scope.root, files, mermaid: loadMermaidAssets(params.kitRoot), scope});
 
     const [docs, home] = await Promise.all([

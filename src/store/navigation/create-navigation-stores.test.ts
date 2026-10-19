@@ -124,14 +124,11 @@ describe("탐색 스크롤 저장", () => {
          * GIVEN
          * 접근할 때 예외를 발생시키는 저장소
          */
-        /**
-         * 브라우저 저장소 접근 차단 재현
-         */
-        const blocked = () => {
-            throw new Error("Storage blocked");
-        };
-
-        const stores = createNavigationStores({session: blocked});
+        const stores = createNavigationStores({
+            session: () => {
+                throw new Error("Storage blocked");
+            },
+        });
 
         stores.scroll.setState({positions: {desktop: {navigation: "docs", pathname: "/", documents: 100, outline: 200}}});
 

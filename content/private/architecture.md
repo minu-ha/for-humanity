@@ -136,7 +136,7 @@ Consola는 빌드 결과·문서 경고·사이트 실행 오류의 공통 출�
 
 ### Content scope
 
-`readProject`는 프로젝트 루트 설정에서 content 경로를 해소합니다. `readContentScope`는 공개·내부 폴더를 검증하고, `loadSite`는 dev에서만 내부 문서를 포함합니다. build 기본값은 공개 문서만입니다.
+`readProject`는 프로젝트 루트 설정에서 content 경로를 해소합니다. `loadSite`는 공개·내부 폴더를 검증하고 dev에서만 내부 문서를 포함합니다. build 기본값은 공개 문서만입니다.
 공개 폴더 상대 경로가 사이트 ID이며 내부 문서에는 `private/`를 붙입니다. 홈은 content 루트의 README로 별도 처리합니다. `toContentId`가 문서·상대 링크·parent 변환에 같은 규칙을 적용합니다.
 `assertContentPath`는 참조의 원래 경로와 실제 symlink 대상을 검사합니다. Markdown·원시 HTML·이미지·스니펫에서 공개 범위를 벗어나면 원본 위치가 있는 오류로 중단합니다. 공개 결과는 공개 문서만 가진 store와 그 처리 중 수집한 자원으로 생성합니다.
 

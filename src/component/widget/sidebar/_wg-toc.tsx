@@ -36,12 +36,40 @@ export const WgToc = (props: WgTocProps) => {
         const lock = {slug: isRestoringNavigation() ? undefined : toHashId(location.hash)};
 
         /**
-         * 끝 구간 제목의 도착 위치를 목차 전환 위치와 일치
+         * 연속 스크롤의 프레임당 1회 현재 제목 갱신
+         *
+         *   - 접힌 본문 제목은 제외하고 읽는 선을 통과한 마지막 제목 선택
+         *   - 링크, hash로 이동한 제목은 사용자 스크롤 전까지 유지
+         */
+        const handleReadingPositionChange = () => {
+            if (frame.id !== 0) {
+                return;
+            }
+
+            frame.id = requestAnimationFrame(() => {
+                frame.id = 0;
+
+                const visible = headings.flatMap((heading) => {
+                    const target = findHashTarget(`#${heading.slug}`);
+
+                    return target?.checkVisibility()
+                        ? [{slug: heading.slug, top: target.getBoundingClientRect().top - Number.parseFloat(getComputedStyle(target).scrollMarginTop)}]
+                        : [];
+                });
+
+                setCurrentSlug(
+                    visible.find((heading) => heading.slug === lock.slug)?.slug ?? visible.findLast((heading) => heading.top <= reading_line_slack_px)?.slug ?? visible[0]?.slug,
+                );
+            });
+        };
+
+        /**
+         * 문서 크기, 화면 높이 변경. 끝 구간 제목의 도착 위치를 목차 전환 위치와 맞춘 뒤 현재 제목 재계산
          *
          *   - 읽는 선에 닿지 못하는 끝 절이 있으면 마지막 한 화면 구간의 도착 위치를 문서 끝까지 비례 압축
          *   - 압축한 거리만큼 제목 위 여백 추가, 앵커 이동과 목차 판정이 같은 위치 사용
          */
-        const updateAnchorShifts = () => {
+        const handleLayoutChange = () => {
             for (const heading of headings) {
                 findHashTarget(`#${heading.slug}`)?.style.removeProperty(anchor_shift_property);
             }
@@ -56,57 +84,19 @@ export const WgToc = (props: WgTocProps) => {
 
             const last = anchors.at(-1);
             const scrollEnd = document.documentElement.scrollHeight - innerHeight;
+            const isTailUnreachable = last !== undefined && scrollEnd > 0 && last.arrival > scrollEnd;
 
-            if (last === undefined || scrollEnd <= 0 || last.arrival <= scrollEnd) {
-                return;
-            }
+            if (isTailUnreachable) {
+                const stretchFrom = Math.max(0, scrollEnd - innerHeight);
+                const stretchScale = (scrollEnd - stretchFrom) / (last.arrival - stretchFrom);
 
-            const stretchFrom = Math.max(0, scrollEnd - innerHeight);
-            const stretchScale = (scrollEnd - stretchFrom) / (last.arrival - stretchFrom);
-
-            for (const anchor of anchors) {
-                if (anchor.arrival > stretchFrom) {
-                    anchor.target.style.setProperty(anchor_shift_property, `${(anchor.arrival - stretchFrom) * (1 - stretchScale)}px`);
+                for (const anchor of anchors) {
+                    if (anchor.arrival > stretchFrom) {
+                        anchor.target.style.setProperty(anchor_shift_property, `${(anchor.arrival - stretchFrom) * (1 - stretchScale)}px`);
+                    }
                 }
             }
-        };
 
-        /**
-         * 접힌 본문 제목은 제외하고 읽는 선을 통과한 마지막 제목 선택
-         *
-         *   - 링크, hash로 이동한 제목은 사용자 스크롤 전까지 유지
-         */
-        const updateCurrentHeading = () => {
-            frame.id = 0;
-
-            const visible = headings.flatMap((heading) => {
-                const target = findHashTarget(`#${heading.slug}`);
-
-                return target?.checkVisibility()
-                    ? [{slug: heading.slug, top: target.getBoundingClientRect().top - Number.parseFloat(getComputedStyle(target).scrollMarginTop)}]
-                    : [];
-            });
-
-            const locked = visible.find((heading) => heading.slug === lock.slug);
-            const passed = visible.findLast((heading) => heading.top <= reading_line_slack_px);
-
-            setCurrentSlug((locked ?? passed ?? visible.at(0))?.slug);
-        };
-
-        /**
-         * 연속 스크롤의 프레임당 1회 위치 조회
-         */
-        const handleReadingPositionChange = () => {
-            if (frame.id === 0) {
-                frame.id = requestAnimationFrame(updateCurrentHeading);
-            }
-        };
-
-        /**
-         * 문서 크기, 화면 높이 변경. 끝 구간 도착 위치와 현재 제목 재계산
-         */
-        const handleLayoutChange = () => {
-            updateAnchorShifts();
             handleReadingPositionChange();
         };
 
