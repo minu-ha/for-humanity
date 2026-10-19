@@ -15,7 +15,7 @@ Write Markdown. Keep the context. Share a static site.
 ![Node 22.12.0+](https://img.shields.io/badge/node-22.12.0%2B-444444?style=flat-square)
 ![Prototype](https://img.shields.io/badge/status-prototype-9a6400?style=flat-square)
 
-[Quick start](#quick-start) · [Guide](https://github.com/minu-ha/for-humanity/blob/main/content/public/writing.md) · [Reference](https://github.com/minu-ha/for-humanity/blob/main/content/public/api.md) · [Deployment](https://github.com/minu-ha/for-humanity/blob/main/content/public/deployment.md) · [Korean](https://github.com/minu-ha/for-humanity/blob/main/language/README.ko.md)
+[Quick start](#quick-start) · [Guide](https://github.com/minu-ha/for-humanity/blob/main/content/public/writing.md) · [Commands](https://github.com/minu-ha/for-humanity/blob/main/content/public/commands.md) · [Deployment](https://github.com/minu-ha/for-humanity/blob/main/content/public/deployment.md) · [Korean](https://github.com/minu-ha/for-humanity/blob/main/language/README.ko.md)
 
 </div>
 
@@ -49,7 +49,7 @@ Start the local server:
 pnpm exec for-humanity dev
 ```
 
-Open [localhost:4321](http://localhost:4321). Edit the Markdown file and save to update the page. Follow [Commands](https://github.com/minu-ha/for-humanity/blob/main/content/public/commands.md) to add your first document.
+Open [localhost:4321](http://localhost:4321). Edit the Markdown file and save to update the page. Follow [Installation](https://github.com/minu-ha/for-humanity/blob/main/content/public/installation.md) to add your first document.
 
 Build and inspect the site before deployment:
 
@@ -98,10 +98,10 @@ Add examples or explanations readers can open when needed.
 
 | Task | Guide |
 | --- | --- |
-| Install and run | [Commands](https://github.com/minu-ha/for-humanity/blob/main/content/public/commands.md) |
+| Install and run | [Installation](https://github.com/minu-ha/for-humanity/blob/main/content/public/installation.md) · [Commands](https://github.com/minu-ha/for-humanity/blob/main/content/public/commands.md) |
 | Write and organize pages | [Writing](https://github.com/minu-ha/for-humanity/blob/main/content/public/writing.md) · [Navigation](https://github.com/minu-ha/for-humanity/blob/main/content/public/navigation.md) |
 | Add rich content | [Parts](https://github.com/minu-ha/for-humanity/blob/main/content/public/parts.md) · [Diagrams](https://github.com/minu-ha/for-humanity/blob/main/content/public/diagrams.md) · [Images](https://github.com/minu-ha/for-humanity/blob/main/content/public/images.md) |
-| Configure the site | [Settings](https://github.com/minu-ha/for-humanity/blob/main/content/public/settings.md) · [Reference](https://github.com/minu-ha/for-humanity/blob/main/content/public/api.md) |
+| Configure the site | [Settings](https://github.com/minu-ha/for-humanity/blob/main/content/public/settings.md) |
 | Publish | [Deployment](https://github.com/minu-ha/for-humanity/blob/main/content/public/deployment.md) · [Crawling](https://github.com/minu-ha/for-humanity/blob/main/content/public/crawling.md) |
 | Update | [Changelog](https://github.com/minu-ha/for-humanity/blob/main/content/public/changelog.md) · [Migration](https://github.com/minu-ha/for-humanity/blob/main/content/public/migration.md) |
 

@@ -15,7 +15,7 @@ Markdown으로 작성하고, 맥락을 남기고, 정적 사이트로 공유.
 ![Node 22.12.0+](https://img.shields.io/badge/node-22.12.0%2B-444444?style=flat-square)
 ![Prototype](https://img.shields.io/badge/status-prototype-9a6400?style=flat-square)
 
-[Quick start](#quick-start) · [Guide](../content/public/writing.md) · [Reference](../content/public/api.md) · [Deployment](../content/public/deployment.md) · [English](../README.md)
+[Quick start](#quick-start) · [Guide](../content/public/writing.md) · [Commands](../content/public/commands.md) · [Deployment](../content/public/deployment.md) · [English](../README.md)
 
 </div>
 
@@ -49,7 +49,7 @@ pnpm add -D --save-exact for-humanity@0.14.0
 pnpm exec for-humanity dev
 ```
 
-[localhost:4321](http://localhost:4321)에 접속합니다. Markdown을 수정하고 저장하면 페이지가 갱신됩니다. [Commands](../content/public/commands.md)의 예시를 따라 첫 문서를 추가할 수 있습니다.
+[localhost:4321](http://localhost:4321)에 접속합니다. Markdown을 수정하고 저장하면 페이지가 갱신됩니다. [Installation](../content/public/installation.md)의 예시를 따라 첫 문서를 추가할 수 있습니다.
 
 배포 전에 결과를 만들고 확인합니다.
 
@@ -98,10 +98,10 @@ export default {
 
 | Task | Guide |
 | --- | --- |
-| 설치와 실행 | [Commands](../content/public/commands.md) |
+| 설치와 실행 | [Installation](../content/public/installation.md) · [Commands](../content/public/commands.md) |
 | 문서 작성과 정리 | [Writing](../content/public/writing.md) · [Navigation](../content/public/navigation.md) |
 | 표현 추가 | [Parts](../content/public/parts.md) · [Diagrams](../content/public/diagrams.md) · [Images](../content/public/images.md) |
-| 사이트 설정 | [Settings](../content/public/settings.md) · [Reference](../content/public/api.md) |
+| 사이트 설정 | [Settings](../content/public/settings.md) |
 | 배포 | [Deployment](../content/public/deployment.md) · [Crawling](../content/public/crawling.md) |
 | 업데이트 | [Changelog](../content/public/changelog.md) · [Migration](../content/public/migration.md) |
 

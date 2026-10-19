@@ -93,7 +93,7 @@ CSS·스크립트의 내용이 바뀌면 URL도 바뀌므로 새 HTML이 이전 
 
 자신의 문서 프로젝트에서 CLI로 빌드한 `content/dist` 전체를 배포. `content.root`를 변경했다면 그 폴더 아래의 `dist`를 지정. 원본 `content` 전체를 업로드하지 않음.
 그 프로젝트의 Cloudflare 설정은 build command `pnpm exec for-humanity build`, output `content/dist`.
-CLI 설치는 [Commands](../public/commands.md#install-the-package).
+CLI 설치는 [Installation](../public/installation.md#install-the-package).
 
 HTML 원문 보존과 내용 지문이 붙은 자원의 장기 캐시가 필요하면 빌드 후 `content/dist/_headers`에 다음 내용을 추가.
 

@@ -17,7 +17,7 @@ Write Markdown. Keep the context. Share a static site.
 ![Node 22.12.0+](https://img.shields.io/badge/node-22.12.0%2B-444444?style=flat-square)
 ![Prototype](https://img.shields.io/badge/status-prototype-9a6400?style=flat-square)
 
-[Quick start](#quick-start) · [Guide](public/writing.md) · [Reference](public/api.md) · [Deployment](public/deployment.md) · [Korean](https://github.com/minu-ha/for-humanity/blob/main/language/README.ko.md)
+[Quick start](#quick-start) · [Guide](public/writing.md) · [Commands](public/commands.md) · [Deployment](public/deployment.md) · [Korean](https://github.com/minu-ha/for-humanity/blob/main/language/README.ko.md)
 
 </div>
 
@@ -51,7 +51,7 @@ Start the local server:
 pnpm exec for-humanity dev
 ```
 
-Open [localhost:4321](http://localhost:4321). Edit the Markdown file and save to update the page. Follow [Commands](public/commands.md) to add your first document.
+Open [localhost:4321](http://localhost:4321). Edit the Markdown file and save to update the page. Follow [Installation](public/installation.md) to add your first document.
 
 Build and inspect the site before deployment:
 
@@ -100,10 +100,10 @@ Add examples or explanations readers can open when needed.
 
 | Task | Guide |
 | --- | --- |
-| Install and run | [Commands](public/commands.md) |
+| Install and run | [Installation](public/installation.md) · [Commands](public/commands.md) |
 | Write and organize pages | [Writing](public/writing.md) · [Navigation](public/navigation.md) |
 | Add rich content | [Parts](public/parts.md) · [Diagrams](public/diagrams.md) · [Images](public/images.md) |
-| Configure the site | [Settings](public/settings.md) · [Reference](public/api.md) |
+| Configure the site | [Settings](public/settings.md) |
 | Publish | [Deployment](public/deployment.md) · [Crawling](public/crawling.md) |
 | Update | [Changelog](public/changelog.md) · [Migration](public/migration.md) |
 

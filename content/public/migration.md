@@ -5,7 +5,7 @@ group: Getting started
 order: 15
 ---
 
-`0.14.0`부터 설정 위치와 문서 수집 방식이 바뀝니다. `0.13.1` 이하에서 업데이트할 때 이 절차를 따릅니다. 새 프로젝트는 [Commands](commands.md#your-first-site)에서 시작합니다.
+`0.14.0`부터 설정 위치와 문서 수집 방식이 바뀝니다. `0.13.1` 이하에서 업데이트할 때 이 절차를 따릅니다. 새 프로젝트는 [Installation](installation.md#your-first-site)에서 시작합니다.
 
 ## Before and after
 
