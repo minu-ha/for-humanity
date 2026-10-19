@@ -32,14 +32,17 @@ export const WgMermaid = (props: WgMermaidProps) => {
          * 공유 툴팁 재사용, 테마나 접힘 변경에서 숨긴 안내의 다음 호버 복원
          */
         const handleTooltipShow = (event: MouseEvent) => {
-            if (event.target instanceof Element && event.target.closest("[title]") !== null) {
-                for (const tooltip of tooltips) {
-                    tooltip.hidden = false;
+            if (!(event.target instanceof Element) || event.target.closest("[title]") === null) {
+                return;
+            }
 
-                    const bounds = tooltip.getBoundingClientRect();
+            for (const tooltip of tooltips) {
+                tooltip.hidden = false;
 
-                    tooltip.style.left = `${scrollX + Math.max(0, Math.min(bounds.left, document.documentElement.clientWidth - bounds.width))}px`;
-                }
+                // 표시 후 측정한 폭으로 화면 오른쪽 넘침 방지
+                const bounds = tooltip.getBoundingClientRect();
+
+                tooltip.style.left = `${scrollX + Math.max(0, Math.min(bounds.left, document.documentElement.clientWidth - bounds.width))}px`;
             }
         };
 
@@ -52,6 +55,9 @@ export const WgMermaid = (props: WgMermaidProps) => {
             }
         };
 
+        /**
+         * 보이는 다이어그램만 현재 테마로 차례 렌더. 모듈 수신 실패는 모든 영역에 오류 안내
+         */
         const render = toChangeQueue({
             run: async () => {
                 const elements = [...document.querySelectorAll<HTMLElement>(".wg_mermaid__root[data-mermaid]")];
@@ -216,9 +222,8 @@ export const WgMermaid = (props: WgMermaidProps) => {
                 const result = element.querySelector<HTMLElement>(".wg_mermaid__result");
                 const error = element.querySelector<HTMLElement>(".wg_mermaid__error");
 
-                result?.shadowRoot?.replaceChildren();
-
                 if (result !== null) {
+                    result.shadowRoot?.replaceChildren();
                     result.hidden = true;
                 }
 

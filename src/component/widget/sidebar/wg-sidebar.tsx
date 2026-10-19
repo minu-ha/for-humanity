@@ -332,6 +332,9 @@ export const WgSidebar = (props: WgSidebarProps) => {
 
         let active = true;
 
+        /**
+         * 연결된 배치의 좌표 복원 후 전환 전 포커스를 같은 링크나 진입 버튼으로 이동
+         */
         const restoreNavigation = () => {
             if (!active) {
                 return;
@@ -383,6 +386,9 @@ export const WgSidebar = (props: WgSidebarProps) => {
                  * 어느 문서에서도 홈으로 이동. 모달 진입은 브라우저 동작이 연결된 뒤 표시
                  */}
                 <div className={clsx("wg_sidebar__brandRow")}>
+                    {/**
+                     * 사이트 이름. 홈 문서에서는 현재 페이지로 표시
+                     */}
                     <a ref={props.stores === undefined ? undefined : brandRef} className={clsx("wg_sidebar__brand")} href="/" aria-current={props.data.home ? "page" : undefined}>
                         {props.data.title}
                     </a>
@@ -448,6 +454,9 @@ export const WgSidebar = (props: WgSidebarProps) => {
                  * 목록 스크롤과 독립된 대화상자 이름, 닫기 동작
                  */}
                 <div className={clsx("wg_sidebar__drawerHeader")}>
+                    {/**
+                     * 모달의 접근 가능한 이름
+                     */}
                     <h2 className={clsx("wg_sidebar__drawerTitle")} id="fh-navigation-title">
                         {copy_nav_title}
                     </h2>

@@ -28,8 +28,7 @@ export const WgToc = (props: WgTocProps) => {
      * 연결마다 구독 설치, 초기 위치 갱신은 본문 파싱 이후 실행
      */
     useLayoutEffect(() => {
-        const sections = props.groups.flatMap((group) => group.sections);
-        const headings = sections.flatMap((section) => [section.heading, ...section.subs.map((sub) => sub.heading)]);
+        const headings = props.groups.flatMap((group) => group.sections).flatMap((section) => [section.heading, ...section.subs.map((sub) => sub.heading)]);
         const frame = {id: 0};
         const lifetime = new AbortController();
 
@@ -88,9 +87,10 @@ export const WgToc = (props: WgTocProps) => {
                     : [];
             });
 
-            setCurrentSlug(
-                visible.find((heading) => heading.slug === lock.slug)?.slug ?? visible.findLast((heading) => heading.top <= reading_line_slack_px)?.slug ?? visible[0]?.slug,
-            );
+            const locked = visible.find((heading) => heading.slug === lock.slug);
+            const passed = visible.findLast((heading) => heading.top <= reading_line_slack_px);
+
+            setCurrentSlug((locked ?? passed ?? visible.at(0))?.slug);
         };
 
         /**
@@ -187,6 +187,9 @@ export const WgToc = (props: WgTocProps) => {
                             {group.sections.map((section) => {
                                 return (
                                     <li className={clsx("wg_toc__item")} key={section.heading.slug}>
+                                        {/**
+                                         * 절 제목. 읽는 위치면 현재 위치로 표시
+                                         */}
                                         <a
                                             className={clsx("wg_toc__link", {"wg_toc__link--active": section.heading.slug === currentSlug})}
                                             href={`#${section.heading.slug}`}

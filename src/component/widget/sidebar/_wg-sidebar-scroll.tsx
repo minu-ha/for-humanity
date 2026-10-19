@@ -82,14 +82,13 @@ export const WgSidebarScroll = (props: WgSidebarScrollProps) => {
         }
 
         const observer = new ResizeObserver(scheduleOverflow);
+        let active = true;
 
         observer.observe(props.portRef.current);
 
         if (props.portRef.current.firstElementChild !== null) {
             observer.observe(props.portRef.current.firstElementChild);
         }
-
-        let active = true;
 
         addEventListener("pageshow", scheduleOverflow);
 
