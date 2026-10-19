@@ -56,7 +56,7 @@ describe("홈페이지", () => {
         expect(html).toMatch(/wg_navigation__brand" href="\/" aria-current="page"/);
         expect([...html.matchAll(/href="\/"/g)].length).toBe(1);
         expect(docs[0].html).toMatch(/href="\/#start"/);
-        expect(html).not.toMatch(/wg_prose__eyebrow|pg_home__card/);
+        expect(html).not.toMatch(/wg_article__eyebrow|pg_home__card/);
         expect((await app.request("/readme/")).status).toBe(404);
     });
 

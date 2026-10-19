@@ -1,9 +1,9 @@
 import clsx from "clsx";
 import {Fragment, useLayoutEffect, useRef} from "hono/jsx";
+import {heading_highlight_hold_ms} from "@/component/widget/article/_constant/heading-highlight";
 import {WgCursorFace} from "@/component/widget/cursor-face/wg-cursor-face";
 import {WgMermaid} from "@/component/widget/mermaid/wg-mermaid";
 import {WgNavigation, type WgNavigationProps} from "@/component/widget/navigation/wg-navigation";
-import {heading_highlight_hold_ms} from "@/component/widget/prose/_constant/heading-highlight";
 import {scroll_user_input_events} from "@/constant/scroll";
 import {findHashLink} from "@/util/dom/find-hash-link";
 import {isRestoringNavigation} from "@/util/dom/is-restoring-navigation";
@@ -25,7 +25,7 @@ export const WgShellControls = (props: WgNavigationProps) => {
         timerRef.current = 0;
         arrivalRef.current?.abort();
         arrivalRef.current = null;
-        headingRef.current?.classList.remove("wg_prose__headingText--highlighted");
+        headingRef.current?.classList.remove("wg_article__headingText--highlighted");
         headingRef.current = null;
     };
 
@@ -45,9 +45,9 @@ export const WgShellControls = (props: WgNavigationProps) => {
      */
     const highlightHeading = (target: HTMLElement | null) => {
         clearHeadingHighlight();
-        headingRef.current = target === null ? null : target.querySelector<HTMLElement>(".wg_prose__headingText");
+        headingRef.current = target === null ? null : target.querySelector<HTMLElement>(".wg_article__headingText");
         if (headingRef.current === null) return;
-        headingRef.current.classList.add("wg_prose__headingText--highlighted");
+        headingRef.current.classList.add("wg_article__headingText--highlighted");
         timerRef.current = window.setTimeout(clearHeadingHighlight, heading_highlight_hold_ms);
         arrivalRef.current = new AbortController();
         document.addEventListener("scrollend", handleHighlightArrival, {signal: arrivalRef.current.signal});

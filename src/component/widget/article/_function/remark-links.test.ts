@@ -1,7 +1,7 @@
 import type {Root} from "mdast";
 import {VFile} from "vfile";
 import {describe, expect, test, vi} from "vitest";
-import {remarkLinks} from "@/component/widget/prose/_function/remark-links";
+import {remarkLinks} from "@/component/widget/article/_function/remark-links";
 
 // 운영체제 경로 계약의 재현, 실행 중인 macOS와 Linux에서도 Windows 구분자 검증
 vi.mock("node:path", async (importOriginal) => {

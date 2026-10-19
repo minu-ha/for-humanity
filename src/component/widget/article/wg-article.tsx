@@ -1,12 +1,12 @@
 import clsx from "clsx";
-import "./wg-prose.css";
+import "./wg-article.css";
 
 /**
  * Markdown HTML과 본문 부품의 공통 표현 입력
  *
  *   - remark, rehype 플러그인은 _function 소유
  */
-export interface WgProseProps {
+export interface WgArticleProps {
     /**
      * 머리를 포함한 렌더링 완료 HTML
      */
@@ -28,17 +28,17 @@ export interface WgProseProps {
     };
 }
 
-export const WgProse = (props: WgProseProps) => {
+export const WgArticle = (props: WgArticleProps) => {
     if (props.html !== undefined) {
-        return <article className={clsx("wg_prose__root")} dangerouslySetInnerHTML={{__html: props.html}} />;
+        return <article className={clsx("wg_article__root")} dangerouslySetInnerHTML={{__html: props.html}} />;
     }
 
     return (
-        <article className={clsx("wg_prose__root")}>
+        <article className={clsx("wg_article__root")}>
             {props.head !== undefined && (
-                <header className={clsx("wg_prose__head")}>
-                    <h1 className={clsx("wg_prose__title")}>{props.head.title}</h1>
-                    {props.head.lead !== undefined && <p className={clsx("wg_prose__lead")}>{props.head.lead}</p>}
+                <header className={clsx("wg_article__head")}>
+                    <h1 className={clsx("wg_article__title")}>{props.head.title}</h1>
+                    {props.head.lead !== undefined && <p className={clsx("wg_article__lead")}>{props.head.lead}</p>}
                 </header>
             )}
         </article>

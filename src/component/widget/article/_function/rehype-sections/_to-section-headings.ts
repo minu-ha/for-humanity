@@ -1,5 +1,5 @@
 import type {Element, Root} from "hast";
-import {section_heading_depth} from "@/component/widget/prose/_constant/section";
+import {section_heading_depth} from "@/component/widget/article/_constant/section";
 
 /**
  * 목차 대상 h2, h3. 중첩 블록까지 문서 순서 수집

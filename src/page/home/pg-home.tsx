@@ -1,4 +1,4 @@
-import {WgProse} from "@/component/widget/prose/wg-prose";
+import {WgArticle} from "@/component/widget/article/wg-article";
 import {WgShell} from "@/component/widget/shell/wg-shell";
 import {copy_home_missing} from "@/constant/copy";
 import type {Doc} from "@/type/doc";
@@ -37,12 +37,12 @@ export const PgHome = (props: PgHomeProps) => {
             {/**
              * 작성한 README 본문
              */}
-            {props.home !== undefined && <WgProse html={props.home.html} />}
+            {props.home !== undefined && <WgArticle html={props.home.html} />}
 
             {/**
              * README 부재 시 파일 작성 안내
              */}
-            {props.home === undefined && <WgProse head={{title: props.site.title, lead: copy_home_missing}} />}
+            {props.home === undefined && <WgArticle head={{title: props.site.title, lead: copy_home_missing}} />}
         </WgShell>
     );
 };

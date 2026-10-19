@@ -2,7 +2,7 @@ import {escape as escapeHtml, escapeRegExp} from "es-toolkit/string";
 import type {Root} from "mdast";
 import {findAndReplace, type RegExpMatchObject} from "mdast-util-find-and-replace";
 import type {VFile} from "vfile";
-import {status_candidate_pattern, status_date_pattern} from "@/component/widget/prose/_constant/status";
+import {status_candidate_pattern, status_date_pattern} from "@/component/widget/article/_constant/status";
 import {copy_warn_unknown_status} from "@/constant/copy";
 import type {ResolvedSiteConfig} from "@/type/site-config";
 
@@ -33,7 +33,7 @@ export const remarkStatus = (options: Pick<ResolvedSiteConfig, "status">) => {
 
                     return {
                         type: "html",
-                        value: `<span class="wg_prose__pill wg_prose__pill--${item.kind}">${escapeHtml(text)}</span>`,
+                        value: `<span class="wg_article__pill wg_article__pill--${item.kind}">${escapeHtml(text)}</span>`,
                     };
                 },
             ],

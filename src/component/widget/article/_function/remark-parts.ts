@@ -1,6 +1,6 @@
 import type {Root} from "mdast";
 import {toString as toPlainText} from "mdast-util-to-string";
-import {section_heading_depth} from "@/component/widget/prose/_constant/section";
+import {section_heading_depth} from "@/component/widget/article/_constant/section";
 
 /**
  * ::part[이름]의 본문 가름과 다음 h2의 data-part
@@ -15,7 +15,7 @@ export const remarkParts = () => (tree: Root) => {
 
         const section = tree.children.slice(index + 1).find((next) => next.type === "heading" && next.depth === section_heading_depth.section);
 
-        node.data = {hName: "div", hProperties: {className: ["wg_prose__part"]}};
+        node.data = {hName: "div", hProperties: {className: ["wg_article__part"]}};
 
         if (section) {
             section.data = {

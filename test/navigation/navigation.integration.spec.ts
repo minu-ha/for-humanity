@@ -47,7 +47,7 @@ test.describe("셸 컴포넌트 수명", () => {
                     dispatchEvent(new HashChangeEvent("hashchange"));
                 });
                 await page.waitForFunction(() => {
-                    return document.querySelector<HTMLElement>("#hidden-detail .wg_prose__headingText")?.classList.contains("wg_prose__headingText--highlighted");
+                    return document.querySelector<HTMLElement>("#hidden-detail .wg_article__headingText")?.classList.contains("wg_article__headingText--highlighted");
                 });
                 const main = await page.locator("main").elementHandle();
                 await page.evaluate(() => window.shellFixture.unmount());
@@ -57,7 +57,7 @@ test.describe("셸 컴포넌트 수명", () => {
                  * 본문 유지와 구독, 타이머 정리
                  */
                 expect(await main.evaluate((element) => element === document.querySelector<HTMLElement>("main"))).toBe(true);
-                expect(await page.locator(".wg_prose__headingText--highlighted").count()).toBe(0);
+                expect(await page.locator(".wg_article__headingText--highlighted").count()).toBe(0);
                 const active = await page.evaluate((start) => {
                     return window.shellListeners
                         .slice(start)

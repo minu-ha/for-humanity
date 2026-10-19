@@ -108,7 +108,7 @@ h1 자간은 `-0.045em`, h2·part는 `-0.04em`으로 본문보다 조금 더 조
 h1, 문서·목차 묶음 라벨, On this page에는 `text-box: trim-start cap alphabetic` 적용. 크기가 달라도 대문자 위쪽 시작선을 맞추며, 미지원 브라우저는 기존 행 상자로 표시. [MDN text-box](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-box).
 README 홈의 소개 제목은 `24px`, 얼굴은 `72px`. Markdown 원문의 내용은 유지하고 사이트에서만 크기 조정.
 Shiki는 기존 역할색 참조: 키워드 strong, 함수 accent, 문자열 verified, 숫자 unverified, 주석 muted, 링크 link.
-코드 상자와 파일 제목의 바탕은 `wg-prose.css`에서 상태 수정자로 지정. `token.css`는 역할색과 테마 값만 소유하며 컴포넌트 클래스를 선언하지 않음. Shiki 토큰의 구문 색상은 유지하고 `pre`의 인라인 색상은 제거.
+코드 상자와 파일 제목의 바탕은 `wg-article.css`에서 상태 수정자로 지정. `token.css`는 역할색과 테마 값만 소유하며 컴포넌트 클래스를 선언하지 않음. Shiki 토큰의 구문 색상은 유지하고 `pre`의 인라인 색상은 제거.
 
 글꼴 이름과 fallback은 `token.css`에 정적 선언. CLI는 내장 `@font-face`와 내용 지문이 붙은 자원 URL 생성.
 공통 폰트 토큰의 정의를 IDE에서도 같은 소스로 확인 가능.

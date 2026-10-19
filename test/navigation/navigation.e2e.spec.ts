@@ -24,7 +24,7 @@ test.describe("문서 탐색", () => {
         const cursor = page.locator("[data-cursor-face]");
         const navigation = page.locator("[data-navigation]");
         const details = page.locator("details");
-        const hiddenHeading = page.locator("#hidden-detail .wg_prose__headingText");
+        const hiddenHeading = page.locator("#hidden-detail .wg_article__headingText");
 
         // 소수 높이와 scroll anchoring의 반올림만 허용
         const roundingTolerance = 1;
@@ -93,7 +93,7 @@ test.describe("문서 탐색", () => {
         await test.step("배치를 전환해도 독립 스크롤과 포커스와 본문을 유지한다", async () => {
             await page.getByRole("link", {name: "Hidden detail", exact: true}).click();
             await expect(details).toHaveJSProperty("open", true);
-            await expect(hiddenHeading).toHaveClass(/wg_prose__headingText--highlighted/);
+            await expect(hiddenHeading).toHaveClass(/wg_article__headingText--highlighted/);
             const body = await page.locator("main").elementHandle();
             await page.setViewportSize({width: 1280, height: 600});
             await expect(navigation).toHaveAttribute("data-navigation-layout", "desktop");
@@ -126,8 +126,8 @@ test.describe("문서 탐색", () => {
             await expect(details).toHaveJSProperty("open", false);
             await page.getByRole("link", {name: "Hidden detail", exact: true}).click();
             await expect(details).toHaveJSProperty("open", true);
-            await expect(hiddenHeading).toHaveClass(/wg_prose__headingText--highlighted/);
-            await expect(hiddenHeading).not.toHaveClass(/wg_prose__headingText--highlighted/);
+            await expect(hiddenHeading).toHaveClass(/wg_article__headingText--highlighted/);
+            await expect(hiddenHeading).not.toHaveClass(/wg_article__headingText--highlighted/);
         });
         expect(scriptRequests, "one inline entry must provide every browser behavior").toStrictEqual([]);
         expect(errors).toStrictEqual([]);
@@ -311,7 +311,7 @@ test.describe("문서 탐색", () => {
         expect(new Set(frames.filter((position) => position !== 0)).size).toBe(1);
 
         // 강조 유지 시간 종료 전의 즉시 조회
-        expect(await page.locator(".wg_prose__headingText--highlighted").count()).toBe(0);
+        expect(await page.locator(".wg_article__headingText--highlighted").count()).toBe(0);
         await expect(page.locator("html")).toHaveCSS("scroll-behavior", "auto");
         await page.mouse.wheel(0, 100);
         await expect(page.locator("html")).toHaveCSS("scroll-behavior", "smooth");

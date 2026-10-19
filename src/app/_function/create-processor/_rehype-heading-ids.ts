@@ -27,7 +27,7 @@ export const rehypeHeadingIds = () => (tree: Root, file: VFile) => {
         headings.push({depth: Number(depth), slug: node.properties.id, text});
 
         // 텍스트 노드의 className 미지원, 별도 강조 요소로 기존 줄바꿈 유지
-        node.children = [{type: "element", tagName: "span", properties: {className: ["wg_prose__headingText"]}, children: node.children}];
+        node.children = [{type: "element", tagName: "span", properties: {className: ["wg_article__headingText"]}, children: node.children}];
     });
 
     if (file.data.fh) {

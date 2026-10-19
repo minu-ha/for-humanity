@@ -2,8 +2,8 @@ import type {Root} from "mdast";
 import {toString as toPlainText} from "mdast-util-to-string";
 import {visit} from "unist-util-visit";
 import type {VFile} from "vfile";
-import {section_heading_depth} from "@/component/widget/prose/_constant/section";
-import {hasBlockContent} from "@/component/widget/prose/_function/has-block-content";
+import {section_heading_depth} from "@/component/widget/article/_constant/section";
+import {hasBlockContent} from "@/component/widget/article/_function/has-block-content";
 import {copy_error_directive_syntax} from "@/constant/copy";
 
 /**
@@ -102,12 +102,12 @@ export const remarkBlocks = () => (tree: Root, file: VFile) => {
         label.data = {
             ...label.data,
             hName: node.name === "note" ? "strong" : "summary",
-            hProperties: {className: [node.name === "note" ? "wg_prose__noteTitle" : "wg_prose__detailsSummary"]},
+            hProperties: {className: [node.name === "note" ? "wg_article__noteTitle" : "wg_article__detailsSummary"]},
         };
         node.data = {
             ...node.data,
             hName: node.name === "note" ? "aside" : "details",
-            hProperties: node.name === "note" ? {className: ["wg_prose__note"], ariaLabel: title} : {className: ["wg_prose__details"], open: open === ""},
+            hProperties: node.name === "note" ? {className: ["wg_article__note"], ariaLabel: title} : {className: ["wg_article__details"], open: open === ""},
         };
     });
 };

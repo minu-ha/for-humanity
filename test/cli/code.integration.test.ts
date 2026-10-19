@@ -29,7 +29,7 @@ describe("코드 블록", () => {
          * THEN
          * 줄 상태와 번호 표시, 지시문 원문 제외
          */
-        expect(doc.html).toMatch(/<pre class="[^"]*wg_prose__lineNumbers[^"]*"/);
+        expect(doc.html).toMatch(/<pre class="[^"]*wg_article__lineNumbers[^"]*"/);
         expect(doc.html).toMatch(/<span class="line highlighted error">/);
         expect(doc.html).toMatch(/<span class="line diff add">/);
         expect(doc.html).toMatch(/<span class="line highlighted">[^\n]*first/);
@@ -59,8 +59,8 @@ describe("코드 블록", () => {
          * THEN
          * 파일 제목과 작성 언어 표시, 코드와 제목의 상태 공유
          */
-        expect(doc.html).toMatch(/<figcaption class="[^"]*wg_prose__codeFileTitle--bad[^"]*">page\/products\.ts<span class="wg_prose__codeFileLang">ts<\/span><\/figcaption>/);
-        expect(doc.html).toMatch(/<pre class="[^"]*wg_prose__code--bad[^"]*"/);
+        expect(doc.html).toMatch(/<figcaption class="[^"]*wg_article__codeFileTitle--bad[^"]*">page\/products\.ts<span class="wg_article__codeFileLang">ts<\/span><\/figcaption>/);
+        expect(doc.html).toMatch(/<pre class="[^"]*wg_article__code--bad[^"]*"/);
         expect(doc.html).not.toMatch(/<pre\b[^>]*\bstyle=/);
         expect(doc.html.split("<figure").length - 1, "braces meta is not a title").toBe(1);
     });
@@ -92,7 +92,9 @@ describe("코드 블록", () => {
          * THEN
          * 전체 파일과 선택 영역의 코드, 지시문 제외와 메타 전달
          */
-        expect(doc.html).toMatch(/<pre class="[^"]*wg_prose__lineNumbers[^"]*wg_prose__code--bad[^"]*"|<pre class="[^"]*wg_prose__code--bad[^"]*wg_prose__lineNumbers[^"]*"/);
+        expect(doc.html).toMatch(
+            /<pre class="[^"]*wg_article__lineNumbers[^"]*wg_article__code--bad[^"]*"|<pre class="[^"]*wg_article__code--bad[^"]*wg_article__lineNumbers[^"]*"/,
+        );
         expect(doc.html).toMatch(/<span class="line highlighted error">[^\n]*const<\/span>[^\n]* a/);
         expect(doc.html).not.toContain("#region");
         expect(doc.html.split("const</span>").length - 1, "the region block has two lines and the whole-file block four").toBe(2 + 4);

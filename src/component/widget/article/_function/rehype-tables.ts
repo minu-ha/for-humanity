@@ -13,7 +13,7 @@ export const rehypeTables = () => (tree: Root) => {
         parent.children[index] = {
             type: "element",
             tagName: "div",
-            properties: {className: ["wg_prose__table"]},
+            properties: {className: ["wg_article__table"]},
             children: [node],
         };
 

@@ -1,6 +1,6 @@
 import type {Root} from "hast";
 import type {VFile} from "vfile";
-import {toSectionHeadings} from "@/component/widget/prose/_function/rehype-sections/_to-section-headings";
+import {toSectionHeadings} from "@/component/widget/article/_function/rehype-sections/_to-section-headings";
 import type {DocSection} from "@/type/doc-section";
 
 /**

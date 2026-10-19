@@ -87,13 +87,13 @@ describe("문서 링크와 목차", () => {
          * THEN
          * 제목과 목차는 작성한 텍스트와 번호를 보존한 결과
          */
-        expect(html).toMatch(/<h2[^>]*id="overview"[^>]*><span class="wg_prose__headingText">Overview<\/span><\/h2>/);
-        expect(html).toMatch(/<h3[^>]*id="01-keep-this-number"[^>]*><span class="wg_prose__headingText">01\. Keep this number<\/span><\/h3>/);
+        expect(html).toMatch(/<h2[^>]*id="overview"[^>]*><span class="wg_article__headingText">Overview<\/span><\/h2>/);
+        expect(html).toMatch(/<h3[^>]*id="01-keep-this-number"[^>]*><span class="wg_article__headingText">01\. Keep this number<\/span><\/h3>/);
         expect(html).toMatch(/href="#overview"[^>]*>Overview<\/a>/);
         expect(html).toMatch(/href="#01-keep-this-number"[^>]*>01\. Keep this number<\/a>/);
         expect(html).toMatch(/href="#nested-heading"[^>]*>Nested heading<\/a>/);
         expect(html).toMatch(/href="#overview-1"[^>]*>Overview<\/a>/);
         expect(html).toMatch(/wg_navigationToc__group">Setup<\/div>/);
-        expect(html).not.toMatch(/wg_prose__num|wg_navigationToc__mark/);
+        expect(html).not.toMatch(/wg_article__num|wg_navigationToc__mark/);
     });
 });

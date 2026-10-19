@@ -1,4 +1,4 @@
-import {WgProse} from "@/component/widget/prose/wg-prose";
+import {WgArticle} from "@/component/widget/article/wg-article";
 import {WgShell} from "@/component/widget/shell/wg-shell";
 import type {Doc} from "@/type/doc";
 import type {SiteAssets} from "@/type/site-assets";
@@ -32,7 +32,7 @@ export interface PgDocProps {
 export const PgDoc = (props: PgDocProps) => {
     return (
         <WgShell site={props.site} docs={props.docs} assets={props.assets} title={props.doc.data.name} current={props.doc.id} outline={props.doc.outline}>
-            <WgProse html={props.doc.html} />
+            <WgArticle html={props.doc.html} />
         </WgShell>
     );
 };

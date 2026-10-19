@@ -276,7 +276,7 @@ gray-matter는 frontmatter를 분리·해석하는 다른 선택지. 여기서�
 | 포인터 장식 · 좌표 · 입력 구독 | `src/component/widget/cursor-face` |
 | 문서 트리 계산 · 탐색 · 목차 · 드로어 | `src/component/widget/navigation` |
 | 탐색 저장 상태 · 검증         | `src/store/navigation`       |
-| 본문 · remark·rehype 플러그인 | `src/component/widget/prose` |
+| 본문 · remark·rehype 플러그인 | `src/component/widget/article` |
 | Mermaid 원문 · 공식 SVG 렌더 수명 | `src/component/widget/mermaid` |
 | processor · 문서 읽기 · 공통 앱 | `src/app` |
 | 개발 HTTP · 감시 · 갱신 통신 연결 | `src/entry/dev` |

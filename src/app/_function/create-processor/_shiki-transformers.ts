@@ -19,25 +19,25 @@ const codeMetadata: ShikiTransformer = {
     name: "for-humanity:code-metadata",
     root(root) {
         this.pre.properties.style = undefined;
-        this.addClassToHast(this.pre, "wg_prose__code");
+        this.addClassToHast(this.pre, "wg_article__code");
 
         if (this.options.meta?.__raw === undefined) {
             return;
         }
 
         if (/\bline-numbers\b/.test(this.options.meta.__raw)) {
-            this.addClassToHast(this.pre, "wg_prose__lineNumbers");
+            this.addClassToHast(this.pre, "wg_article__lineNumbers");
         }
 
         const isBad = /\bbad\b/.test(this.options.meta.__raw);
         const isGood = /\bgood\b/.test(this.options.meta.__raw);
 
         if (isBad) {
-            this.addClassToHast(this.pre, "wg_prose__code--bad");
+            this.addClassToHast(this.pre, "wg_article__code--bad");
         }
 
         if (isGood) {
-            this.addClassToHast(this.pre, "wg_prose__code--good");
+            this.addClassToHast(this.pre, "wg_article__code--good");
         }
 
         const title = /\[([^\]]+)\]/.exec(this.options.meta.__raw)?.[1];
@@ -49,17 +49,17 @@ const codeMetadata: ShikiTransformer = {
         const caption: Element = {
             type: "element",
             tagName: "figcaption",
-            properties: {className: ["wg_prose__codeFileTitle", ...(isBad ? ["wg_prose__codeFileTitle--bad"] : []), ...(isGood ? ["wg_prose__codeFileTitle--good"] : [])]},
+            properties: {className: ["wg_article__codeFileTitle", ...(isBad ? ["wg_article__codeFileTitle--bad"] : []), ...(isGood ? ["wg_article__codeFileTitle--good"] : [])]},
             children: [
                 {type: "text", value: title},
-                {type: "element", tagName: "span", properties: {className: ["wg_prose__codeFileLang"]}, children: [{type: "text", value: this.options.lang}]},
+                {type: "element", tagName: "span", properties: {className: ["wg_article__codeFileLang"]}, children: [{type: "text", value: this.options.lang}]},
             ],
         };
 
         const figure: Element = {
             type: "element",
             tagName: "figure",
-            properties: {className: ["wg_prose__codeFile"]},
+            properties: {className: ["wg_article__codeFile"]},
             children: [caption, ...root.children.filter((child): child is ElementContent => child.type !== "doctype")],
         };
 
