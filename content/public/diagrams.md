@@ -123,23 +123,27 @@ Tree View는 Mermaid의 beta 문법이므로 버전 갱신 때 예제를 함께 
 ````markdown
 ```mermaid
 treeView-beta
-    docs/
+    content/
         README.md
-        images/
+        asset/
             sample.svg
-        guide/
-            screen.md
+        public/
+            guide/
+                screen.md
+        private/
 ```
 ````
 
 ```mermaid
 treeView-beta
-    docs/
+    content/
         README.md
-        images/
+        asset/
             sample.svg
-        guide/
-            screen.md
+        public/
+            guide/
+                screen.md
+        private/
 ```
 
 ## Themes and rendering

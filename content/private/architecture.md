@@ -67,8 +67,8 @@ flowchart LR
 | 실행 | 입력과 동작 | 용도 |
 | --- | --- | --- |
 | `dev` | 원본 문서·소스, Vite 파일 감시·변환·갱신, Hono HTML 응답 | 작성·개발 중 확인 |
-| `build` | 문서 처리와 정적 생성, `<문서 폴더>/dist` 출력 | 배포 파일 생성 |
-| `preview` | `<문서 폴더>/dist`의 HTML·CSS·JS 제공, 원본 감시·HMR 미사용 | 빌드 결과 확인 |
+| `build` | 문서 처리와 정적 생성, `<content.root>/dist` 출력 | 배포 파일 생성 |
+| `preview` | `<content.root>/dist`의 HTML·CSS·JS 제공, 원본 감시·HMR 미사용 | 빌드 결과 확인 |
 | 정적 운영 | 호스팅 서비스가 빌드 파일 제공 | 현재 공개 문서 배포 |
 | 향후 동적 운영 | 배포 환경이 Hono 앱 실행, 인증·DB 조회·API 응답 | 서버 기능 제공 |
 
@@ -128,16 +128,22 @@ HTTP API 명세는 브라우저나 외부 앱이 Hono 기능을 호출하는 계
 
 ### CLI ownership
 
-Citty가 `dev`·`build`·`preview` 선택, 위치 인자, 도움말과 버전 표시를 담당합니다. 명령 생략 시 `dev`, 문서 폴더 생략 시 현재 폴더를 사용합니다. 사이트 실행 코드는 명령을 실행할 때만 가져오므로 도움말 조회가 사용자 설정이나 문서 처리를 실행하지 않습니다.
+Citty가 `dev`·`build`·`preview` 선택, 위치 인자, 도움말과 버전 표시를 담당합니다. 명령 생략 시 `dev`, 프로젝트 폴더 생략 시 현재 폴더를 사용합니다. 사이트 실행 코드는 명령을 실행할 때만 가져오므로 도움말 조회가 사용자 설정이나 문서 처리를 실행하지 않습니다.
 
 Consola는 빌드 결과·문서 경고·사이트 실행 오류의 공통 출력입니다. 전역 console을 교체하지 않으며 Vite와 브라우저의 진단 출력은 각 실행기가 소유합니다. `init`의 입력 프롬프트는 후속 기능이고 현재 파일 생성 명령은 제공하지 않습니다.
 
 참조: [Citty](https://github.com/unjs/citty), [Consola](https://github.com/unjs/consola).
 
+### Content scope
+
+`readProject`는 프로젝트 루트 설정에서 content 경로를 해소합니다. `readContentScope`는 공개·내부 폴더를 검증하고, `loadSite`는 dev에서만 내부 문서를 포함합니다. build 기본값은 공개 문서만입니다.
+공개 폴더 상대 경로가 사이트 ID이며 내부 문서에는 `private/`를 붙입니다. 홈은 content 루트의 README로 별도 처리합니다. `toContentId`가 문서·상대 링크·parent 변환에 같은 규칙을 적용합니다.
+`assertContentPath`는 참조의 원래 경로와 실제 symlink 대상을 검사합니다. Markdown·원시 HTML·이미지·스니펫에서 공개 범위를 벗어나면 원본 위치가 있는 오류로 중단합니다. 공개 결과는 공개 문서만 가진 store와 그 처리 중 수집한 자원으로 생성합니다.
+
 ### Page routes
 
 페이지 앱의 라우트: `/`, `/:slug{.+}/`. 문서 id에는 하위 폴더 포함.
-`/`는 문서 폴더의 `README.md`. 일반 문서 목록과 별도로 읽고, 개발 중 함께 갱신.
+`/`는 content 루트의 `README.md`. 일반 문서 목록과 별도로 읽고, 개발 중 함께 갱신.
 
 공개 `url`이 설정됐으면 공통 앱의 `toCrawlingApp`에서 `/robots.txt`·`/sitemap.xml` 응답을 만듭니다. 크롤러 앱은 페이지 앱과 별도로 유지합니다. dev 앱은 두 파일 요청만 크롤러 앱에 위임하고, build는 각 앱을 `toSSG`로 출력합니다. 사이트맵은 같은 문서 store의 URL만 읽습니다. URL 미지정 프로젝트에는 크롤러 앱과 생성 파일이 없습니다.
 

@@ -29,17 +29,16 @@ order: 10
 ### Requirements
 ```
 
-문서 폴더에는 Markdown과 선택 설정 파일. 루트 `README.md`는 홈(`/`)으로 표시하고 문서 목록에서는 제외.
-루트 `AGENTS.md`·`CLAUDE.md`는 작성 지침으로 보고 문서 수집에서 제외. 이 세 파일의 이름은 대소문자를 구분하지 않음.
-하위 폴더의 같은 이름은 일반 문서로 처리하므로 frontmatter 필수.
-`node_modules`, `dist`는 읽지 않음.
-하위 폴더도 지원. `.mdx`는 Markdown으로 처리 · JSX 실행 미지원.
+설정은 프로젝트 루트, Markdown은 `content/public`과 `content/private`에 작성합니다. `content/README.md`는 홈(`/`)으로 표시하며 문서 목록에서 제외합니다.
+`dev`는 양쪽 문서, `build`는 public 문서만 처리합니다. 경로는 [Settings](settings.md#content-paths)에서 변경할 수 있습니다.
+public·private 밖의 일반 Markdown은 수집하지 않습니다. 두 폴더 안의 `README.md`·`AGENTS.md`·`CLAUDE.md`는 일반 문서이므로 frontmatter가 필요합니다.
+`node_modules`, `dist`, `.git`은 읽지 않습니다. `.mdx`도 Markdown으로 처리하며 JSX를 실행하지 않습니다.
 
 ::part[Structure]
 
 ## Home page
 
-문서 폴더의 `README.md`가 기본 홈. 파일 이름의 대소문자는 구분하지 않음.
+`content/README.md`가 기본 홈. 파일 이름의 대소문자는 구분하지 않음.
 frontmatter 없이 `#` 제목부터 일반 Markdown으로 작성. 제목·목차·코드 강조는 문서와 같은 처리 과정.
 README가 없으면 추가 안내를 표시. 사이드바의 사이트 이름을 누르면 홈으로 이동.
 
@@ -50,7 +49,7 @@ README가 없으면 추가 안내를 표시. 사이드바의 사이트 이름을
 
 ## Getting started
 
-[설치 안내](commands.md)
+[설치 안내](public/commands.md)
 ```
 
 하위 폴더의 README는 일반 문서로 처리하며 frontmatter 필수.
@@ -72,9 +71,9 @@ README가 없으면 추가 안내를 표시. 사이드바의 사이트 이름을
 같은 첫 글자로 시작하는 이름도 허용. `API`와 `Architecture`는 각각 별도 문서.
 새 문서는 `type`을 생략합니다. 기존 `document`·`blueprint` 값은 호환을 위해 읽으며 동일하게 렌더링합니다. 별도 Blueprint 렌더러를 요구하지 않습니다.
 읽는 순서와 근거 작성은 [Authoring](authoring.md), 로컬 그림·첨부는 [Images](images.md).
-파일 경로는 확장자를 뺀 소문자 id로 사용. `.md`와 `.mdx`, 대소문자만 다른 경로의 id 중복 금지.
+공개 폴더 기준 파일 경로는 확장자를 뺀 소문자 id로 사용. 내부 폴더 기준 경로에는 `private/`를 붙임. `.md`와 `.mdx`, 대소문자만 다른 경로의 id 중복 금지.
 YAML 영역은 `remark-frontmatter`, 값은 `yaml`, 필드 검증은 Zod로 처리.
-빈 경로와 예약 문자 `#`, `?`, `%`, `*`, `:`, `\`는 사용 불가. 첫 경로 `/_fh/`는 패키지 자원 전용.
+빈 경로와 예약 문자 `#`, `?`, `%`, `*`, `:`, `\`는 사용 불가. 첫 경로 `/_fh/`는 패키지 자원 전용, `/private/`는 로컬 내부 문서 전용.
 `.`·`..`·`index.html` 경로 조각, 제어문자, 첫 경로 `/favicon.svg/`는 정적 출력과 충돌하므로 사용 불가.
 공개 `url`을 지정하면 첫 경로 `robots.txt`·`sitemap.xml`도 생성 파일 전용으로 예약됩니다. [Crawling](crawling.md).
 
@@ -116,7 +115,7 @@ group:
 파일 이름에 번호나 알파벳을 붙여 순서를 맞출 필요 없음.
 모든 문서 묶음은 항상 표시. 문서는 이름으로 표시하고 하위 문서는 들여쓰기.
 같은 그룹 안에서 문서 아래에 다른 문서를 두려면 `parent` 지정. 부모도 클릭 가능한 독립 문서이며 파일 URL은 유지.
-`parent: writing`은 문서 루트 기준 ID, `parent: ./readme`는 현재 파일 위치 기준 참조. 확장자는 제외.
+`parent: writing`은 사이트 URL 기준 ID, `parent: ./readme`는 현재 파일 위치 기준 참조. 확장자는 제외.
 부모·자식의 전체 `group` 경로는 같아야 하며, 같은 부모 아래에서는 `order`로 순서 지정.
 예시와 오류 조건은 [Navigation](navigation.md).
 `On this page`는 현재 문서 안의 절만 표시.
@@ -137,12 +136,12 @@ group:
 [Settings](settings.md)
 [Settings with query](settings.md?view=compact#navigation)
 [Status badges](settings.md#status-badges)
-[Home](README.md)
+[Home](../README.md)
 ```
 
 상대 Markdown 링크 → 사이트 문서 URL. GitHub에서도 같은 파일로 이동.
-루트 README 링크는 `/`로 변환. 하위 문서의 `../README.md#start`도 `/#start`로 변환.
-외부 URL, 절대 URL, 같은 문서의 hash는 원문 유지.
+`content/README.md` 링크는 `/`로 변환. 하위 문서의 `../README.md#start`도 `/#start`로 변환.
+외부 URL, 절대 URL, 같은 문서의 hash는 원문 유지. 단, 공개 빌드에서 `/private/` URL이나 내부 파일을 가리키는 링크는 오류.
 앵커로 이동한 제목은 약 3초 동안 형광색으로 강조한 뒤 서서히 해제.
 같은 앵커를 다시 누르면 강조 시간을 다시 시작. 접힌 Details의 제목도 펼친 뒤 표시.
 움직임 감소 설정에서는 전환 효과 없이 강조만 표시·해제.
@@ -203,7 +202,7 @@ const name = user.name ?? user_name_default; // [!code ++]
 <<< ./example/response.ts#contract bad line-numbers [example/response.ts]
 ```
 
-`<<<` 줄 하나가 파일을 코드 블록으로 불러옵니다. 경로는 문서 파일 위치 기준이고 문서 폴더 밖은 거부합니다.
+`<<<` 줄 하나가 파일을 코드 블록으로 불러옵니다. 경로는 문서 파일 위치 기준이고 content 루트 밖은 거부합니다. 공개 빌드에서 private 스니펫 참조도 거부합니다.
 언어는 확장자로 정합니다. `#이름`을 붙이면 파일 안의 `// #region 이름`과 `// #endregion 이름` 사이만 가져오고 공통 들여쓰기를 지웁니다.
 region 표시 줄은 항상 지웁니다. 그 뒤의 글은 펜스 메타로 넘어가 줄 표기, `line-numbers`, `bad`, `good`을 그대로 씁니다.
 dev 서버는 불러온 파일이 바뀌어도 새로고침합니다. 예제 코드를 실제 파일로 두고 lint, typecheck 를 받게 할 때 씁니다.

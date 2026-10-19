@@ -13,21 +13,22 @@ order: 20
 
 ```mermaid
 treeView-beta
-docs/
+content/
 ├── README.md
-├── images/
+├── asset/
 │   └── sample.svg
-└── guide/
-    └── screen.md
+└── public/
+    └── guide/
+        └── screen.md
 ```
 
-`guide/screen.md`에서:
+`content/public/guide/screen.md`에서:
 
 ```markdown
-![가상 책 목록의 선택 상태](../images/sample.svg)
+![가상 책 목록의 선택 상태](../../asset/sample.svg)
 
 책장 이름과 선택 표시가 있는 가상 그림입니다.
-[그림 크게 보기](../images/sample.svg)
+[그림 크게 보기](../../asset/sample.svg)
 ```
 
 아래 그림은 이 저장소의 가상 예시 자원입니다.
@@ -38,11 +39,11 @@ docs/
 [그림 크게 보기](../asset/sample.svg)
 
 참조식 이미지와 원시 HTML의 `<img src="...">`에도 같은 상대 경로 규칙을 적용합니다.
-문서 폴더의 README와 하위 문서를 동일하게 처리합니다. 프로젝트만 빌드할 때도 그림은 선택한 문서 루트 안에 있어야 합니다.
+content의 README와 하위 문서를 동일하게 처리합니다. 그림은 content 루트 안에 있어야 합니다. 공용 자료는 `content/asset`, 내부 자료는 `content/private/asset`에 보관합니다. 공개 빌드에서 private 자료를 참조하면 오류가 발생합니다.
 
 ## Build and dev
 
-참조된 파일만 `dist/_fh/media/`로 복사합니다. 전체 이미지 폴더나 주변 개인 파일을 자동으로 복사하지 않습니다.
+참조된 파일만 `content/dist/_fh/media/`로 복사합니다. 전체 이미지 폴더나 주변 개인 파일을 자동으로 복사하지 않습니다.
 URL에는 파일 내용 지문을 포함하며 같은 내용·확장자는 같은 URL을 공유합니다. 파일을 바꾸면 URL도 바뀝니다.
 상대 URL의 query·hash 접미사는 유지합니다. 파일명에 공백이 있으면 링크에서 `%20`으로 쓸 수 있습니다.
 

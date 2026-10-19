@@ -3,7 +3,7 @@ import {isAbsolute, relative, resolve, sep} from "node:path";
 import {readSiteConfig} from "@/app/_function/read-site-config";
 
 /**
- * 프로젝트 설정과 문서 루트 해소, 외부 폴더를 가리키는 symlink 거부
+ * 프로젝트 설정과 문서 루트 해소, 외부·시스템 폴더 symlink 거부
  */
 export const readProject = async (directory: string) => {
     const projectRoot = realpathSync(resolve(directory));
@@ -12,6 +12,9 @@ export const readProject = async (directory: string) => {
     if (existsSync(root)) {
         const location = relative(projectRoot, realpathSync(root));
         if (location === ".." || location.startsWith(`..${sep}`) || isAbsolute(location)) throw new Error(`content 루트는 프로젝트 내부여야 합니다: ${root}`);
+        if (location.split(sep).some((part) => ["dist", ".git", "node_modules"].includes(part.toLowerCase()))) {
+            throw new Error(`content 루트는 dist, .git, node_modules 내부일 수 없습니다: ${root}`);
+        }
     }
     return {root, site};
 };

@@ -12,6 +12,8 @@ Cloudflare Pages는 구매한 도메인 없이 `<project>.pages.dev` 주소를 �
 이 저장소의 문서 주소는 [for-humanity.fyi](https://for-humanity.fyi).
 Pages 프로젝트는 `for-humanity`, 기본 주소는 [for-humanity-1i2.pages.dev](https://for-humanity-1i2.pages.dev).
 
+경로와 공개 범위 전환은 다음 릴리스용 변경입니다. 기존 npm 사용자는 [Migration](migration.md)을 먼저 확인합니다.
+
 ## Overview
 
 공개 사이트의 `robots.txt`와 `sitemap.xml`을 생성하려면 문서 설정에 배포할 루트 `url`을 지정합니다. npm `0.6.0`부터 지원하며, 설정과 Cloudflare 진단 항목은 [Crawling](crawling.md).
@@ -19,7 +21,7 @@ Pages 프로젝트는 `for-humanity`, 기본 주소는 [for-humanity-1i2.pages.d
 | Target             | Build                     | Output                   |
 | ------------------ | ------------------------- | ------------------------ |
 | 이 저장소의 문서   | `pnpm build:pages`        | `content/dist` |
-| 자신의 문서        | `pnpm exec for-humanity build docs` | `docs/dist`     |
+| 자신의 문서        | `pnpm exec for-humanity build` | `content/dist`     |
 
 로컬 서버를 인터넷에 계속 켜 두는 방식이 아니라, 빌드한 HTML·CSS·스크립트·폰트를 정적 호스팅에 업로드.
 for humanity의 CLI는 빌드할 때만 Node.js에서 실행. 배포 후에는 별도 Node.js 서버 불필요.
@@ -40,6 +42,8 @@ for humanity의 CLI는 빌드할 때만 Node.js에서 실행. 배포 후에는 �
 | Build output directory | `content/dist`   |
 | `NODE_VERSION`          | `22`                        |
 | `PNPM_VERSION`          | `12.9.1`                    |
+
+기존 Pages 프로젝트는 다음 배포 전에 대시보드의 출력 경로를 `templates/document/dist`에서 `content/dist`로 변경합니다. 저장소 파일을 이동하는 것만으로 대시보드 설정이 바뀌지 않습니다.
 
 빌드 이미지에서 Node.js·pnpm 버전은 환경 변수로 지정 가능.
 위 pnpm 버전은 `package.json`의 `packageManager`와 같은 값 · [Build image](https://developers.cloudflare.com/pages/configuration/build-image/).
@@ -87,11 +91,11 @@ CSS·스크립트의 내용이 바뀌면 URL도 바뀌므로 새 HTML이 이전 
 
 ## Another project
 
-자신의 문서 프로젝트에서 CLI로 빌드한 `docs/dist` 전체를 배포.
-그 프로젝트의 Cloudflare 설정은 build command `pnpm exec for-humanity build docs`, output `docs/dist`.
+자신의 문서 프로젝트에서 CLI로 빌드한 `content/dist` 전체를 배포. `content.root`를 변경했다면 그 폴더 아래의 `dist`를 지정. 원본 `content` 전체를 업로드하지 않음.
+그 프로젝트의 Cloudflare 설정은 build command `pnpm exec for-humanity build`, output `content/dist`.
 CLI 설치는 [Commands](commands.md#use-in-another-project).
 
-HTML 원문 보존과 내용 지문이 붙은 자원의 장기 캐시가 필요하면 빌드 후 `docs/dist/_headers`에 다음 내용을 추가.
+HTML 원문 보존과 내용 지문이 붙은 자원의 장기 캐시가 필요하면 빌드 후 `content/dist/_headers`에 다음 내용을 추가.
 
 ```text
 /
@@ -104,7 +108,7 @@ HTML 원문 보존과 내용 지문이 붙은 자원의 장기 캐시가 필요�
   Cache-Control: public, max-age=31536000, immutable
 ```
 
-없는 문서가 README 홈으로 보이지 않도록 `docs/dist/404.html`도 배포 결과에 포함.
+없는 문서가 README 홈으로 보이지 않도록 `content/dist/404.html`도 배포 결과에 포함.
 두 파일은 빌드가 지우는 `dist` 밖에 보관하고, 자신의 배포 명령에서 빌드 후 복사.
 
 ## Other hosts

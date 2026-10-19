@@ -11,7 +11,7 @@ order: 10
 
 ## Public site URL
 
-문서 폴더의 `for-humanity.config.mjs`에 배포할 사이트의 루트 URL을 지정합니다.
+프로젝트 루트의 `for-humanity.config.ts`에 배포할 사이트의 루트 URL을 지정합니다.
 
 ```js
 export default {
@@ -23,11 +23,11 @@ export default {
 `http:`·`https:` URL을 지원하고 끝의 `/`는 정규화합니다. 사용자 이름·비밀번호, 하위 경로, query, hash는 허용하지 않습니다. 현재 정적 출력은 도메인 루트(`/`) 배포만 지원합니다.
 
 ```sh
-pnpm exec for-humanity build docs
-pnpm exec for-humanity preview docs
+pnpm exec for-humanity build
+pnpm exec for-humanity preview
 ```
 
-빌드 결과의 `docs/dist/robots.txt`와 `docs/dist/sitemap.xml`을 다른 파일과 함께 배포합니다. `dev`에서도 같은 루트 주소로 확인할 수 있고, 문서 추가·삭제가 사이트맵에 반영됩니다. 설정 파일을 수정했다면 개발 서버를 다시 시작합니다.
+빌드 결과의 `content/dist/robots.txt`와 `content/dist/sitemap.xml`을 다른 파일과 함께 배포합니다. `dev`에서도 같은 루트 주소로 확인할 수 있고, 문서 추가·삭제가 사이트맵에 반영됩니다. 공개 빌드의 사이트맵에는 private 문서가 없으며 로컬 dev에서는 양쪽 문서를 포함합니다. 설정 파일을 수정했다면 개발 서버를 다시 시작합니다.
 
 `url`을 생략하면 두 파일을 생성하지 않습니다. 자신의 공개 URL을 명시하므로 다른 프로젝트의 도메인을 기본값으로 사용하지 않습니다. 파일 생략은 접근 제한이 아닙니다. 비공개 문서를 게시할 때는 별도의 인증·접근 제어가 필요합니다.
 

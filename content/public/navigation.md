@@ -50,7 +50,7 @@ order: 10
 
 부모는 표시 이름이 아닌 확장자를 뺀 소문자 문서 ID로 지정.
 `guide/settings.md`의 ID는 `guide/settings`, URL은 `/guide/settings/`.
-기본 참조는 CLI에 넘긴 문서 루트 기준. 앞뒤 공백은 제거.
+기본 참조는 사이트 URL의 문서 ID 기준. 공개 문서는 `guide`, 내부 문서는 `private/plan` 형태. 앞뒤 공백은 제거.
 
 파일 위치 기준 참조는 `./` 또는 `../`로 시작:
 
@@ -64,7 +64,7 @@ parent: ./readme
 parent: ../research/readme
 ```
 
-상대 참조도 확장자를 넣지 않음. 프로젝트 폴더만 문서 루트로 열 때는 상대 참조를 쓰면 같은 부모 관계를 유지할 수 있음.
+상대 참조도 확장자를 넣지 않음. 파일 위치를 기준으로 해소하므로 내부 문서에서 `../public/guide`처럼 공개 부모를 참조할 수 있음. 공개 문서의 부모는 공개 문서여야 함.
 일반 ID는 URL이 아니므로 `/settings/`, `settings.md`, `#settings`를 사용하지 않음.
 파일 이동·이름 변경 시 부모를 참조하는 문서도 확인.
 
@@ -85,7 +85,7 @@ parent: ../research/readme
 - 자기 자신 참조와 부모 경로의 순환
 - 부모와 자식의 전체 `group` 경로 불일치
 
-루트 `README.md`는 사이트 이름으로 연결하는 홈이므로 부모 문서가 될 수 없음.
+`content/README.md`는 사이트 이름으로 연결하는 홈이므로 부모 문서가 될 수 없음.
 하위 폴더의 README는 일반 문서여서 frontmatter를 갖추면 부모로 사용 가능.
 
 ## Sidebar layout

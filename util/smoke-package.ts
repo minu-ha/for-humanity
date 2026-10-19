@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import {execFileSync, spawnSync} from "node:child_process";
-import {mkdir, mkdtemp, readdir, readFile, realpath, rm, writeFile} from "node:fs/promises";
+import {cp, mkdir, mkdtemp, readdir, readFile, realpath, rename, rm, writeFile} from "node:fs/promises";
 import {tmpdir} from "node:os";
 import {dirname, join, resolve} from "node:path";
 import {checkPackageServer} from "@test/_fixture/check-package-server";
@@ -167,8 +167,36 @@ try {
     await writeFile(join(consumer, "content/public/guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\nOrdinary text.\n");
     execFileSync(process.execPath, [join(packageRoot, "dist/cli.js"), "build", "."], {cwd: consumer, stdio: "inherit"});
     assert.ok(!(await readdir(join(output, "_fh"))).includes("mermaid"), "removing all diagrams must remove the previous runtime assets");
+
+    // 설치된 기본형의 빈 폴더 보존, 기본 경로와 사용자 경로의 실제 빌드
+    for (const file of ["template/content/private/.gitkeep", "template/content/asset/.gitkeep"]) {
+        assert.equal(await readFile(join(packageRoot, file), "utf8"), "");
+    }
+    const starter = join(consumer, "starter");
+    await cp(join(packageRoot, "template"), starter, {recursive: true});
+    await writeFile(join(starter, "content/private/draft.md"), "PRIVATE_STARTER_SENTINEL");
+    execFileSync(process.execPath, [join(packageRoot, "dist/cli.js"), "build"], {cwd: starter, stdio: "inherit"});
+    assert.match(await readFile(join(starter, "content/dist/index.html"), "utf8"), /href="\/getting-started\/"/);
+    assert.ok(!(await readdir(join(starter, "content/dist"))).includes("private"));
+    await rename(join(starter, "content"), join(starter, "knowledge"));
+    await rename(join(starter, "knowledge/public"), join(starter, "knowledge/published"));
+    await rename(join(starter, "knowledge/private"), join(starter, "knowledge/internal"));
+    await writeFile(join(starter, "knowledge/README.md"), "# Custom starter\n\n[Start](published/getting-started.md)\n");
+    await writeFile(
+        join(starter, "for-humanity.config.ts"),
+        'import type {SiteConfig} from "for-humanity";\nexport default {content: {root: "knowledge", public: "published", private: "internal"}} satisfies SiteConfig;\n',
+    );
+    await writeFile(
+        join(starter, "tsconfig.json"),
+        JSON.stringify({compilerOptions: {strict: true, noEmit: true, target: "ESNext", module: "NodeNext", types: []}, files: ["for-humanity.config.ts"]}),
+    );
+    execFileSync(process.execPath, [compiler, "--project", "tsconfig.json"], {cwd: starter, stdio: "inherit"});
+    execFileSync(process.execPath, [join(packageRoot, "dist/cli.js"), "build", starter], {cwd: consumer, stdio: "inherit"});
+    assert.match(await readFile(join(starter, "knowledge/dist/index.html"), "utf8"), /Custom starter/);
+    assert.match(await readFile(join(starter, "knowledge/dist/getting-started/index.html"), "utf8"), /Getting started/);
+    assert.ok(!(await readdir(join(starter, "knowledge/dist"))).some((file) => file === "private" || file === "internal"));
     console.log(
-        `Installed ${pack.name}@${pack.version} on ${process.version}: dev/preview browsers, public config types, TypeScript/ESM settings, fingerprinted assets, navigation, images, Mermaid, README and crawler files passed`,
+        `Installed ${pack.name}@${pack.version} on ${process.version}: dev/preview browsers, config types, TS/ESM settings, assets, navigation, images, Mermaid, README, crawler files and default/custom content starters passed`,
     );
 } finally {
     await rm(consumer, {recursive: true, force: true});

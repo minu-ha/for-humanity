@@ -30,37 +30,41 @@ Write Markdown. Keep the context. Share a static site.
 
 ## Quick start
 
-Node.js 22.12.0 or later and pnpm. Install the CLI in your document project:
+Node.js 22.12.0 or later and pnpm.
+
+**The content layout on this branch is prepared for the next release.** The published npm package is still `0.13.1`:
 
 ```sh
 pnpm add -D --save-exact for-humanity@0.13.1
-mkdir docs
 ```
 
-Create `docs/README.md` for the home page, then start the development server:
+That published version uses a flat Markdown folder and an explicit folder argument. For the new layout below, use a package built from this checkout until the next release. See [Commands](https://github.com/minu-ha/for-humanity/blob/main/content/public/commands.md) for local package installation and [Migration](https://github.com/minu-ha/for-humanity/blob/main/content/public/migration.md) for existing projects.
+
+The next package includes a starter in `node_modules/for-humanity/template`. Copy its configuration and `content` folder into your project, preserving any existing configuration. Add `content/dist/` to your root `.gitignore`:
+
+```text
+for-humanity.config.ts
+content/
+├── README.md
+├── public/
+│   └── getting-started.md
+├── private/
+└── asset/
+```
+
+Run from the project root:
 
 ```sh
-pnpm exec for-humanity dev docs
+pnpm exec for-humanity dev       # Read and edit all documents locally
+pnpm exec for-humanity build     # Generate the public site in content/dist
+pnpm exec for-humanity preview   # Inspect the public build
 ```
 
-Open [localhost:4321](http://localhost:4321). Build and preview your static site:
+Open [localhost:4321](http://localhost:4321). Put published documents in `content/public`, local notes in `content/private`, and the site home in `content/README.md`. Only `content/dist` is deployed. `private` controls site output, not Git repository access.
 
-```sh
-pnpm exec for-humanity build docs    # Generate docs/dist
-pnpm exec for-humanity preview docs
-```
+`init` remains planned. The starter is the shared base for that future command. See [Deployment](https://github.com/minu-ha/for-humanity/blob/main/content/public/deployment.md) for static hosting and [Crawling](https://github.com/minu-ha/for-humanity/blob/main/content/public/crawling.md) for an optional public site URL.
 
-If your Markdown files are in the project root, use `.` instead of `docs`. The root `README.md` becomes the home page; root `AGENTS.md` and `CLAUDE.md` stay out of the site.
-
-Version `0.13.1` supports `dev`, `build` and `preview`. `init` is planned; see the [Roadmap](https://github.com/minu-ha/for-humanity/blob/main/content/public/roadmap.md) and [Changelog](https://github.com/minu-ha/for-humanity/blob/main/CHANGELOG.md).
-Cloudflare Pages can host the generated site. See [Deployment](https://github.com/minu-ha/for-humanity/blob/main/content/public/deployment.md) for the build settings.
-Set an optional public root `url` in the site configuration to generate `robots.txt` and `sitemap.xml`; projects without a URL emit neither file. See [Crawling](https://github.com/minu-ha/for-humanity/blob/main/content/public/crawling.md).
-
-### Develop the kit
-
-Version 0.13.0 requires Node.js 22.12.0 or later. Repository development uses one Vite server with Hono, source TSX reloads and CSS HMR.
-
-To work on the CLI or read this library's guides and examples locally, run the project from source:
+To read and develop this repository locally:
 
 ```sh
 git clone https://github.com/minu-ha/for-humanity.git
@@ -69,38 +73,28 @@ pnpm install
 pnpm dev
 ```
 
-Open [localhost:4321](http://localhost:4321) to read this library's usage guides, API reference and fictional examples.
-
-```sh
-pnpm build      # Generate content/dist
-pnpm preview    # Preview the static site
-pnpm build:pages # Add Cloudflare Pages headers and a 404 page
-```
-
-Changes pushed to `main` update the documentation site. A stable version tag such as `v0.13.1` runs checks, publishes the package to npm, then creates a GitHub Release with the same package file.
-The npm README updates with each package release. See [Maintenance](https://github.com/minu-ha/for-humanity/blob/main/content/private/maintenance.md#packaging-and-release) for the release steps.
-
 ## Make it yours
 
-A document folder is enough to get started. Without a site configuration, the sidebar shows **for humanity**. The pixel face appears in the browser tab, and follows the mouse on desktop when the site sets `cursorFace: true`.
-The folder's `README.md` becomes the home page at `/`, with no frontmatter required. Click the site name to return home.
+The default `content/public` folder is enough to get started. Without a site configuration, the sidebar shows **for humanity**. The pixel face appears in the browser tab, and follows the mouse on desktop when the site sets `cursorFace: true`.
+`content/README.md` becomes the home page at `/`, with no frontmatter required. Click the site name to return home.
 This repository generates [the documentation home](https://github.com/minu-ha/for-humanity/blob/main/content/README.md) from its root README.md and [the site changelog](https://github.com/minu-ha/for-humanity/blob/main/content/public/changelog.md) from CHANGELOG.md. Edit those source files, then run `pnpm sync:docs`; `pnpm dev` and `pnpm build` also sync them on startup.
-Set your own name in `for-humanity.config.ts`, using the exported `SiteConfig` type for editor completion and static checking:
+Set your own name in the project-root `for-humanity.config.ts`, using the exported `SiteConfig` type for editor completion and static checking:
 
 ```ts
 import type {SiteConfig} from "for-humanity";
 
 export default {
     title: "Project notes",
+    content: {root: "content", public: "public", private: "private"},
     description: "Decisions, working notes and the details behind them.",
     navigation: ["Getting started", "Guide", "Reference", "Examples"],
 } satisfies SiteConfig;
 ```
 
 Existing `for-humanity.config.mjs` files remain supported. When migrating to TypeScript, replace the old file with the `.ts` file.
-Use one configuration file per document folder. The CLI validates values at startup; run `tsc --noEmit` in your project for static type checking.
+Use one configuration file per project. The CLI validates values at startup; run `tsc --noEmit` in your project for static type checking.
 
-See [Commands](https://github.com/minu-ha/for-humanity/blob/main/content/public/commands.md) for using another document folder, and [Settings](https://github.com/minu-ha/for-humanity/blob/main/content/public/settings.md) for configuration.
+See [Commands](https://github.com/minu-ha/for-humanity/blob/main/content/public/commands.md) for using another project folder, and [Settings](https://github.com/minu-ha/for-humanity/blob/main/content/public/settings.md) for configuration.
 Each document other than the root README chooses a `group` and optional `order`. Pages stay independent; groups do not need parent documents or nested folders. Document names may share the same first letter.
 Use `group: Guide` for one group or `group: [Projects, Example project, Research]` for nested navigation. Group paths do not change document URLs.
 Use `parent: writing` to place a document below another document in the same group. File-relative references such as `parent: ./readme` also work. Parent pages remain clickable and each page keeps its own URL; see [Navigation](https://github.com/minu-ha/for-humanity/blob/main/content/public/navigation.md).
@@ -128,7 +122,6 @@ The contract, code or reasoning behind the visible result.
 | Reference | [API](https://github.com/minu-ha/for-humanity/blob/main/content/public/api.md) |
 | Releases | [Official releases](https://github.com/minu-ha/for-humanity/blob/main/content/public/releases.md) · [Changelog](https://github.com/minu-ha/for-humanity/blob/main/content/public/changelog.md) |
 | Examples | [Fictional design example](https://github.com/minu-ha/for-humanity/blob/main/content/public/blueprint.md) |
-| Development | [Architecture](https://github.com/minu-ha/for-humanity/blob/main/content/private/architecture.md) · [Design](https://github.com/minu-ha/for-humanity/blob/main/content/private/design.md) · [Maintenance](https://github.com/minu-ha/for-humanity/blob/main/content/private/maintenance.md) · [Roadmap](https://github.com/minu-ha/for-humanity/blob/main/content/public/roadmap.md) |
 
 ## License
 

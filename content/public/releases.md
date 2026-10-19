@@ -27,7 +27,7 @@ order: 0
 pnpm add -D --save-exact for-humanity@latest
 ```
 
-이미 사용하는 프로젝트도 같은 명령으로 업데이트. 새 버전의 [Changelog](changelog.md)를 읽고 문서 빌드 확인:
+이미 사용하는 프로젝트도 같은 명령으로 업데이트. 새 버전의 [Changelog](changelog.md)를 읽고 문서 빌드 확인. 아래는 현재 공개된 `0.13.1`의 평면 문서 폴더 기준:
 
 ```sh
 pnpm exec for-humanity build docs
@@ -35,7 +35,7 @@ pnpm exec for-humanity preview docs
 ```
 
 새 npm 버전의 공개만으로 다른 프로젝트의 고정된 의존성 버전이 바뀌지는 않음.
-설치 버전의 명령과 설정은 [Commands](commands.md) · [Settings](settings.md).
+다음 릴리스의 content 구조와 프로젝트 루트 설정은 아직 npm에 공개되지 않았습니다. 전환은 [Migration](migration.md), 새 명령과 설정은 [Commands](commands.md) · [Settings](settings.md).
 
 ## Documentation and versions
 

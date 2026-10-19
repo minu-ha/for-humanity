@@ -40,12 +40,23 @@ group: Development
 
 ### 3. Consumer workflow
 
-- [ ] 기본형, 한영 README, 설정/CLI/이전 안내와 Unreleased 갱신.
-- [ ] 설치 패키지 테스트에서 기본 및 사용자 경로, 타입, dev와 preview 확인.
-- [ ] 브라우저 검사와 패키지 smoke 검사, 필수 검증 후 커밋.
+- [x] 기본형, 한영 README, 설정/CLI/이전 안내와 Unreleased 갱신.
+- [x] 설치 패키지 테스트에서 기본 및 사용자 경로, 타입, dev와 preview 확인.
+- [x] 브라우저 검사와 패키지 smoke 검사, 필수 검증 후 커밋.
 
 ## Verification
 
 공개 결과의 파일 목록과 HTML/사이트맵/탐색 데이터에서 내부 표식 부재 확인.
 내부 이미지와 스니펫의 직접 참조 및 symlink 우회 실패 확인.
 설정 이름 변경, `.mjs`, 공개 URL 유지, parent 관계와 이미지 링크, dev 갱신과 preview 직접 접속 검증.
+
+
+### Completed checks
+
+- 단위·CLI 통합 검사: 24개 파일, 166개 검사 통과 (`pnpm test --maxWorkers=2`). 제한 없는 병렬 실행에서 기존 코드 강조 검사의 시간제한을 확인하여 워커 수를 제한.
+- `pnpm check`, `pnpm build:pages`, `git diff --check` 통과. 공개 출력 18개 HTML 페이지와 크롤러 파일 2개, 내부 페이지·사이트맵 경로 제외.
+- Playwright: 49개 검사 통과. 이 결과는 macOS 로컬 환경이며 Windows의 기존 간헐적 검사 이력을 대체하지 않음.
+- 설치 패키지: dev·preview 실제 브라우저, 공개 설정 타입, TS·ESM 설정, 자원·Mermaid·탐색·크롤러 파일, 기본형과 사용자 경로 빌드 통과.
+- 저장소 dev: maintenance·architecture·design·content-layout 페이지와 내부 사이트맵 확인.
+- 읽기 전용 코드 리뷰의 content-root symlink 지적 수정. 예약 폴더 세 경로의 실패 재현 후 회귀 검사 통과.
+- 다음 사이트 배포 전에 호스팅 출력 경로를 `content/dist`로 변경. npm 버전은 공개된 `0.13.1` 유지.

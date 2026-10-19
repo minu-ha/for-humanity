@@ -105,8 +105,18 @@ describe("사이트 설정", () => {
          */
         expect(result.success).toBe(false);
     });
+
     test("문서 경로를 부분 지정하면 나머지는 기본 구조를 유지한다", () => {
+        /**
+         * WHEN
+         * 일부 문서 경로만 지정한 설정 검증
+         */
         const result = siteConfigSchema.parse({content: {root: "knowledge", private: "internal"}});
+
+        /**
+         * THEN
+         * 지정한 값과 기본 공개 폴더 유지
+         */
         expect(result.content).toStrictEqual({root: "knowledge", public: "public", private: "internal"});
     });
 
@@ -126,6 +136,10 @@ describe("사이트 설정", () => {
         {private: "folder/.git"},
         {public: "guide?draft"},
     ])("문서 범위를 모호하게 만드는 경로 %j는 거부한다", (content) => {
+        /**
+         * WHEN / THEN
+         * 외부 경로, 예약 경로와 중첩된 수집 범위 거부
+         */
         expect(siteConfigSchema.safeParse({content}).success).toBe(false);
     });
 });

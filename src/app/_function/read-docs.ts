@@ -26,7 +26,7 @@ import {toContentId} from "@/util/file/to-content-id";
  */
 export interface ReadDocsParams {
     /**
-     * CLI에 넘긴 문서 폴더의 절대 경로
+     * 설정에서 해소한 content 루트의 절대 경로
      */
     root: string;
 
@@ -47,9 +47,9 @@ export interface ReadDocsParams {
 }
 
 /**
- * Markdown 수집과 렌더링. 루트 README는 홈, AGENTS, CLAUDE는 작성 지침으로 분리
+ * 공개 범위의 Markdown 수집과 렌더링, 범위 미지정 시 독립 Markdown 처리
  *
- *   - 문서 목록에서 루트 안내 파일, node_modules, dist 제외
+ *   - 사이트 실행에서 공개·내부 문서만 수집, content 루트 안내 파일 제외
  *   - 머리말, 문서 식별자 중복, 플러그인 오류 시 실패
  */
 export const readDocs = async (options: ReadDocsParams): Promise<Doc[]> => {

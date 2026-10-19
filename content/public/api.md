@@ -25,32 +25,33 @@ JavaScript용 공식 진입점은 아직 제공하지 않음. 내부 렌더러 �
 ## Commands
 
 ```text
-for-humanity <dev|build|preview> [docs-dir]
+for-humanity <dev|build|preview> [project-dir]
 ```
 
 | Input       | Default   | Behavior                                  |
 | ----------- | --------- | ----------------------------------------- |
 | command     | `dev`     | `dev` · `build` · `preview`만 지원         |
-| `docs-dir`  | 현재 폴더 | 명령을 실행한 폴더 기준 경로              |
+| `project-dir`  | 현재 폴더 | 설정 파일이 있는 프로젝트 루트              |
 
-- `dev`: 설정 `port`, 기본 `4321` · 문서 변경 후 새로고침 · 잘못된 문서는 직전 정상 결과 유지
-- `build`: `<docs-dir>/dist`를 새로 생성 · 기존 출력 전체 교체
+- `dev`: public과 private 문서 · 설정 `port`, 기본 `4321` · 문서 변경 후 새로고침 · 잘못된 문서는 직전 정상 결과 유지
+- `build`: public 문서만 `<content.root>/dist`를 새로 생성 · 기존 출력 전체 교체
 - `preview`: 같은 `port` · 이미 만든 `dist` 제공
-- `init`: 아직 미구현
+- `init`: 아직 미구현 · 패키지의 `template/` 기본형 제공
 
 ```sh
-pnpm exec for-humanity build docs
-pnpm exec for-humanity preview docs
+pnpm exec for-humanity build
+pnpm exec for-humanity preview
 ```
 
 ::part[Configuration]
 
 ## Site configuration
 
-설정 파일의 `export default` 객체. 파일과 각 항목 모두 선택.
+프로젝트 루트 설정 파일의 `export default` 객체. 경로 전환은 다음 릴리스용 변경이며 [Migration](migration.md) 참고. 파일과 각 항목 모두 선택.
 
 | Field         | Type                               | Default                   |
 | ------------- | ---------------------------------- | ------------------------- |
+| `content`     | `{root?: string, public?: string, private?: string}` | `{root: "content", public: "public", private: "private"}` |
 | `title`       | string                             | `for humanity`            |
 | `description` | string · HTML 설명 메타데이터        | 생략                      |
 | `url`         | HTTP(S) 루트 URL · 0.6.0+           | 생략 · 크롤러 파일 생성하지 않음 |
@@ -72,7 +73,7 @@ pnpm exec for-humanity preview docs
 
 ## Frontmatter
 
-일반 문서에 적용. 루트 `README.md`는 frontmatter 없이 홈(`/`)으로 렌더링.
+public·private 문서에 적용. `content.root`의 `README.md`는 frontmatter 없이 홈(`/`)으로 렌더링.
 파일 이름의 대소문자는 구분하지 않으며, 없으면 README 작성 안내 표시.
 
 ```yaml
@@ -93,14 +94,14 @@ type: document
 | `type`  | 기존 `document` · `blueprint` 값 허용 · 생략 권장 | `document` · 렌더링 차이 없음 |
 
 같은 첫 글자로 시작하는 문서도 지원. 문서 id는 확장자를 제외한 소문자 파일 경로.
-예: `api.md` → `/api/`, `architecture.md` → `/architecture/`.
+예: `content/public/api.md` → `/api/`, `content/private/architecture.md` → 로컬 `/private/architecture/`.
 이름·순서가 같은 문서도 파일 id로 구분. id가 겹치는 파일은 빌드 오류.
 `group: [Projects, Example project, Research]`는 최상위부터 중첩한 탐색 경로. 고정된 깊이 제한 없음.
 각 이름의 앞뒤 공백은 제거. 빈 이름·빈 배열은 오류. 쉼표·슬래시는 경로 구분자로 해석하지 않음.
 단일 문자열과 배열을 내부에서는 같은 경로 배열로 정규화하며, 파일 위치와 URL은 그룹 설정과 독립적.
 예약 경로·문자의 전체 목록은 [Writing](writing.md#frontmatter).
 
-`parent`는 `0.3.0`부터 지원. 기본값 없이 생략 가능. 문서 루트 기준 ID 또는 `./`·`../`로 시작하는 파일 위치 기준 참조.
+`parent`는 `0.3.0`부터 지원. 기본값 없이 생략 가능. 사이트 URL 기준 ID 또는 `./`·`../`로 시작하는 파일 위치 기준 참조.
 확장자와 앞뒤 `/`를 제외한 소문자 경로 사용. 예: `parent: guide/settings`, `parent: ./readme`.
 부모·자식은 같은 전체 `group` 경로를 사용. 형제는 `order`·제목·ID 순으로 정렬하며 URL은 파일 경로 그대로 유지.
 빈 값·부모 누락·홈 README·자기 참조·순환·다른 그룹의 부모는 오류. [Navigation](navigation.md)의 예시 참고.
@@ -129,7 +130,7 @@ type: document
 
 ## Failure behavior
 
-- 시작·빌드 오류: 설정, frontmatter, 문서 id, 블록 문법, 흐름도 렌더링 · 종료 코드 `1`
+- 시작·빌드 오류: 설정, frontmatter, 문서 id, 블록 문법, 공개 문서의 private 참조 · 종료 코드 `1`
 - 문서 변경 오류: 개발 서버는 이전 정상 문서를 유지하고 터미널에 오류 표시
 - 링크 경고: 없는 Markdown 파일은 경고 후 빌드 계속
 - 배포 기준: 사이트 루트 `/` · 하위 URL 경로의 base path 설정은 아직 미구현

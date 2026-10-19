@@ -5,10 +5,12 @@ group: Guide
 order: 30
 ---
 
-문서 폴더의 `for-humanity.config.ts`. 제목, 소개, 공개 URL, 문서 묶음 순서, status badge 설정.
+프로젝트 루트의 `for-humanity.config.ts`. 제목, 소개, 공개 URL, 문서 묶음 순서, status badge 설정.
 설정 파일과 각 항목 모두 선택. 생략한 값은 기본값 적용.
 
 TypeScript 설정과 공개 `SiteConfig` 타입은 `0.13.0`부터 지원합니다. 기존 `for-humanity.config.mjs`도 지원하며, 같은 폴더에 두 설정이 있으면 실행 전에 중복 오류를 표시합니다. `.ts`로 전환할 때는 기존 `.mjs` 파일을 교체합니다.
+
+문서 경로 설정은 다음 릴리스용 변경입니다. npm `0.13.1` 사용자는 [Migration](migration.md)을 먼저 확인합니다.
 
 ## Overview
 
@@ -17,6 +19,7 @@ import type {SiteConfig} from "for-humanity";
 
 export default {
     title: "for humanity",
+    content: {root: "content", public: "public", private: "private"},
     description: "사람이 읽는 문서를 위한 Markdown 문서 도구",
     navigation: ["Getting started", "Guide", "Reference", "Examples"],
     status: [
@@ -38,6 +41,37 @@ export default {title: "Project notes"};
 ```
 
 ::part[Configuration]
+
+## Content paths
+
+| Key | Relative to | Default |
+| --- | --- | --- |
+| `content.root` | 프로젝트 루트 | `content` |
+| `content.public` | content 루트 | `public` |
+| `content.private` | content 루트 | `private` |
+
+설정 파일은 CLI에 지정한 프로젝트 루트에 둡니다. 문서 폴더 이름을 바꿔도 설정 위치는 같습니다.
+기본형은 `content/README.md`, `content/public`, `content/private`, `content/asset`을 함께 제공합니다.
+공개 폴더는 필수이며 내부 폴더와 자원 폴더는 필요 없으면 지워도 됩니다. `asset`은 참조한 파일만 수집하므로 이름을 바꿔도 별도 설정은 필요하지 않습니다.
+
+```ts
+import type {SiteConfig} from "for-humanity";
+
+export default {
+    content: {root: "knowledge", public: "published", private: "internal"},
+} satisfies SiteConfig;
+```
+
+이 경우 홈은 `knowledge/README.md`, 문서는 `knowledge/published`와 `knowledge/internal`, 출력은 `knowledge/dist`입니다.
+공개 문서 `published/guide.md`의 URL은 `/guide/`, 내부 문서 `internal/plan.md`의 로컬 URL은 `/private/plan/`입니다. 폴더 이름을 바꿔도 URL 접두어 규칙은 같습니다.
+
+경로는 프로젝트 내부 상대 경로만 허용합니다. `content.root: "."`는 가능하지만 공개·내부 문서는 각각 별도 하위 폴더가 필요합니다.
+공개·내부 경로는 같거나 중첩될 수 없고, `..`, `dist`, `.git`, `node_modules` 경로는 거부합니다. 바깥이나 예약 폴더를 가리키는 symlink도 사용할 수 없습니다. 공개·내부 폴더 자체는 symlink로 지정하지 않습니다.
+
+`dev`는 양쪽 문서를 표시하고 `build`는 공개 문서만 처리합니다. `preview`는 이미 생성된 공개 결과를 확인합니다.
+홈은 항상 공개됩니다. 공개 문서나 홈에서 내부 Markdown·그림·첨부·스니펫을 참조하면 빌드가 실패합니다.
+내부 자료는 내부 폴더 아래, 공용 자료는 `asset` 아래에 둡니다. 공개·내부 폴더 밖의 일반 Markdown은 수집하지 않습니다.
+`private`는 정적 사이트 출력에서 제외하는 규칙이며 Git 저장소의 접근 권한을 바꾸지 않습니다.
 
 ## Site
 

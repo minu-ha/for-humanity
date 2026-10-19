@@ -8,6 +8,8 @@
 - Preserve public document URLs and reserve `/private/` for local internal pages. Exclude internal pages, navigation data, sitemap entries and their assets from public builds.
 - Reject public references to internal Markdown, images and snippets, including raw HTML and symlink targets.
 - Move this repository's documentation to `content` and its configuration to the project root.
+- Include a reusable `template/` starter with public/private folders and document migration from flat Markdown projects.
+- Reject content-root symlinks into build output, Git metadata and installed dependencies.
 
 ## 0.13.1 — 2026-10-16
 
