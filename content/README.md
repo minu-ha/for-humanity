@@ -105,7 +105,7 @@ Add examples or explanations readers can open when needed.
 | Add rich content | [Parts](public/parts.md) · [Diagrams](public/diagrams.md) · [Images](public/images.md) |
 | Configure the site | [Settings](public/settings.md) · [Reference](public/api.md) |
 | Publish | [Deployment](public/deployment.md) · [Crawling](public/crawling.md) |
-| Update | [Releases](public/releases.md) · [Migration](public/migration.md) |
+| Update | [Changelog](public/changelog.md) · [Migration](public/migration.md) |
 
 ## License
 

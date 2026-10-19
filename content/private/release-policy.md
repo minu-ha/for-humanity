@@ -5,7 +5,7 @@ group: Development
 order: 50
 ---
 
-버전·호환성·공개 시점의 내부 기준. 사용자 업데이트 안내는 [Releases](../public/releases.md), 검증·배포 절차는 [Maintenance](maintenance.md#packaging-and-release).
+버전·호환성·공개 시점의 내부 기준. 사용자 업데이트 안내는 [Changelog](../public/changelog.md), 검증·배포 절차는 [Maintenance](maintenance.md#packaging-and-release).
 
 ## Development and release
 

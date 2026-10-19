@@ -103,7 +103,7 @@ Add examples or explanations readers can open when needed.
 | Add rich content | [Parts](https://github.com/minu-ha/for-humanity/blob/main/content/public/parts.md) · [Diagrams](https://github.com/minu-ha/for-humanity/blob/main/content/public/diagrams.md) · [Images](https://github.com/minu-ha/for-humanity/blob/main/content/public/images.md) |
 | Configure the site | [Settings](https://github.com/minu-ha/for-humanity/blob/main/content/public/settings.md) · [Reference](https://github.com/minu-ha/for-humanity/blob/main/content/public/api.md) |
 | Publish | [Deployment](https://github.com/minu-ha/for-humanity/blob/main/content/public/deployment.md) · [Crawling](https://github.com/minu-ha/for-humanity/blob/main/content/public/crawling.md) |
-| Update | [Releases](https://github.com/minu-ha/for-humanity/blob/main/content/public/releases.md) · [Migration](https://github.com/minu-ha/for-humanity/blob/main/content/public/migration.md) |
+| Update | [Changelog](https://github.com/minu-ha/for-humanity/blob/main/content/public/changelog.md) · [Migration](https://github.com/minu-ha/for-humanity/blob/main/content/public/migration.md) |
 
 ## License
 

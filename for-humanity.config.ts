@@ -8,7 +8,7 @@ export default {
     title: "for humanity",
     url: "https://for-humanity.fyi",
     description: "Markdown으로 문서를 작성하고 정적 사이트로 공유하는 문서 도구. 설치와 실행, 문서 작성, 사이트 설정과 배포 방법.",
-    navigation: ["Getting started", "Guide", "Reference", "Releases", "Examples", "Development"],
+    navigation: ["Getting started", "Guide", "Reference", "Updates", "Examples", "Development"],
 
     // 기본 비활성인 데스크톱 커서 장식 사용
     cursorFace: true,

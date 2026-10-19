@@ -103,7 +103,7 @@ export default {
 | 표현 추가 | [Parts](../content/public/parts.md) · [Diagrams](../content/public/diagrams.md) · [Images](../content/public/images.md) |
 | 사이트 설정 | [Settings](../content/public/settings.md) · [Reference](../content/public/api.md) |
 | 배포 | [Deployment](../content/public/deployment.md) · [Crawling](../content/public/crawling.md) |
-| 업데이트 | [Releases](../content/public/releases.md) · [Migration](../content/public/migration.md) |
+| 업데이트 | [Changelog](../content/public/changelog.md) · [Migration](../content/public/migration.md) |
 
 ## License
 
