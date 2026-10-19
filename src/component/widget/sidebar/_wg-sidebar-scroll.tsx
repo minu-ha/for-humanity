@@ -45,7 +45,9 @@ export const WgSidebarScroll = (props: WgSidebarScrollProps) => {
      */
     const updateOverflow = () => {
         frameRef.current = 0;
-        if (props.portRef.current === null) return;
+        if (props.portRef.current === null) {
+            return;
+        }
         const above = props.portRef.current.scrollTop > 1;
         const below = props.portRef.current.scrollHeight - props.portRef.current.clientHeight - props.portRef.current.scrollTop > 1;
         setOverflow((state) => (state.above === above && state.below === below ? state : {above, below}));
@@ -55,7 +57,9 @@ export const WgSidebarScroll = (props: WgSidebarScrollProps) => {
      * 연속 스크롤과 관찰자 알림은 프레임당 한 번 측정
      */
     const scheduleOverflow = () => {
-        if (frameRef.current === 0) frameRef.current = requestAnimationFrame(updateOverflow);
+        if (frameRef.current === 0) {
+            frameRef.current = requestAnimationFrame(updateOverflow);
+        }
     };
 
     /**
@@ -70,10 +74,14 @@ export const WgSidebarScroll = (props: WgSidebarScrollProps) => {
      * 영역과 내용의 크기를 함께 추적. Hono 최초 mount의 분리된 fragment 측정은 연결 직후 실행
      */
     useLayoutEffect(() => {
-        if (!props.ready || props.portRef.current === null) return;
+        if (!props.ready || props.portRef.current === null) {
+            return;
+        }
         const observer = new ResizeObserver(scheduleOverflow);
         observer.observe(props.portRef.current);
-        if (props.portRef.current.firstElementChild !== null) observer.observe(props.portRef.current.firstElementChild);
+        if (props.portRef.current.firstElementChild !== null) {
+            observer.observe(props.portRef.current.firstElementChild);
+        }
         let active = true;
         addEventListener("pageshow", scheduleOverflow);
         if (props.portRef.current.isConnected) {
@@ -81,7 +89,9 @@ export const WgSidebarScroll = (props: WgSidebarScrollProps) => {
         } else {
             // Hono 최초 레이아웃 효과는 분리된 fragment에서 실행, DOM 연결 후 첫 페인트 전 측정
             queueMicrotask(() => {
-                if (active) updateOverflow();
+                if (active) {
+                    updateOverflow();
+                }
             });
         }
         return () => {
@@ -97,7 +107,9 @@ export const WgSidebarScroll = (props: WgSidebarScrollProps) => {
      * 접힘 선택의 렌더가 바뀐 직후 측정. 좌표 복원은 부모의 연결 후 처리보다 앞서 저장하지 않음
      */
     useLayoutEffect(() => {
-        if (props.ready && props.portRef.current?.isConnected) updateOverflow();
+        if (props.ready && props.portRef.current?.isConnected) {
+            updateOverflow();
+        }
     }, [props.children, props.ready]);
 
     return (

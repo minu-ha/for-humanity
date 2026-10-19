@@ -59,7 +59,9 @@ test.describe("탐색 레이아웃", () => {
                         const fill = await page.evaluate(() => Math.min(document.documentElement.getBoundingClientRect().width, 1920) - (28 + 200 + 32) * 2);
                         expect(await page.locator("main").evaluate((element) => element.getBoundingClientRect().width)).toBe(fill);
                     }
-                    if (options.forcedColors === "active") expect(await documents.evaluate((element) => getComputedStyle(element).scrollbarWidth)).toBe("thin");
+                    if (options.forcedColors === "active") {
+                        expect(await documents.evaluate((element) => getComputedStyle(element).scrollbarWidth)).toBe("thin");
+                    }
                     if (mobile) {
                         await test.step("Escape로 닫으면 탐색 열기 버튼으로 포커스가 복귀한다", async () => {
                             await page.keyboard.press("Escape");

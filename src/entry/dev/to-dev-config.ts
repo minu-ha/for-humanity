@@ -87,7 +87,9 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                     const state = {generation: 0, closed: false};
                     const refresh = toChangeQueue({
                         run: async () => {
-                            if (state.closed) return;
+                            if (state.closed) {
+                                return;
+                            }
                             const generation = state.generation;
 
                             // 저장소 자체 모듈의 공개 계약, Vite가 캐시를 무효화한 소스에서 로드
@@ -100,11 +102,15 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                                 browser: params.source ? {kind: "module", path: "/src/entry/browser/browser.tsx"} : undefined,
                                 stylePaths: params.source ? z.array(z.string()).parse((await server.ssrLoadModule("/src/entry/dev/_constant/style.ts")).style_paths) : undefined,
                             });
-                            if (state.closed || generation !== state.generation) return;
+                            if (state.closed || generation !== state.generation) {
+                                return;
+                            }
                             currentSite = nextSite;
 
                             // Vite는 연결 전 갱신도 보관, 최초 응답의 불필요한 재접속 제외
-                            if (generation > 0) server.hot.send({type: "full-reload"});
+                            if (generation > 0) {
+                                server.hot.send({type: "full-reload"});
+                            }
                         },
                         onError: (error) => {
                             return server.config.logger.error(`${copy_error_prefix}: ${toErrorMessage(error)}`);
@@ -128,7 +134,9 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                             params.source &&
                             file.startsWith(`${join(kitRoot, "src")}${sep}`) &&
                             ([".ts", ".tsx"].includes(extension) || (extension === ".css" && event !== "change"));
-                        if (ready === undefined || (!isDocument && !isSource) || config_file_names.some((name) => documentPath === name)) return;
+                        if (ready === undefined || (!isDocument && !isSource) || config_file_names.some((name) => documentPath === name)) {
+                            return;
+                        }
                         state.generation += 1;
                         reload();
                     };
@@ -165,7 +173,9 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                 loadModule: async () => {
                     ready ??= prepare?.();
                     await ready;
-                    if (currentSite === undefined) throw new Error("문서 준비에 실패했습니다. 위 오류를 수정하면 다시 반영합니다.");
+                    if (currentSite === undefined) {
+                        throw new Error("문서 준비에 실패했습니다. 위 오류를 수정하면 다시 반영합니다.");
+                    }
                     const app = currentSite.app;
                     return {
                         fetch: async (request, env) => {

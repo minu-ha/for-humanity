@@ -43,7 +43,9 @@ export const WgToc = (props: WgTocProps) => {
          *   - 압축한 거리만큼 제목 위 여백 추가, 앵커 이동과 목차 판정이 같은 위치 사용
          */
         const updateAnchorShifts = () => {
-            for (const heading of headings) findHashTarget(`#${heading.slug}`)?.style.removeProperty(anchor_shift_property);
+            for (const heading of headings) {
+                findHashTarget(`#${heading.slug}`)?.style.removeProperty(anchor_shift_property);
+            }
             const anchors = headings.flatMap((heading) => {
                 const target = findHashTarget(`#${heading.slug}`);
                 return target?.checkVisibility()
@@ -52,11 +54,15 @@ export const WgToc = (props: WgTocProps) => {
             });
             const last = anchors.at(-1);
             const scrollEnd = document.documentElement.scrollHeight - innerHeight;
-            if (last === undefined || scrollEnd <= 0 || last.arrival <= scrollEnd) return;
+            if (last === undefined || scrollEnd <= 0 || last.arrival <= scrollEnd) {
+                return;
+            }
             const stretchFrom = Math.max(0, scrollEnd - innerHeight);
             const stretchScale = (scrollEnd - stretchFrom) / (last.arrival - stretchFrom);
             for (const anchor of anchors) {
-                if (anchor.arrival > stretchFrom) anchor.target.style.setProperty(anchor_shift_property, `${(anchor.arrival - stretchFrom) * (1 - stretchScale)}px`);
+                if (anchor.arrival > stretchFrom) {
+                    anchor.target.style.setProperty(anchor_shift_property, `${(anchor.arrival - stretchFrom) * (1 - stretchScale)}px`);
+                }
             }
         };
 
@@ -82,7 +88,9 @@ export const WgToc = (props: WgTocProps) => {
          * 연속 스크롤의 프레임당 1회 위치 조회
          */
         const handleReadingPositionChange = () => {
-            if (frame.id === 0) frame.id = requestAnimationFrame(updateCurrentHeading);
+            if (frame.id === 0) {
+                frame.id = requestAnimationFrame(updateCurrentHeading);
+            }
         };
 
         /**
@@ -98,7 +106,9 @@ export const WgToc = (props: WgTocProps) => {
          */
         const handleHashLinkClick = (event: MouseEvent) => {
             const link = findHashLink(event);
-            if (link === null) return;
+            if (link === null) {
+                return;
+            }
             lock.slug = toHashId(link.hash);
             handleReadingPositionChange();
         };
@@ -133,13 +143,17 @@ export const WgToc = (props: WgTocProps) => {
         for (const type of scroll_user_input_events) {
             addEventListener(type, handleUserScroll, {passive: true, signal: lifetime.signal});
         }
-        if (document.readyState !== "loading") handleLayoutChange();
+        if (document.readyState !== "loading") {
+            handleLayoutChange();
+        }
 
         return () => {
             cancelAnimationFrame(frame.id);
             lifetime.abort();
             observer.disconnect();
-            for (const heading of headings) findHashTarget(`#${heading.slug}`)?.style.removeProperty(anchor_shift_property);
+            for (const heading of headings) {
+                findHashTarget(`#${heading.slug}`)?.style.removeProperty(anchor_shift_property);
+            }
         };
     }, [props.groups]);
 

@@ -45,7 +45,9 @@ export const remarkLinks = (options: LinkOptions) => (tree: Root, file: VFile) =
                 try {
                     assertContentPath({scope: options.scope, path: target});
                     const id = toContentId({scope: options.scope, path: target});
-                    if (!existsSync(target)) file.message(`${copy_warn_broken_link}: ${node.url}`, node);
+                    if (!existsSync(target)) {
+                        file.message(`${copy_warn_broken_link}: ${node.url}`, node);
+                    }
                     node.url = `${id === "" ? "/" : `/${id}/`}${match[3]}`;
                 } catch (error) {
                     file.fail(error instanceof Error ? error.message : String(error), node);

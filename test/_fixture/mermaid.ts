@@ -74,7 +74,9 @@ export const test = base.extend<{runtime: BrowserRuntime}, {mermaidSite: string}
                 const server = await preview(toPreviewConfig({root, port: 0}));
                 try {
                     const url = server.resolvedUrls?.local[0];
-                    if (url === undefined) throw new Error("미리보기 서버의 테스트 주소가 없습니다");
+                    if (url === undefined) {
+                        throw new Error("미리보기 서버의 테스트 주소가 없습니다");
+                    }
                     await use(new URL(url).origin);
                 } finally {
                     await server.close();
@@ -93,7 +95,9 @@ export const test = base.extend<{runtime: BrowserRuntime}, {mermaidSite: string}
         page.on("request", (request) => runtime.requests.push(request.url()));
         page.on("pageerror", (error) => runtime.errors.push(error.message));
         page.on("console", (message) => {
-            if (message.type() === "error") runtime.consoleErrors.push(message.text());
+            if (message.type() === "error") {
+                runtime.consoleErrors.push(message.text());
+            }
         });
         await use(runtime);
     },

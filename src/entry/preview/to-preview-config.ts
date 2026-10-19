@@ -27,7 +27,9 @@ export interface PreviewParams {
  */
 export const toPreviewConfig = (params: PreviewParams): InlineConfig => {
     const outDir = resolve(params.root, "dist");
-    if (!existsSync(join(outDir, "index.html"))) throw new Error(`${copy_error_missing_build}: ${outDir}`);
+    if (!existsSync(join(outDir, "index.html"))) {
+        throw new Error(`${copy_error_missing_build}: ${outDir}`);
+    }
     return {
         configFile: false,
         envDir: false,
@@ -41,7 +43,9 @@ export const toPreviewConfig = (params: PreviewParams): InlineConfig => {
                 name: "for-humanity:preview",
                 configurePreviewServer: (server) => {
                     server.middlewares.use((request, response, next) => {
-                        if (request.url?.startsWith(`${asset_font_dir}/`)) response.setHeader("Cache-Control", font_cache_control);
+                        if (request.url?.startsWith(`${asset_font_dir}/`)) {
+                            response.setHeader("Cache-Control", font_cache_control);
+                        }
                         next();
                     });
 

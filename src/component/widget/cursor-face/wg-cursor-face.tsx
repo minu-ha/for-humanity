@@ -42,11 +42,15 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
      * 화면 갱신마다 한 번만 반영. transform으로 본문 재배치 방지
      */
     const renderCursorFace = () => {
-        if (positionRef.current.frame !== 0) return;
+        if (positionRef.current.frame !== 0) {
+            return;
+        }
         positionRef.current.frame = requestAnimationFrame(() => {
             positionRef.current.frame = 0;
             const face = faceRef.current;
-            if (face === null) return;
+            if (face === null) {
+                return;
+            }
             face.style.transform = `translate3d(
                 ${Math.max(0, Math.min(positionRef.current.x + cursor_face_offset_px, document.documentElement.clientWidth - face.width - cursor_face_offset_px))}px,
                 ${Math.max(0, Math.min(positionRef.current.y + cursor_face_offset_px, document.documentElement.clientHeight - face.height - cursor_face_offset_px))}px,
@@ -75,14 +79,18 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
      * 새 마우스 이동 없이 화면 가장자리의 좌표 재계산
      */
     const handleCursorResize = () => {
-        if (faceRef.current?.classList.contains("wg_cursorFace__root--visible")) renderCursorFace();
+        if (faceRef.current?.classList.contains("wg_cursorFace__root--visible")) {
+            renderCursorFace();
+        }
     };
 
     /**
      * 같은 탭의 마지막 마우스 좌표 전달, 포커스 이탈의 일시 숨김과 무관
      */
     const handlePageHide = () => {
-        if (!positionRef.current.hasPointer) return;
+        if (!positionRef.current.hasPointer) {
+            return;
+        }
         try {
             sessionStorage.setItem(cursor_face_storage_key, JSON.stringify({x: positionRef.current.x, y: positionRef.current.y}));
         } catch {
@@ -97,7 +105,9 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
         try {
             const stored = sessionStorage.getItem(cursor_face_storage_key);
             sessionStorage.removeItem(cursor_face_storage_key);
-            if (stored === null || !mediaRef.current?.matches) return;
+            if (stored === null || !mediaRef.current?.matches) {
+                return;
+            }
             const point: unknown = JSON.parse(stored);
             if (
                 typeof point === "object" &&
@@ -123,7 +133,9 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
      * 첫 paint 전 좌표 복원. 해제 시 전역 이벤트와 예약 frame을 함께 정리
      */
     useLayoutEffect(() => {
-        if (!props.ready) return;
+        if (!props.ready) {
+            return;
+        }
         const lifetime = new AbortController();
         const media = matchMedia("(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)");
         mediaRef.current = media;

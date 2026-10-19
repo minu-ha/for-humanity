@@ -19,19 +19,25 @@ interface ContentIdParams {
  * 폴더 이름과 독립적인 공개 URL, 내부 문서의 private 접두사
  */
 export const toContentId = (params: ContentIdParams) => {
-    if (relative(params.scope.root, params.path).toLowerCase() === "readme.md") return "";
+    if (relative(params.scope.root, params.path).toLowerCase() === "readme.md") {
+        return "";
+    }
     for (const [root, prefix] of [
         [params.scope.publicRoot, ""],
         [params.scope.privateRoot, "private/"],
     ]) {
         const location = relative(root, params.path);
-        if (location === ".." || location.startsWith(`..${sep}`) || isAbsolute(location)) continue;
+        if (location === ".." || location.startsWith(`..${sep}`) || isAbsolute(location)) {
+            continue;
+        }
         const id = location
             .replace(/\.mdx?$/i, "")
             .split(sep)
             .join("/")
             .toLowerCase();
-        if (prefix === "" && id.split("/")[0] === "private") throw new Error(`private URL은 내부 문서 전용입니다: ${params.path}`);
+        if (prefix === "" && id.split("/")[0] === "private") {
+            throw new Error(`private URL은 내부 문서 전용입니다: ${params.path}`);
+        }
         return `${prefix}${id}`;
     }
     throw new Error(`공개 또는 내부 문서 폴더에 없는 Markdown 참조: ${params.path}`);

@@ -45,28 +45,40 @@ export const WgMermaid = (props: WgMermaidProps) => {
          * SVG 이탈이나 배치 변경에서 툴팁의 이전 절대 좌표와 스크롤 넘침 제외
          */
         const handleTooltipHide = () => {
-            for (const tooltip of tooltips) tooltip.hidden = true;
+            for (const tooltip of tooltips) {
+                tooltip.hidden = true;
+            }
         };
 
         const render = toChangeQueue({
             run: async () => {
                 const elements = [...document.querySelectorAll<HTMLElement>(".wg_mermaid__root[data-mermaid]")];
                 const path = elements[0]?.dataset.mermaidModule;
-                if (path === undefined || lifetime.signal.aborted) return;
+                if (path === undefined || lifetime.signal.aborted) {
+                    return;
+                }
                 const mode = theme.matches ? "dark" : "light";
                 const pending = elements.filter((element) => element.checkVisibility({visibilityProperty: true}) && element.dataset.mermaidTheme !== mode);
-                if (pending.length === 0) return;
+                if (pending.length === 0) {
+                    return;
+                }
 
                 // 미리 빌드한 자체 호스팅 ESM의 런타임 URL, Vite의 번들 대상 분석 제외
                 const library: typeof import("mermaid") = await import(/* @vite-ignore */ path);
                 await document.fonts.ready;
-                if (lifetime.signal.aborted) return;
+                if (lifetime.signal.aborted) {
+                    return;
+                }
                 for (const element of pending) {
-                    if (lifetime.signal.aborted || !element.isConnected || theme.matches !== (mode === "dark")) return;
+                    if (lifetime.signal.aborted || !element.isConnected || theme.matches !== (mode === "dark")) {
+                        return;
+                    }
                     const source = element.querySelector<HTMLElement>(".wg_mermaid__source");
                     const result = element.querySelector<HTMLElement>(".wg_mermaid__result");
                     const error = element.querySelector<HTMLElement>(".wg_mermaid__error");
-                    if (source === null || result === null || error === null) continue;
+                    if (source === null || result === null || error === null) {
+                        continue;
+                    }
                     const measurement = document.createElement("div");
                     measurement.className = "wg_mermaid__measurement";
                     measurements.add(measurement);
@@ -84,7 +96,9 @@ export const WgMermaid = (props: WgMermaidProps) => {
                             source.textContent,
                             measurement,
                         );
-                        if (lifetime.signal.aborted || !element.isConnected || theme.matches !== (mode === "dark")) return;
+                        if (lifetime.signal.aborted || !element.isConnected || theme.matches !== (mode === "dark")) {
+                            return;
+                        }
 
                         // 생성 SVG의 공식 스타일 격리. 본문 p, code, a 선택자의 내부 라벨 개입 제외
                         const shadow = result.shadowRoot ?? result.attachShadow({mode: "open"});
@@ -106,7 +120,9 @@ export const WgMermaid = (props: WgMermaidProps) => {
                         error.hidden = true;
                         element.dataset.mermaidStatus = "rendered";
                     } catch (cause) {
-                        if (lifetime.signal.aborted) return;
+                        if (lifetime.signal.aborted) {
+                            return;
+                        }
                         result.hidden = true;
                         source.hidden = false;
                         error.textContent = copy_error_render;
@@ -123,7 +139,9 @@ export const WgMermaid = (props: WgMermaidProps) => {
                 props.onRendered?.();
             },
             onError: (cause) => {
-                if (lifetime.signal.aborted) return;
+                if (lifetime.signal.aborted) {
+                    return;
+                }
                 for (const element of document.querySelectorAll<HTMLElement>(".wg_mermaid__root[data-mermaid]")) {
                     const error = element.querySelector<HTMLElement>(".wg_mermaid__error");
                     if (error !== null) {
@@ -155,18 +173,28 @@ export const WgMermaid = (props: WgMermaidProps) => {
 
         return () => {
             lifetime.abort();
-            for (const measurement of measurements) measurement.remove();
+            for (const measurement of measurements) {
+                measurement.remove();
+            }
             measurements.clear();
-            for (const tooltip of tooltips) tooltip.remove();
+            for (const tooltip of tooltips) {
+                tooltip.remove();
+            }
             tooltips.clear();
             for (const element of owned) {
                 const source = element.querySelector<HTMLElement>(".wg_mermaid__source");
                 const result = element.querySelector<HTMLElement>(".wg_mermaid__result");
                 const error = element.querySelector<HTMLElement>(".wg_mermaid__error");
                 result?.shadowRoot?.replaceChildren();
-                if (result !== null) result.hidden = true;
-                if (source !== null) source.hidden = false;
-                if (error !== null) error.hidden = true;
+                if (result !== null) {
+                    result.hidden = true;
+                }
+                if (source !== null) {
+                    source.hidden = false;
+                }
+                if (error !== null) {
+                    error.hidden = true;
+                }
                 delete element.dataset.mermaidTheme;
                 delete element.dataset.mermaidStatus;
             }

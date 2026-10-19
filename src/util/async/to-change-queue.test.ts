@@ -18,7 +18,9 @@ describe("변경 처리 큐", () => {
                 running += 1;
                 concurrency.push(running);
                 const current = version;
-                if (current === 1) await gate.promise;
+                if (current === 1) {
+                    await gate.promise;
+                }
                 renders.push(current);
                 running -= 1;
             },

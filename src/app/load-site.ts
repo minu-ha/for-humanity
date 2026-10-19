@@ -63,7 +63,9 @@ export const loadSite = async (params: SiteParams) => {
     const brand = toFontCss({css: join(params.kitRoot, font_brand_css), fontDir: asset_font_dir});
     const stylePaths = params.stylePaths ?? [toAssetPath({path: asset_style_path, file: join(params.kitRoot, "dist/cli.css")})];
     const files = new Map([[asset_favicon_path, join(params.kitRoot, "src/asset/favicon.svg")], ...mono.files, ...body.files, ...brand.files]);
-    if (params.stylePaths === undefined) files.set(stylePaths[0], join(params.kitRoot, "dist/cli.css"));
+    if (params.stylePaths === undefined) {
+        files.set(stylePaths[0], join(params.kitRoot, "dist/cli.css"));
+    }
     const scope = readContentScope({root: params.root, content: params.site.content, includePrivate: params.includePrivate === true});
     const processor = createProcessor({site: params.site, root: scope.root, files, mermaid: loadMermaidAssets(params.kitRoot), scope});
     const [docs, home] = await Promise.all([

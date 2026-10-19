@@ -15,7 +15,9 @@ test.describe("문서 탐색", () => {
         const scriptRequests: string[] = [];
         page.on("pageerror", (error) => errors.push(error.message));
         page.on("request", (request) => {
-            if (request.resourceType() === "script") scriptRequests.push(request.url());
+            if (request.resourceType() === "script") {
+                scriptRequests.push(request.url());
+            }
         });
         await page.goto("/guide/");
         await page.bringToFront();
@@ -57,8 +59,12 @@ test.describe("문서 탐색", () => {
                 const sample = () => {
                     const documents = document.querySelector<HTMLElement>('[data-sidebar-scroll="documents"]');
                     const outline = document.querySelector<HTMLElement>('[data-sidebar-scroll="outline"]');
-                    if (documents && outline) window.navigationFrames.push({documents: documents.scrollTop, outline: outline.scrollTop});
-                    if (++frames < 45) requestAnimationFrame(sample);
+                    if (documents && outline) {
+                        window.navigationFrames.push({documents: documents.scrollTop, outline: outline.scrollTop});
+                    }
+                    if (++frames < 45) {
+                        requestAnimationFrame(sample);
+                    }
                 };
                 requestAnimationFrame(sample);
             });
@@ -235,7 +241,9 @@ test.describe("문서 탐색", () => {
                 await page.evaluate((top) => scrollTo({top, behavior: "instant"}), position);
                 await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
                 const href = await current.getAttribute("href");
-                if (seen.at(-1) !== href) seen.push(href);
+                if (seen.at(-1) !== href) {
+                    seen.push(href);
+                }
             }
 
             /**
@@ -256,10 +264,14 @@ test.describe("문서 탐색", () => {
             await page.evaluate(() => {
                 window.tocChanges = [];
                 const toc = document.querySelector("[data-sidebar-toc]");
-                if (toc === null) return;
+                if (toc === null) {
+                    return;
+                }
                 new MutationObserver(() => {
                     const href = document.querySelector('[aria-current="location"]')?.getAttribute("href");
-                    if (href) window.tocChanges.push(href);
+                    if (href) {
+                        window.tocChanges.push(href);
+                    }
                 }).observe(toc, {subtree: true, attributeFilter: ["aria-current"]});
             });
 
@@ -316,7 +328,9 @@ test.describe("문서 탐색", () => {
              */
             const sample = () => {
                 window.readingFrames.push(scrollY);
-                if (window.readingFrames.length < 45) requestAnimationFrame(sample);
+                if (window.readingFrames.length < 45) {
+                    requestAnimationFrame(sample);
+                }
             };
             requestAnimationFrame(sample);
         });

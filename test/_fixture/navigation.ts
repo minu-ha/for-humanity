@@ -48,7 +48,9 @@ export const test = base.extend<Record<never, never>, {navigationSite: string}>(
                 const server = await preview(toPreviewConfig({root, port: 0}));
                 try {
                     const url = server.resolvedUrls?.local[0];
-                    if (url === undefined) throw new Error("미리보기 서버의 테스트 주소가 없습니다");
+                    if (url === undefined) {
+                        throw new Error("미리보기 서버의 테스트 주소가 없습니다");
+                    }
                     await use(new URL(url).origin);
                 } finally {
                     await server.close();

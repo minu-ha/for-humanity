@@ -104,7 +104,9 @@ export const test = base.extend<DevFixture>({
     },
     baseURL: async ({devSite}, use) => {
         const address = devSite.server.httpServer?.address();
-        if (address === null || address === undefined || typeof address === "string") throw new Error("개발 서버의 테스트 포트가 없습니다");
+        if (address === null || address === undefined || typeof address === "string") {
+            throw new Error("개발 서버의 테스트 포트가 없습니다");
+        }
         await use(`http://127.0.0.1:${address.port}`);
     },
 });

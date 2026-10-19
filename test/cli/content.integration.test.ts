@@ -64,7 +64,9 @@ describe("공개와 내부 문서", () => {
             await mkdir(join(root, "content/public"), {recursive: true});
             await mkdir(join(root, "content/private"), {recursive: true});
             await writeFile(join(root, "content/public/guide.md"), `---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n${source}`);
-            for (const name of ["secret.md", "secret.svg", "secret.ts"]) await writeFile(join(root, "content/private", name), "SECRET");
+            for (const name of ["secret.md", "secret.svg", "secret.ts"]) {
+                await writeFile(join(root, "content/private", name), "SECRET");
+            }
 
             /**
              * WHEN / THEN

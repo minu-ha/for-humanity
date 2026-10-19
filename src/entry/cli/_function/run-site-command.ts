@@ -30,7 +30,9 @@ interface CliCommandParams {
  */
 export const runSiteCommand = async (params: CliCommandParams) => {
     try {
-        if (params.args._.length > 1) throw new Error("프로젝트 폴더는 하나만 지정하세요");
+        if (params.args._.length > 1) {
+            throw new Error("프로젝트 폴더는 하나만 지정하세요");
+        }
 
         // dist의 실행 청크 기준 패키지 루트
         const kitRoot = fileURLToPath(new URL("../", import.meta.url));
@@ -55,9 +57,13 @@ export const runSiteCommand = async (params: CliCommandParams) => {
         // 삭제된 문서와 자원의 잔여 파일 방지
         await rm(outDir, {recursive: true, force: true});
         const result = await toSSG(snapshot.pages, {writeFile, mkdir}, {dir: outDir});
-        if (!result.success) throw result.error;
+        if (!result.success) {
+            throw result.error;
+        }
         const crawling = snapshot.crawling === undefined ? undefined : await toSSG(snapshot.crawling, {writeFile, mkdir}, {dir: outDir});
-        if (crawling?.success === false) throw crawling.error;
+        if (crawling?.success === false) {
+            throw crawling.error;
+        }
 
         for (const [url, file] of snapshot.files) {
             await mkdir(dirname(join(outDir, url)), {recursive: true});

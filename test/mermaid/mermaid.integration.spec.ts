@@ -37,7 +37,9 @@ test.describe("다이어그램", () => {
                     .evaluate((label) => {
                         const luminance = (color: string) => {
                             const channels = color.match(/[\d.]+/g);
-                            if (channels === null) throw new Error(`Unsupported color: ${color}`);
+                            if (channels === null) {
+                                throw new Error(`Unsupported color: ${color}`);
+                            }
                             return channels
                                 .slice(0, 3)
                                 .map((value) => Number(value) / 255)
@@ -87,7 +89,9 @@ test.describe("다이어그램", () => {
             await page.goto("/lifecycle/");
             await page.evaluate(async () => {
                 const path = document.querySelector<HTMLElement>("[data-mermaid-module]")?.dataset.mermaidModule;
-                if (path === undefined) throw new Error("테스트 Mermaid 모듈이 없습니다");
+                if (path === undefined) {
+                    throw new Error("테스트 Mermaid 모듈이 없습니다");
+                }
                 const library: typeof import("mermaid") = await import(path);
                 const original = library.default.render;
                 const gate = Promise.withResolvers<void>();
@@ -120,7 +124,9 @@ test.describe("다이어그램", () => {
                 });
                 await expect(page.locator('[data-mermaid-status="rendered"]')).toHaveCount(diagram_cases.length);
                 const currentId = await page.locator(".wg_mermaid__result svg").first().getAttribute("id");
-                if (currentId === null) throw new Error("새 SVG의 식별자가 없습니다");
+                if (currentId === null) {
+                    throw new Error("새 SVG의 식별자가 없습니다");
+                }
                 await page.evaluate(() => window.diagramRender.release());
                 await page.evaluate(async () => {
                     await window.diagramRender.completion;
@@ -195,7 +201,9 @@ test.describe("다이어그램", () => {
             }
             await page.evaluate(async () => {
                 const path = document.querySelector<HTMLElement>("[data-mermaid-module]")?.dataset.mermaidModule;
-                if (path === undefined) throw new Error("Missing Mermaid module in lifecycle fixture");
+                if (path === undefined) {
+                    throw new Error("Missing Mermaid module in lifecycle fixture");
+                }
                 await import(path);
                 await new Promise(requestAnimationFrame);
             });

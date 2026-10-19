@@ -33,7 +33,9 @@ export const WgShellControls = (props: WgSidebarProps) => {
      * 본문 스크롤 도착 후 3초 확보. 사이드바 자체의 scrollend는 제외
      */
     const handleHighlightArrival = (event: Event) => {
-        if (event.target !== document) return;
+        if (event.target !== document) {
+            return;
+        }
         clearTimeout(timerRef.current);
         arrivalRef.current?.abort();
         arrivalRef.current = null;
@@ -46,7 +48,9 @@ export const WgShellControls = (props: WgSidebarProps) => {
     const highlightHeading = (target: HTMLElement | null) => {
         clearHeadingHighlight();
         headingRef.current = target === null ? null : target.querySelector<HTMLElement>(".wg_article__headingText");
-        if (headingRef.current === null) return;
+        if (headingRef.current === null) {
+            return;
+        }
         headingRef.current.classList.add("wg_article__headingText--highlighted");
         timerRef.current = window.setTimeout(clearHeadingHighlight, heading_highlight_hold_ms);
         arrivalRef.current = new AbortController();
@@ -58,9 +62,13 @@ export const WgShellControls = (props: WgSidebarProps) => {
      */
     const handleHashClick = (event: MouseEvent) => {
         const link = findHashLink(event);
-        if (link === null) return;
+        if (link === null) {
+            return;
+        }
         const target = revealHashTarget(link.hash);
-        if (link.hash === location.hash) highlightHeading(target);
+        if (link.hash === location.hash) {
+            highlightHeading(target);
+        }
     };
 
     /**
@@ -90,9 +98,13 @@ export const WgShellControls = (props: WgSidebarProps) => {
         const lifetime = lifetimeRef.current;
         const hash = location.hash;
         const target = revealHashTarget(hash);
-        if (isRestoringNavigation()) return;
+        if (isRestoringNavigation()) {
+            return;
+        }
         await document.fonts.ready;
-        if (lifetime === null || lifetime.signal.aborted) return;
+        if (lifetime === null || lifetime.signal.aborted) {
+            return;
+        }
         if (target !== null && !userScrollRef.current?.signal.aborted && hash === location.hash) {
             target.scrollIntoView({behavior: "instant"});
             highlightHeading(target);
@@ -105,7 +117,9 @@ export const WgShellControls = (props: WgSidebarProps) => {
      */
     const handleBodyReady = () => {
         revealHashTarget(location.hash);
-        if (document.readyState === "complete") void handlePageLoad();
+        if (document.readyState === "complete") {
+            void handlePageLoad();
+        }
     };
 
     /**

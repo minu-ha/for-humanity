@@ -59,6 +59,7 @@
                 "noReExportAll": "error"
             },
             "style": {
+                "useBlockStatements": "error",
                 "noDefaultExport": "error",
                 "noEnum": "error",
                 "noMagicNumbers": "error",

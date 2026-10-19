@@ -26,7 +26,9 @@ test.describe("셸 컴포넌트 수명", () => {
             };
             EventTarget.prototype.removeEventListener = function (type, listener, options) {
                 for (const entry of window.shellListeners) {
-                    if (entry.target === this && entry.type === type && entry.listener === listener) entry.removed = true;
+                    if (entry.target === this && entry.type === type && entry.listener === listener) {
+                        entry.removed = true;
+                    }
                 }
                 return remove.call(this, type, listener, options);
             };

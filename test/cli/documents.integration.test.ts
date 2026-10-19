@@ -158,7 +158,9 @@ describe("문서 로드", () => {
          */
         expect(api?.html).toMatch(/예:이것/);
         expect(empty?.html).toMatch(/<h1[^>]*><span[^>]*>Empty<\/span><\/h1>/);
-        for (const doc of docs) expect(doc.html).not.toContain("wg_article__eyebrow");
+        for (const doc of docs) {
+            expect(doc.html).not.toContain("wg_article__eyebrow");
+        }
     });
 
     test("문서 지시문 오류는 메타를 포함한 원본 행 번호를 유지한다", async ({root}) => {

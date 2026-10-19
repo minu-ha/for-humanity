@@ -21,20 +21,27 @@ interface ContentLinkOptions {
  */
 export const rehypeContentLinks = (options: ContentLinkOptions) => (tree: Root, file: VFile) => {
     const scope = options.scope;
-    if (scope === undefined) return;
+    if (scope === undefined) {
+        return;
+    }
     visit(tree, "element", (node) => {
         for (const property of ["href", "src", "poster", "data", "srcSet"]) {
             const value = node.properties[property];
-            if (typeof value !== "string") continue;
+            if (typeof value !== "string") {
+                continue;
+            }
             const urls = property === "srcSet" ? value.split(",").map((entry) => entry.trim().split(/\s+/)[0]) : [value];
             for (const url of urls) {
-                if (/^(?:[a-z][a-z\d+.-]*:|\/\/|#)/i.test(url)) continue;
+                if (/^(?:[a-z][a-z\d+.-]*:|\/\/|#)/i.test(url)) {
+                    continue;
+                }
                 const path = decodeURIComponent(url.split(/[?#]/)[0]);
                 try {
                     if (path.startsWith("/")) {
                         const pathname = new URL(path, "https://content.invalid").pathname.toLowerCase();
-                        if (!scope.includePrivate && (pathname === "/private" || pathname.startsWith("/private/")))
+                        if (!scope.includePrivate && (pathname === "/private" || pathname.startsWith("/private/"))) {
                             throw new Error(`공개 문서에서 private URL을 참조할 수 없습니다: ${url}`);
+                        }
                         continue;
                     }
                     const target = resolve(dirname(file.path), path);

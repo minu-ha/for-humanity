@@ -63,7 +63,9 @@ export const readDocs = async (options: ReadDocsParams): Promise<Doc[]> => {
 
     const docs = await Promise.all(
         paths.map(async (path): Promise<Doc> => {
-            if (options.scope !== undefined) assertContentPath({scope: options.scope, path: join(options.root, path)});
+            if (options.scope !== undefined) {
+                assertContentPath({scope: options.scope, path: join(options.root, path)});
+            }
             const id =
                 options.scope === undefined
                     ? path

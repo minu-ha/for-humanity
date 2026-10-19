@@ -22,10 +22,14 @@ interface MermaidOptions {
  */
 export const remarkMermaid = (options: MermaidOptions) => (tree: Root) => {
     visit(tree, "code", (node, index, parent) => {
-        if (node.lang !== "mermaid" || parent === undefined || index === undefined) return;
+        if (node.lang !== "mermaid" || parent === undefined || index === undefined) {
+            return;
+        }
 
         if (options.assets !== undefined) {
-            for (const [url, path] of options.assets.files) options.files.set(url, path);
+            for (const [url, path] of options.assets.files) {
+                options.files.set(url, path);
+            }
         }
 
         parent.children[index] = {

@@ -30,8 +30,12 @@ export interface WgSidebarProps {
 
 export const WgSidebar = (props: WgSidebarProps) => {
     const [layout, setLayout] = useState<NavigationLayout>(() => {
-        if (props.stores === undefined) return "desktop";
-        if (matchMedia(navigation_mobile_query).matches) return "drawer";
+        if (props.stores === undefined) {
+            return "desktop";
+        }
+        if (matchMedia(navigation_mobile_query).matches) {
+            return "drawer";
+        }
         return matchMedia(navigation_wide_query).matches ? "wide" : "desktop";
     });
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -56,8 +60,12 @@ export const WgSidebar = (props: WgSidebarProps) => {
      * 저장된 배치와 현재 CSS 조건을 구분. 조건 변경 직후 잘린 좌표를 이전 배치에 저장하지 않음
      */
     const getNavigationLayout = (): NavigationLayout => {
-        if (mobileRef.current === null || wideRef.current === null) return layoutRef.current;
-        if (mobileRef.current.matches) return "drawer";
+        if (mobileRef.current === null || wideRef.current === null) {
+            return layoutRef.current;
+        }
+        if (mobileRef.current.matches) {
+            return "drawer";
+        }
         return wideRef.current.matches ? "wide" : "desktop";
     };
 
@@ -112,8 +120,12 @@ export const WgSidebar = (props: WgSidebarProps) => {
     const restoreScroll = () => {
         layoutRef.current = getNavigationLayout();
         const documents = getDocumentsPort();
-        if (props.stores === undefined || documents === null || outlineRef.current === null) return;
-        if (layoutRef.current === "drawer" && dialogRef.current?.open !== true) return;
+        if (props.stores === undefined || documents === null || outlineRef.current === null) {
+            return;
+        }
+        if (layoutRef.current === "drawer" && dialogRef.current?.open !== true) {
+            return;
+        }
         const position = props.stores.scroll.getState().positions[layoutRef.current];
 
         if (position?.navigation === navigationSignature) {
@@ -136,7 +148,9 @@ export const WgSidebar = (props: WgSidebarProps) => {
      * 네이티브 close가 이전 열기 이벤트보다 늦게 도착해도 새 모달을 잠금 해제하지 않음
      */
     const handleDrawerClose = (_event: Event) => {
-        if (dialogRef.current?.open === true) return;
+        if (dialogRef.current?.open === true) {
+            return;
+        }
         document.body.classList.remove("wg_shell__root--drawerOpen");
         setDrawerOpen(false);
     };
@@ -155,7 +169,9 @@ export const WgSidebar = (props: WgSidebarProps) => {
      * 모바일에서만 네이티브 모달을 열고 독립된 드로어 좌표를 즉시 복원
      */
     const handleOpenButtonClick: DOMAttributes["onClick"] = (_event) => {
-        if (getNavigationLayout() !== "drawer" || dialogRef.current === null || dialogRef.current.open) return;
+        if (getNavigationLayout() !== "drawer" || dialogRef.current === null || dialogRef.current.open) {
+            return;
+        }
         dialogRef.current.showModal();
         document.body.classList.add("wg_shell__root--drawerOpen");
         setDrawerOpen(true);
@@ -178,9 +194,13 @@ export const WgSidebar = (props: WgSidebarProps) => {
      * 대화상자 내부 빈 공간은 유지하고 경계 밖 배경만 닫기
      */
     const handleDrawerClick: DOMAttributes["onClick"] = (event) => {
-        if (dialogRef.current === null || event.target !== dialogRef.current) return;
+        if (dialogRef.current === null || event.target !== dialogRef.current) {
+            return;
+        }
         const bounds = dialogRef.current.getBoundingClientRect();
-        if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) closeNavigation();
+        if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) {
+            closeNavigation();
+        }
     };
 
     /**
@@ -201,7 +221,9 @@ export const WgSidebar = (props: WgSidebarProps) => {
             return;
         }
         const link = event.target.closest("a[href]");
-        if (!(link instanceof HTMLAnchorElement) || (link.target !== "" && link.target !== "_self") || link.hasAttribute("download")) return;
+        if (!(link instanceof HTMLAnchorElement) || (link.target !== "" && link.target !== "_self") || link.hasAttribute("download")) {
+            return;
+        }
         closeNavigation();
         if (link.origin === location.origin && link.pathname === location.pathname && link.search === location.search && link.hash) {
             const target = revealHashTarget(link.hash);
@@ -217,7 +239,9 @@ export const WgSidebar = (props: WgSidebarProps) => {
      */
     const handleLayoutChange = () => {
         const nextLayout = getNavigationLayout();
-        if (nextLayout === layoutRef.current) return;
+        if (nextLayout === layoutRef.current) {
+            return;
+        }
         if (document.activeElement instanceof HTMLElement) {
             focusRef.current = {
                 navigation: document.activeElement.closest("[data-sidebar-docs]") !== null,
@@ -225,7 +249,9 @@ export const WgSidebar = (props: WgSidebarProps) => {
                 href: document.activeElement.getAttribute("href"),
             };
         }
-        if (nextLayout !== "drawer") closeNavigation();
+        if (nextLayout !== "drawer") {
+            closeNavigation();
+        }
         restorePendingRef.current = true;
         layoutRef.current = nextLayout;
         flushSync(() => setLayout(nextLayout));
@@ -235,7 +261,9 @@ export const WgSidebar = (props: WgSidebarProps) => {
      * BFCache 복귀 시 persist의 최신 저장 좌표를 다시 읽어 복원
      */
     const handlePageShow = (event: PageTransitionEvent) => {
-        if (!event.persisted || props.stores === undefined) return;
+        if (!event.persisted || props.stores === undefined) {
+            return;
+        }
         restorePendingRef.current = true;
         props.stores.scroll.persist.rehydrate();
         handleLayoutChange();
@@ -246,7 +274,9 @@ export const WgSidebar = (props: WgSidebarProps) => {
      * Hono 탐색이 전역 구독의 설치, 정리를 소유. 서버 렌더에서는 실행하지 않음
      */
     useLayoutEffect(() => {
-        if (props.stores === undefined) return;
+        if (props.stores === undefined) {
+            return;
+        }
         mobileRef.current = matchMedia(navigation_mobile_query);
         wideRef.current = matchMedia(navigation_wide_query);
         mobileRef.current.addEventListener("change", handleLayoutChange);
@@ -268,15 +298,23 @@ export const WgSidebar = (props: WgSidebarProps) => {
      * 최초 mount와 반응형 재연결의 paint 전 좌표, 포커스 복원. Hono의 fragment 연결 시점 보정
      */
     useLayoutEffect(() => {
-        if (props.stores === undefined) return;
+        if (props.stores === undefined) {
+            return;
+        }
         let active = true;
         const restoreNavigation = () => {
-            if (!active) return;
+            if (!active) {
+                return;
+            }
             restoreScroll();
-            if (focusRef.current === null) return;
+            if (focusRef.current === null) {
+                return;
+            }
             const navigation = getNavigationPort();
             if (layout === "drawer") {
-                if (focusRef.current.navigation) openButtonRef.current?.focus({preventScroll: true});
+                if (focusRef.current.navigation) {
+                    openButtonRef.current?.focus({preventScroll: true});
+                }
             } else if (focusRef.current.navigation && navigation !== null) {
                 const href = focusRef.current.href;
                 const target = [...navigation.querySelectorAll<HTMLElement>("a[href]")].find((element) => element.getAttribute("href") === href);

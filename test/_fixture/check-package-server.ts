@@ -66,7 +66,9 @@ export const checkPackageServer = async (params: PackageServerParams) => {
         await expect
             .poll(
                 async () => {
-                    if (server.exitCode !== null) throw new Error(output);
+                    if (server.exitCode !== null) {
+                        throw new Error(output);
+                    }
                     try {
                         return (await fetch(url, {signal: AbortSignal.timeout(1000)})).status;
                     } catch {
@@ -85,7 +87,9 @@ export const checkPackageServer = async (params: PackageServerParams) => {
                 output += `\n${request.method()} ${request.url()}: ${request.failure()?.errorText}`;
             });
             page.on("response", (response) => {
-                if (!response.ok()) output += `\n${response.status()} ${response.url()}`;
+                if (!response.ok()) {
+                    output += `\n${response.status()} ${response.url()}`;
+                }
             });
             if (params.command === "dev") {
                 const client = await page.request.get(`${url}/@vite/client`);
@@ -139,7 +143,9 @@ export const checkPackageServer = async (params: PackageServerParams) => {
             try {
                 await stopped;
             } finally {
-                if (server.exitCode === null && server.signalCode === null) server.kill("SIGKILL");
+                if (server.exitCode === null && server.signalCode === null) {
+                    server.kill("SIGKILL");
+                }
             }
         }
         await writeFile(configPath, originalConfig);

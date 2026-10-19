@@ -21,7 +21,9 @@ export const readSiteConfig = async (root: string) => {
     }
 
     const file = files[0];
-    if (file === undefined) return siteConfigSchema.parse(site_config_absent);
+    if (file === undefined) {
+        return siteConfigSchema.parse(site_config_absent);
+    }
 
     // ESM 실행 오류를 변환 재시도로 숨기지 않고 기존 Node import 계약 유지
     const input: unknown = file.endsWith(".mjs")

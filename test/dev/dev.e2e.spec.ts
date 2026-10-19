@@ -133,7 +133,9 @@ test.describe("개발 서버", () => {
         });
 
         const previousImage = await page.getByRole("img", {name: "Illustration"}).getAttribute("src");
-        if (previousImage === null) throw new Error("등록 이미지 URL이 없습니다");
+        if (previousImage === null) {
+            throw new Error("등록 이미지 URL이 없습니다");
+        }
 
         await test.step("스니펫과 이미지 수정 시 새 내용과 지문을 사용한다", async () => {
             /**
