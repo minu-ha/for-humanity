@@ -128,9 +128,11 @@ Hono 브라우저 셸·탐색·커서를 변경하면 자동 브라우저 검사
 
 ### Known Windows check issue
 
-`0.13.0` 릴리스 검증에서 Windows Node 22.12.0의 `[NAV-010]`이 새로고침 후 커서 장식을 `visible` 대신 `hidden`으로 확인하는 간헐적 실패가 남아 있습니다. [검증 실행](https://github.com/minu-ha/for-humanity/actions/runs/38868716242)에서 브라우저 검사 47개는 통과했고 이 검사 1개가 실패했습니다. 단위 검사·린트·타입 검사·빌드·별도 프로젝트 설치 후 dev/preview 검사는 통과했습니다.
+`0.13.0`부터 Windows Node 22.12.0의 `[NAV-010]`이 새로고침 후 커서 장식을 `visible` 대신 `hidden`으로 확인하며 실패했습니다. `0.13.0`, `0.13.1`, `0.14.1`은 이 실패를 알려진 문제로 기록한 채 공개했습니다.
 
-같은 변경의 macOS 브라우저 검사 48개와 Linux Node 22.12.0·24 검사는 통과했습니다. 커서 저장·복원과 포커스 이벤트 순서의 추가 확인은 후속 작업으로 남기며, 이 Windows 검사 실패를 기록한 상태로 `0.13.0` 공개를 진행합니다.
+원인은 Windows Chromium이 새로고침으로 문서를 떠나기 직전, 커서 장식의 표시 조건 `(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)`을 잠시 비활성으로 바꾸는 데 있었습니다. 조건 변화 처리가 장식을 숨기면서 마지막 좌표까지 지워, `pagehide`가 좌표를 저장하지 않았습니다. [진단 실행](https://github.com/minu-ha/for-humanity/actions/runs/39237682877)에서 30회 중 21회가 같은 순서로 실패했고, 새 문서의 표시 조건은 모두 다시 활성이었습니다.
+
+이제 조건 변화에는 장식만 숨기고 좌표는 유지합니다. 복원 여부는 다음 문서가 자기 표시 조건으로 판정합니다. `[NAV-020]`은 같은 조건 변화를 `emulateMedia`로 모든 운영체제에서 재현합니다. [수정 확인 실행](https://github.com/minu-ha/for-humanity/actions/runs/39239457865)에서 Windows의 `[NAV-010]`과 `[NAV-020]`을 각각 30회 반복해 모두 통과했습니다.
 
 ```sh
 pnpm exec playwright install chromium
