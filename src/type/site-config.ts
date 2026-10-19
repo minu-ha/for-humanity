@@ -1,13 +1,19 @@
 import {z} from "zod";
 import {copy_error_navigation_clash, copy_error_site_url, copy_site_title_default} from "@/constant/copy";
-import {site_navigation_default, site_port_default, site_port_max, site_port_min} from "@/constant/site";
+import {content_default, site_navigation_default, site_port_default, site_port_max, site_port_min} from "@/constant/site";
 import {status_default_phrases, status_kind} from "@/constant/status";
+import {contentConfigSchema} from "@/type/content-config";
 import {groupPathSchema} from "@/type/group-path";
 
 /**
  * 사이트 설정의 입력 검증과 기본값 적용
  */
 export const siteConfigSchema = z.object({
+    /**
+     * 프로젝트 기준 문서 루트와 공개 범위
+     */
+    content: contentConfigSchema.default(content_default),
+
     /**
      * 사이드바 이름과 탭 제목
      */
@@ -83,6 +89,11 @@ export type ResolvedSiteConfig = z.infer<typeof siteConfigSchema>;
  * 작성자가 지정하는 사이트 설정, 기본값 적용 전 입력
  */
 export interface SiteConfig {
+    /**
+     * 기본 content/public, content/private 구조의 경로 변경
+     */
+    content?: z.input<typeof siteConfigSchema>["content"];
+
     /**
      * 사이드바 이름과 탭 제목, 생략 시 for humanity
      */

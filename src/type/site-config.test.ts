@@ -15,6 +15,7 @@ describe("사이트 설정", () => {
          * 기본값 적용과 선택 주소 미생성
          */
         expect(result).toStrictEqual({
+            content: {root: "content", public: "public", private: "private"},
             title: "for humanity",
             port: 4321,
             cursorFace: false,
@@ -61,7 +62,14 @@ describe("사이트 설정", () => {
          * THEN
          * 설정 값 유지와 탐색 경로 정규화
          */
-        expect(result).toStrictEqual({title: "for humanity", port: 4322, cursorFace: true, navigation: [["Guide"], ["Projects", "Research"]], status: []});
+        expect(result).toStrictEqual({
+            content: {root: "content", public: "public", private: "private"},
+            title: "for humanity",
+            port: 4322,
+            cursorFace: true,
+            navigation: [["Guide"], ["Projects", "Research"]],
+            status: [],
+        });
     });
 
     test.each([
@@ -96,5 +104,28 @@ describe("사이트 설정", () => {
          * 설정 오류
          */
         expect(result.success).toBe(false);
+    });
+    test("문서 경로를 부분 지정하면 나머지는 기본 구조를 유지한다", () => {
+        const result = siteConfigSchema.parse({content: {root: "knowledge", private: "internal"}});
+        expect(result.content).toStrictEqual({root: "knowledge", public: "public", private: "internal"});
+    });
+
+    test.each([
+        {root: "../outside"},
+        {root: "/absolute"},
+        {root: "C:\\content"},
+        {public: "."},
+        {public: ""},
+        {public: "../outside"},
+        {public: "dist"},
+        {public: "same", private: "same"},
+        {public: "guide", private: "guide/internal"},
+        {public: "notes/public", private: "notes"},
+        {public: "PUBLIC", private: "public"},
+        {private: "node_modules"},
+        {private: "folder/.git"},
+        {public: "guide?draft"},
+    ])("문서 범위를 모호하게 만드는 경로 %j는 거부한다", (content) => {
+        expect(siteConfigSchema.safeParse({content}).success).toBe(false);
     });
 });

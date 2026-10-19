@@ -22,3 +22,8 @@ export const site_port_min = 1;
  * 포트 번호 상한. TCP
  */
 export const site_port_max = 65535;
+
+/**
+ * 기본 문서 루트와 공개 범위 폴더
+ */
+export const content_default = {root: "content", public: "public", private: "private"};
