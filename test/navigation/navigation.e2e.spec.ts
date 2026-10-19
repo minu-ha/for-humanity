@@ -220,6 +220,50 @@ test.describe("문서 탐색", () => {
             expect(errors).toStrictEqual([]);
         });
     }
+    test("[NAV-016] 문서 끝 구간의 목차는 제목을 건너뛰지 않고 이동한 제목은 스크롤 전까지 유지한다", {tag: "@high"}, async ({page}) => {
+        await page.goto("/guide/");
+        const current = page.locator('[aria-current="location"]');
+        const order = await page.locator("[data-toc-link], [data-toc-sub-link]").evaluateAll((links) => links.map((link) => link.getAttribute("href")));
+        const scrollEnd = await page.evaluate(() => document.documentElement.scrollHeight - innerHeight);
+        await test.step("마지막 화면을 내려가면 남은 제목을 차례로 표시한다", async () => {
+            /**
+             * WHEN
+             * 마지막 화면을 작은 간격으로 스크롤
+             */
+            const seen: (string | null)[] = [];
+            for (let position = scrollEnd - 600; position <= scrollEnd; position += 20) {
+                await page.evaluate((top) => scrollTo({top, behavior: "instant"}), position);
+                await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+                const href = await current.getAttribute("href");
+                if (seen.at(-1) !== href) seen.push(href);
+            }
+
+            /**
+             * THEN
+             * 목차 순서대로 이어지고 접힌 제목을 제외한 마지막 제목에서 끝남
+             */
+            const indexes = seen.map((href) => order.indexOf(href));
+            expect(indexes).toStrictEqual(indexes.map((_index, step) => indexes[0] + step));
+            expect(seen.at(-1)).toBe("#detail-23");
+        });
+        await test.step("목차로 이동한 끝 절 제목은 사용자 스크롤 전까지 유지한다", async () => {
+            /**
+             * WHEN
+             * 문서 끝에서 읽는 선에 닿지 못하는 제목 선택
+             */
+            await page.getByRole("link", {name: "Section 23", exact: true}).click();
+
+            /**
+             * THEN
+             * 선택한 제목 유지, 휠 입력 후 위치 기준 제목
+             */
+            await expect(current).toHaveAttribute("href", "#section-23");
+            expect(await page.evaluate(() => Math.round(scrollY))).toBe(Math.round(scrollEnd));
+            await page.mouse.move(800, 300);
+            await page.mouse.wheel(0, 100);
+            await expect(current).toHaveAttribute("href", "#detail-23");
+        });
+    });
     test("[NAV-017] hash로 연 문서를 새로고침하면 앵커로 갔다가 다시 이동하지 않는다", {tag: "@high"}, async ({page}) => {
         /**
          * GIVEN

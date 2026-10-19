@@ -5,6 +5,7 @@ import {WgMermaid} from "@/component/widget/mermaid/wg-mermaid";
 import {WgNavigation, type WgNavigationProps} from "@/component/widget/navigation/wg-navigation";
 import {heading_highlight_hold_ms} from "@/component/widget/prose/_constant/heading-highlight";
 import {scroll_user_input_events} from "@/constant/scroll";
+import {findHashLink} from "@/util/dom/find-hash-link";
 import {isRestoringNavigation} from "@/util/dom/is-restoring-navigation";
 import {revealHashTarget} from "@/util/dom/reveal-hash-target";
 import "./wg-shell-controls.css";
@@ -56,20 +57,10 @@ export const WgShellControls = (props: WgNavigationProps) => {
      * 탐색 DOM이 다시 만들어져도 같은 hash의 접힌 Details 공개를 유지
      */
     const handleHashClick = (event: MouseEvent) => {
-        if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-        const link = event.target instanceof Element ? event.target.closest("a[href]") : null;
-        if (
-            link instanceof HTMLAnchorElement &&
-            (link.target === "" || link.target === "_self") &&
-            !link.hasAttribute("download") &&
-            link.origin === location.origin &&
-            link.pathname === location.pathname &&
-            link.search === location.search &&
-            link.hash
-        ) {
-            const target = revealHashTarget(link.hash);
-            if (link.hash === location.hash) highlightHeading(target);
-        }
+        const link = findHashLink(event);
+        if (link === null) return;
+        const target = revealHashTarget(link.hash);
+        if (link.hash === location.hash) highlightHeading(target);
     };
 
     /**

@@ -3,7 +3,11 @@ import {useLayoutEffect, useState} from "hono/jsx";
 import {reading_line_slack_px} from "@/component/widget/navigation/_constant/reading-line";
 import type {TocGroup} from "@/component/widget/navigation/_type/toc-group";
 import {copy_nav_toc_label} from "@/constant/copy";
+import {scroll_user_input_events} from "@/constant/scroll";
+import {findHashLink} from "@/util/dom/find-hash-link";
 import {findHashTarget} from "@/util/dom/find-hash-target";
+import {isRestoringNavigation} from "@/util/dom/is-restoring-navigation";
+import {toHashId} from "@/util/dom/to-hash-id";
 import "./_wg-navigation-toc.css";
 
 /**
@@ -26,19 +30,40 @@ export const WgNavigationToc = (props: WgNavigationTocProps) => {
         const sections = props.groups.flatMap((group) => group.sections);
         const headings = sections.flatMap((section) => [section.heading, ...section.subs.map((sub) => sub.heading)]);
         const frame = {id: 0};
+        const lifetime = new AbortController();
+
+        // 새로고침, 뒤로가기의 복원 위치에는 hash 제목 고정 미적용
+        const lock = {slug: isRestoringNavigation() ? undefined : toHashId(location.hash)};
 
         /**
          * 접힌 본문 제목은 제외하고 읽는 선을 통과한 마지막 제목 선택
+         *
+         *   - 링크, hash로 이동한 제목은 사용자 스크롤 전까지 유지
+         *   - 읽는 선에 닿지 못하는 끝 절이 있으면 마지막 한 화면 구간의 도착 위치를 문서 끝까지 비례 압축
          */
         const updateCurrentHeading = () => {
             frame.id = 0;
             const visible = headings.flatMap((heading) => {
                 const target = findHashTarget(`#${heading.slug}`);
                 return target?.checkVisibility()
-                    ? [{slug: heading.slug, top: target.getBoundingClientRect().top - Number.parseFloat(getComputedStyle(target).scrollMarginTop)}]
+                    ? [{slug: heading.slug, arrival: scrollY + target.getBoundingClientRect().top - Number.parseFloat(getComputedStyle(target).scrollMarginTop)}]
                     : [];
             });
-            setCurrentSlug(visible.findLast((heading) => heading.top <= reading_line_slack_px)?.slug ?? visible[0]?.slug);
+            const last = visible.at(-1);
+            if (last === undefined) {
+                setCurrentSlug(undefined);
+                return;
+            }
+            const scrollEnd = document.documentElement.scrollHeight - innerHeight;
+            const stretchFrom = Math.max(0, scrollEnd - innerHeight);
+
+            // 끝 절이 없거나 스크롤할 수 없는 문서는 원래 도착 위치 사용
+            const stretchScale = scrollEnd > 0 && last.arrival > scrollEnd ? (scrollEnd - stretchFrom) / (last.arrival - stretchFrom) : 1;
+            const passed = visible.findLast((heading) => {
+                const arrival = heading.arrival > stretchFrom ? stretchFrom + (heading.arrival - stretchFrom) * stretchScale : heading.arrival;
+                return arrival <= scrollY + reading_line_slack_px;
+            });
+            setCurrentSlug(visible.find((heading) => heading.slug === lock.slug)?.slug ?? passed?.slug ?? visible[0].slug);
         };
 
         /**
@@ -48,20 +73,47 @@ export const WgNavigationToc = (props: WgNavigationTocProps) => {
             if (frame.id === 0) frame.id = requestAnimationFrame(updateCurrentHeading);
         };
 
-        addEventListener("scroll", handleReadingPositionChange, {passive: true});
-        addEventListener("resize", handleReadingPositionChange);
-        addEventListener("toggle", handleReadingPositionChange, true);
-        addEventListener("pageshow", handleReadingPositionChange);
-        document.addEventListener("DOMContentLoaded", handleReadingPositionChange);
+        /**
+         * 같은 문서 hash 링크의 도착 제목 고정. 같은 hash 재클릭 포함
+         */
+        const handleHashLinkClick = (event: MouseEvent) => {
+            const link = findHashLink(event);
+            if (link === null) return;
+            lock.slug = toHashId(link.hash);
+            handleReadingPositionChange();
+        };
+
+        /**
+         * 뒤로가기, 주소 수정의 hash 변경 도착 제목 고정
+         */
+        const handleHashChange = () => {
+            lock.slug = toHashId(location.hash);
+            handleReadingPositionChange();
+        };
+
+        /**
+         * 사용자 스크롤 시작. 도착 제목 고정 해제
+         */
+        const handleUserScroll = () => {
+            lock.slug = undefined;
+            handleReadingPositionChange();
+        };
+
+        addEventListener("scroll", handleReadingPositionChange, {passive: true, signal: lifetime.signal});
+        addEventListener("resize", handleReadingPositionChange, {signal: lifetime.signal});
+        addEventListener("toggle", handleReadingPositionChange, {capture: true, signal: lifetime.signal});
+        addEventListener("pageshow", handleReadingPositionChange, {signal: lifetime.signal});
+        addEventListener("hashchange", handleHashChange, {signal: lifetime.signal});
+        document.addEventListener("DOMContentLoaded", handleReadingPositionChange, {signal: lifetime.signal});
+        document.addEventListener("click", handleHashLinkClick, {signal: lifetime.signal});
+        for (const type of scroll_user_input_events) {
+            addEventListener(type, handleUserScroll, {passive: true, signal: lifetime.signal});
+        }
         if (document.readyState !== "loading") updateCurrentHeading();
 
         return () => {
             cancelAnimationFrame(frame.id);
-            removeEventListener("scroll", handleReadingPositionChange);
-            removeEventListener("resize", handleReadingPositionChange);
-            removeEventListener("toggle", handleReadingPositionChange, true);
-            removeEventListener("pageshow", handleReadingPositionChange);
-            document.removeEventListener("DOMContentLoaded", handleReadingPositionChange);
+            lifetime.abort();
         };
     }, [props.groups]);
 

@@ -35,8 +35,8 @@
     min-width: 0;
     border-inline: 1px solid var(--app-color-border-layout);
 
-    /* 문서 목록의 시작선, 마지막 절도 읽는 선까지 이동 가능한 끝 여백 */
-    padding-block: var(--app-size-brand) calc(100vh - var(--app-space-anchor));
+    /* 문서 목록의 시작선, 본문 끝은 절 간격만큼의 여백 */
+    padding-block: var(--app-size-brand) var(--app-space-section);
     padding-inline: var(--app-space-column);
 }
 

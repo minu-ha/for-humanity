@@ -41,9 +41,11 @@ export const test = base.extend<{runtime: BrowserRuntime}, {mermaidSite: string}
                 await writeFile(join(root, "for-humanity.config.ts"), 'export default {content: {root: "."}};');
                 const diagrams = diagram_cases.map((diagram, index) => `## Diagram ${index}\n\n\`\`\`mermaid\n${diagram.source}\n\`\`\`\n`).join("\n");
                 await writeFile(join(root, "README.md"), "# Home\n\nOrdinary content.\n");
+
+                // 끝 여백 없이도 마지막 다이어그램 제목이 읽는 선에 도달하는 끝 절
                 await writeFile(
                     join(root, "public/guide.md"),
-                    `---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n${diagrams}\n:::details[Hidden diagram]\n\n\`\`\`mermaid\nflowchart LR\n    Hidden --> Visible\n\`\`\`\n:::\n`,
+                    `---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n${diagrams}\n:::details[Hidden diagram]\n\n\`\`\`mermaid\nflowchart LR\n    Hidden --> Visible\n\`\`\`\n:::\n\n## Ending\n\n${"Readable context. ".repeat(400)}\n`,
                 );
                 await writeFile(
                     join(root, "public/hidden.md"),
