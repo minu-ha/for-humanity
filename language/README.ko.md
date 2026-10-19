@@ -77,7 +77,6 @@ pnpm dev
 
 `content/public` 폴더로 시작. 사이트 설정을 생략하면 사이드바에 **for humanity**. 픽셀 얼굴은 탭 아이콘으로 표시하고, 설정에 `cursorFace: true`를 두면 데스크톱 마우스 옆에도 따라다님.
 `content/README.md`는 홈(`/`)으로 표시하며 frontmatter 불필요. 사이트 이름을 누르면 홈으로 이동.
-이 사이트의 홈은 [최상위 README](../README.md), [변경 기록](../content/public/changelog.md)은 최상위 CHANGELOG.md와 동기화. 원본 수정 후 `pnpm sync:docs` 실행.
 `pnpm dev`와 `pnpm build`도 시작할 때 [문서 폴더 README](../content/README.md)와 변경 기록 동기화.
 프로젝트 루트의 `for-humanity.config.ts`의 `title`로 자신의 사이트 이름 지정. 공개 `SiteConfig` 타입으로 편집기 자동완성과 정적 타입 검사 지원.
 
@@ -114,7 +113,6 @@ export default {
 ```
 
 [Parts](../content/public/parts.md)에 소스와 실제 결과.
-[Design example](../content/public/blueprint.md)은 가상 독서 목록 앱. 화면 흐름·결정·미결 질문·예시 API 계약의 작성 방법.
 
 ## Documentation
 
@@ -123,8 +121,7 @@ export default {
 | Getting started | [Commands](../content/public/commands.md) · [Deployment](../content/public/deployment.md) |
 | Guide | [Writing](../content/public/writing.md) · [Parts](../content/public/parts.md) · [Settings](../content/public/settings.md) |
 | Reference | [API](../content/public/api.md) |
-| Releases | [공식 릴리스](../content/public/releases.md) · [변경 기록](../content/public/changelog.md) |
-| Examples | [가상 Blueprint](../content/public/blueprint.md) |
+| Releases | [공식 릴리스](../content/public/releases.md) |
 
 ## License
 

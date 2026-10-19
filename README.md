@@ -77,7 +77,6 @@ pnpm dev
 
 The default `content/public` folder is enough to get started. Without a site configuration, the sidebar shows **for humanity**. The pixel face appears in the browser tab, and follows the mouse on desktop when the site sets `cursorFace: true`.
 `content/README.md` becomes the home page at `/`, with no frontmatter required. Click the site name to return home.
-This repository generates [the documentation home](https://github.com/minu-ha/for-humanity/blob/main/content/README.md) from its root README.md and [the site changelog](https://github.com/minu-ha/for-humanity/blob/main/content/public/changelog.md) from CHANGELOG.md. Edit those source files, then run `pnpm sync:docs`; `pnpm dev` and `pnpm build` also sync them on startup.
 Set your own name in the project-root `for-humanity.config.ts`, using the exported `SiteConfig` type for editor completion and static checking:
 
 ```ts
@@ -111,7 +110,6 @@ The contract, code or reasoning behind the visible result.
 :::
 ```
 
-[Parts](https://github.com/minu-ha/for-humanity/blob/main/content/public/parts.md) pairs source examples with their rendered results. The [Design example](https://github.com/minu-ha/for-humanity/blob/main/content/public/blueprint.md) uses a fictional reading-list app to show a screen flow, decisions, open questions and illustrative API contracts.
 
 ## Documentation
 
@@ -120,8 +118,7 @@ The contract, code or reasoning behind the visible result.
 | Getting started | [Commands](https://github.com/minu-ha/for-humanity/blob/main/content/public/commands.md) · [Deployment](https://github.com/minu-ha/for-humanity/blob/main/content/public/deployment.md) |
 | Guide | [Writing](https://github.com/minu-ha/for-humanity/blob/main/content/public/writing.md) · [Parts](https://github.com/minu-ha/for-humanity/blob/main/content/public/parts.md) · [Settings](https://github.com/minu-ha/for-humanity/blob/main/content/public/settings.md) |
 | Reference | [API](https://github.com/minu-ha/for-humanity/blob/main/content/public/api.md) |
-| Releases | [Official releases](https://github.com/minu-ha/for-humanity/blob/main/content/public/releases.md) · [Changelog](https://github.com/minu-ha/for-humanity/blob/main/content/public/changelog.md) |
-| Examples | [Fictional design example](https://github.com/minu-ha/for-humanity/blob/main/content/public/blueprint.md) |
+| Releases | [Official releases](https://github.com/minu-ha/for-humanity/blob/main/content/public/releases.md) |
 
 ## License
 

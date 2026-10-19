@@ -6,7 +6,7 @@ order: 30
 ---
 
 코드 변경, 컨벤션, 검증, 패키지 배포 기준.
-엔진은 [Architecture](architecture.md), 표현 기준은 [Design](design.md), 다음 작업은 [Roadmap](../public/roadmap.md).
+엔진은 [Architecture](architecture.md), 표현 기준은 [Design](design.md), 다음 작업은 [Roadmap](roadmap.md).
 
 ## Overview
 
@@ -158,8 +158,8 @@ pnpm exec playwright show-report .cache/playwright/report
 
 ## Packaging and release
 
-버전 선택·공개 시점·호환성 정책의 기준은 [Releases](../public/releases.md). 이 문서는 검증과 공개 작업 절차 담당.
-버전별 변경 기록은 [Changelog](../public/changelog.md).
+버전 선택·공개 시점·호환성 정책의 기준은 [Releases](release-policy.md). 이 문서는 검증과 공개 작업 절차 담당.
+버전별 변경 기록은 [Changelog](changelog.md).
 변경 기록은 최상위 `CHANGELOG.md`에 작성. npm 패키지·GitHub Release·사이트에서 같은 기록 사용.
 
 ```sh
@@ -217,7 +217,7 @@ CI가 실패하면 다른 작업보다 실패 원인 수정 우선. 현재 Pages
 
 패키지 릴리스가 작업 범위에 포함됐을 때 실행:
 
-1. 마지막 공개 태그 이후의 전체 변경을 검토하고 [Version policy](../public/releases.md#version-policy)에 따라 버전 선택.
+1. 마지막 공개 태그 이후의 전체 변경을 검토하고 [Version policy](release-policy.md#version-policy)에 따라 버전 선택.
 2. `package.json` 버전을 올리고 `CHANGELOG.md`의 `Unreleased`를 해당 버전·공개 날짜 항목으로 옮김. 이번 공개에 포함될 미공개 기록이 남지 않았는지 확인.
 3. 최상위 `README.md`와 `language/README.ko.md`의 설치 버전·지원 버전 갱신. 공개하는 기능 문서의 미공개 표시 제거.
 4. 검증 명령 실행. `pnpm build`가 `content/README.md`와 `content/public/changelog.md`도 동기화.
@@ -243,5 +243,5 @@ git push origin v0.2.2
 
 ## Roadmap
 
-진행 순서, 단계별 산출물과 완료 기준은 [Roadmap](../public/roadmap.md).
-다음 작업은 [Authoring](../public/authoring.md)의 작성 기준과 [시각화·테마 모듈](../public/roadmap.md#visualization-modules).
+진행 순서, 단계별 산출물과 완료 기준은 [Roadmap](roadmap.md).
+다음 작업은 [Authoring](authoring.md)의 작성 기준과 [시각화·테마 모듈](roadmap.md#visualization-modules).

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Focus public documentation on installation, configuration, authoring and deployment. Keep internal plans, release operations, development history and fictional project studies in local-only content.
+
 **Migration:** Configuration now belongs in the project root. CLI paths identify a project, not a Markdown folder. Move published documents into `content/public`, local-only documents into `content/private`, and the site home into `content/README.md`; use `content.root`, `content.public` and `content.private` to customize these paths. Existing flat document folders are not automatically published. The current npm release remains `0.13.1`; these changes are not published yet.
 
 - Show both document collections in `dev`; build and preview only the public site in `content/dist`.

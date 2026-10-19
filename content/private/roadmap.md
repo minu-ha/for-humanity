@@ -32,7 +32,7 @@ order: 40
 ## Foundation
 
 현재의 폭과 사이드바 배치에서 글과 링크 중심의 표현 기준 정리.
-표현은 [Design](https://github.com/minu-ha/for-humanity/blob/main/content/private/design.md), 작성 기준은 [Writing](writing.md), 검증은 [Maintenance](https://github.com/minu-ha/for-humanity/blob/main/content/private/maintenance.md#browser-checks).
+표현은 [Design](https://github.com/minu-ha/for-humanity/blob/main/content/private/design.md), 작성 기준은 [Writing](../public/writing.md), 검증은 [Maintenance](https://github.com/minu-ha/for-humanity/blob/main/content/private/maintenance.md#browser-checks).
 
 - [x] 흰 바탕·진회색 본문·파란 링크·얇은 점선
 - [x] 사이트 폭 유지 · 본문·사이드바 링크 12px 통일
@@ -53,14 +53,14 @@ order: 40
 ## Parts and syntax
 
 샘플: [Design example](blueprint.md) · 가상 독서 목록 앱의 흐름·결정·질문·API.
-선정: [Note·Details](parts.md). Decision·Question·API reference는 section·표·링크.
+선정: [Note·Details](../public/parts.md). Decision·Question·API reference는 section·표·링크.
 
 - [x] 본문·표·흐름도로 표현되는 부분과 새 부품이 필요한 부분 확인
 - [x] 부품별 목적·입력·허용 중첩·기본값 정의
 - [x] Markdown 작성 예와 렌더링 결과를 나란히 정리
 - [x] 지원하지 않는 입력과 잘못된 문법의 오류 기준 정의
 - [x] 선택한 부품의 HTML·CSS·접근성 구현
-- [x] [Writing](writing.md)에 실제 지원 문법과 예시 반영
+- [x] [Writing](../public/writing.md)에 실제 지원 문법과 예시 반영
 
 산출물: 가상 프로젝트 예시, 부품 목록, 작성 문법, 렌더링 결과.
 완료 기준: 작성자가 소스를 보지 않고 예시만으로 같은 결과를 만들 수 있고, 두 테마·좁은 화면에서 내용이 읽힘.
@@ -90,7 +90,7 @@ Vite를 런타임 의존성에 포함하고 Node 최소 버전을 22.12.0으로 
 
 Node 22.12.0과 24.3.0에서 설치 패키지의 공개 타입·build·dev·preview와 실제 브라우저 갱신을 검증했습니다. Windows의 Node 22.12.0에서도 CI가 단위·브라우저·설치 검사를 실행합니다.
 
-`0.13.0`의 공개 검증은 Ubuntu·Windows CI와 패키지 설치 검사로 수행합니다. 결과는 [CI 실행 기록](https://github.com/minu-ha/for-humanity/actions/workflows/ci.yml)과 [GitHub Release](https://github.com/minu-ha/for-humanity/releases/tag/v0.13.0)에서 확인합니다. Node 지원 범위·버전·태그의 일치 기준은 [Releases](releases.md), 공개 절차는 [Maintenance](https://github.com/minu-ha/for-humanity/blob/main/content/private/maintenance.md#packaging-and-release)를 따릅니다.
+`0.13.0`의 공개 검증은 Ubuntu·Windows CI와 패키지 설치 검사로 수행합니다. 결과는 [CI 실행 기록](https://github.com/minu-ha/for-humanity/actions/workflows/ci.yml)과 [GitHub Release](https://github.com/minu-ha/for-humanity/releases/tag/v0.13.0)에서 확인합니다. Node 지원 범위·버전·태그의 일치 기준은 [Releases](release-policy.md), 공개 절차는 [Maintenance](https://github.com/minu-ha/for-humanity/blob/main/content/private/maintenance.md#packaging-and-release)를 따릅니다.
 
 검색·로그인·DB 연결은 아래 후속 단계에서 별도로 설계합니다.
 
@@ -125,7 +125,7 @@ Node 22.12.0과 24.3.0에서 설치 패키지의 공개 타입·build·dev·prev
 - [ ] 설정·일반 문서·목적별 최소 견본 준비
 - [ ] 기존 파일과 충돌할 때의 처리 기준 구현
 - [ ] 생성 직후 `dev`, `build`, `preview` 실행 확인
-- [ ] [Commands](commands.md)에 명령·결과·오류 예시 반영
+- [ ] [Commands](../public/commands.md)에 명령·결과·오류 예시 반영
 
 산출물: `init` 명령, 시작 템플릿, 사용법.
 완료 기준: 별도 프로젝트의 빈 폴더에서 시작해 첫 문서를 작성하고 정적 사이트를 만들 수 있음.
@@ -135,7 +135,7 @@ Node 22.12.0과 24.3.0에서 설치 패키지의 공개 타입·build·dev·prev
 프로젝트 소스 밖에서도 설치와 실행이 가능한 패키지 준비.
 prototype의 첫 버전 `0.1.0`은 `dev`, `build`, `preview`를 지원. `init`은 별도 예정 작업이며 첫 공개의 필수 조건에서 분리.
 공개 패키지: [for-humanity@0.1.0](https://www.npmjs.com/package/for-humanity/v/0.1.0).
-이후 공식 공개 버전은 [Releases](releases.md), 변경 사항은 [Changelog](changelog.md)에서 확인.
+이후 공식 공개 버전은 [Releases](release-policy.md), 변경 사항은 [Changelog](changelog.md)에서 확인.
 
 - [x] 버전·지원 Node.js·라이선스·배포 파일 확인
 - [x] `pack` 결과를 별도 폴더에 설치
@@ -188,7 +188,7 @@ prototype의 첫 버전 `0.1.0`은 `dev`, `build`, `preview`를 지원. `init`�
 - [ ] 한국어 본문·영어 용어·사실과 미결 사항의 작성 규칙 반영
 - [ ] 실제 문서 생성·수정 사례로 결과 검토
 - [ ] frontmatter·링크·부품 문법의 검증 절차 반영
-- [ ] [Writing](writing.md)과 스킬 규칙의 변경 기준 연결
+- [ ] [Writing](../public/writing.md)과 스킬 규칙의 변경 기준 연결
 
 완료 기준: 생성된 문서가 빌드되고, 사람이 사실·결정·미결 사항을 확인할 수 있음.
 
@@ -200,7 +200,7 @@ prototype의 첫 버전 `0.1.0`은 `dev`, `build`, `preview`를 지원. `init`�
 - [ ] base path의 설정 형식·기본값·정규화 기준 정의
 - [ ] 문서 링크·자원·폰트·favicon의 URL을 같은 기준으로 생성
 - [ ] 루트와 하위 경로에서 직접 접속·새로고침·hash 이동 확인
-- [ ] [Settings](settings.md)와 [Commands](commands.md)에 배포 예시 반영
+- [ ] [Settings](../public/settings.md)와 [Commands](../public/commands.md)에 배포 예시 반영
 
 완료 기준: 동일한 문서가 루트와 하위 경로의 정적 서버에서 모든 자원을 포함해 동작.
 

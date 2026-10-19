@@ -86,6 +86,6 @@ pnpm exec for-humanity preview
 ```
 
 dev에서 양쪽 문서가 표시되는지 확인합니다. build 후에는 private 페이지·메뉴·사이트맵 항목·내부 자원이 없는지 확인하고, preview에서 공개 문서를 직접 열어 봅니다.
-배포에는 생성된 `dist`만 사용합니다. 기존 호스팅이 예전 출력 경로를 보고 있다면 다음 배포 전에 변경합니다. 이 저장소의 Pages 설정 전환은 [Deployment](deployment.md#repository-setup).
+배포에는 생성된 `dist`만 사용합니다. 기존 호스팅이 예전 출력 경로를 보고 있다면 다음 배포 전에 변경합니다. 호스팅 설정은 [Deployment](deployment.md#hosting-settings).
 
 `private`는 배포 제외 규칙입니다. 공개 Git 저장소에 넣은 파일은 Git에서 읽을 수 있습니다. 로그인을 통한 비공개 문서 제공은 이번 구조의 범위에 포함하지 않습니다.

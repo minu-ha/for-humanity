@@ -18,7 +18,6 @@ JavaScript용 공식 진입점은 아직 제공하지 않음. 내부 렌더러 �
 | 본문 부품   | Note · Details            | [Parts](parts.md)                |
 | 사이트 배포 | 문서 폴더의 `dist`        | [Deployment](deployment.md)      |
 
-이 페이지는 라이브러리의 실제 계약. [Design example](blueprint.md)의 HTTP API는 가상 앱의 작성 예시.
 
 ::part[CLI]
 
@@ -135,4 +134,4 @@ type: document
 - 링크 경고: 없는 Markdown 파일은 경고 후 빌드 계속
 - 배포 기준: 사이트 루트 `/` · 하위 URL 경로의 base path 설정은 아직 미구현
 
-실행 예시는 [Commands](commands.md), 향후 지원 범위는 [Roadmap](roadmap.md).
+실행 예시는 [Commands](commands.md), 설정은 [Settings](settings.md).

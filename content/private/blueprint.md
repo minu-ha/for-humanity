@@ -11,7 +11,7 @@ order: 10
 
 :::note[Example]
 별책의 기능과 API는 for humanity가 제공하는 기능이 아님. 예시 API에 연결하거나 데이터를 요청하지 않음.
-라이브러리의 실제 사용 계약은 [API](api.md), 부품 작성법은 [Parts](parts.md).
+라이브러리의 실제 사용 계약은 [API](../public/api.md), 부품 작성법은 [Parts](../public/parts.md).
 :::
 
 ## Overview
