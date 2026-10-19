@@ -25,5 +25,7 @@ const header = [
     "",
     "버전별 패키지 파일은 [GitHub Releases](https://github.com/minu-ha/for-humanity/releases)에서 받을 수 있습니다.",
 ].join("\n");
+
 const source = await readFile(new URL("../CHANGELOG.md", import.meta.url), "utf8");
+
 await writeFile(new URL("../content/public/changelog.md", import.meta.url), `${header}\n\n${source.replace(/^# Changelog\s*\n/, "").trim()}\n`);

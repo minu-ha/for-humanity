@@ -6,6 +6,7 @@ import {readFile, writeFile} from "node:fs/promises";
  *   - 배포용 라이브러리에는 포함하지 않는 저장소 전용 작업
  */
 const source = await readFile(new URL("../README.md", import.meta.url), "utf8");
+
 const content = source
     .replace('src="src/asset/favicon.svg"', 'src="/favicon.svg"')
     .replace('src="https://raw.githubusercontent.com/minu-ha/for-humanity/main/src/asset/favicon.svg"', 'src="/favicon.svg"')

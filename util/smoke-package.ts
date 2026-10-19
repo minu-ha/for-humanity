@@ -8,9 +8,11 @@ import {packReportSchema} from "@tool/_type/pack-report";
 import {packageMetadataSchema} from "@tool/_type/package-metadata";
 
 const [directory] = process.argv.slice(2);
+
 if (directory === undefined) {
     throw new Error("Usage: pnpm exec tsx util/smoke-package.ts <artifact directory>");
 }
+
 const artifactDirectory = resolve(directory);
 const pack = packReportSchema.parse(JSON.parse(await readFile(join(artifactDirectory, "pack.json"), "utf8")));
 
