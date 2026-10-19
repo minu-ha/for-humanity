@@ -30,10 +30,12 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
 
     /**
      * 비활성 전환에서만 숨겨 새 마우스 이동을 취소하지 않음
+     *
+     *   - 마지막 좌표는 유지, 다음 문서가 자기 표시 조건으로 복원 여부 판정
+     *   - Windows Chromium은 새로고침 직전 이 조건을 잠시 비활성으로 전환
      */
     const handleCursorMediaChange = () => {
         if (!mediaRef.current?.matches) {
-            positionRef.current.hasPointer = false;
             handleCursorHide();
         }
     };

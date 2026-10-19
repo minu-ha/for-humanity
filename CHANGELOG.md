@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Keep the `cursorFace` pixel face at the last mouse position after a reload in Chromium on Windows. Chromium briefly turned off its display condition just before leaving the page, which dropped the position and failed the Windows browser check `NAV-010`.
+
 ## 0.14.1 — 2026-10-19
 
 **Upgrade:** CLI commands, configuration, document syntax and Node.js requirements remain unchanged.

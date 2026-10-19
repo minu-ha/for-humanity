@@ -185,6 +185,33 @@ test.describe("문서 탐색", () => {
         });
     });
 
+    test("[NAV-020] 새로고침 직전 커서 표시 조건이 잠시 꺼져도 마지막 좌표를 이어 받는다", {tag: "@mid"}, async ({page}) => {
+        /**
+         * GIVEN
+         * 마우스 좌표에 표시한 커서 장식
+         */
+        const cursor = page.locator("[data-cursor-face]");
+
+        await page.goto("/guide/");
+        await page.mouse.move(500, 200);
+        await expect(cursor).toHaveCSS("visibility", "visible");
+
+        /**
+         * WHEN
+         * Windows Chromium처럼 문서를 떠나기 직전 표시 조건이 잠시 꺼졌다 켜진 뒤 새로고침
+         */
+        await page.emulateMedia({reducedMotion: "reduce"});
+        await expect(cursor).toHaveCSS("visibility", "hidden");
+        await page.emulateMedia({reducedMotion: "no-preference"});
+        await page.reload();
+
+        /**
+         * THEN
+         * 새 마우스 이동 없이 마지막 좌표에 다시 표시
+         */
+        await expect(cursor).toHaveCSS("visibility", "visible");
+    });
+
     test("[NAV-015] 구형 저장 키의 좌표는 복원하지 않는다", {tag: ["@high", "@negative"]}, async ({page}) => {
         /**
          * GIVEN
