@@ -165,7 +165,7 @@ TOC의 현재 위치도 같은 `anchor` 토큰 사용. 본문 끝은 `section` �
 좁은 데스크톱에서는 목차를 숨기고 문서 목록이 전체 탐색 높이를 사용. 오른쪽 목차를 왼쪽 목록에 합치거나 이동하지 않음.
 실제 남은 내용이 있는 위·아래 끝만 `size-navigation-fade` 28px로 흐리게 표시. `ResizeObserver`로 글꼴·화면 크기 변경을 추적. 강제 색상 환경과 JavaScript 미사용 환경은 네이티브 스크롤바 제공.
 모바일에서는 같은 문서 탐색 컴포넌트를 네이티브 `dialog` 안에 렌더. 드로어에서는 문서 목록만 스크롤하며 닫기 버튼은 고정. 본문 세로 보더·열 패딩·열 간격은 해제. JavaScript가 없으면 문서 목록을 본문 위에 제공.
-폭 기준의 CSS 변수 사용 불가. `shell/wg-shell.css`, `navigation/wg-navigation.css`, `token.css`, `navigation/_constant/navigation.ts`의 적용 구간 일치 필요.
+폭 기준의 CSS 변수 사용 불가. `shell/wg-shell.css`, `sidebar/wg-sidebar.css`, `token.css`, `sidebar/_constant/navigation.ts`의 적용 구간 일치 필요.
 
 ## Interaction
 

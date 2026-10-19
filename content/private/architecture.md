@@ -226,7 +226,7 @@ Hono의 최초 레이아웃 효과는 아직 연결되지 않은 fragment에서 
 
 ### Store ownership and lifetime
 
-`src/store/navigation`에 생성기·저장 키·상태 계약·저장 자료 검증을 모읍니다. JSX 이벤트·반응형 배치·스크롤 영역·현재 헤딩은 `src/component/widget/navigation`이 소유하며 구독을 설치한 효과에서 정리합니다.
+`src/store/navigation`에 생성기·저장 키·상태 계약·저장 자료 검증을 모읍니다. JSX 이벤트·반응형 배치·스크롤 영역·현재 헤딩은 `src/component/widget/sidebar`이 소유하며 구독을 설치한 효과에서 정리합니다.
 `createNavigationStores`는 브라우저의 탐색 진입점에서 페이지마다 생성하며, 서버 요청이나 정적 빌드에서는 실행하지 않습니다. 페이지 사이의 스크롤 위치는 `persist`가 이어받고, BFCache 복귀에서는 `persist.rehydrate()`로 최신 상태를 다시 읽습니다. 저장 자료는 스토어의 Zod 스키마로 한 번 검증하고, 손상된 저장값은 전체를 제외합니다. 스크롤 상태 타입도 같은 스키마에서 추론합니다.
 
 실제 저장 위치는 `sessionStorage`입니다. `createJSONStorage`는 Zustand 상태 객체와 저장소의 문자열 사이에서 JSON 직렬화, 역직렬화를 담당하는 어댑터입니다. `localStorage`로 바꾸는 경우에도 같은 어댑터를 사용할 수 있지만, 탐색 위치는 현재 탭에서만 유지하는 정책이므로 `sessionStorage`를 연결합니다. 저장소 조회는 어댑터에서 지연 실행하고, 저장 차단이나 용량 부족은 메모리 상태를 유지하도록 처리합니다.
@@ -274,7 +274,7 @@ gray-matter는 frontmatter를 분리·해석하는 다른 선택지. 여기서�
 | HTML 틀 · 자원 · 본문 배치    | `src/component/widget/shell` |
 | 공통 제어 UI · 앵커 수명      | `src/component/widget/shell-controls` |
 | 포인터 장식 · 좌표 · 입력 구독 | `src/component/widget/cursor-face` |
-| 문서 트리 계산 · 탐색 · 목차 · 드로어 | `src/component/widget/navigation` |
+| 문서 트리 계산 · 탐색 · 목차 · 드로어 | `src/component/widget/sidebar` |
 | 탐색 저장 상태 · 검증         | `src/store/navigation`       |
 | 본문 · remark·rehype 플러그인 | `src/component/widget/article` |
 | Mermaid 원문 · 공식 SVG 렌더 수명 | `src/component/widget/mermaid` |

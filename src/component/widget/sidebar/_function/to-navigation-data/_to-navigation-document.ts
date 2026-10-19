@@ -1,5 +1,5 @@
-import type {DocBranch} from "@/component/widget/navigation/_type/doc-branch";
-import type {NavigationDoc} from "@/component/widget/navigation/_type/navigation-data";
+import type {DocBranch} from "@/component/widget/sidebar/_type/doc-branch";
+import type {NavigationDoc} from "@/component/widget/sidebar/_type/navigation-data";
 
 /**
  * 본문을 제외할 문서 가지 입력

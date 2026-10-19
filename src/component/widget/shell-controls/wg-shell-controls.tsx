@@ -3,14 +3,14 @@ import {Fragment, useLayoutEffect, useRef} from "hono/jsx";
 import {heading_highlight_hold_ms} from "@/component/widget/article/_constant/heading-highlight";
 import {WgCursorFace} from "@/component/widget/cursor-face/wg-cursor-face";
 import {WgMermaid} from "@/component/widget/mermaid/wg-mermaid";
-import {WgNavigation, type WgNavigationProps} from "@/component/widget/navigation/wg-navigation";
+import {WgSidebar, type WgSidebarProps} from "@/component/widget/sidebar/wg-sidebar";
 import {scroll_user_input_events} from "@/constant/scroll";
 import {findHashLink} from "@/util/dom/find-hash-link";
 import {isRestoringNavigation} from "@/util/dom/is-restoring-navigation";
 import {revealHashTarget} from "@/util/dom/reveal-hash-target";
 import "./wg-shell-controls.css";
 
-export const WgShellControls = (props: WgNavigationProps) => {
+export const WgShellControls = (props: WgSidebarProps) => {
     const headingRef = useRef<HTMLElement | null>(null);
     const timerRef = useRef(0);
     const arrivalRef = useRef<AbortController | null>(null);
@@ -141,8 +141,8 @@ export const WgShellControls = (props: WgNavigationProps) => {
             {/**
              * 별도 DOM 경계로 탐색 갱신이 커서 형제 사이에서 dialog를 재삽입하지 않게 함
              */}
-            <div className={clsx("wg_shellControls__navigation")}>
-                <WgNavigation data={props.data} stores={props.stores} />
+            <div className={clsx("wg_shellControls__sidebar")}>
+                <WgSidebar data={props.data} stores={props.stores} />
             </div>
             {props.data.cursorFace && <WgCursorFace ready={props.stores !== undefined} />}
             <WgMermaid onRendered={handlePageLoad} />

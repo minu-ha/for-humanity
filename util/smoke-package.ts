@@ -119,14 +119,14 @@ try {
         assert.equal(await readFile(join(output, "_fh/mermaid", name), "utf8"), await readFile(join(packageRoot, "dist/mermaid", name), "utf8"));
     }
     const nested = await readFile(join(output, "guide/agents/index.html"), "utf8");
-    const nestedNavigation = nested.match(/<nav\b[^>]*class="wg_navigationNav__root"[\s\S]*?<\/nav>/)?.[0];
+    const nestedNavigation = nested.match(/<nav\b[^>]*class="wg_docTree__root"[\s\S]*?<\/nav>/)?.[0];
     assert.ok(nestedNavigation);
     assert.match(nested, /Example<\/span><ul\b/);
     assert.match(nested, /Guide<\/span><ul\b/);
     assert.match(nested, /href="\/guide\/agents\/"[^>]*aria-current="page"/);
-    assert.equal([...nestedNavigation.matchAll(/wg_navigationNavList__link--active/g)].length, 1);
+    assert.equal([...nestedNavigation.matchAll(/wg_docList__link--active/g)].length, 1);
     const child = await readFile(join(output, "guide/options/index.html"), "utf8");
-    const childNavigation = child.match(/<nav\b[^>]*class="wg_navigationNav__root"[\s\S]*?<\/nav>/)?.[0];
+    const childNavigation = child.match(/<nav\b[^>]*class="wg_docTree__root"[\s\S]*?<\/nav>/)?.[0];
     assert.ok(childNavigation);
     assert.match(child, /href="\/guide\/"[^>]*>Guide<\/a><ul\b[^>]*aria-label="Guide"/);
     assert.match(child, /href="\/guide\/options\/"[^>]*aria-current="page"/);
@@ -136,7 +136,7 @@ try {
     assert.ok(child.includes(`href="${imagePath}"`));
     assert.equal([...child.matchAll(/href="\/guide\/options\/"/g)].length, 1);
     assert.equal([...child.matchAll(/aria-current="page"/g)].length, 1);
-    assert.equal([...childNavigation.matchAll(/wg_navigationNavList__link--active/g)].length, 1);
+    assert.equal([...childNavigation.matchAll(/wg_docList__link--active/g)].length, 1);
     assert.ok(nested.indexOf('aria-label="Projects"') < nested.indexOf('aria-label="Guide"'));
     const entries = (await readdir(output, {recursive: true})).map((path) => path.replaceAll("\\", "/"));
     assert.ok(!entries.includes("agents/index.html"));

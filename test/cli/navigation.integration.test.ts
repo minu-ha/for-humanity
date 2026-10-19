@@ -7,10 +7,10 @@ import {createProcessor} from "@/app/_function/create-processor/create-processor
 import {readDocs} from "@/app/_function/read-docs";
 import {readHome} from "@/app/_function/read-home";
 import {toPageApp} from "@/app/_function/to-page-app/to-page-app";
-import {navigationDataSchema} from "@/component/widget/navigation/_constant/navigation-data-schema";
-import {toDocGroups} from "@/component/widget/navigation/_function/to-doc-groups/to-doc-groups";
-import {toNavigationData} from "@/component/widget/navigation/_function/to-navigation-data/to-navigation-data";
-import {toNavigationJson} from "@/component/widget/navigation/_function/to-navigation-json";
+import {navigationDataSchema} from "@/component/widget/sidebar/_constant/navigation-data-schema";
+import {toDocGroups} from "@/component/widget/sidebar/_function/to-doc-groups/to-doc-groups";
+import {toNavigationData} from "@/component/widget/sidebar/_function/to-navigation-data/to-navigation-data";
+import {toNavigationJson} from "@/component/widget/sidebar/_function/to-navigation-json";
 import {asset_style_path} from "@/constant/asset";
 import {siteConfigSchema} from "@/type/site-config";
 
@@ -58,15 +58,15 @@ describe("문서 탐색", () => {
         const home = await readHome({root, processor: createProcessor({site, root})});
         const assets = {fontCss: "", preload: [], browser: {kind: "inline" as const, code: ""}, stylePaths: [asset_style_path]};
         const html = await (await toPageApp({site, store: {docs: [], home}, assets}).request("/")).text();
-        const rail = html.match(/<aside\b[^>]*data-navigation-rail=""[^>]*>([\s\S]*?)<\/aside>/)?.[1];
+        const rail = html.match(/<aside\b[^>]*data-sidebar-toc=""[^>]*>([\s\S]*?)<\/aside>/)?.[1];
 
         /**
          * THEN
          * 페이지 목차는 오른쪽 영역에 한 번만 렌더된 결과
          */
-        expect(rail).toContain('data-navigation-scroll="outline"');
+        expect(rail).toContain('data-sidebar-scroll="outline"');
         expect(rail).toMatch(/Read here/);
-        expect([...html.matchAll(/data-navigation-scroll="outline"/g)].length).toBe(1);
+        expect([...html.matchAll(/data-sidebar-scroll="outline"/g)].length).toBe(1);
     });
 
     test("탐색은 설정 순서대로 모든 묶음과 현재 문서를 표시한다", async ({root}) => {
@@ -96,7 +96,7 @@ describe("문서 탐색", () => {
          */
         expect(groups.map((group) => group[1])).toStrictEqual(["Getting started", "Guide"]);
         expect(html).not.toMatch(/<details\b/);
-        expect(html).not.toMatch(/wg_navigationNav__docIcon/);
+        expect(html).not.toMatch(/wg_docTree__docIcon/);
         expect(html).not.toMatch(/href="\/"/);
         expect(html).not.toMatch(/>Documents<|>Overview</);
         expect(html.indexOf('href="/writing/"')).toBeLessThan(html.indexOf('href="/parts/"'));
@@ -193,7 +193,7 @@ describe("문서 탐색", () => {
         expect(html).toMatch(/href="\/guide\/site\/"[^>]*>Site<\/a><ul\b[^>]*aria-label="Site"/);
         expect(html).toMatch(/href="\/details\/"[^>]*aria-current="page"/);
         expect([...html.matchAll(/aria-current="page"/g)].length).toBe(1);
-        expect([...html.matchAll(/wg_navigationNavList__link--active/g)].length).toBe(1);
+        expect([...html.matchAll(/wg_docList__link--active/g)].length).toBe(1);
         for (const doc of docs) {
             expect(html.split(`href="/${doc.id}/"`).length - 1).toBe(1);
         }

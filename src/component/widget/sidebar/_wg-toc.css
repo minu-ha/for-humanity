@@ -1,12 +1,12 @@
 /*
  * 와이드 화면의 오른쪽 목차, 라벨과 묶음은 문서 탐색의 묶음과 같은 표현
  */
-.wg_navigationToc__root {
+.wg_toc__root {
     font-size: var(--app-font-size-dense);
     line-height: var(--app-line-height-tight);
 }
 
-.wg_navigationToc__label {
+.wg_toc__label {
     margin: 0 0 var(--app-space-tree-label);
     color: var(--app-color-text-muted);
     font-size: var(--app-font-size-group);
@@ -14,7 +14,7 @@
     text-box: trim-start cap alphabetic;
 }
 
-.wg_navigationToc__group {
+.wg_toc__group {
     margin: 0 0 var(--app-space-tree-label);
     color: var(--app-color-text-muted);
     font-size: var(--app-font-size-group);
@@ -22,17 +22,17 @@
     text-box: trim-start cap alphabetic;
 }
 
-.wg_navigationToc__groupSection--named {
+.wg_toc__groupSection--named {
     margin-top: var(--app-space-tree-group);
 }
 
-.wg_navigationToc__list {
+.wg_toc__list {
     margin: 0;
     padding: 0;
     list-style: none;
 }
 
-.wg_navigationToc__link {
+.wg_toc__link {
     display: block;
     padding: var(--app-space-tree-row) 0;
     color: var(--app-color-text);
@@ -53,18 +53,18 @@
     }
 }
 
-.wg_navigationToc__link--active {
+.wg_toc__link--active {
     color: var(--app-color-text-strong);
     font-weight: var(--app-font-weight-active);
 }
 
-.wg_navigationToc__sub {
+.wg_toc__sub {
     margin: var(--app-space-tree-row) 0 4px var(--app-space-tree-indent);
     padding: 0;
     list-style: none;
 }
 
-.wg_navigationToc__subLink {
+.wg_toc__subLink {
     display: block;
     padding: var(--app-space-tree-row) 0;
     color: var(--app-color-text);
@@ -85,7 +85,7 @@
     }
 }
 
-.wg_navigationToc__subLink--active {
+.wg_toc__subLink--active {
     color: var(--app-color-text-strong);
     font-weight: var(--app-font-weight-active);
 }

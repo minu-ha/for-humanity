@@ -1,6 +1,6 @@
 import {takeWhile} from "es-toolkit/array";
 import {section_heading_depth} from "@/component/widget/article/_constant/section";
-import type {TocGroup, TocSection} from "@/component/widget/navigation/_type/toc-group";
+import type {TocGroup, TocSection} from "@/component/widget/sidebar/_type/toc-group";
 import type {DocOutline} from "@/type/doc-outline";
 
 /**

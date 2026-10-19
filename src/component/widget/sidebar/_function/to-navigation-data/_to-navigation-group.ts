@@ -1,6 +1,6 @@
-import {toNavigationDocument} from "@/component/widget/navigation/_function/to-navigation-data/_to-navigation-document";
-import type {DocGroup} from "@/component/widget/navigation/_type/doc-group";
-import type {NavigationGroup} from "@/component/widget/navigation/_type/navigation-data";
+import {toNavigationDocument} from "@/component/widget/sidebar/_function/to-navigation-data/_to-navigation-document";
+import type {DocGroup} from "@/component/widget/sidebar/_type/doc-group";
+import type {NavigationGroup} from "@/component/widget/sidebar/_type/navigation-data";
 
 /**
  * 탐색 묶음 변환 입력

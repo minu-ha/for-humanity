@@ -1,4 +1,4 @@
-import type {DocBranch} from "@/component/widget/navigation/_type/doc-branch";
+import type {DocBranch} from "@/component/widget/sidebar/_type/doc-branch";
 import type {Doc} from "@/type/doc";
 
 /**

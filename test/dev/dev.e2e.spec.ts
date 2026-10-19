@@ -418,7 +418,7 @@ test.describe("저장소 소스 개발", () => {
              * WHEN
              * 클라이언트가 마운트하는 탐색 버튼 이름 변경
              */
-            const path = join(devSite.kitRoot, "src/component/widget/navigation/wg-navigation.tsx");
+            const path = join(devSite.kitRoot, "src/component/widget/sidebar/wg-sidebar.tsx");
             await writeFile(path, (await readFile(path, "utf8")).replace("aria-label={copy_nav_open}", 'aria-label="Updated navigation"'));
 
             /**

@@ -19,10 +19,10 @@ test.describe("문서 탐색", () => {
         });
         await page.goto("/guide/");
         await page.bringToFront();
-        const documents = page.locator('[data-navigation-scroll="documents"]');
-        const outline = page.locator('[data-navigation-scroll="outline"]');
+        const documents = page.locator('[data-sidebar-scroll="documents"]');
+        const outline = page.locator('[data-sidebar-scroll="outline"]');
         const cursor = page.locator("[data-cursor-face]");
-        const navigation = page.locator("[data-navigation]");
+        const navigation = page.locator("[data-sidebar-docs]");
         const details = page.locator("details");
         const hiddenHeading = page.locator("#hidden-detail .wg_article__headingText");
 
@@ -55,8 +55,8 @@ test.describe("문서 탐색", () => {
                  * 최초 프레임부터 적용한 탐색 위치 수집
                  */
                 const sample = () => {
-                    const documents = document.querySelector<HTMLElement>('[data-navigation-scroll="documents"]');
-                    const outline = document.querySelector<HTMLElement>('[data-navigation-scroll="outline"]');
+                    const documents = document.querySelector<HTMLElement>('[data-sidebar-scroll="documents"]');
+                    const outline = document.querySelector<HTMLElement>('[data-sidebar-scroll="outline"]');
                     if (documents && outline) window.navigationFrames.push({documents: documents.scrollTop, outline: outline.scrollTop});
                     if (++frames < 45) requestAnimationFrame(sample);
                 };
@@ -96,14 +96,14 @@ test.describe("문서 탐색", () => {
             await expect(hiddenHeading).toHaveClass(/wg_article__headingText--highlighted/);
             const body = await page.locator("main").elementHandle();
             await page.setViewportSize({width: 1280, height: 600});
-            await expect(navigation).toHaveAttribute("data-navigation-layout", "desktop");
+            await expect(navigation).toHaveAttribute("data-sidebar-layout", "desktop");
             await documents.evaluate((element) => {
                 element.scrollTop = 80;
             });
             await expect.poll(async () => (await readNavigationScroll(page))?.desktop?.documents).toBe(80);
             const focused = page.getByRole("link", {name: "Page 10", exact: true});
             await focused.focus();
-            const desktopPosition = await page.locator('[data-navigation-scroll="documents"]').evaluate((element) => element.scrollTop);
+            const desktopPosition = await page.locator('[data-sidebar-scroll="documents"]').evaluate((element) => element.scrollTop);
             await page.setViewportSize({width: 390, height: 844});
             await expect(page.getByRole("button", {name: "Open navigation", exact: true})).toBeFocused();
             await page.getByRole("button", {name: "Open navigation", exact: true}).click();
@@ -113,7 +113,7 @@ test.describe("문서 탐색", () => {
             await expect.poll(async () => (await readNavigationScroll(page))?.drawer?.documents).toBe(180);
             await page.getByRole("link", {name: "Page 10", exact: true}).focus();
             await page.setViewportSize({width: 1280, height: 600});
-            await expect(navigation).toHaveAttribute("data-navigation-layout", "desktop");
+            await expect(navigation).toHaveAttribute("data-sidebar-layout", "desktop");
             await expect(focused).toBeFocused();
             await expect(documents).toHaveJSProperty("scrollTop", desktopPosition);
             await expect(page.locator("dialog")).toHaveJSProperty("open", false);
@@ -121,7 +121,7 @@ test.describe("문서 탐색", () => {
         });
         await test.step("접힌 제목으로 이동하면 내용을 공개하고 강조를 정리한다", async () => {
             await page.setViewportSize({width: 1920, height: 600});
-            await expect(navigation).toHaveAttribute("data-navigation-layout", "wide");
+            await expect(navigation).toHaveAttribute("data-sidebar-layout", "wide");
             await page.locator("details summary").click();
             await expect(details).toHaveJSProperty("open", false);
             await page.getByRole("link", {name: "Hidden detail", exact: true}).click();
@@ -155,8 +155,8 @@ test.describe("문서 탐색", () => {
          * 현재 문서 목록과 일치하는 구형 배치별 저장값
          */
         await page.goto("/guide/");
-        const signature = await page.locator("[data-navigation]").evaluate((element) => {
-            return [...element.querySelectorAll<HTMLAnchorElement>(".wg_navigationNav__root a[href]")].map((link) => `${link.pathname}:${link.textContent}`).join("\n");
+        const signature = await page.locator("[data-sidebar-docs]").evaluate((element) => {
+            return [...element.querySelectorAll<HTMLAnchorElement>(".wg_docTree__root a[href]")].map((link) => `${link.pathname}:${link.textContent}`).join("\n");
         });
         await page.addInitScript(
             (options) => {
@@ -176,8 +176,8 @@ test.describe("문서 탐색", () => {
          * THEN
          * 구형 좌표 대신 초기 위치를 현재 스토어에 저장
          */
-        await expect(page.locator('[data-navigation-scroll="documents"]')).toHaveJSProperty("scrollTop", 0);
-        await expect(page.locator('[data-navigation-scroll="outline"]')).toHaveJSProperty("scrollTop", 0);
+        await expect(page.locator('[data-sidebar-scroll="documents"]')).toHaveJSProperty("scrollTop", 0);
+        await expect(page.locator('[data-sidebar-scroll="outline"]')).toHaveJSProperty("scrollTop", 0);
         await expect.poll(async () => (await readNavigationScroll(page))?.wide).toStrictEqual({documents: 0, outline: 0});
     });
     for (const storage of ["blocked", "corrupt"]) {
@@ -207,7 +207,7 @@ test.describe("문서 탐색", () => {
              * 탐색 스크롤과 다른 문서로 이동
              */
             await page.goto("/guide/");
-            await page.locator('[data-navigation-scroll="documents"]').evaluate((element) => {
+            await page.locator('[data-sidebar-scroll="documents"]').evaluate((element) => {
                 element.scrollTop = 120;
             });
             await page.getByRole("link", {name: "Page 10", exact: true}).click();
@@ -328,8 +328,8 @@ test.describe("문서 탐색", () => {
                  * GIVEN
                  * 화면 높이 안에 모두 들어가는 탐색 영역
                  */
-                const list = page.locator(`[data-navigation-scroll="${area.kind}"]`);
-                await expect(list).not.toHaveClass(/wg_navigation__scroll--overflow/);
+                const list = page.locator(`[data-sidebar-scroll="${area.kind}"]`);
+                await expect(list).not.toHaveClass(/wg_sidebar__scroll--overflow/);
                 const center = await list.evaluate((element) => element.getBoundingClientRect().left + element.getBoundingClientRect().width / 2);
                 for (const point of [
                     {name: "링크", y: 200},
@@ -359,8 +359,8 @@ test.describe("문서 탐색", () => {
              */
             await page.setViewportSize({width: 1920, height: 600});
             await page.evaluate(() => scrollTo({top: 0, behavior: "instant"}));
-            const documents = page.locator('[data-navigation-scroll="documents"]');
-            await expect(documents).toHaveClass(/wg_navigation__scroll--overflow/);
+            const documents = page.locator('[data-sidebar-scroll="documents"]');
+            await expect(documents).toHaveClass(/wg_sidebar__scroll--overflow/);
             await documents.evaluate((element) => {
                 element.scrollTop = element.scrollHeight;
             });

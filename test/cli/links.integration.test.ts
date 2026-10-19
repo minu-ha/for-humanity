@@ -93,7 +93,7 @@ describe("문서 링크와 목차", () => {
         expect(html).toMatch(/href="#01-keep-this-number"[^>]*>01\. Keep this number<\/a>/);
         expect(html).toMatch(/href="#nested-heading"[^>]*>Nested heading<\/a>/);
         expect(html).toMatch(/href="#overview-1"[^>]*>Overview<\/a>/);
-        expect(html).toMatch(/wg_navigationToc__group">Setup<\/div>/);
-        expect(html).not.toMatch(/wg_article__num|wg_navigationToc__mark/);
+        expect(html).toMatch(/wg_toc__group">Setup<\/div>/);
+        expect(html).not.toMatch(/wg_article__num|wg_toc__mark/);
     });
 });

@@ -1,26 +1,26 @@
 import clsx from "clsx";
 import {useLayoutEffect, useState} from "hono/jsx";
-import {reading_line_slack_px} from "@/component/widget/navigation/_constant/reading-line";
-import type {TocGroup} from "@/component/widget/navigation/_type/toc-group";
+import {reading_line_slack_px} from "@/component/widget/sidebar/_constant/reading-line";
+import type {TocGroup} from "@/component/widget/sidebar/_type/toc-group";
 import {copy_nav_toc_label} from "@/constant/copy";
 import {scroll_user_input_events} from "@/constant/scroll";
 import {findHashLink} from "@/util/dom/find-hash-link";
 import {findHashTarget} from "@/util/dom/find-hash-target";
 import {isRestoringNavigation} from "@/util/dom/is-restoring-navigation";
 import {toHashId} from "@/util/dom/to-hash-id";
-import "./_wg-navigation-toc.css";
+import "./_wg-toc.css";
 
 /**
  * 현재 문서의 목차. 읽는 제목 한 항목만 강조
  */
-export interface WgNavigationTocProps {
+export interface WgTocProps {
     /**
      * 본문 순서의 가름, 절, 소제목
      */
     groups: TocGroup[];
 }
 
-export const WgNavigationToc = (props: WgNavigationTocProps) => {
+export const WgToc = (props: WgTocProps) => {
     const [currentSlug, setCurrentSlug] = useState<string>();
 
     /**
@@ -118,24 +118,21 @@ export const WgNavigationToc = (props: WgNavigationTocProps) => {
     }, [props.groups]);
 
     return (
-        <nav className={clsx("wg_navigationToc__root")} aria-label={copy_nav_toc_label}>
-            <div className={clsx("wg_navigationToc__label")}>{copy_nav_toc_label}</div>
+        <nav className={clsx("wg_toc__root")} aria-label={copy_nav_toc_label}>
+            <div className={clsx("wg_toc__label")}>{copy_nav_toc_label}</div>
             {/**
              * 가름별 제목 이동. 하위 제목이 현재 위치여도 부모 글씨는 강조하지 않음
              */}
             {props.groups.map((group) => {
                 return (
-                    <div
-                        className={clsx("wg_navigationToc__groupSection", {"wg_navigationToc__groupSection--named": group.part !== undefined})}
-                        key={group.sections[0].heading.slug}
-                    >
-                        {group.part !== undefined && <div className={clsx("wg_navigationToc__group")}>{group.part}</div>}
-                        <ul className={clsx("wg_navigationToc__list")}>
+                    <div className={clsx("wg_toc__groupSection", {"wg_toc__groupSection--named": group.part !== undefined})} key={group.sections[0].heading.slug}>
+                        {group.part !== undefined && <div className={clsx("wg_toc__group")}>{group.part}</div>}
+                        <ul className={clsx("wg_toc__list")}>
                             {group.sections.map((section) => {
                                 return (
-                                    <li className={clsx("wg_navigationToc__item")} key={section.heading.slug}>
+                                    <li className={clsx("wg_toc__item")} key={section.heading.slug}>
                                         <a
-                                            className={clsx("wg_navigationToc__link", {"wg_navigationToc__link--active": section.heading.slug === currentSlug})}
+                                            className={clsx("wg_toc__link", {"wg_toc__link--active": section.heading.slug === currentSlug})}
                                             href={`#${section.heading.slug}`}
                                             data-toc-link=""
                                             aria-current={section.heading.slug === currentSlug ? "location" : undefined}
@@ -147,13 +144,13 @@ export const WgNavigationToc = (props: WgNavigationTocProps) => {
                                          * 하위 제목. 활성 링크는 한 제목만
                                          */}
                                         {section.subs.length > 0 && (
-                                            <ul className={clsx("wg_navigationToc__sub")}>
+                                            <ul className={clsx("wg_toc__sub")}>
                                                 {section.subs.map((sub) => {
                                                     return (
-                                                        <li className={clsx("wg_navigationToc__subItem")} key={sub.heading.slug}>
+                                                        <li className={clsx("wg_toc__subItem")} key={sub.heading.slug}>
                                                             <a
-                                                                className={clsx("wg_navigationToc__subLink", {
-                                                                    "wg_navigationToc__subLink--active": sub.heading.slug === currentSlug,
+                                                                className={clsx("wg_toc__subLink", {
+                                                                    "wg_toc__subLink--active": sub.heading.slug === currentSlug,
                                                                 })}
                                                                 href={`#${sub.heading.slug}`}
                                                                 data-toc-sub-link=""

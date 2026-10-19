@@ -53,7 +53,7 @@ describe("홈페이지", () => {
         expect(html).toMatch(/href="\/guide\/setup\/"/);
         expect(html).toMatch(/href="#start" data-toc-link/);
         expect(html).toMatch(/class="shiki/);
-        expect(html).toMatch(/wg_navigation__brand" href="\/" aria-current="page"/);
+        expect(html).toMatch(/wg_sidebar__brand" href="\/" aria-current="page"/);
         expect([...html.matchAll(/href="\/"/g)].length).toBe(1);
         expect(docs[0].html).toMatch(/href="\/#start"/);
         expect(html).not.toMatch(/wg_article__eyebrow|pg_home__card/);

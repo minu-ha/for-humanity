@@ -1,5 +1,5 @@
-import {locale_doc_name} from "@/component/widget/navigation/_constant/locale";
-import type {DocBranch} from "@/component/widget/navigation/_type/doc-branch";
+import {locale_doc_name} from "@/component/widget/sidebar/_constant/locale";
+import type {DocBranch} from "@/component/widget/sidebar/_type/doc-branch";
 import type {Doc} from "@/type/doc";
 
 /**

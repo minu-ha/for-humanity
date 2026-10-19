@@ -1,4 +1,4 @@
-import type {TocGroup} from "@/component/widget/navigation/_type/toc-group";
+import type {TocGroup} from "@/component/widget/sidebar/_type/toc-group";
 
 /**
  * 브라우저 문서 가지. 본문, 파일 경로를 포함하지 않는 탐색 전용 계약

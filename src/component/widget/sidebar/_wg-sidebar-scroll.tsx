@@ -4,7 +4,7 @@ import {type Child, type DOMAttributes, type RefObject, useLayoutEffect, useRef,
 /**
  * 탐색 좌표를 제어하는 부모와 넘침 표시를 소유하는 스크롤 영역의 경계
  */
-export interface WgNavigationScrollProps {
+export interface WgSidebarScrollProps {
     /**
      * 배치별 좌표 복원과 저장에 필요한 실제 스크롤 요소
      */
@@ -36,7 +36,7 @@ export interface WgNavigationScrollProps {
     onScroll?: () => void;
 }
 
-export const WgNavigationScroll = (props: WgNavigationScrollProps) => {
+export const WgSidebarScroll = (props: WgSidebarScrollProps) => {
     const [overflow, setOverflow] = useState({above: false, below: false});
     const frameRef = useRef(0);
 
@@ -105,15 +105,15 @@ export const WgNavigationScroll = (props: WgNavigationScrollProps) => {
         <div
             ref={props.ready ? props.portRef : undefined}
             className={clsx(
-                "wg_navigation__scroll",
-                props.kind === "documents" && "wg_navigation__documents",
-                props.kind === "outline" && "wg_navigation__headings",
-                props.ready && "wg_navigation__scroll--ready",
-                props.ready && (overflow.above || overflow.below) && "wg_navigation__scroll--overflow",
-                props.ready && overflow.above && "wg_navigation__scroll--above",
-                props.ready && overflow.below && "wg_navigation__scroll--below",
+                "wg_sidebar__scroll",
+                props.kind === "documents" && "wg_sidebar__docsScroll",
+                props.kind === "outline" && "wg_sidebar__tocScroll",
+                props.ready && "wg_sidebar__scroll--ready",
+                props.ready && (overflow.above || overflow.below) && "wg_sidebar__scroll--overflow",
+                props.ready && overflow.above && "wg_sidebar__scroll--above",
+                props.ready && overflow.below && "wg_sidebar__scroll--below",
             )}
-            data-navigation-scroll={props.kind}
+            data-sidebar-scroll={props.kind}
             onClick={props.onClick}
             onScroll={handlePortScroll}
         >

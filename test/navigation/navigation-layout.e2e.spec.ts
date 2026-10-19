@@ -44,14 +44,14 @@ test.describe("탐색 레이아웃", () => {
                 expect(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)).toBe(false);
                 const outline = page.getByRole("navigation", {name: "On this page", exact: true});
                 await expect(outline).toBeVisible({visible: options.viewport.width >= 1360});
-                const documents = page.locator('[data-navigation-scroll="documents"]');
+                const documents = page.locator('[data-sidebar-scroll="documents"]');
                 if (options.javaScriptEnabled === false) {
                     await expect(page.getByRole("link", {name: "Child", exact: true})).toBeVisible();
                     expect(await documents.evaluate((element) => getComputedStyle(element).scrollbarWidth)).not.toBe("none");
                 } else {
                     if (options.viewport.width >= 1360) {
                         const width = await documents.evaluate((element) => element.getBoundingClientRect().width);
-                        const outlineWidth = await page.locator('[data-navigation-scroll="outline"]').evaluate((element) => element.getBoundingClientRect().width);
+                        const outlineWidth = await page.locator('[data-sidebar-scroll="outline"]').evaluate((element) => element.getBoundingClientRect().width);
                         expect(width).toBe(200);
                         expect(outlineWidth).toBe(width);
 

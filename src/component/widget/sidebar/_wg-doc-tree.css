@@ -1,18 +1,18 @@
 /*
  * 읽는 순서의 문서 목록, 작은 회색 묶음과 링크색 문서
  */
-.wg_navigationNav__root {
+.wg_docTree__root {
     font-size: var(--app-font-size-dense);
     line-height: var(--app-line-height-tight);
 }
 
-.wg_navigationNav__docs {
+.wg_docTree__docs {
     display: flex;
     flex-direction: column;
     gap: var(--app-space-tree-group);
 }
 
-.wg_navigationNav__group {
+.wg_docTree__group {
     margin: 0 0 var(--app-space-tree-label);
     color: var(--app-color-text-muted);
     font-size: var(--app-font-size-group);

@@ -1,22 +1,22 @@
 import clsx from "clsx";
 import {type DOMAttributes, Fragment, useLayoutEffect, useRef, useState} from "hono/jsx";
 import {flushSync} from "hono/jsx/dom";
-import {navigation_mobile_query, navigation_wide_query} from "@/component/widget/navigation/_constant/navigation";
-import type {NavigationData} from "@/component/widget/navigation/_type/navigation-data";
-import type {NavigationFocusSnapshot} from "@/component/widget/navigation/_type/navigation-focus-snapshot";
-import {WgNavigationNav} from "@/component/widget/navigation/_wg-navigation-nav";
-import {WgNavigationScroll} from "@/component/widget/navigation/_wg-navigation-scroll";
-import {WgNavigationToc} from "@/component/widget/navigation/_wg-navigation-toc";
+import {navigation_mobile_query, navigation_wide_query} from "@/component/widget/sidebar/_constant/navigation";
+import type {NavigationData} from "@/component/widget/sidebar/_type/navigation-data";
+import type {NavigationFocusSnapshot} from "@/component/widget/sidebar/_type/navigation-focus-snapshot";
+import {WgDocTree} from "@/component/widget/sidebar/_wg-doc-tree";
+import {WgSidebarScroll} from "@/component/widget/sidebar/_wg-sidebar-scroll";
+import {WgToc} from "@/component/widget/sidebar/_wg-toc";
 import {copy_nav_close, copy_nav_open, copy_nav_title} from "@/constant/copy";
 import type {createNavigationStores} from "@/store/navigation/create-navigation-stores";
 import type {NavigationLayout} from "@/store/navigation/navigation-state";
 import {revealHashTarget} from "@/util/dom/reveal-hash-target";
-import "./wg-navigation.css";
+import "./wg-sidebar.css";
 
 /**
  * 같은 Hono 탐색을 서버에서는 기본 링크로, 브라우저에서는 사용자 저장 상태로 렌더
  */
-export interface WgNavigationProps {
+export interface WgSidebarProps {
     /**
      * 서버가 정리한 문서 목록과 현재 페이지 목차
      */
@@ -28,7 +28,7 @@ export interface WgNavigationProps {
     stores?: ReturnType<typeof createNavigationStores>;
 }
 
-export const WgNavigation = (props: WgNavigationProps) => {
+export const WgSidebar = (props: WgSidebarProps) => {
     const [layout, setLayout] = useState<NavigationLayout>(() => {
         if (props.stores === undefined) return "desktop";
         if (matchMedia(navigation_mobile_query).matches) return "drawer";
@@ -220,8 +220,8 @@ export const WgNavigation = (props: WgNavigationProps) => {
         if (nextLayout === layoutRef.current) return;
         if (document.activeElement instanceof HTMLElement) {
             focusRef.current = {
-                navigation: document.activeElement.closest("[data-navigation]") !== null,
-                drawer: document.activeElement === openButtonRef.current || document.activeElement.closest("[data-navigation-drawer]") !== null,
+                navigation: document.activeElement.closest("[data-sidebar-docs]") !== null,
+                drawer: document.activeElement === openButtonRef.current || document.activeElement.closest("[data-sidebar-drawer]") !== null,
                 href: document.activeElement.getAttribute("href"),
             };
         }
@@ -302,17 +302,12 @@ export const WgNavigation = (props: WgNavigationProps) => {
             {/**
              * 데스크톱 문서 사이드바. 모바일에서는 고정 브랜드와 연결된 메뉴 버튼
              */}
-            <div className={clsx("wg_navigation__sidebar", props.stores !== undefined && "wg_navigation__sidebar--navigationReady")}>
+            <div className={clsx("wg_sidebar__docsColumn", props.stores !== undefined && "wg_sidebar__docsColumn--ready")}>
                 {/**
                  * 어느 문서에서도 홈으로 이동. 모달 진입은 브라우저 동작이 연결된 뒤 표시
                  */}
-                <div className={clsx("wg_navigation__brandRow")}>
-                    <a
-                        ref={props.stores === undefined ? undefined : brandRef}
-                        className={clsx("wg_navigation__brand")}
-                        href="/"
-                        aria-current={props.data.home ? "page" : undefined}
-                    >
+                <div className={clsx("wg_sidebar__brandRow")}>
+                    <a ref={props.stores === undefined ? undefined : brandRef} className={clsx("wg_sidebar__brand")} href="/" aria-current={props.data.home ? "page" : undefined}>
                         {props.data.title}
                     </a>
 
@@ -321,15 +316,14 @@ export const WgNavigation = (props: WgNavigationProps) => {
                      */}
                     <button
                         ref={props.stores === undefined ? undefined : openButtonRef}
-                        className={clsx("wg_navigation__menuToggle", props.stores !== undefined && layout === "drawer" && "wg_navigation__menuToggle--visible")}
+                        className={clsx("wg_sidebar__menuToggle", props.stores !== undefined && layout === "drawer" && "wg_sidebar__menuToggle--visible")}
                         type="button"
                         aria-label={copy_nav_open}
                         aria-controls="fh-navigation-drawer"
                         aria-expanded={String(drawerOpen)}
-                        data-navigation-open=""
                         onClick={handleOpenButtonClick}
                     >
-                        <svg className={clsx("wg_navigation__menuIcon")} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <svg className={clsx("wg_sidebar__menuIcon")} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                             <path d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
                     </button>
@@ -339,15 +333,10 @@ export const WgNavigation = (props: WgNavigationProps) => {
                  * JavaScript 없이도 전체 문서 링크를 표시. 브라우저 모바일에서는 드로어가 같은 목록을 소유
                  */}
                 {layout !== "drawer" && (
-                    <div
-                        ref={props.stores === undefined ? undefined : navigationRef}
-                        className={clsx("wg_navigation__navigation")}
-                        data-navigation=""
-                        data-navigation-layout={layout}
-                    >
-                        <WgNavigationScroll portRef={documentsRef} kind="documents" ready={props.stores !== undefined} onScroll={saveScroll} onClick={handleNavigationClick}>
-                            <WgNavigationNav groups={props.data.groups} />
-                        </WgNavigationScroll>
+                    <div ref={props.stores === undefined ? undefined : navigationRef} className={clsx("wg_sidebar__docsPanel")} data-sidebar-docs="" data-sidebar-layout={layout}>
+                        <WgSidebarScroll portRef={documentsRef} kind="documents" ready={props.stores !== undefined} onScroll={saveScroll} onClick={handleNavigationClick}>
+                            <WgDocTree groups={props.data.groups} />
+                        </WgSidebarScroll>
                     </div>
                 )}
             </div>
@@ -355,11 +344,11 @@ export const WgNavigation = (props: WgNavigationProps) => {
             {/**
              * 와이드 화면 전용 목차. 드로어에는 문서 목록만 표시
              */}
-            <aside className={clsx("wg_navigation__tocRail")} data-navigation-rail="">
-                <div className={clsx("wg_navigation__outline")} data-navigation-outline="">
-                    <WgNavigationScroll portRef={outlineRef} kind="outline" ready={props.stores !== undefined} onScroll={saveScroll} onClick={handleNavigationClick}>
-                        {props.data.outline.length > 0 && <WgNavigationToc groups={props.data.outline} />}
-                    </WgNavigationScroll>
+            <aside className={clsx("wg_sidebar__tocColumn")} data-sidebar-toc="">
+                <div className={clsx("wg_sidebar__tocPanel")}>
+                    <WgSidebarScroll portRef={outlineRef} kind="outline" ready={props.stores !== undefined} onScroll={saveScroll} onClick={handleNavigationClick}>
+                        {props.data.outline.length > 0 && <WgToc groups={props.data.outline} />}
+                    </WgSidebarScroll>
                 </div>
             </aside>
 
@@ -371,10 +360,10 @@ export const WgNavigation = (props: WgNavigationProps) => {
              */}
             <dialog
                 ref={props.stores === undefined ? undefined : dialogRef}
-                className={clsx("wg_navigation__drawer")}
+                className={clsx("wg_sidebar__drawer")}
                 id="fh-navigation-drawer"
                 aria-labelledby="fh-navigation-title"
-                data-navigation-drawer=""
+                data-sidebar-drawer=""
                 onClose={handleDrawerClose}
                 onCancel={handleDrawerCancel}
                 onClick={handleDrawerClick}
@@ -382,16 +371,16 @@ export const WgNavigation = (props: WgNavigationProps) => {
                 {/**
                  * 목록 스크롤과 독립된 대화상자 이름, 닫기 동작
                  */}
-                <div className={clsx("wg_navigation__drawerHeader")}>
-                    <h2 className={clsx("wg_navigation__drawerTitle")} id="fh-navigation-title">
+                <div className={clsx("wg_sidebar__drawerHeader")}>
+                    <h2 className={clsx("wg_sidebar__drawerTitle")} id="fh-navigation-title">
                         {copy_nav_title}
                     </h2>
 
                     {/**
                      * 네이티브 close로 열기 버튼에 포커스 복원
                      */}
-                    <button className={clsx("wg_navigation__drawerClose")} type="button" aria-label={copy_nav_close} data-navigation-close="" onClick={handleCloseButtonClick}>
-                        <svg className={clsx("wg_navigation__menuIcon")} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <button className={clsx("wg_sidebar__drawerClose")} type="button" aria-label={copy_nav_close} onClick={handleCloseButtonClick}>
+                        <svg className={clsx("wg_sidebar__menuIcon")} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                             <path d="m6 6 12 12M18 6 6 18" />
                         </svg>
                     </button>
@@ -400,23 +389,17 @@ export const WgNavigation = (props: WgNavigationProps) => {
                 {/**
                  * 모바일에만 한 번 렌더하는 문서 탐색. 다른 배치와 저장 좌표 분리
                  */}
-                <div className={clsx("wg_navigation__drawerContent")} data-navigation-content="">
+                <div className={clsx("wg_sidebar__drawerContent")}>
                     {layout === "drawer" && (
                         <div
                             ref={props.stores === undefined ? undefined : drawerNavigationRef}
-                            className={clsx("wg_navigation__navigation")}
-                            data-navigation=""
-                            data-navigation-layout={layout}
+                            className={clsx("wg_sidebar__docsPanel")}
+                            data-sidebar-docs=""
+                            data-sidebar-layout={layout}
                         >
-                            <WgNavigationScroll
-                                portRef={drawerDocumentsRef}
-                                kind="documents"
-                                ready={props.stores !== undefined}
-                                onScroll={saveScroll}
-                                onClick={handleNavigationClick}
-                            >
-                                <WgNavigationNav groups={props.data.groups} />
-                            </WgNavigationScroll>
+                            <WgSidebarScroll portRef={drawerDocumentsRef} kind="documents" ready={props.stores !== undefined} onScroll={saveScroll} onClick={handleNavigationClick}>
+                                <WgDocTree groups={props.data.groups} />
+                            </WgSidebarScroll>
                         </div>
                     )}
                 </div>

@@ -1,5 +1,5 @@
 import {array, boolean, lazy, minLength, number, object, optional, string, type ZodMiniType} from "zod/mini";
-import type {NavigationData, NavigationDoc, NavigationGroup} from "@/component/widget/navigation/_type/navigation-data";
+import type {NavigationData, NavigationDoc, NavigationGroup} from "@/component/widget/sidebar/_type/navigation-data";
 
 /**
  * 본문과 파일 경로를 제외한 탐색 문서의 브라우저 입력 검증
