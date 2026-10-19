@@ -1,19 +1,19 @@
 /*
- * 전역 상자 크기와 스크롤·움직임 기본값
+ * 전역 상자 크기와 스크롤과 움직임 기본값
  */
 
 * {
     box-sizing: border-box;
 }
 
-/* 페이지 바탕과 절 이동 · 초기 hash 보정 중 smooth scroll 일시 중지 */
+/* 페이지 바탕과 절 이동, 초기 hash 보정 중 smooth scroll 일시 중지 */
 :root {
     background: var(--app-color-ground);
     scrollbar-gutter: stable;
     scroll-behavior: smooth;
 }
 
-/* 움직임 줄이기 · 컴포넌트보다 우선하는 전역 !important 예외 */
+/* 움직임 줄이기, 컴포넌트보다 우선하는 전역 !important 예외 */
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,

@@ -1,5 +1,5 @@
 /*
- * 넓은 화면은 같은 폭의 양쪽 탐색 사이를 본문이 채움 · 좁은 화면은 문서 탐색만 표시
+ * 넓은 화면은 같은 폭의 양쪽 탐색 사이를 본문이 채움, 좁은 화면은 문서 탐색만 표시
  */
 .wg_shell__root {
     display: grid;
@@ -14,7 +14,7 @@
     line-height: var(--app-line-height-body);
     letter-spacing: var(--app-letter-spacing-body);
 
-    /* 한국어 낱말 단위 줄바꿈 · 긴 식별자만 예외 */
+    /* 한국어 낱말 단위 줄바꿈, 긴 식별자만 예외 */
     word-break: keep-all;
     overflow-wrap: break-word;
     text-wrap: pretty;
@@ -26,7 +26,7 @@
 }
 
 .wg_shell__browserRoot {
-    /* 브라우저 셸의 마운트 경계 · 자식은 body의 기존 grid에 참여 */
+    /* 브라우저 셸의 마운트 경계, 자식은 body의 기존 grid에 참여 */
     display: contents;
 }
 
@@ -35,19 +35,19 @@
     min-width: 0;
     border-inline: 1px solid var(--app-color-border-layout);
 
-    /* 문서 목록의 시작선 · 마지막 절도 읽는 선까지 이동 가능한 끝 여백 */
+    /* 문서 목록의 시작선, 마지막 절도 읽는 선까지 이동 가능한 끝 여백 */
     padding-block: var(--app-size-brand) calc(100vh - var(--app-space-anchor));
     padding-inline: var(--app-space-column);
 }
 
-/* 본문 최소 약 800px을 남기도록 목차 숨김 · 본문이 오른쪽 여백까지 채움 */
+/* 본문 최소 약 800px을 남기도록 목차 숨김, 본문이 오른쪽 여백까지 채움 */
 @media (width < 1360px) {
     .wg_shell__root {
         grid-template: "nav main" 1fr / calc(var(--app-size-sidebar) + var(--app-space-sidebar-gap)) minmax(0, 1fr);
     }
 }
 
-/* 모바일의 브랜드·본문은 한 열 배치 */
+/* 모바일의 브랜드와 본문은 한 열 배치 */
 @media (width < 1024px) {
     .wg_shell__root {
         grid-template:

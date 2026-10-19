@@ -49,7 +49,7 @@ export interface ReadDocsParams {
 /**
  * 공개 범위의 Markdown 수집과 렌더링, 범위 미지정 시 독립 Markdown 처리
  *
- *   - 사이트 실행에서 공개·내부 문서만 수집, content 루트 안내 파일 제외
+ *   - 사이트 실행에서 공개와 내부 문서만 수집, content 루트 안내 파일 제외
  *   - 머리말, 문서 식별자 중복, 플러그인 오류 시 실패
  */
 export const readDocs = async (options: ReadDocsParams): Promise<Doc[]> => {

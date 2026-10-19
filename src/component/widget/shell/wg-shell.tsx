@@ -80,7 +80,7 @@ export const WgShell = (props: WgShellProps) => {
     return (
         <html lang="ko">
             {/**
-             * Unhead의 서버 직렬화 결과. 글꼴·CSS는 JavaScript 수신 전에 로드
+             * Unhead의 서버 직렬화 결과. 글꼴과 CSS는 JavaScript 수신 전에 로드
              */}
             <head>{raw(head.render().headTags)}</head>
 

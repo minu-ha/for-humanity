@@ -1,19 +1,19 @@
 /*
- * 공통 토큰의 단일 출처 · --app-종류-쓰임
- * 사용 기준: content/private/design.md · 테마 분기는 color-scheme에 한정
- * 폭 기준 1360px·1024px·640px · 양쪽 탐색과 본문 배치
+ * 공통 토큰의 단일 출처, --app-종류-쓰임
+ * 사용 기준: content/private/design.md, 테마 분기는 color-scheme에 한정
+ * 폭 기준 1360px, 1024px, 640px, 양쪽 탐색과 본문 배치
  */
 
 :root {
-    /* 시스템의 밝게·어둡게 설정을 그대로 따름 */
+    /* 시스템의 밝게, 어둡게 설정을 그대로 따름 */
     color-scheme: light dark;
 
-    /* 바탕 · ground 페이지, code 코드, backdrop 모달 배경 */
+    /* 바탕, ground 페이지, code 코드, backdrop 모달 배경 */
     --app-color-ground: light-dark(#fff, #181818);
     --app-color-code: light-dark(#f1f1eb, #22221f);
     --app-color-backdrop: light-dark(rgb(0 0 0 / 30%), rgb(0 0 0 / 55%));
 
-    /* 글 · text 본문, strong 강조, muted 라벨 */
+    /* 글, text 본문, strong 강조, muted 라벨 */
     --app-color-text: light-dark(#333, #d5d5d5);
     --app-color-text-strong: light-dark(#222, #eee);
     --app-color-text-muted: light-dark(#666, #aaa);
@@ -21,50 +21,50 @@
     /* Mermaid 공식 툴팁의 고정 밝은 배경 위 글색 */
     --app-color-mermaid-tooltip-text: #333;
 
-    /* 앵커로 도착한 제목 · 형광펜 바탕과 테마별 읽기 대비 */
+    /* 앵커로 도착한 제목, 형광펜 바탕과 테마별 읽기 대비 */
     --app-color-anchor-highlight: light-dark(#f4f58a, #666322);
 
-    /* 제목 강조 해제 · 움직임 감소는 base.css에서 일괄 차단 */
+    /* 제목 강조 해제, 움직임 감소는 base.css에서 일괄 차단 */
     --app-motion-duration-highlight-fade: 600ms;
     --app-motion-easing-out: ease-out;
 
-    /* 선 · border 상자·목록, layout 열 경계 */
+    /* 선, border 상자와 목록, layout 열 경계 */
     --app-color-border: light-dark(#aaa, #555);
     --app-color-border-layout: light-dark(#eee, #2b2b2b);
 
-    /* 강조 · 현재 절·코드 · soft 행 hover 바탕 */
+    /* 강조, 현재 절과 코드, soft 행 hover 바탕 */
     --app-color-accent: light-dark(#555, #b5b5b5);
     --app-color-accent-soft: light-dark(#f5f5f2, #222);
 
-    /* 코드 판정 색 · soft 는 블록 바탕(메타 bad·good), mark 는 그 위의 줄 표기 · warn 은 줄 표기만 */
+    /* 코드 판정 색, soft 는 블록 바탕(메타 bad, good), mark 는 그 위의 줄 표기, warn 은 줄 표기만 */
     --app-color-bad-soft: light-dark(#f9ebe8, #3a2522);
     --app-color-bad-mark: light-dark(#f1cdc6, #5b322c);
     --app-color-good-soft: light-dark(#e4f3ed, #1c342c);
     --app-color-good-mark: light-dark(#c4e4d4, #27503f);
     --app-color-warn-soft: light-dark(#fbf3d9, #3d3418);
 
-    /* 링크 · 기본·방문·hover */
+    /* 링크의 기본, 방문, hover 색 */
     --app-color-link: light-dark(#11a, #9db8ff);
     --app-color-link-visited: light-dark(#51a, #c5a5ed);
     --app-color-link-hover: light-dark(#44d, #c1d1ff);
 
-    /* 상태 표지 · verified 초록, unverified amber */
+    /* 상태 표지, verified 초록, unverified amber */
     --app-color-verified: light-dark(#176b36, #82cf95);
     --app-color-verified-soft: light-dark(#edf5ed, #1d2c20);
     --app-color-unverified: light-dark(#855700, #dfb26c);
     --app-color-unverified-soft: light-dark(#faf2df, #30291c);
 
     /*
-     * 내장 글꼴 · CLI는 @font-face와 자원 URL 생성
-     * 본문·라벨·인라인 코드 한글 IBM Plex Sans KR·영문 Monoplex KR · 코드 블록 Monoplex KR · 사이트 이름 Architects Daughter
-     * 영문 폭 0.528em · 코드 블록의 한글은 정확히 2칸
-     * 본문 맨 앞의 IBM Plex Sans KR은 한글 unicode-range만 담당 · 영문·숫자·기호는 다음 순서의 Monoplex KR
+     * 내장 글꼴, CLI는 @font-face와 자원 URL 생성
+     * 본문, 라벨, 인라인 코드 한글 IBM Plex Sans KR, 영문 Monoplex KR, 코드 블록 Monoplex KR, 사이트 이름 Architects Daughter
+     * 영문 폭 0.528em, 코드 블록의 한글은 정확히 2칸
+     * 본문 맨 앞의 IBM Plex Sans KR은 한글 unicode-range만 담당, 영문, 숫자, 기호는 다음 순서의 Monoplex KR
      */
     --app-font-mono: "Monoplex KR", ui-monospace, monospace;
     --app-font-body: "IBM Plex Sans KR", var(--app-font-mono);
     --app-font-brand: "Architects Daughter", var(--app-font-body);
 
-    /* 글자 크기 · 11px 비상호작용 묶음 · 12px 기본과 역할별 제목 크기 */
+    /* 글자 크기, 11px 비상호작용 묶음, 12px 기본과 역할별 제목 크기 */
     --app-font-size-group: 11px;
     --app-font-size-detail: 12px;
     --app-font-size-dense: 12px;
@@ -74,26 +74,26 @@
     --app-font-size-section: 15px;
     --app-font-size-title: 16px;
 
-    /* 굵기 · 기본 400 · 현재 위치·제목·강조 600 */
+    /* 굵기, 기본 400, 현재 위치와 제목과 강조는 600 */
     --app-font-weight-mark: 400;
     --app-font-weight-active: 600;
     --app-font-weight-strong: 600;
     --app-font-weight-title: 600;
 
-    /* 행간 · 작은 제목·탐색은 1.4, 본문은 한글 획 사이 여유 확보 */
+    /* 행간, 작은 제목과 탐색은 1.4, 본문은 한글 획 사이 여유 확보 */
     --app-line-height-title: 1.5;
     --app-line-height-heading: 1.5;
     --app-line-height-tight: 1.4;
     --app-line-height-code: 1.65;
     --app-line-height-body: 1.7;
 
-    /* 자간 · 본문·라벨·인라인 코드를 조이고 제목은 그보다 조금 더 · 사이트 이름은 기본 폭 · 코드 블록은 고정폭 칸 기준 0 */
+    /* 자간, 본문, 라벨, 인라인 코드를 조이고 제목은 그보다 조금 더, 사이트 이름은 기본 폭, 코드 블록은 고정폭 칸 기준 0 */
     --app-letter-spacing-body: -0.03em;
     --app-letter-spacing-brand: 0;
     --app-letter-spacing-heading: -0.04em;
     --app-letter-spacing-title: -0.045em;
 
-    /* 공통 간격 · margin·padding·gap의 리듬 · 단독 보정은 지역 값 */
+    /* 공통 간격, margin, padding, gap의 리듬, 단독 보정은 지역 값 */
     --app-space-inline: 6px;
     --app-space-stack: 10px;
     --app-space-block: 14px;
@@ -101,20 +101,20 @@
     --app-space-subsection: 28px;
     --app-space-section: 64px;
 
-    /* 탐색 트리 · 항목 위아래 여백·묶음 사이·묶음 라벨 아래·중첩 들여쓰기 */
+    /* 탐색 트리, 항목 위아래 여백, 묶음 사이, 묶음 라벨 아래, 중첩 들여쓰기 */
     --app-space-tree-row: 0px;
     --app-space-tree-group: 16px;
     --app-space-tree-label: 2px;
     --app-space-tree-indent: 12px;
 
-    /* 페이지 틀 · 좁은 화면 값은 아래 @media */
+    /* 페이지 틀, 좁은 화면 값은 아래 @media */
     --app-space-page-top: 28px;
     --app-space-gutter: 28px;
     --app-space-column: 32px;
     --app-space-sidebar-gap: 32px;
     --app-size-sidebar: 200px;
 
-    /* 페이지 최대 폭 · 본문은 사이드바·간격을 뺀 나머지 전체 */
+    /* 페이지 최대 폭, 본문은 사이드바와 간격을 뺀 나머지 전체 */
     --app-size-page: 1920px;
     --app-size-brand: calc(var(--app-font-size-title) * var(--app-line-height-title) + var(--app-space-page-top) + var(--app-space-group));
     --app-size-mobile-header: 56px;
@@ -122,10 +122,10 @@
     --app-size-drawer: 320px;
     --app-size-navigation-fade: 28px;
 
-    /* 화면 위쪽 제목 여백 · hash 도착점과 목차 읽는 선의 공통 기준 */
+    /* 화면 위쪽 제목 여백, hash 도착점과 목차 읽는 선의 공통 기준 */
     --app-space-anchor: 80px;
 
-    /* 모서리 · 직각 기본값 */
+    /* 모서리, 직각 기본값 */
     --app-radius-box: 0;
     --app-radius-inline: 0;
     --app-radius-mark: 0;
@@ -134,13 +134,13 @@
     --app-outline-focus: 2px solid var(--app-color-link);
     --app-outline-focus-offset: 2px;
 
-    /* 사이드바 사이트 이름 · 커서 장식 */
+    /* 사이드바 사이트 이름, 커서 장식 */
     --app-z-index-sticky: 100;
     --app-z-index-popper: 300;
 
     /*
-     * Shiki CSS 변수 · 기존 역할색 재사용
-     * 키워드 strong · 함수 accent
+     * Shiki CSS 변수, 기존 역할색 재사용
+     * 키워드 strong, 함수 accent
      */
     --app-code-foreground: var(--app-color-text);
     --app-code-background: var(--app-color-code);
@@ -155,7 +155,7 @@
     --app-code-token-link: var(--app-color-link);
 }
 
-/* 폭 조건 · shell의 breakpoint와 일치 */
+/* 폭 조건, shell의 breakpoint와 일치 */
 @media (width < 1024px) {
     :root {
         --app-space-page-top: 24px;

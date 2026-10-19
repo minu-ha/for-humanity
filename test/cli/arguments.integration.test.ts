@@ -17,7 +17,7 @@ describe("CLI 인자와 출력", () => {
 
         /**
          * WHEN / THEN
-         * 루트·명령별 도움말과 실제 패키지 버전의 독립 실행
+         * 루트와 명령별 도움말과 실제 패키지 버전의 독립 실행
          */
         for (const args of [["--help"], ["-h"], ["dev", "--help"], ["build", "--help"], ["preview", "--help"]]) {
             const result = spawnSync(process.execPath, [cli, ...args], {cwd: root, encoding: "utf8", timeout: 5000});

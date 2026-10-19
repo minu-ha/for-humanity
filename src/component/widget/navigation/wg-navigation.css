@@ -1,7 +1,7 @@
 .wg_navigation__brandRow {
     display: flex;
 
-    /* 두 스크롤 영역 바깥 · 목록과 목차 위에서 이름 고정 */
+    /* 두 스크롤 영역 바깥, 목록과 목차 위에서 이름 고정 */
     position: sticky;
     top: 0;
     z-index: var(--app-z-index-sticky);
@@ -119,7 +119,7 @@
 }
 
 .wg_navigation__tocRail {
-    /* body의 오른쪽 grid 열 · 문서 스크롤과 독립된 뷰포트 기준 sticky */
+    /* body의 오른쪽 grid 열, 문서 스크롤과 독립된 뷰포트 기준 sticky */
     grid-area: outline;
     position: sticky;
     top: 0;
@@ -145,7 +145,7 @@
 }
 
 .wg_navigation__scroll--ready {
-    /* 흐림으로 넘침을 알릴 때만 손잡이 숨김 · JS 없으면 네이티브 손잡이 유지 */
+    /* 흐림으로 넘침을 알릴 때만 손잡이 숨김, JS 없으면 네이티브 손잡이 유지 */
     scrollbar-width: none;
 }
 
@@ -162,7 +162,7 @@
 }
 
 .wg_navigation__drawer {
-    /* 네이티브 모달의 top layer · 뷰포트 왼쪽에 고정 */
+    /* 네이티브 모달의 top layer, 뷰포트 왼쪽에 고정 */
     position: fixed;
     inset: 0 auto 0 0;
     width: min(var(--app-size-drawer), calc(100% - var(--app-space-gutter) * 2));
@@ -266,7 +266,7 @@
     }
 
     .wg_navigation__sidebar--navigationReady {
-        /* 본문을 스크롤해도 메뉴 진입 유지 · 스크립트 없는 긴 목록에는 적용하지 않음 */
+        /* 본문을 스크롤해도 메뉴 진입 유지, 스크립트 없는 긴 목록에는 적용하지 않음 */
         position: sticky;
         top: 0;
         z-index: var(--app-z-index-sticky);

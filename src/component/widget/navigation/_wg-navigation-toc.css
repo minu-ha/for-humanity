@@ -1,5 +1,5 @@
 /*
- * 와이드 화면의 오른쪽 목차 · 라벨·묶음은 문서 탐색의 묶음과 같은 표현
+ * 와이드 화면의 오른쪽 목차, 라벨과 묶음은 문서 탐색의 묶음과 같은 표현
  */
 .wg_navigationToc__root {
     font-size: var(--app-font-size-dense);
@@ -45,7 +45,7 @@
         text-decoration: underline;
     }
 
-    /* 박스 대신 hover와 같은 진한 글·밑줄로 키보드 위치 표시 */
+    /* 박스 대신 hover와 같은 진한 글과 밑줄로 키보드 위치 표시 */
     &:where(:focus-visible) {
         outline: none;
         color: var(--app-color-text-strong);

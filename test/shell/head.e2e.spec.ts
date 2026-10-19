@@ -18,7 +18,7 @@ for (const source of [false, true]) {
 
             /**
              * THEN
-             * 태그·엔티티 모양의 입력은 텍스트, 초기 CSS와 글꼴 선언은 유지
+             * 태그와 엔티티 모양의 입력은 텍스트, 초기 CSS와 글꼴 선언은 유지
              */
             expect(response?.status()).toBe(200);
             await expect(page).toHaveTitle(site.title);
