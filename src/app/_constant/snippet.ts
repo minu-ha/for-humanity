@@ -11,11 +11,11 @@ export const snippet_region_pattern = /^\s*\S*\s*#(end)?region\s+([\w-]+)/;
 /**
  * 펜스 언어로 치환할 확장자, 미등록 확장자는 원문 사용
  */
-export const snippet_language_by_extension: Record<string, string> = {
-    ".cjs": "js",
-    ".md": "markdown",
-    ".mjs": "js",
-    ".mts": "ts",
-    ".txt": "text",
-    ".yml": "yaml",
-};
+export const snippet_language_by_extension: ReadonlyMap<string, string> = new Map([
+    [".cjs", "js"],
+    [".md", "markdown"],
+    [".mjs", "js"],
+    [".mts", "ts"],
+    [".txt", "text"],
+    [".yml", "yaml"],
+]);

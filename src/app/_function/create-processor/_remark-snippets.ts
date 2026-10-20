@@ -30,7 +30,7 @@ export const remarkSnippets = (options: SnippetOptions) => (tree: Root, file: VF
     visit(tree, "paragraph", (node, index, parent) => {
         const [child] = node.children;
 
-        if (node.children.length !== 1 || child === undefined || child.type !== "text" || parent === undefined || index === undefined) {
+        if (node.children.length !== 1 || child.type !== "text" || parent === undefined || index === undefined) {
             return;
         }
 
@@ -40,7 +40,7 @@ export const remarkSnippets = (options: SnippetOptions) => (tree: Root, file: VF
             return;
         }
 
-        const [, path = "", region, meta] = match;
+        const [, path, region, meta] = match;
         const target = resolve(dirname(file.path), path);
 
         // 경로와 symlink 대상의 문서 범위 검사
@@ -64,15 +64,13 @@ export const remarkSnippets = (options: SnippetOptions) => (tree: Root, file: VF
 
         if (body === undefined) {
             file.fail(`${copy_error_snippet}: ${path}#${region} (${copy_error_region_missing})`, node);
-
-            return;
         }
 
         const extension = extname(actual).toLowerCase();
 
         parent.children.splice(index, 1, {
             type: "code",
-            lang: snippet_language_by_extension[extension] === undefined ? extension.slice(1) : snippet_language_by_extension[extension],
+            lang: snippet_language_by_extension.get(extension) ?? extension.slice(1),
             meta: meta === undefined ? null : meta,
             value: body,
         });

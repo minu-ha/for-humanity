@@ -58,7 +58,7 @@ interface ProcessorOptions {
  * Markdown 변환과 문서 메타데이터 수집
  *
  *   - 코드와 문서 머리 생성 후 제목 ID와 가름 수집
- *   - 플러그인 HTML 조각은 마지막 rehype-raw에서 해석
+ *   - 플러그인 HTML 조각은 rehype-raw에서 해석. 이후 링크, 자원 검사는 원시 HTML 포함
  *   - 코드 상자의 색상은 article CSS 소유, Shiki 토큰 색상은 --app-code-* 참조
  */
 export const createProcessor = (options: ProcessorOptions) => {

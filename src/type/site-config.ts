@@ -1,7 +1,7 @@
 import {z} from "zod";
 import {content_default} from "@/constant/content";
 import {copy_error_navigation_clash, copy_error_site_url, copy_site_title_default} from "@/constant/copy";
-import {site_navigation_default, site_port_default, site_port_max, site_port_min} from "@/constant/site";
+import {site_cursor_face_default, site_navigation_default, site_port_default, site_port_max, site_port_min} from "@/constant/site";
 import {status_default_phrases, status_kind} from "@/constant/status";
 import {contentConfigSchema} from "@/type/content-config";
 import {groupPathSchema} from "@/type/group-path";
@@ -43,7 +43,7 @@ export const siteConfigSchema = z.object({
     /**
      * 데스크톱 커서 옆 픽셀 얼굴. 기본 꺼짐. favicon 은 설정과 무관
      */
-    cursorFace: z.boolean().default(false),
+    cursorFace: z.boolean().default(site_cursor_face_default),
 
     /**
      * 탐색 묶음 경로의 읽는 순서. 미지정 형제 묶음은 뒤에서 이름순

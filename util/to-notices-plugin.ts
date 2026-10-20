@@ -17,13 +17,13 @@ export const toNoticesPlugin = (): Plugin => {
             const packages = new Set(
                 Object.values(bundle)
                     .flatMap((output) => (output.type === "chunk" ? output.moduleIds : []))
-                    .filter((id) => !id.startsWith("\0") && id.replaceAll("\\", "/").includes("/node_modules/"))
+                    .map((id) => id.replaceAll("\\", "/"))
+                    .filter((id) => !id.startsWith("\0") && id.includes("/node_modules/"))
                     .map((id) => {
-                        const absolute = id.replaceAll("\\", "/");
-                        const marker = absolute.lastIndexOf("/node_modules/") + "/node_modules/".length;
-                        const name = absolute.slice(marker).split("/");
+                        const marker = id.lastIndexOf("/node_modules/") + "/node_modules/".length;
+                        const name = id.slice(marker).split("/");
 
-                        return absolute.slice(0, marker) + name.slice(0, name[0].startsWith("@") ? 2 : 1).join("/");
+                        return id.slice(0, marker) + name.slice(0, name[0].startsWith("@") ? 2 : 1).join("/");
                     }),
             );
 

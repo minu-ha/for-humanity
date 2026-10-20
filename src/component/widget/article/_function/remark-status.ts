@@ -1,3 +1,4 @@
+import {orderBy} from "es-toolkit/array";
 import {escape as escapeHtml, escapeRegExp} from "es-toolkit/string";
 import type {Root} from "mdast";
 import {findAndReplace, type RegExpMatchObject} from "mdast-util-find-and-replace";
@@ -12,7 +13,7 @@ import type {ResolvedSiteConfig} from "@/type/site-config";
  *   - 미등록 날짜 문구는 파일 경고. remark-report에서 출력
  */
 export const remarkStatus = (options: Pick<ResolvedSiteConfig, "status">) => {
-    const statuses = options.status.toSorted((a, b) => b.phrase.length - a.phrase.length);
+    const statuses = orderBy(options.status, [(item) => item.phrase.length], ["desc"]);
     const phrases = statuses.map((item) => [escapeRegExp(item.phrase), ...(item.date ? [`(?: ${status_date_pattern})?`] : [])].join("")).join("|");
     const pattern = new RegExp(String.raw`\((${phrases})\)|(${phrases})`, "g");
     const ignore = ["link", "linkReference", "heading"];

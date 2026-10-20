@@ -20,7 +20,7 @@ import "./wg-shell.css";
  */
 export interface WgShellProps {
     /**
-     * 사이트 이름. 탭과 사이드바
+     * 검증한 사이트 설정. 탭 제목, 설명, 탐색 순서, 커서 장식
      */
     site: ResolvedSiteConfig;
 

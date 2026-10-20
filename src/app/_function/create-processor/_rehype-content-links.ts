@@ -38,31 +38,30 @@ export const rehypeContentLinks = (options: ContentLinkOptions) => (tree: Root, 
                     continue;
                 }
 
-                const path = toDecodedPath(url.split(/[?#]/)[0]);
+                const [rawPath] = url.split(/[?#]/, 1);
+                const path = toDecodedPath(rawPath);
 
                 if (path === undefined) {
                     file.fail(`${copy_error_url_encoding}: ${url}`, node);
                 }
 
-                try {
-                    if (path.startsWith("/")) {
-                        const pathname = new URL(path, "https://content.invalid").pathname.toLowerCase();
-
-                        if (!options.scope.includePrivate && pathname.split("/")[1] === content_private_segment) {
-                            throw new Error(`${copy_error_private_url}: ${url}`);
-                        }
-
-                        continue;
+                if (path.startsWith("/")) {
+                    if (!options.scope.includePrivate && new URL(path, "https://content.invalid").pathname.toLowerCase().split("/")[1] === content_private_segment) {
+                        file.fail(`${copy_error_private_url}: ${url}`, node);
                     }
 
-                    const target = resolve(dirname(file.path), path);
+                    continue;
+                }
 
+                const target = resolve(dirname(file.path), path);
+
+                try {
                     assertContentPath({scope: options.scope, path: target});
 
                     if (property === "href" && /\.mdx?$/i.test(path)) {
                         const id = toContentId({scope: options.scope, path: target});
 
-                        node.properties[property] = `${id === "" ? "/" : `/${id}/`}${url.slice(url.split(/[?#]/)[0].length)}`;
+                        node.properties[property] = `${id === "" ? "/" : `/${id}/`}${url.slice(rawPath.length)}`;
                     }
                 } catch (error) {
                     file.fail(toErrorMessage(error), node);

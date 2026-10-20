@@ -8,6 +8,7 @@ import {snippet_region_pattern} from "@/app/_constant/snippet";
  *   - 빈 region은 빈 문자열, 없는 region은 undefined 반환
  */
 export const toSnippetBody = (source: string, region: string | undefined): string | undefined => {
+    // region 경계를 지날 때마다 바뀌는 줄 순서 의존 판정. 선언형 변환 대신 순차 반복
     let inside = region === undefined;
     let found = region === undefined;
     const kept: string[] = [];
@@ -49,5 +50,5 @@ export const toSnippetBody = (source: string, region: string | undefined): strin
 
     const indent = leastIndentedLine.length - leastIndentedLine.trimStart().length;
 
-    return content.map((line) => line.slice(Math.min(indent, line.length - line.trimStart().length))).join("\n");
+    return content.map((line) => line.slice(indent)).join("\n");
 };

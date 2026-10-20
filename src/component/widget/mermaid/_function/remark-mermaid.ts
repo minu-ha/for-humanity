@@ -1,3 +1,4 @@
+import {escape as escapeHtml} from "es-toolkit/string";
 import type {Root} from "mdast";
 import {visit} from "unist-util-visit";
 import type {MermaidAssets} from "@/type/mermaid-assets";
@@ -34,7 +35,7 @@ export const remarkMermaid = (options: MermaidOptions) => (tree: Root) => {
 
         parent.children[index] = {
             type: "html",
-            value: `<figure class="wg_mermaid__root" data-mermaid${options.assets === undefined ? "" : ` data-mermaid-module="${options.assets.entry}"`}><div class="wg_mermaid__result" hidden></div><pre class="wg_mermaid__source"><code data-mermaid-source>${node.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")}</code></pre><p class="wg_mermaid__error" role="status" hidden></p></figure>`,
+            value: `<figure class="wg_mermaid__root" data-mermaid${options.assets === undefined ? "" : ` data-mermaid-module="${options.assets.entry}"`}><div class="wg_mermaid__result" hidden></div><pre class="wg_mermaid__source"><code data-mermaid-source>${escapeHtml(node.value)}</code></pre><p class="wg_mermaid__error" role="status" hidden></p></figure>`,
         };
     });
 };

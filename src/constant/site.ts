@@ -9,6 +9,11 @@ export const site_config_absent = {};
 export const site_navigation_default: readonly string[] = [];
 
 /**
+ * 커서 장식의 기본값. 설정에서 켠 사이트만 표시
+ */
+export const site_cursor_face_default = false;
+
+/**
  * dev, preview 서버 기본 포트
  */
 export const site_port_default = 4321;

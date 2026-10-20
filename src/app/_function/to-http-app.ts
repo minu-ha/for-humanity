@@ -1,7 +1,6 @@
 import {readFile} from "node:fs/promises";
 import {extname} from "node:path";
 import {type Context, Hono} from "hono";
-import {crawling_robots_path, crawling_sitemap_path} from "@/app/_constant/crawling";
 import {asset_content_type_default, asset_content_types, asset_dir, asset_favicon_path} from "@/constant/asset";
 import {font_cache_control} from "@/constant/font";
 
@@ -28,7 +27,8 @@ export interface HttpParams {
 /**
  * 등록 자원과 크롤러 응답, 나머지 요청은 페이지 앱에 위임
  *
- *   - 정적 생성은 페이지 앱만 사용, 파일 응답과 정규식 페이지 라우트 분리
+ *   - dev 응답 전용. 정적 생성은 페이지 앱과 크롤러 앱을 직접 출력
+ *   - 파일 응답과 정규식 페이지 라우트 분리
  */
 export const toHttpApp = (options: HttpParams) => {
     const app = new Hono();
@@ -56,7 +56,7 @@ export const toHttpApp = (options: HttpParams) => {
     app.get(asset_favicon_path, handleAsset);
 
     if (options.crawling !== undefined) {
-        app.on("GET", [crawling_robots_path, crawling_sitemap_path], (c) => options.crawling?.fetch(c.req.raw, c.env) ?? c.notFound());
+        app.route("/", options.crawling);
     }
 
     app.all("/*", (c) => options.pages.fetch(c.req.raw, c.env));

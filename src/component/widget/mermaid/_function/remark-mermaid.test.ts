@@ -24,7 +24,7 @@ describe("다이어그램", () => {
              * 이스케이프한 원문과 숨겨진 렌더 영역
              */
             expect(result.type).toBe("html");
-            expect(result).toHaveProperty("value", expect.stringContaining('한글 &lt;script&gt;alert("x")&lt;/script&gt; &amp; guide.md'));
+            expect(result).toHaveProperty("value", expect.stringContaining("한글 &lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt; &amp; guide.md"));
             expect(result).toHaveProperty("value", expect.stringContaining('class="wg_mermaid__result" hidden'));
             expect(result).toHaveProperty("value", expect.stringContaining('role="status" hidden'));
             expect(result).toHaveProperty("value", expect.not.stringMatching(/<script>|<svg|data-mermaid-module=/));

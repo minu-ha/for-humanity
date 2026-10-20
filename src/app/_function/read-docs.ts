@@ -14,10 +14,12 @@ import {
 } from "@/app/_constant/copy";
 import type {Processor} from "@/app/_type/processor";
 import {asset_dir, asset_favicon_path} from "@/constant/asset";
+import {doc_data_absent} from "@/constant/doc";
 import type {ContentScope} from "@/type/content-scope";
 import type {Doc} from "@/type/doc";
 import {docDataSchema} from "@/type/doc-data";
 import type {DocFileData} from "@/type/doc-file-data";
+import {toIssueText} from "@/util/error/to-issue-text";
 import {assertContentPath} from "@/util/file/assert-content-path";
 import {hasReservedFolder} from "@/util/file/has-reserved-folder";
 import {toContentId} from "@/util/file/to-content-id";
@@ -81,10 +83,10 @@ export const readDocs = async (params: ReadDocsParams): Promise<Doc[]> => {
             const file = new VFile({value: source.replace(/^\uFEFF/, ""), path: join(params.scope.root, path)});
             const tree = params.processor.parse(file);
             const frontmatter = tree.children[0];
-            const parsed = docDataSchema.safeParse(frontmatter?.type === "yaml" ? parseYaml(frontmatter.value) : {});
+            const parsed = docDataSchema.safeParse(frontmatter?.type === "yaml" ? parseYaml(frontmatter.value) : doc_data_absent);
 
             if (!parsed.success) {
-                throw new Error(`${copy_error_frontmatter}: ${path}: ${parsed.error.issues.map((issue) => `${issue.path.join(".")} ${issue.message}`).join(", ")}`);
+                throw new Error(`${copy_error_frontmatter}: ${path}: ${toIssueText(parsed.error)}`);
             }
 
             // 상대 부모 id는 파일 위치 기준으로 한 번 해소. 문서 루트를 바꿔도 같은 관계 유지

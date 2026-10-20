@@ -29,47 +29,30 @@ const main = defineCommand({
             process.exit(1);
         }
     },
-    subCommands: {
-        dev: defineCommand({
-            meta: {name: "dev", description: copy_dev_description},
-            args: cli_docs_args,
+    subCommands: Object.fromEntries(
+        (
+            [
+                ["dev", copy_dev_description],
+                ["build", copy_build_description],
+                ["preview", copy_preview_description],
+            ] as const
+        ).map(([name, description]) => [
+            name,
+            defineCommand({
+                meta: {name, description},
+                args: cli_docs_args,
 
-            /**
-             * 도움말 조회와 분리한 사이트 실행
-             */
-            run: async (context) => {
-                const command = await import("@/entry/cli/_function/run-site-command");
+                /**
+                 * 도움말 조회와 분리한 사이트 실행
+                 */
+                run: async (context) => {
+                    const command = await import("@/entry/cli/_function/run-site-command");
 
-                await command.runSiteCommand({command: "dev", args: context.args});
-            },
-        }),
-        build: defineCommand({
-            meta: {name: "build", description: copy_build_description},
-            args: cli_docs_args,
-
-            /**
-             * 도움말 조회와 분리한 사이트 실행
-             */
-            run: async (context) => {
-                const command = await import("@/entry/cli/_function/run-site-command");
-
-                await command.runSiteCommand({command: "build", args: context.args});
-            },
-        }),
-        preview: defineCommand({
-            meta: {name: "preview", description: copy_preview_description},
-            args: cli_docs_args,
-
-            /**
-             * 도움말 조회와 분리한 사이트 실행
-             */
-            run: async (context) => {
-                const command = await import("@/entry/cli/_function/run-site-command");
-
-                await command.runSiteCommand({command: "preview", args: context.args});
-            },
-        }),
-    },
+                    await command.runSiteCommand({command: name, args: context.args});
+                },
+            }),
+        ]),
+    ),
 });
 
 await runMain(main);

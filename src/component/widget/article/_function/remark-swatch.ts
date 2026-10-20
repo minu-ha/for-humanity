@@ -8,10 +8,10 @@ import {visit} from "unist-util-visit";
  */
 export const remarkSwatch = () => (tree: Root) => {
     visit(tree, "inlineCode", (node) => {
-        if (/^#[0-9a-f]{3,8}$/i.test(node.value.trim())) {
-            node.data = {
-                hProperties: {className: ["wg_article__color"], style: `--wg-article-chip-color: ${node.value.trim()}`},
-            };
+        const color = node.value.trim();
+
+        if (/^#[0-9a-f]{3,8}$/i.test(color)) {
+            node.data = {hProperties: {className: ["wg_article__color"], style: `--wg-article-chip-color: ${color}`}};
         }
     });
 };

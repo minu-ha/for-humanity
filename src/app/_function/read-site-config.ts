@@ -7,6 +7,7 @@ import {copy_error_config, copy_error_config_clash} from "@/app/_constant/copy";
 import {config_file_names} from "@/constant/config";
 import {site_config_absent} from "@/constant/site";
 import {siteConfigSchema} from "@/type/site-config";
+import {toIssueText} from "@/util/error/to-issue-text";
 
 /**
  * 프로젝트 루트의 설정 조회, TypeScript 실행과 스키마 검증
@@ -35,7 +36,7 @@ export const readSiteConfig = async (root: string) => {
     const parsed = z.object({default: siteConfigSchema}).safeParse(input);
 
     if (!parsed.success) {
-        throw new Error(`${copy_error_config}: ${parsed.error.issues.map((issue) => `${issue.path.join(".")} ${issue.message}`).join(", ")}`);
+        throw new Error(`${copy_error_config}: ${toIssueText(parsed.error)}`);
     }
 
     return parsed.data.default;
