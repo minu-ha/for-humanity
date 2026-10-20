@@ -3,8 +3,8 @@ import {mkdir, mkdtemp, readFile, rm, writeFile} from "node:fs/promises";
 import {tmpdir} from "node:os";
 import {join} from "node:path";
 import {test as base} from "@playwright/test";
+import {diagram_cases} from "@test/_constant/diagram";
 import {loadBrowserScript} from "@test/_fixture/load-browser-script";
-import {diagram_cases} from "@test/mermaid/_constant/diagram";
 import {preview} from "vite";
 import {toPreviewConfig} from "@/entry/preview/to-preview-config";
 
@@ -77,7 +77,7 @@ export const test = base.extend<{runtime: BrowserRuntime}, {mermaidSite: string}
 
                 execFileSync(process.execPath, ["dist/cli.js", "build", root]);
 
-                const fixture = await loadBrowserScript("test/mermaid/_gallery/lifecycle.tsx");
+                const fixture = await loadBrowserScript("test/_gallery/mermaid-lifecycle.tsx");
                 const shell = await readFile("dist/browser.js", "utf8");
 
                 const html = (await readFile(join(root, "dist/guide/index.html"), "utf8"))

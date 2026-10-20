@@ -1,7 +1,10 @@
 import {expect} from "@playwright/test";
+import {diagram_cases} from "@test/_constant/diagram";
 import {test} from "@test/_fixture/mermaid";
-import {diagram_cases} from "@test/mermaid/_constant/diagram";
 
+/**
+ * 다이어그램 위젯(src/component/widget/mermaid/wg-mermaid.tsx) 검증. 갤러리에서 마운트한 위젯
+ */
 test.describe("다이어그램", () => {
     test.describe("표현과 상호작용", () => {
         test("[MRM-017] 시스템 테마를 변경해도 작성자 테마와 파일 트리의 가독성이 유지된다", {tag: "@high"}, async ({page}) => {
@@ -37,7 +40,7 @@ test.describe("다이어그램", () => {
                     .locator(".treeView-node-label")
                     .first()
                     .evaluate((label) => {
-                        const luminance = (color: string) => {
+                        const toLuminance = (color: string) => {
                             const channels = color.match(/[\d.]+/g);
 
                             if (channels === null) {
@@ -51,8 +54,8 @@ test.describe("다이어그램", () => {
                                 .reduce((sum, value, index) => sum + value * [0.2126, 0.7152, 0.0722][index], 0);
                         };
 
-                        const foreground = luminance(getComputedStyle(label).fill);
-                        const background = luminance(getComputedStyle(document.documentElement).backgroundColor);
+                        const foreground = toLuminance(getComputedStyle(label).fill);
+                        const background = toLuminance(getComputedStyle(document.documentElement).backgroundColor);
 
                         return (Math.max(foreground, background) + 0.05) / (Math.min(foreground, background) + 0.05);
                     }),

@@ -1,5 +1,5 @@
 import {uniqBy} from "es-toolkit/array";
-import {toDocGroupBranches} from "@/component/widget/sidebar/_function/to-doc-groups/_to-doc-group-branches";
+import {toDocGroupBranches} from "@/component/widget/sidebar/_function/to-navigation-data/_to-doc-group-branches";
 import type {Doc} from "@/type/doc";
 import type {ResolvedSiteConfig} from "@/type/site-config";
 

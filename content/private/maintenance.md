@@ -106,7 +106,7 @@ CI는 Ubuntu의 Node 22.12.0·24와 Windows의 Node 22.12.0에서 같은 단위�
 
 설치 CLI의 도움말·버전도 소비 프로젝트에서 검증합니다. head 검사는 제목·설명의 텍스트 보존, 요청 간 격리, 자원 중복 제거와 CSS 순서를 포함합니다. 브라우저에서는 소스·설치 번들의 JavaScript 비활성 상태에서도 메타데이터와 첫 화면 스타일을 확인합니다.
 
-preview의 HTTP 검사는 `test/cli/preview.integration.test.ts`에서 빌드 누락·포트 충돌·중첩 문서·원본 비공개·404·폰트 캐시를 확인합니다. Mermaid·탐색 브라우저 fixture도 CLI와 같은 Vite preview 설정을 사용하며, 설치 검사는 실제 배포 CLI에서 원본 변경 후 빌드 결과 유지·캐시·404·종료까지 확인합니다.
+preview의 HTTP 검사는 `test/3-server/3.2-preview.integration.test.ts`에서 빌드 누락·포트 충돌·중첩 문서·원본 비공개·404·폰트 캐시를 확인합니다. Mermaid·탐색 브라우저 fixture도 CLI와 같은 Vite preview 설정을 사용하며, 설치 검사는 실제 배포 CLI에서 원본 변경 후 빌드 결과 유지·캐시·404·종료까지 확인합니다.
 
 루트 `util/`은 저장소 개발·문서 동기화·배포 검증용. npm 패키지에는 포함하지 않음.
 CSS 규칙 본문은 타입 검사하는 `util/stylelint.config.ts`에 둡니다. 루트 `stylelint.config.mjs`는 현재 cosmiconfig의 TypeScript 5 API 의존을 피하기 위한 Jiti 로더만 제공합니다.
@@ -120,7 +120,7 @@ CSS 규칙 본문은 타입 검사하는 `util/stylelint.config.ts`에 둡니다
 | `prepare-release.test.ts` | 버전 불일치·변경 기록 누락·이전 설치 버전·필수 파일 누락 검사 |
 | `smoke-package.ts` | 패키지를 별도 프로젝트에 설치 · 실제 dev·preview 브라우저와 종료, 공개 타입의 정상·오류 입력, TS·ESM 설정, 페이지·Mermaid·자원·README·크롤러 파일, 기본형·사용자 content 경로와 내부 문서 배포 제외 확인 |
 
-`test/`의 구조와 작성 기준은 [테스트 안내](https://github.com/minu-ha/for-humanity/blob/main/test/README.md)를 따릅니다. 함수 검증은 소스 옆 `*.test.ts`, 파일 시스템을 연결하는 검사는 `test/cli/*.integration.test.ts`, 브라우저 검사는 `test/mermaid/*.spec.ts`와 `test/navigation/*.spec.ts`, 개발 서버 검사는 `test/dev/*.spec.ts`에 둡니다. 한글 시나리오·GIVEN/WHEN/THEN·독립 fixture를 사용하며, 브라우저에는 케이스 번호와 우선순위 태그를 붙입니다.
+`test/`의 구조와 작성 기준은 [테스트 안내](https://github.com/minu-ha/for-humanity/blob/main/test/README.md)를 따릅니다. 함수 검증은 소스 옆 `*.test.ts`에 두고, 나머지 검사는 사용자 흐름 순서의 영역 폴더(`0-command`, `1-document`, `2-page`, `3-server`)에 층 접미사로 둡니다. 한글 시나리오·GIVEN/WHEN/THEN·독립 fixture를 사용하며, 모든 케이스에 영역 코드 번호를, 브라우저 케이스에는 우선순위 태그도 붙입니다.
 
 ::part[Verification]
 

@@ -1,7 +1,10 @@
 import {expect} from "@playwright/test";
+import {diagram_cases} from "@test/_constant/diagram";
 import {test} from "@test/_fixture/mermaid";
-import {diagram_cases} from "@test/mermaid/_constant/diagram";
 
+/**
+ * 다이어그램(src/component/widget/mermaid) 검증. 실제 CLI 빌드 결과
+ */
 test.describe("다이어그램", () => {
     test.describe("공식 문법", () => {
         for (const diagram of diagram_cases) {
@@ -187,25 +190,25 @@ test.describe("다이어그램", () => {
             expect(runtime.errors).toStrictEqual([]);
             expect(runtime.consoleErrors.filter((message) => message.includes("for-humanity Mermaid rendering failed"))).toHaveLength(2);
         });
+    });
 
-        test.describe("스크립트 비활성", () => {
-            test.use({javaScriptEnabled: false});
+    test.describe("스크립트 비활성", () => {
+        test.use({javaScriptEnabled: false});
 
-            test("[MRM-016] 스크립트를 비활성화해도 원문을 읽을 수 있다", {tag: "@high"}, async ({page}) => {
-                /**
-                 * GIVEN
-                 * 스크립트 없이 연 다이어그램 문서
-                 */
-                await page.goto("/flowchart/");
+        test("[MRM-016] 스크립트를 비활성화해도 원문을 읽을 수 있다", {tag: "@high"}, async ({page}) => {
+            /**
+             * GIVEN
+             * 스크립트 없이 연 다이어그램 문서
+             */
+            await page.goto("/flowchart/");
 
-                /**
-                 * THEN
-                 * 서버가 작성한 원문 표시
-                 */
-                await expect(page.locator("[data-mermaid-source]")).toHaveText(diagram_cases[0].source);
-                await expect(page.locator(".wg_mermaid__source")).toBeVisible();
-                await expect(page.locator(".wg_mermaid__result")).toBeHidden();
-            });
+            /**
+             * THEN
+             * 서버가 작성한 원문 표시
+             */
+            await expect(page.locator("[data-mermaid-source]")).toHaveText(diagram_cases[0].source);
+            await expect(page.locator(".wg_mermaid__source")).toBeVisible();
+            await expect(page.locator(".wg_mermaid__result")).toBeHidden();
         });
     });
 });

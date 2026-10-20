@@ -45,7 +45,7 @@ export const test = base.extend<Record<never, never>, {navigationSite: string}>(
 
                 execFileSync(process.execPath, ["dist/cli.js", "build", root]);
 
-                const lifecycle = await loadBrowserScript("test/navigation/_gallery/lifecycle.tsx");
+                const lifecycle = await loadBrowserScript("test/_gallery/navigation-lifecycle.tsx");
                 const browserScript = await readFile("dist/browser.js", "utf8");
 
                 const html = (await readFile(join(root, "dist/guide/index.html"), "utf8"))

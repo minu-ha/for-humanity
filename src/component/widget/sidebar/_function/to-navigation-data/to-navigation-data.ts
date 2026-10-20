@@ -1,6 +1,6 @@
 import {takeWhile, zip} from "es-toolkit/array";
 import {section_heading_depth} from "@/component/widget/article/_constant/section";
-import {toDocGroups} from "@/component/widget/sidebar/_function/to-doc-groups/to-doc-groups";
+import {toDocGroups} from "@/component/widget/sidebar/_function/to-navigation-data/_to-doc-groups";
 import {toNavigationGroup} from "@/component/widget/sidebar/_function/to-navigation-data/_to-navigation-group";
 import type {NavigationData} from "@/component/widget/sidebar/_type/navigation-data";
 import type {TocSection} from "@/component/widget/sidebar/_type/toc-group";

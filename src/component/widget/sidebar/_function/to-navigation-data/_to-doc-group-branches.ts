@@ -1,5 +1,5 @@
 import {locale_doc_group} from "@/component/widget/sidebar/_constant/locale";
-import {toDocBranches} from "@/component/widget/sidebar/_function/to-doc-groups/_to-doc-branches";
+import {toDocBranches} from "@/component/widget/sidebar/_function/to-navigation-data/_to-doc-branches";
 import type {DocGroup} from "@/component/widget/sidebar/_type/doc-group";
 import type {Doc} from "@/type/doc";
 
