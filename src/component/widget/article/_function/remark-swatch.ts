@@ -10,7 +10,7 @@ export const remarkSwatch = () => (tree: Root) => {
     visit(tree, "inlineCode", (node) => {
         const color = node.value.trim();
 
-        if (/^#[0-9a-f]{3,8}$/i.test(color)) {
+        if (/^#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i.test(color)) {
             node.data = {hProperties: {className: ["wg_article__color"], style: `--wg-article-chip-color: ${color}`}};
         }
     });

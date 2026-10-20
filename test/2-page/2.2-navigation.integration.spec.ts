@@ -49,6 +49,18 @@ test.describe("문서 탐색", () => {
 
             const initialListeners = await page.evaluate(() => window.shellListeners.length);
 
+            /**
+             * 시작 위치 이후 설치하고 해제하지 않은 셸 소유 전역 구독
+             */
+            const readActiveListeners = (start: number) => {
+                return page.evaluate((from) => {
+                    return window.shellListeners
+                        .slice(from)
+                        .filter((entry) => entry.owned && !entry.removed && !(typeof entry.options === "object" && entry.options.signal?.aborted))
+                        .map((entry) => entry.type);
+                }, start);
+            };
+
             for (let cycle = 0; cycle < 3; cycle++) {
                 await test.step(`${cycle + 1}번째 마운트에서 생성한 자원을 해제한다`, async () => {
                     /**
@@ -64,39 +76,38 @@ test.describe("문서 탐색", () => {
                         dispatchEvent(new HashChangeEvent("hashchange"));
                     });
 
-                    await page.waitForFunction(() => {
-                        return document.querySelector<HTMLElement>("#hidden-detail .wg_article__headingText")?.classList.contains("wg_article__headingText--highlighted");
-                    });
+                    await expect(page.locator("#hidden-detail .wg_article__headingText")).toHaveClass(/wg_article__headingText--highlighted/);
 
-                    const main = await page.locator("main").elementHandle();
+                    const main = await page.getByRole("main").elementHandle();
 
                     await page.evaluate(() => window.shellFixture.unmount());
 
                     /**
                      * THEN
-                     * 본문 유지와 구독, 타이머 정리
+                     * 본문 유지, 구독과 타이머 정리
                      */
                     expect(await main.evaluate((element) => element === document.querySelector<HTMLElement>("main"))).toBe(true);
+
+                    // 강조 유지 시간 종료 전의 즉시 조회
                     expect(await page.locator(".wg_article__headingText--highlighted").count()).toBe(0);
 
-                    const active = await page.evaluate((start) => {
-                        return window.shellListeners
-                            .slice(start)
-                            .filter((entry) => entry.owned && !entry.removed && !(typeof entry.options === "object" && entry.options.signal?.aborted))
-                            .map((entry) => entry.type);
-                    }, initialListeners);
-
-                    expect(active, "unmount must clean every global listener and pending highlight").toStrictEqual([]);
+                    expect(await readActiveListeners(initialListeners), "unmount must clean every global listener and pending highlight").toStrictEqual([]);
                 });
             }
 
-            // 첫 Effect 프레임 이전 해제에서도 늦은 구독 설치 방지
-            await page.evaluate(() => {
-                window.shellFixture.mount();
-                window.shellFixture.unmount();
+            await test.step("첫 프레임 전에 해제하면 늦은 구독을 설치하지 않는다", async () => {
+                const start = await page.evaluate(() => window.shellListeners.length);
+
+                await page.evaluate(() => {
+                    window.shellFixture.mount();
+                    window.shellFixture.unmount();
+                });
+
+                await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+
+                expect(await readActiveListeners(start), "an unmount before the first frame must not leave late listeners").toStrictEqual([]);
             });
 
-            await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
             expect(errors).toStrictEqual([]);
         });
     });

@@ -3,6 +3,7 @@ import {join} from "node:path";
 import {test} from "@test/_fixture/temp-root";
 import {describe, expect} from "vitest";
 import {readDocs} from "@/app/_function/read-docs";
+import {readHome} from "@/app/_function/read-home";
 import {toProcessor} from "@/app/_function/to-processor/to-processor";
 import {siteConfigSchema} from "@/type/site-config";
 
@@ -16,7 +17,6 @@ describe("코드 블록", () => {
              * GIVEN
              * 줄별 오류, 변경 표시와 강조 메타를 포함한 코드
              */
-
             await writeFile(
                 join(scope.publicRoot, "guide.md"),
                 "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Read\n\n```ts line-numbers\nconst a = 1; // [!code error]\nconst b = 2; // [!code ++]\nconst c = 3;\n```\n\n```txt\n# [!code highlight]\nfirst\nsecond\n```\n\n```css {2}\n.a {\n  color: red;\n}\n```\n",
@@ -47,7 +47,6 @@ describe("코드 블록", () => {
              * GIVEN
              * 파일 제목과 상태 메타가 있는 코드, 제목 없는 코드
              */
-
             await writeFile(
                 join(scope.publicRoot, "guide.md"),
                 "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Read\n\n```ts bad [page/products.ts]\nconst a = 1;\n```\n\n```ts {1}\nconst b = 2;\n```\n",
@@ -68,9 +67,37 @@ describe("코드 블록", () => {
             expect(doc.html).toMatch(
                 /<figcaption class="[^"]*wg_article__codeFileTitle--bad[^"]*">page\/products\.ts<span class="wg_article__codeFileLang">ts<\/span><\/figcaption>/,
             );
+
             expect(doc.html).toMatch(/<pre class="[^"]*wg_article__code--bad[^"]*"/);
             expect(doc.html).not.toMatch(/<pre\b[^>]*\bstyle=/);
             expect(doc.html.split("<figure").length - 1, "braces meta is not a title").toBe(1);
+        });
+
+        test("[COD-007] 파일 제목 안의 표시 낱말은 줄 번호와 상태 배경을 켜지 않는다", async ({scope}) => {
+            /**
+             * GIVEN
+             * 표시 낱말이 든 파일 제목의 코드와 제목 밖 줄 번호 메타의 코드
+             */
+            await writeFile(
+                join(scope.publicRoot, "guide.md"),
+                "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Read\n\n```ts [good.ts]\nconst a = 1;\n```\n\n```ts line-numbers [bad-example.ts]\nconst b = 2;\n```\n\n```md [line-numbers.md]\n- c\n```\n",
+            );
+
+            const site = siteConfigSchema.parse({});
+
+            /**
+             * WHEN
+             * Markdown 처리
+             */
+            const [doc] = await readDocs({scope, processor: toProcessor({site, scope})});
+
+            /**
+             * THEN
+             * 파일 제목 표시, 제목 밖 메타의 줄 번호 하나, 상태 배경 없음
+             */
+            expect(doc.html).toMatch(/>good\.ts<span class="wg_article__codeFileLang">ts<\/span><\/figcaption>/);
+            expect(doc.html.split("wg_article__lineNumbers").length - 1, "only the block with line-numbers outside its title").toBe(1);
+            expect(doc.html).not.toMatch(/wg_article__code(FileTitle)?--(good|bad)/);
         });
     });
 
@@ -80,7 +107,6 @@ describe("코드 블록", () => {
              * GIVEN
              * region 지시문과 들여쓰기를 포함한 TypeScript 스니펫
              */
-
             await mkdir(join(scope.publicRoot, "snippet"));
 
             await writeFile(
@@ -139,6 +165,29 @@ describe("코드 블록", () => {
              * 루트 이탈, 누락 파일, 누락 region의 오류
              */
             await expect(result).rejects.toThrow(scenario.expected);
+        });
+
+        test("[COD-008] 코드 블록으로 시작하는 홈도 Note 안의 스니펫을 불러온다", async ({scope}) => {
+            /**
+             * GIVEN
+             * 코드 블록으로 시작하고 Note 안에 스니펫을 둔 README
+             */
+            const site = siteConfigSchema.parse({});
+
+            await writeFile(join(scope.publicRoot, "example.ts"), "const fromSnippet = 1;\n");
+            await writeFile(join(scope.root, "README.md"), "```sh\npnpm build\n```\n\n:::note[Example]\nSee below.\n\n<<< ./public/example.ts\n:::\n");
+
+            /**
+             * WHEN
+             * 홈 렌더
+             */
+            const home = await readHome({scope, processor: toProcessor({site, scope})});
+
+            /**
+             * THEN
+             * 원문 위치가 없는 삽입 코드의 fence 검사 제외와 스니펫 본문 표시
+             */
+            expect(home?.html).toContain("fromSnippet");
         });
     });
 });

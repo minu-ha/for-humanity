@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Serve the first page in `dev` even when a document changes while the site is still being prepared. The first request used to fail with HTTP 500 until the next change.
+- Report a YAML syntax error in frontmatter as `Invalid frontmatter: <file>: <reason>`, and print YAML warnings with the file and line, instead of messages without the document path.
+- Ignore the words `good`, `bad` and `line-numbers` inside a code block file title such as `[good.ts]`. They used to turn on the colored background or line numbers.
+- Build a README that starts with a code block and puts a snippet inside a Note or Details block. The build used to fail with a code fence error.
+- Show a color swatch only for 3, 4, 6 or 8 digit hex colors such as `#e80030`. Values such as `#12345` now render as plain inline code.
+
 ## 0.14.2 — 2026-10-20
 
 **Upgrade:** CLI commands, configuration, document syntax and Node.js requirements remain unchanged.

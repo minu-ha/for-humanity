@@ -77,13 +77,7 @@ export const remarkBlocks = () => (tree: Root, file: VFile) => {
         const opening = /^(:{3,})/.exec(original);
         const closing = /(?:^|\n)[ \t>]*(:{3,})[ \t]*\r?$/.exec(original);
 
-        if (
-            opening === null ||
-            closing === null ||
-            closing.index + closing[0].length !== original.length ||
-            closing[1].length < opening[1].length ||
-            node.position?.end.offset === node.children.at(-1)?.position?.end.offset
-        ) {
+        if (opening === null || closing === null || closing[1].length < opening[1].length || node.position?.end.offset === node.children.at(-1)?.position?.end.offset) {
             file.fail(`${copy_error_directive_syntax}: ${node.name} ${copy_error_part_fence}`, node);
         }
 
@@ -95,17 +89,16 @@ export const remarkBlocks = () => (tree: Root, file: VFile) => {
 
         // 코드 안의 :::가 container를 먼저 닫은 경우. 더 긴 바깥 fence로 구분
         visit(node, "code", (code) => {
-            const originalCode = source.slice(code.position?.start.offset, code.position?.end.offset);
+            // 원문 위치가 없는 스니펫 삽입 코드는 fence 검사 제외
+            if (code.position === undefined) {
+                return;
+            }
+
+            const originalCode = source.slice(code.position.start.offset, code.position.end.offset);
             const codeOpening = /^ {0,3}(`{3,}|~{3,})/.exec(originalCode);
             const codeClosing = /(?:^|\n)[ \t>]*(`{3,}|~{3,})[ \t]*\r?$/.exec(originalCode);
 
-            if (
-                codeOpening !== null &&
-                (codeClosing === null ||
-                    codeClosing.index + codeClosing[0].length !== originalCode.length ||
-                    codeClosing[1][0] !== codeOpening[1][0] ||
-                    codeClosing[1].length < codeOpening[1].length)
-            ) {
+            if (codeOpening !== null && (codeClosing === null || codeClosing[1][0] !== codeOpening[1][0] || codeClosing[1].length < codeOpening[1].length)) {
                 file.fail(`${copy_error_directive_syntax}: ${node.name} ${copy_error_part_code_fence}`, code);
             }
         });

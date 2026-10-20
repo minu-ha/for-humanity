@@ -167,7 +167,7 @@ describe("문서", () => {
 
             /**
              * THEN
-             * 렌더한 본문과 frontmatter 이름의 제목
+             * 렌더한 본문과 머리말 이름의 제목
              */
             expect(api?.html).toMatch(/예:이것/);
             expect(empty?.html).toMatch(/<h1[^>]*><span[^>]*>Empty<\/span><\/h1>/);
@@ -197,6 +197,28 @@ describe("문서", () => {
              * 메타를 포함한 원본 행 번호의 오류
              */
             await expect(result).rejects.toHaveProperty("line", 7);
+        });
+
+        test("[DOC-014] 머리말의 YAML 문법 오류는 문서 경로와 함께 거부한다", async ({scope}) => {
+            /**
+             * GIVEN
+             * 같은 키가 두 번 있는 머리말
+             */
+            const site = siteConfigSchema.parse({});
+
+            await writeFile(join(scope.publicRoot, "guide.md"), "---\nname: Guide\nname: Again\nlabel: Guide\ngroup: Guide\n---\n\nText.\n");
+
+            /**
+             * WHEN
+             * 문서 로드
+             */
+            const result = readDocs({scope, processor: toProcessor({site, scope})});
+
+            /**
+             * THEN
+             * 문서 경로가 붙은 YAML 오류
+             */
+            await expect(result).rejects.toThrow(/Invalid frontmatter: public[\\/]guide\.md: Map keys must be unique/);
         });
     });
 
@@ -228,7 +250,7 @@ describe("문서", () => {
             expect(docs.map((doc) => doc.id)).toStrictEqual(["guide"]);
         });
 
-        test("[DOC-013] 루트 에이전트 지침은 제외하고 하위 폴더의 같은 이름 문서는 표시한다", async ({scope}) => {
+        test("[DOC-013] 루트 에이전트 지침은 제외하고 하위 폴더의 같은 이름 문서는 수집한다", async ({scope}) => {
             /**
              * GIVEN
              * content 루트의 README, 에이전트 지침과 공개 폴더의 같은 이름 문서

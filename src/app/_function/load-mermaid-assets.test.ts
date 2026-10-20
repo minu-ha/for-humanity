@@ -53,5 +53,21 @@ describe("다이어그램", () => {
              */
             expect(result).toThrow(/Missing Mermaid browser entry.*pnpm build:kit/);
         });
+
+        test("자원 폴더가 없어도 빌드 안내가 포함된 오류가 발생한다", ({root}) => {
+            /**
+             * WHEN
+             * 빌드 전 패키지의 자원 조회
+             */
+            const result = () => {
+                return loadMermaidAssets(root);
+            };
+
+            /**
+             * THEN
+             * 파일 시스템 오류 대신 빌드 명령 안내
+             */
+            expect(result).toThrow(/Missing Mermaid browser entry.*pnpm build:kit/);
+        });
     });
 });

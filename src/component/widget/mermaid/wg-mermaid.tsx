@@ -1,4 +1,4 @@
-import {useEffect} from "hono/jsx";
+import {useLayoutEffect} from "hono/jsx";
 import {copy_error_load, copy_error_render} from "@/component/widget/mermaid/_constant/copy";
 import {render_config, render_dark_config, render_id_words, render_source_max_chars} from "@/component/widget/mermaid/_constant/render";
 import {toChangeQueue} from "@/util/async/to-change-queue";
@@ -20,7 +20,7 @@ export const WgMermaid = (props: WgMermaidProps) => {
     /**
      * 본문 파싱 후 모듈 수신, 테마 변경과 Details 공개의 직렬 렌더
      */
-    useEffect(() => {
+    useLayoutEffect(() => {
         const lifetime = new AbortController();
         const theme = matchMedia("(prefers-color-scheme: dark)");
         const measurements = new Set<HTMLElement>();

@@ -3,7 +3,7 @@ import {readdir, readFile} from "node:fs/promises";
 import {dirname, join, relative, resolve} from "node:path";
 import {isEqual} from "es-toolkit/predicate";
 import {VFile} from "vfile";
-import {parse as parseYaml} from "yaml";
+import {Document, parseDocument} from "yaml";
 import {
     copy_error_doc_id,
     copy_error_doc_id_clash,
@@ -27,7 +27,7 @@ import {toContentId} from "@/util/file/to-content-id";
 /**
  * 문서 폴더를 읽고 명령별 출력 경로와 함께 검증하는 입력
  */
-export interface ReadDocsParams {
+interface ReadDocsParams {
     /**
      * 공개, 내부 문서 폴더와 참조 범위
      */
@@ -59,10 +59,11 @@ export const readDocs = async (params: ReadDocsParams): Promise<Doc[]> => {
 
     const docs = await Promise.all(
         paths.map(async (path): Promise<Doc> => {
-            assertContentPath({scope: params.scope, path: join(params.scope.root, path)});
+            const absolutePath = join(params.scope.root, path);
 
-            const id = toContentId({scope: params.scope, path: join(params.scope.root, path)});
+            assertContentPath({scope: params.scope, path: absolutePath});
 
+            const id = toContentId({scope: params.scope, path: absolutePath});
             const segments = id.split("/");
 
             // Hono, SSG, 정적 제공의 공통 URL 계약. 예약 문자로 생기는 페이지 누락 방지
@@ -77,13 +78,25 @@ export const readDocs = async (params: ReadDocsParams): Promise<Doc[]> => {
                 throw new Error(`${copy_error_doc_id}: ${path}`);
             }
 
-            const source = await readFile(join(params.scope.root, path), "utf8");
+            const source = await readFile(absolutePath, "utf8");
 
             // 원문에서도 UTF-8 BOM 제거. remark 파서와 지시문 offset 기준 일치
-            const file = new VFile({value: source.replace(/^\uFEFF/, ""), path: join(params.scope.root, path)});
+            const file = new VFile({value: source.replace(/^\uFEFF/, ""), path: absolutePath});
             const tree = params.processor.parse(file);
             const frontmatter = tree.children[0];
-            const parsed = docDataSchema.safeParse(frontmatter?.type === "yaml" ? parseYaml(frontmatter.value) : doc_data_absent);
+
+            // YAML 문법 오류와 경고에 문서 경로 추가. yaml 패키지의 기본 출력은 경로 미포함
+            const yaml = frontmatter?.type === "yaml" ? parseDocument(frontmatter.value) : new Document(doc_data_absent);
+
+            if (yaml.errors.length > 0) {
+                throw new Error(`${copy_error_frontmatter}: ${path}: ${yaml.errors[0].message}`);
+            }
+
+            for (const warning of yaml.warnings) {
+                file.message(warning.message, frontmatter);
+            }
+
+            const parsed = docDataSchema.safeParse(yaml.toJS());
 
             if (!parsed.success) {
                 throw new Error(`${copy_error_frontmatter}: ${path}: ${toIssueText(parsed.error)}`);

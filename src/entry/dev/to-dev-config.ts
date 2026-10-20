@@ -28,7 +28,8 @@ export interface DevParams extends SiteParams {
  * 단일 Vite 서버의 Hono 연결과 문서 갱신 설정
  *
  *   - 소비 프로젝트의 Vite 설정과 환경 파일은 자동 실행하지 않음
- *   - 마지막 정상 스냅샷 유지, 준비 중 새 변경과 서버 종료 이후 결과 제외
+ *   - 마지막 정상 스냅샷 유지, 서버 종료 이후 결과 제외
+ *   - 준비 중 새 변경이 생긴 결과는 기존 스냅샷이 있을 때만 제외
  */
 export const toDevConfig = (params: DevParams): InlineConfig => {
     const root = realpathSync(params.root);
@@ -112,7 +113,10 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                                 stylePaths: params.source ? z.array(z.string()).parse((await server.ssrLoadModule("/src/entry/dev/_constant/style.ts")).style_paths) : undefined,
                             });
 
-                            if (state.closed || generation !== state.generation) {
+                            // 디바운스 중인 재준비는 첫 요청 대기에 미포함, 첫 결과 제외 시 500 응답
+                            const isSuperseded = generation !== state.generation && currentSite !== undefined;
+
+                            if (state.closed || isSuperseded) {
                                 return;
                             }
 

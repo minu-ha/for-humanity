@@ -25,12 +25,15 @@ const codeMetadata: ShikiTransformer = {
             return;
         }
 
-        if (/\bline-numbers\b/.test(this.options.meta.__raw)) {
+        // 줄 번호, 상태 판정은 파일 제목을 제외한 메타 기준
+        const flags = this.options.meta.__raw.replace(/\[[^\]]+\]/, " ");
+
+        if (/\bline-numbers\b/.test(flags)) {
             this.addClassToHast(this.pre, "wg_article__lineNumbers");
         }
 
-        const isBad = /\bbad\b/.test(this.options.meta.__raw);
-        const isGood = /\bgood\b/.test(this.options.meta.__raw);
+        const isBad = /\bbad\b/.test(flags);
+        const isGood = /\bgood\b/.test(flags);
 
         if (isBad) {
             this.addClassToHast(this.pre, "wg_article__code--bad");
