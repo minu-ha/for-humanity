@@ -22,7 +22,7 @@ export default {
 } satisfies SiteConfig;
 ```
 
-`url`에는 HTTP(S) 도메인의 루트 주소를 사용합니다. 하위 경로·사용자 이름·비밀번호·query·hash는 넣지 않습니다.
+`url`에는 HTTP(S) 도메인의 루트 주소를 사용합니다. 하위 경로, 사용자 이름, 비밀번호, query, hash는 넣지 않습니다.
 예를 들어 `https://docs.example.com`은 가능하고 `https://example.com/docs/`는 사용할 수 없습니다.
 
 ## Build the files
@@ -47,10 +47,10 @@ Allow: /
 Sitemap: https://docs.example.com/sitemap.xml
 ```
 
-사이트맵에는 홈과 공개 문서의 URL을 포함합니다. 제목 앵커·이미지·글꼴은 포함하지 않습니다.
+사이트맵에는 홈과 공개 문서의 URL을 포함합니다. 제목 앵커, 이미지, 글꼴은 포함하지 않습니다.
 공개 빌드에서는 private 문서를 제외합니다. 로컬 dev에서는 양쪽 문서가 표시됩니다.
 
-`url`을 사용하면 `robots.txt`·`sitemap.xml`은 생성 파일 전용 경로입니다. `robots.txt.md`처럼 같은 출력 경로를 만드는 문서 이름은 사용할 수 없습니다.
+`url`을 사용하면 `robots.txt`와 `sitemap.xml`은 생성 파일 전용 경로입니다. `robots.txt.md`처럼 같은 출력 경로를 만드는 문서 이름은 사용할 수 없습니다.
 
 ## Verify the deployment
 

@@ -6,8 +6,8 @@ order: 10
 ---
 
 가상의 독서 목록 앱 **별책**. 책장 선택 → 읽기 상태 필터 → 책 상세 확인.
-화면 흐름·결정·질문·API 계약을 한 문서에 담는 작성 예시.
-등장하는 서비스·책·인물·식별자·API·결정은 모두 이 문서를 위한 가상 내용.
+화면 흐름, 결정, 질문, API 계약을 한 문서에 담는 작성 예시.
+등장하는 서비스, 책, 인물, 식별자, API, 결정은 모두 이 문서를 위한 가상 내용.
 
 :::note[Example]
 별책의 기능과 API는 for humanity가 제공하는 기능이 아님. 예시 API에 연결하거나 데이터를 요청하지 않음.
@@ -20,11 +20,11 @@ order: 10
 | --------- | ------------------------- | -------------------------- |
 | 책장 목록 | 읽을 책이 담긴 책장 선택  | [Shelf list](#shelf-list)   |
 | 조건 설정 | 읽기 상태로 책 목록 좁힘  | [Conditions](#conditions)  |
-| 책 목록   | 제목·저자·읽기 상태 비교  | [Book list](#book-list)     |
+| 책 목록   | 제목, 저자, 읽기 상태 비교 | [Book list](#book-list)     |
 | 미결 사항 | 예시 설계의 남은 판단     | [Questions](#questions)    |
 
 :::note[Scope]
-책장 탐색과 책 상세 읽기가 예시 범위. 책 구매·회원 가입·실제 도서 검색은 다루지 않음.
+책장 탐색과 책 상세 읽기가 예시 범위. 책 구매, 회원 가입, 실제 도서 검색은 다루지 않음.
 :::
 
 ::part[Screen]
@@ -55,10 +55,10 @@ flowchart LR
 처음 방문하면 첫 책장을 자동 선택할지, 책장 선택 안내를 먼저 보여줄지 미정.
 :::
 
-:::details[구현 상세 · 선택과 조회]
+:::details[구현 상세(선택과 조회)]
 ### Selection state
 
-- 선택 key와 요청 path는 응답의 `shelfId` 사용 · [D1](#decisions)
+- 선택 key와 요청 path는 응답의 `shelfId` 사용([D1](#decisions))
 - 책장 이름을 바꿔도 같은 식별자 유지
 - 예시 주소: `/shelves/weekend?status=reading`
 
@@ -85,7 +85,7 @@ GET /api/shelves/weekend/books?status=reading
 
 ## Book list
 
-선택한 책장의 책 목록. 제목·저자·읽기 상태 표시.
+선택한 책장의 책 목록. 제목, 저자, 읽기 상태 표시.
 아래 책과 저자는 실제 도서 정보를 사용하지 않은 예시 데이터.
 
 | ID         | Title                | Author | Status    |
@@ -93,12 +93,12 @@ GET /api/shelves/weekend/books?status=reading
 | `book-101` | 비 오는 골목의 지도  | 윤가람 | `reading` |
 | `book-102` | 느린 우체국의 편지  | 서누리 | `planned` |
 
-:::details[구현 상세 · 요청과 표시]
+:::details[구현 상세(요청과 표시)]
 ### Table contract
 
 - path: 선택한 `shelfId`
-- query: 선택 상태의 `status` · 전체 보기에서는 생략
-- 제목순 표시 · 제목이 같으면 `bookId`순
+- query: 선택 상태의 `status`, 전체 보기에서는 생략
+- 제목순 표시, 제목이 같으면 `bookId`순
 - 빈 목록과 조회 오류는 별도 상태로 표시
 :::
 
@@ -111,7 +111,7 @@ GET /api/shelves/weekend/books?status=reading
 | D1 | Decided | 이름 대신 `shelfId`로 책장 참조 | 이름 변경 후에도 링크 유지     |
 | D2 | Decided | 적용 버튼에서만 조건 반영       | 편집 중인 입력과 목록 구분     |
 
-결정에는 식별자·상태·선택 이유. 미결 사항은 [Questions](#questions)에서 추적.
+결정에는 식별자, 상태, 선택 이유. 미결 사항은 [Questions](#questions)에서 추적.
 이 표의 상태도 가상 앱의 설계 예시. 라이브러리 구현의 진행 상태와 무관.
 
 ## Questions
@@ -131,11 +131,11 @@ GET /api/shelves/weekend/books?status=reading
 
 | Endpoint                               | Caller    | Use                 |
 | -------------------------------------- | --------- | ------------------- |
-| `GET /api/shelves`                      | 책장 목록 | 책장 이름·건수 조회 |
+| `GET /api/shelves`                      | 책장 목록 | 책장 이름과 건수 조회 |
 | `GET /api/shelves/{shelfId}/books`       | 책 목록   | 책장의 책 조회      |
 | `GET /api/books/{bookId}`               | 책 상세   | 선택한 책의 상세    |
 
-::::details[구현 상세 · 응답 필드]
+::::details[구현 상세(응답 필드)]
 ### Response fields
 
 ```json
@@ -156,7 +156,7 @@ GET /api/shelves/weekend/books?status=reading
 
 - 선택 책장과 책 목록 요청의 path 일치
 - draft 편집과 적용된 조회 조건의 구분
-- 목록의 로딩·빈 결과·오류 표시
+- 목록의 로딩, 빈 결과, 오류 표시
 - 책장 이름을 바꿔도 같은 링크 사용
 - 결정한 내용과 미결 질문 구분
 
@@ -164,7 +164,7 @@ GET /api/shelves/weekend/books?status=reading
 
 ## Writing this example
 
-화면 흐름은 Mermaid, 값과 계약은 표·코드, 보충 설명은 Note, 구현 상세는 Details로 작성.
+화면 흐름은 Mermaid, 값과 계약은 표와 코드, 보충 설명은 Note, 구현 상세는 Details로 작성.
 소스는 이 페이지의 `blueprint.md`. 가상 내용은 자신의 프로젝트 설명으로 교체해 사용.
 
 이 견본은 일반 Markdown 문서이며 `type`을 지정하지 않습니다.

@@ -50,16 +50,16 @@ public은 배포할 문서, private은 로컬에서만 읽을 문서를 담습�
 ```
 
 사이트 이름을 누르면 홈으로 이동합니다. README가 없으면 홈 작성 안내가 표시됩니다.
-public·private 안의 README는 일반 문서이므로 다른 문서처럼 frontmatter를 작성합니다.
+public과 private 안의 README는 일반 문서이므로 다른 문서처럼 frontmatter를 작성합니다.
 
 ## Frontmatter
 
 | Field | Use | Required |
 | --- | --- | --- |
-| `name` | 본문과 사이드바에 표시할 제목 | 필수 · 비어 있지 않은 문자열 |
+| `name` | 본문과 사이드바에 표시할 제목 | 필수, 비어 있지 않은 문자열 |
 | `label` | 문서를 설명하는 문자열 | 필수 |
-| `group` | 사이드바 그룹 이름 또는 이름 배열 | 필수 · 비어 있지 않은 값 |
-| `order` | 같은 그룹 안에서 읽을 순서 | 선택 · 0 이상의 정수 |
+| `group` | 사이드바 그룹 이름 또는 이름 배열 | 필수, 비어 있지 않은 값 |
+| `order` | 같은 그룹 안에서 읽을 순서 | 선택, 0 이상의 정수 |
 | `parent` | 같은 그룹 안의 부모 문서 ID | 선택 |
 
 새 문서는 `type`을 지정할 필요가 없습니다. 기존 `document`와 `blueprint` 값은 계속 읽으며 같은 문서로 표시합니다.
@@ -83,8 +83,8 @@ order: 10
 private 문서에는 `/private/`이 붙습니다. `.mdx`도 Markdown으로 읽으며 JSX는 실행하지 않습니다.
 
 같은 ID가 되는 파일 두 개는 함께 사용할 수 없습니다. 예를 들어 `Guide.md`와 `guide.mdx`는 충돌합니다.
-파일 이름에는 `#`, `?`, `%`, `*`, `:`, `\`나 제어문자를 사용하지 않습니다. `.`·`..`·`index.html` 경로 조각도 사용할 수 없습니다.
-첫 경로 `_fh`·`favicon.svg`는 기본 자원용, `private`은 내부 문서용입니다. `url`을 설정하면 `robots.txt`·`sitemap.xml`도 예약됩니다.
+파일 이름에는 `#`, `?`, `%`, `*`, `:`, `\`나 제어문자를 사용하지 않습니다. `.`, `..`, `index.html` 경로 조각도 사용할 수 없습니다.
+첫 경로 `_fh`와 `favicon.svg`는 기본 자원용, `private`은 내부 문서용입니다. `url`을 설정하면 `robots.txt`와 `sitemap.xml`도 예약됩니다.
 
 ## Sections and parts
 
@@ -141,7 +141,7 @@ flowchart LR
     Review --> Publish[배포]
 ```
 
-순서·상태·관계·폴더 구조에 맞는 작성 예시는 [Diagrams](diagrams.md)를 참고합니다.
+순서, 상태, 관계, 폴더 구조에 맞는 작성 예시는 [Diagrams](diagrams.md)를 참고합니다.
 
 ## Code notation
 
@@ -162,11 +162,11 @@ const count = 3;
 | Notation | Result |
 | --- | --- |
 | `// [!code highlight]` 또는 코드 블록 메타 `{2,4-6}` | 해당 줄 강조 |
-| `// [!code error]` · `// [!code warning]` | 오류·주의 줄 표시 |
-| `// [!code ++]` · `// [!code --]` | 추가·삭제 줄 표시 |
+| `// [!code error]`와 `// [!code warning]` | 오류와 주의 줄 표시 |
+| `// [!code ++]`와 `// [!code --]` | 추가와 삭제 줄 표시 |
 | `// [!code word:title]` | 해당 줄의 낱말 강조 |
 | 메타 `line-numbers` | 줄 번호 |
-| 메타 `bad` · `good` | 잘못된 예·올바른 예의 배경 구분 |
+| 메타 `bad`와 `good` | 잘못된 예와 올바른 예의 배경 구분 |
 | 메타 `[파일 이름]` | 코드 위 파일 이름 |
 
 표시용 주석은 결과에서 숨겨집니다. 언어별 주석 문법을 사용합니다.
@@ -189,7 +189,7 @@ const count = 3;
 표, 목록, 체크 목록, 링크, 인라인 코드와 일반 Markdown 서식을 사용할 수 있습니다.
 그림과 첨부의 경로는 [Images](images.md), 본문 상태 문구의 강조는 [Status badges](settings.md#status-badges)를 참고합니다.
 인라인 색 값 `#e80030`은 색 견본과 함께 표시됩니다.
-원시 HTML도 사용할 수 있지만 다른 사이트의 CSS·JavaScript를 자동으로 가져오지는 않습니다.
+원시 HTML도 사용할 수 있지만 다른 사이트의 CSS와 JavaScript를 자동으로 가져오지는 않습니다.
 
 ## Block components
 
@@ -206,4 +206,4 @@ Node.js 22.12.0 이상이 필요합니다.
 ```
 
 제목과 본문은 필수입니다. Details에 `{open}`을 붙이면 처음부터 펼칩니다.
-작성 예시와 중첩·오류 규칙은 [Parts](parts.md)를 참고합니다.
+작성 예시, 중첩과 오류 규칙은 [Parts](parts.md)를 참고합니다.

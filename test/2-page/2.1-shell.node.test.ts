@@ -64,7 +64,7 @@ describe("페이지 셸", () => {
              * THEN
              * 요청한 페이지의 제목과 사이트 설명만 포함
              */
-            expect(pages.map((page) => page.match(/<title>(.*?)<\/title>/)?.[1])).toStrictEqual(["Guide · First", "Second", "First", "Guide · Second"]);
+            expect(pages.map((page) => page.match(/<title>(.*?)<\/title>/)?.[1])).toStrictEqual(["Guide | First", "Second", "First", "Guide | Second"]);
             expect(pages.map((page) => page.includes('name="description"'))).toStrictEqual([true, false, true, false]);
             expect(pages[0]).toContain('content="First description"');
         });

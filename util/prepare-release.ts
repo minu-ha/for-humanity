@@ -72,7 +72,7 @@ const notes = join(artifactDirectory, "release-notes.md");
 
 await writeFile(
     notes,
-    `## ${entry.trim()}\n\n### Install\n\n\`\`\`sh\n${installation}\n\`\`\`\n\n[npm](https://www.npmjs.com/package/${metadata.name}/v/${metadata.version}) · [Documentation](${metadata.homepage})\n`,
+    `## ${entry.trim()}\n\n### Install\n\n\`\`\`sh\n${installation}\n\`\`\`\n\n[npm](https://www.npmjs.com/package/${metadata.name}/v/${metadata.version}) | [Documentation](${metadata.homepage})\n`,
 );
 
 if (process.env.GITHUB_OUTPUT !== undefined) {

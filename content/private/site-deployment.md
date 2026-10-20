@@ -23,7 +23,7 @@ Pages 프로젝트는 `for-humanity`, 기본 주소는 [for-humanity-1i2.pages.d
 | 이 저장소의 문서   | `pnpm build:pages`        | `content/dist` |
 | 자신의 문서        | `pnpm exec for-humanity build` | `content/dist`     |
 
-로컬 서버를 인터넷에 계속 켜 두는 방식이 아니라, 빌드한 HTML·CSS·스크립트·폰트를 정적 호스팅에 업로드.
+로컬 서버를 인터넷에 계속 켜 두는 방식이 아니라, 빌드한 HTML, CSS, 스크립트, 폰트를 정적 호스팅에 업로드.
 for humanity의 CLI는 빌드할 때만 Node.js에서 실행. 배포 후에는 별도 Node.js 서버 불필요.
 
 ::part[Cloudflare Pages]
@@ -45,8 +45,8 @@ for humanity의 CLI는 빌드할 때만 Node.js에서 실행. 배포 후에는 �
 
 기존 Pages 프로젝트는 다음 배포 전에 대시보드의 출력 경로를 `templates/document/dist`에서 `content/dist`로 변경합니다. 저장소 파일을 이동하는 것만으로 대시보드 설정이 바뀌지 않습니다.
 
-빌드 이미지에서 Node.js·pnpm 버전은 환경 변수로 지정 가능.
-위 pnpm 버전은 `package.json`의 `packageManager`와 같은 값 · [Build image](https://developers.cloudflare.com/pages/configuration/build-image/).
+빌드 이미지에서 Node.js와 pnpm 버전은 환경 변수로 지정 가능.
+위 pnpm 버전은 `package.json`의 `packageManager`와 같은 값([Build image](https://developers.cloudflare.com/pages/configuration/build-image/)).
 
 ### Connect and deploy
 
@@ -57,7 +57,7 @@ for humanity의 CLI는 빌드할 때만 Node.js에서 실행. 배포 후에는 �
 5. 생성된 `<project>.pages.dev` 주소에서 README 홈과 각 문서 직접 접속 확인
 
 프로젝트 이름으로 기본 주소 생성. 사용할 수 있는 이름은 생성 시 결정.
-연결 후 `main`에 push하면 문서를 다시 빌드해 배포 · [Git integration](https://developers.cloudflare.com/pages/get-started/git-integration/).
+연결 후 `main`에 push하면 문서를 다시 빌드해 배포([Git integration](https://developers.cloudflare.com/pages/get-started/git-integration/)).
 나중에 별도 도메인을 연결할 수도 있음.
 
 ### Custom domain
@@ -65,7 +65,7 @@ for humanity의 CLI는 빌드할 때만 Node.js에서 실행. 배포 후에는 �
 이 문서 사이트는 `for-humanity.fyi`를 사이트 루트에 연결.
 Pages 프로젝트의 `Custom domains → Set up a domain`에서 도메인을 추가하고 DNS 레코드를 확인.
 최상위 도메인을 쓰려면 Pages와 같은 Cloudflare 계정에 해당 도메인의 zone이 있어야 하며, 네임서버도 Cloudflare를 사용.
-도메인 활성화 후 HTTPS, 문서 직접 접속, 없는 경로의 404 응답을 확인 · [Custom domains](https://developers.cloudflare.com/pages/configuration/custom-domains/).
+도메인 활성화 후 HTTPS, 문서 직접 접속, 없는 경로의 404 응답을 확인([Custom domains](https://developers.cloudflare.com/pages/configuration/custom-domains/)).
 
 ## Pages output
 
@@ -78,12 +78,12 @@ pnpm preview
 
 | File        | Purpose                                             |
 | ----------- | --------------------------------------------------- |
-| `_headers`  | HTML 원문 보존 · 내용 지문이 붙은 `/_fh/*` 자원의 장기 브라우저 캐시 |
+| `_headers`  | HTML 원문 보존, 내용 지문이 붙은 `/_fh/*` 자원의 장기 브라우저 캐시 |
 | `404.html`  | 없는 문서에 표시할 페이지                            |
 
-HTML은 매번 재검증. CSS·브라우저 스크립트·폰트는 파일명에 내용 지문을 붙여 장기 캐시.
-CSS·스크립트의 내용이 바뀌면 URL도 바뀌므로 새 HTML이 이전 배포의 자원을 재사용하지 않음. 내용이 같으면 URL도 유지.
-홈과 문서 경로의 `Cache-Control: no-transform`은 Cloudflare가 설치 명령의 패키지 이름과 버전을 이메일 주소로 바꾸지 않도록 원문을 보존 · [Email Address Obfuscation](https://developers.cloudflare.com/waf/tools/scrape-shield/email-address-obfuscation/).
+HTML은 매번 재검증. CSS, 브라우저 스크립트, 폰트는 파일명에 내용 지문을 붙여 장기 캐시.
+CSS와 스크립트의 내용이 바뀌면 URL도 바뀌므로 새 HTML이 이전 배포의 자원을 재사용하지 않음. 내용이 같으면 URL도 유지.
+홈과 문서 경로의 `Cache-Control: no-transform`은 Cloudflare가 설치 명령의 패키지 이름과 버전을 이메일 주소로 바꾸지 않도록 원문을 보존([Email Address Obfuscation](https://developers.cloudflare.com/waf/tools/scrape-shield/email-address-obfuscation/)).
 헤더 규칙은 [Headers](https://developers.cloudflare.com/pages/configuration/headers/), 없는 경로의 처리는 [Serving Pages](https://developers.cloudflare.com/pages/configuration/serving-pages/) 기준.
 로컬 `preview`는 정적 파일 미리보기. Cloudflare의 `_headers` 해석과 없는 경로 처리는 배포 후 확인.
 
@@ -113,7 +113,7 @@ HTML 원문 보존과 내용 지문이 붙은 자원의 장기 캐시가 필요�
 
 ## Other hosts
 
-정적 호스팅이면 같은 결과 폴더 사용 가능. 현재 모든 문서·자원의 URL은 사이트 루트 `/` 기준.
+정적 호스팅이면 같은 결과 폴더 사용 가능. 현재 모든 문서와 자원의 URL은 사이트 루트 `/` 기준.
 GitHub Pages의 프로젝트 사이트는 보통 `/<repository>/` 경로를 사용하므로 현재 출력 그대로는 링크와 자원이 맞지 않음.
-계정 사이트처럼 루트에서 제공하는 방법이나 base path 지원이 필요 · [GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages).
+계정 사이트처럼 루트에서 제공하는 방법이나 base path 지원이 필요([GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages)).
 하위 경로 지원 계획은 [Roadmap](roadmap.md#subpath-deployment).

@@ -1,6 +1,6 @@
 ---
 name: Settings
-label: 사이트 이름·문서 경로·탐색 순서 설정
+label: 사이트 이름, 문서 경로, 탐색 순서 설정
 group: Guide
 order: 30
 ---
@@ -41,7 +41,7 @@ export default {title: "Project notes"};
 | `title` | 사이드바와 브라우저 탭의 사이트 이름 | `for humanity` |
 | `description` | 검색 결과 등에 사용할 사이트 설명 | 없음 |
 | `url` | 배포한 사이트의 루트 주소 | 없음 |
-| `port` | dev·preview 포트 · 1부터 65535까지 정수 | `4321` |
+| `port` | dev와 preview 포트, 1부터 65535까지 정수 | `4321` |
 | `cursorFace` | 데스크톱에서 마우스를 따라다니는 픽셀 얼굴 | `false` |
 
 사이트 홈의 제목과 본문은 `content/README.md`에 작성합니다. `url`을 지정하면 검색 엔진용 파일을 생성합니다. URL 형식과 출력은 [Crawling](crawling.md)을 참고합니다.
@@ -71,12 +71,12 @@ export default {
 공개 문서 `published/guide.md`의 URL은 `/guide/`, 내부 문서 `internal/plan.md`의 로컬 URL은 `/private/plan/`입니다.
 
 경로는 프로젝트 내부의 상대 경로를 사용합니다. `content.root: "."`도 가능하지만 public과 private은 서로 다른 하위 폴더여야 합니다. 두 경로가 같거나 한쪽이 다른 쪽 안에 들어갈 수 없습니다.
-`..`, `dist`, `.git`, `node_modules`가 포함된 경로는 사용할 수 없습니다. 공개·내부 폴더 자체를 symlink로 지정할 수 없습니다. symlink로 프로젝트 밖이나 예약 폴더를 가리킬 수도 없습니다.
+`..`, `dist`, `.git`, `node_modules`가 포함된 경로는 사용할 수 없습니다. 공개 폴더와 내부 폴더 자체를 symlink로 지정할 수 없습니다. symlink로 프로젝트 밖이나 예약 폴더를 가리킬 수도 없습니다.
 
 ### Public and private content
 
 `dev`는 양쪽 문서를 보여 줍니다. `build`는 홈과 공개 문서만 생성하며 `preview`로 그 결과를 확인합니다.
-홈이나 공개 문서에서 private 문서·이미지·첨부·스니펫을 참조하면 빌드가 실패합니다.
+홈이나 공개 문서에서 private 문서, 이미지, 첨부, 스니펫을 참조하면 빌드가 실패합니다.
 
 공용 자료는 `content/asset`, 내부 자료는 `content/private/asset`에 보관합니다. `asset` 이름은 자유롭게 바꿀 수 있으며 링크를 수정하면 됩니다. 별도 설정은 필요하지 않습니다.
 `private`은 사이트 배포 제외 규칙입니다. Git 저장소에 올린 파일의 접근 권한을 바꾸지는 않습니다.
@@ -126,11 +126,11 @@ export default {
 | Key | Use |
 | --- | --- |
 | `phrase` | 본문에서 찾을 비어 있지 않은 문구 |
-| `kind` | `verified`: 초록 · `unverified`: 호박색 |
+| `kind` | `verified`: 초록, `unverified`: 호박색 |
 | `date` | `true`이면 뒤의 `YYYY-MM-DD` 날짜도 함께 표시 |
 
 위 설정을 사용한 문서에 `검토 완료 2026-10-01`을 쓰면 날짜까지 하나의 표지로 표시합니다.
-괄호로 감싼 문구도 인식합니다. 제목·링크·코드 안의 문구는 바꾸지 않습니다.
+괄호로 감싼 문구도 인식합니다. 제목, 링크, 코드 안의 문구는 바꾸지 않습니다.
 `status`를 지정하면 기본 목록을 교체합니다. 표지를 끄려면 `status: []`를 사용합니다.
 
 ## Appearance

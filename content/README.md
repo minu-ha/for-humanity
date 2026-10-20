@@ -10,14 +10,14 @@
 
 Write Markdown. Keep the context. Share a static site.
 
-[Documentation](https://for-humanity.fyi) · [npm](https://www.npmjs.com/package/for-humanity) · [Releases](https://github.com/minu-ha/for-humanity/releases)
+[Documentation](https://for-humanity.fyi) | [npm](https://www.npmjs.com/package/for-humanity) | [Releases](https://github.com/minu-ha/for-humanity/releases)
 
 [![MIT](https://img.shields.io/badge/license-MIT-1111aa?style=flat-square)](https://github.com/minu-ha/for-humanity/blob/main/LICENSE)
 [![npm](https://img.shields.io/npm/v/for-humanity?style=flat-square)](https://www.npmjs.com/package/for-humanity)
 ![Node 22.12.0+](https://img.shields.io/badge/node-22.12.0%2B-444444?style=flat-square)
 ![Prototype](https://img.shields.io/badge/status-prototype-9a6400?style=flat-square)
 
-[Quick start](#quick-start) · [Guide](public/writing.md) · [Commands](public/commands.md) · [Deployment](public/deployment.md) · [Korean](https://github.com/minu-ha/for-humanity/blob/main/language/README.ko.md)
+[Quick start](#quick-start) | [Guide](public/writing.md) | [Commands](public/commands.md) | [Deployment](public/deployment.md) | [Korean](https://github.com/minu-ha/for-humanity/blob/main/language/README.ko.md)
 
 </div>
 
@@ -100,12 +100,12 @@ Add examples or explanations readers can open when needed.
 
 | Task | Guide |
 | --- | --- |
-| Install and run | [Installation](public/installation.md) · [Commands](public/commands.md) |
-| Write and organize pages | [Writing](public/writing.md) · [Navigation](public/navigation.md) |
-| Add rich content | [Parts](public/parts.md) · [Diagrams](public/diagrams.md) · [Images](public/images.md) |
+| Install and run | [Installation](public/installation.md), [Commands](public/commands.md) |
+| Write and organize pages | [Writing](public/writing.md), [Navigation](public/navigation.md) |
+| Add rich content | [Parts](public/parts.md), [Diagrams](public/diagrams.md), [Images](public/images.md) |
 | Configure the site | [Settings](public/settings.md) |
-| Publish | [Deployment](public/deployment.md) · [Crawling](public/crawling.md) |
-| Update | [Changelog](public/changelog.md) · [Migration](public/migration.md) |
+| Publish | [Deployment](public/deployment.md), [Crawling](public/crawling.md) |
+| Update | [Changelog](public/changelog.md), [Migration](public/migration.md) |
 
 ## License
 

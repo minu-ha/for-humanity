@@ -9,7 +9,7 @@ order: 10
 
 버전별 변경 사항입니다. `Unreleased`는 아직 npm에 공개하지 않은 변경입니다.
 설치한 버전은 `pnpm exec for-humanity --version`으로 확인합니다.
-업데이트하기 전에 해당 버전의 **Breaking change**·**Upgrade** 안내를 확인합니다. `0.x`에서는 minor 업데이트에도 문서나 설정을 수정해야 할 수 있습니다.
+업데이트하기 전에 해당 버전의 **Breaking change**와 **Upgrade** 안내를 확인합니다. `0.x`에서는 minor 업데이트에도 문서나 설정을 수정해야 할 수 있습니다.
 
 ```sh
 pnpm add -D --save-exact for-humanity@latest
@@ -24,6 +24,7 @@ pnpm add -D --save-exact for-humanity@latest
 - Report a link or image path with a malformed `%` escape as `Invalid percent-encoding` with its file and line, instead of failing with `URI malformed`.
 - Skip Markdown files inside `dist`, `.git` and `node_modules` folders at any depth of the document folders instead of failing the build, and treat these folder names case-insensitively when checking references.
 - Keep a Details block closed after you close it, even when diagrams render again, for example after a theme change. A block opened by the address hash used to reopen.
+- Join the page and site names in browser tab titles with a vertical bar, for example `Writing | for humanity`, instead of a middle dot.
 
 ## 0.14.1 — 2026-10-19
 

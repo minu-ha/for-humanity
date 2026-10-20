@@ -62,7 +62,7 @@ export const WgShell = (props: WgShellProps) => {
     const head = createHead({disableDefaults: true});
 
     head.push({
-        title: props.title === undefined ? props.site.title : `${props.title} · ${props.site.title}`,
+        title: props.title === undefined ? props.site.title : `${props.title} | ${props.site.title}`,
         meta: [
             {charset: "utf-8"},
             {name: "viewport", content: "width=device-width, initial-scale=1"},
