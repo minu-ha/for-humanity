@@ -27,14 +27,14 @@ export const createNavigationStores = (options: NavigationStorage) => {
             },
             setItem: (key, value) => {
                 try {
-                    return options.session().setItem(key, value);
+                    options.session().setItem(key, value);
                 } catch {
                     // 용량 부족, 저장소 차단 시 현재 탭의 상태 유지
                 }
             },
             removeItem: (key) => {
                 try {
-                    return options.session().removeItem(key);
+                    options.session().removeItem(key);
                 } catch {
                     // 저장소 차단 시에도 기본 탐색 유지
                 }

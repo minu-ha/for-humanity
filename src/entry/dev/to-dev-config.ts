@@ -121,7 +121,7 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                             }
                         },
                         onError: (error) => {
-                            return server.config.logger.error(`${copy_error_prefix}: ${toErrorMessage(error)}`);
+                            server.config.logger.error(`${copy_error_prefix}: ${toErrorMessage(error)}`);
                         },
                     });
 

@@ -9,18 +9,29 @@ export const rehypeHead = () => (tree: Root, file: VFile) => {
     const firstSection = tree.children.findIndex((node) => node.type === "element" && node.tagName === `h${section_heading_depth.section}`);
     const leadEnd = firstSection === -1 ? tree.children.length : firstSection;
 
+    // 제목도 리드도 없는 README는 머리 생략
+    if (file.data.fh?.frontmatter === undefined && leadEnd === 0) {
+        return;
+    }
+
     const head: Element = {
         type: "element",
         tagName: "header",
         properties: {className: ["wg_article__head"]},
-        children: tree.children.slice(0, leadEnd).filter((node) => node.type !== "doctype"),
+        children: [
+            ...(file.data.fh?.frontmatter === undefined
+                ? []
+                : [
+                      {
+                          type: "element",
+                          tagName: "h1",
+                          properties: {className: ["wg_article__title"]},
+                          children: [{type: "text", value: file.data.fh.frontmatter.name}],
+                      } satisfies Element,
+                  ]),
+            ...tree.children.slice(0, leadEnd).filter((node) => node.type !== "doctype"),
+        ],
     };
-
-    if (file.data.fh?.frontmatter !== undefined) {
-        head.children.unshift({type: "element", tagName: "h1", properties: {className: ["wg_article__title"]}, children: [{type: "text", value: file.data.fh.frontmatter.name}]});
-    } else if (leadEnd === 0) {
-        return;
-    }
 
     tree.children = [head, ...tree.children.slice(leadEnd)];
 };

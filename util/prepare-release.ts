@@ -10,6 +10,7 @@ if (tag === undefined || !/^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(tag
 }
 
 const metadata = packageMetadataSchema.parse(JSON.parse(await readFile("package.json", "utf8")));
+const installation = `pnpm add -D --save-exact ${metadata.name}@${metadata.version}`;
 
 if (tag !== `v${metadata.version}`) {
     throw new Error(`Tag ${tag} does not match package.json version ${metadata.version}`);
@@ -18,7 +19,7 @@ if (tag !== `v${metadata.version}`) {
 for (const file of ["README.md", "language/README.ko.md"]) {
     const readme = await readFile(file, "utf8");
 
-    if (!readme.includes(`pnpm add -D --save-exact ${metadata.name}@${metadata.version}\n`)) {
+    if (!readme.includes(`${installation}\n`)) {
         throw new Error(`${file} must install ${metadata.name}@${metadata.version}`);
     }
 }
@@ -61,7 +62,6 @@ if (!pack.files.some((file) => file.path.startsWith("src/asset/font/") && file.p
 }
 
 const notes = join(artifactDirectory, "release-notes.md");
-const installation = `pnpm add -D --save-exact ${metadata.name}@${metadata.version}`;
 
 await writeFile(
     notes,
