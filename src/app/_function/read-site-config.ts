@@ -3,7 +3,7 @@ import {join} from "node:path";
 import {pathToFileURL} from "node:url";
 import {createJiti} from "jiti";
 import {z} from "zod";
-import {config_file_names} from "@/app/_constant/config";
+import {config_file_names} from "@/constant/config";
 import {copy_error_config} from "@/constant/copy";
 import {site_config_absent} from "@/constant/site";
 import {siteConfigSchema} from "@/type/site-config";

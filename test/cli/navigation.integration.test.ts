@@ -10,9 +10,9 @@ import {toPageApp} from "@/app/_function/to-page-app/to-page-app";
 import {navigationDataSchema} from "@/component/widget/sidebar/_constant/navigation-data-schema";
 import {toDocGroups} from "@/component/widget/sidebar/_function/to-doc-groups/to-doc-groups";
 import {toNavigationData} from "@/component/widget/sidebar/_function/to-navigation-data/to-navigation-data";
-import {toNavigationJson} from "@/component/widget/sidebar/_function/to-navigation-json";
 import {asset_style_path} from "@/constant/asset";
 import {siteConfigSchema} from "@/type/site-config";
+import {toScriptJson} from "@/util/json/to-script-json";
 
 describe("문서 탐색", () => {
     test("탐색 데이터는 본문을 제외하고 작성한 이름을 안전하게 전달한다", async ({root}) => {
@@ -31,7 +31,7 @@ describe("문서 탐색", () => {
          */
         const docs = await readDocs({root, processor: createProcessor({site, root})});
         const data = toNavigationData({site, docs, current: "guide"});
-        const json = toNavigationJson(data);
+        const json = toScriptJson(data);
 
         /**
          * THEN

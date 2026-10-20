@@ -3,7 +3,6 @@ import {type DOMAttributes, Fragment, useLayoutEffect, useRef, useState} from "h
 import {flushSync} from "hono/jsx/dom";
 import {navigation_mobile_query, navigation_wide_query} from "@/component/widget/sidebar/_constant/navigation";
 import type {NavigationData} from "@/component/widget/sidebar/_type/navigation-data";
-import type {NavigationFocusSnapshot} from "@/component/widget/sidebar/_type/navigation-focus-snapshot";
 import {WgDocTree} from "@/component/widget/sidebar/_wg-doc-tree";
 import {WgSidebarScroll} from "@/component/widget/sidebar/_wg-sidebar-scroll";
 import {WgToc} from "@/component/widget/sidebar/_wg-toc";
@@ -12,6 +11,26 @@ import type {createNavigationStores} from "@/store/navigation/create-navigation-
 import type {NavigationLayout} from "@/store/navigation/navigation-state";
 import {revealHashTarget} from "@/util/dom/reveal-hash-target";
 import "./wg-sidebar.css";
+
+/**
+ * Hono가 배치 변경에서 이전 DOM의 자식을 분리하기 전에 기억하는 키보드 위치
+ */
+interface NavigationFocusSnapshot {
+    /**
+     * 문서 탐색 안에서 새 배치로 옮길 위치인지 구분
+     */
+    navigation: boolean;
+
+    /**
+     * 메뉴 진입, 닫기 버튼에서 데스크톱 브랜드로 돌아갈 위치인지 구분
+     */
+    drawer: boolean;
+
+    /**
+     * 문서 이동 링크의 안정된 식별자
+     */
+    href: string | null;
+}
 
 /**
  * 같은 Hono 탐색을 서버에서는 기본 링크로, 브라우저에서는 사용자 저장 상태로 렌더

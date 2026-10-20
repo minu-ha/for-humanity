@@ -5,12 +5,12 @@ import {createHead, escapeHtml} from "unhead/server";
 import type {Link} from "unhead/types";
 import {WgShellControls} from "@/component/widget/shell-controls/wg-shell-controls";
 import {toNavigationData} from "@/component/widget/sidebar/_function/to-navigation-data/to-navigation-data";
-import {toNavigationJson} from "@/component/widget/sidebar/_function/to-navigation-json";
 import {asset_favicon_path} from "@/constant/asset";
 import type {Doc} from "@/type/doc";
 import type {DocOutline} from "@/type/doc-outline";
 import type {SiteAssets} from "@/type/site-assets";
 import type {ResolvedSiteConfig} from "@/type/site-config";
+import {toScriptJson} from "@/util/json/to-script-json";
 import "@/style/base.css";
 import "@/style/token.css";
 import "./wg-shell.css";
@@ -99,7 +99,7 @@ export const WgShell = (props: WgShellProps) => {
                 {/**
                  * 서버 탐색 자료와 브라우저 진입점 연결
                  */}
-                <script type="application/json" id="fh-navigation-data" dangerouslySetInnerHTML={{__html: toNavigationJson(navigationData)}} />
+                <script type="application/json" id="fh-navigation-data" dangerouslySetInnerHTML={{__html: toScriptJson(navigationData)}} />
                 {props.assets.browser.kind === "inline" && <script dangerouslySetInnerHTML={{__html: props.assets.browser.code}} />}
                 {props.assets.browser.kind === "module" && <script type="module" src={props.assets.browser.path} />}
                 <main className={clsx("wg_shell__main")}>{props.children}</main>

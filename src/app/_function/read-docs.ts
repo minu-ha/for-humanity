@@ -4,7 +4,7 @@ import {dirname, join, posix, relative, resolve, sep} from "node:path";
 import {isEqual} from "es-toolkit/predicate";
 import {VFile} from "vfile";
 import {parse as parseYaml} from "yaml";
-import type {Processor} from "@/app/_function/create-processor/create-processor";
+import type {Processor} from "@/app/_type/processor";
 import {asset_dir, asset_favicon_path} from "@/constant/asset";
 import {
     copy_error_doc_id,

@@ -11,14 +11,14 @@ import {createCssVariablesTheme} from "shiki";
 import {unified} from "unified";
 import {rehypeAssets} from "@/app/_function/create-processor/_rehype-assets";
 import {rehypeContentLinks} from "@/app/_function/create-processor/_rehype-content-links";
-import {rehypeHeadingIds} from "@/app/_function/create-processor/_rehype-heading-ids";
 import {remarkReport} from "@/app/_function/create-processor/_remark-report";
 import {remarkSnippets} from "@/app/_function/create-processor/_remark-snippets";
-import {shikiTransformers} from "@/app/_function/create-processor/_shiki-transformers";
+import {shikiTransformers} from "@/component/widget/article/_constant/shiki-transformers";
 import {rehypeHead} from "@/component/widget/article/_function/rehype-head";
+import {rehypeHeadingIds} from "@/component/widget/article/_function/rehype-heading-ids";
 import {rehypeSections} from "@/component/widget/article/_function/rehype-sections/rehype-sections";
 import {rehypeTables} from "@/component/widget/article/_function/rehype-tables";
-import {remarkBlocks} from "@/component/widget/article/_function/remark-blocks";
+import {remarkBlocks} from "@/component/widget/article/_function/remark-blocks/remark-blocks";
 import {remarkLinks} from "@/component/widget/article/_function/remark-links";
 import {remarkParts} from "@/component/widget/article/_function/remark-parts";
 import {remarkStatus} from "@/component/widget/article/_function/remark-status";
@@ -95,8 +95,3 @@ export const createProcessor = (options: ProcessorOptions) => {
         .use(rehypeAssets, {root: options.root, files, scope: options.scope})
         .use(rehypeStringify, {allowDangerousHtml: true});
 };
-
-/**
- * 플러그인 조립을 마친 Markdown 처리기
- */
-export type Processor = ReturnType<typeof createProcessor>;

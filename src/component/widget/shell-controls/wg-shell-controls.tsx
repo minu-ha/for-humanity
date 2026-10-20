@@ -1,8 +1,8 @@
 import clsx from "clsx";
 import {Fragment, useLayoutEffect, useRef} from "hono/jsx";
-import {heading_highlight_hold_ms} from "@/component/widget/article/_constant/heading-highlight";
 import {WgCursorFace} from "@/component/widget/cursor-face/wg-cursor-face";
 import {WgMermaid} from "@/component/widget/mermaid/wg-mermaid";
+import {heading_highlight_hold_ms} from "@/component/widget/shell-controls/_constant/heading-highlight";
 import {WgSidebar, type WgSidebarProps} from "@/component/widget/sidebar/wg-sidebar";
 import {scroll_user_input_events} from "@/constant/scroll";
 import {findHashLink} from "@/util/dom/find-hash-link";

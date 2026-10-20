@@ -3,7 +3,7 @@ import {toString as toPlainText} from "mdast-util-to-string";
 import {visit} from "unist-util-visit";
 import type {VFile} from "vfile";
 import {section_heading_depth} from "@/component/widget/article/_constant/section";
-import {hasBlockContent} from "@/component/widget/article/_function/has-block-content";
+import {hasBlockContent} from "@/component/widget/article/_function/remark-blocks/_has-block-content";
 import {copy_error_directive_syntax} from "@/constant/copy";
 
 /**
