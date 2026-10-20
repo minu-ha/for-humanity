@@ -51,19 +51,17 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
         positionRef.current.frame = requestAnimationFrame(() => {
             positionRef.current.frame = 0;
 
-            const face = faceRef.current;
-
-            if (face === null) {
+            if (faceRef.current === null) {
                 return;
             }
 
-            face.style.transform = `translate3d(
-                ${Math.max(0, Math.min(positionRef.current.x + cursor_face_offset_px, document.documentElement.clientWidth - face.width - cursor_face_offset_px))}px,
-                ${Math.max(0, Math.min(positionRef.current.y + cursor_face_offset_px, document.documentElement.clientHeight - face.height - cursor_face_offset_px))}px,
+            faceRef.current.style.transform = `translate3d(
+                ${Math.max(0, Math.min(positionRef.current.x + cursor_face_offset_px, document.documentElement.clientWidth - faceRef.current.width - cursor_face_offset_px))}px,
+                ${Math.max(0, Math.min(positionRef.current.y + cursor_face_offset_px, document.documentElement.clientHeight - faceRef.current.height - cursor_face_offset_px))}px,
                 0
             )`;
 
-            face.classList.add("wg_cursorFace__root--visible");
+            faceRef.current.classList.add("wg_cursorFace__root--visible");
         });
     };
 

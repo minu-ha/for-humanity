@@ -67,6 +67,13 @@ export const WgMermaid = (props: WgMermaidProps) => {
                 }
 
                 const mode = theme.matches ? "dark" : "light";
+
+                /**
+                 * 해제, 문서 교체, 테마 전환으로 이번 회차의 결과를 쓰지 않을 영역
+                 */
+                const isStale = (element: HTMLElement) => {
+                    return lifetime.signal.aborted || !element.isConnected || theme.matches !== (mode === "dark");
+                };
                 const pending = elements.filter((element) => element.checkVisibility({visibilityProperty: true}) && element.dataset.mermaidTheme !== mode);
 
                 if (pending.length === 0) {
@@ -83,7 +90,7 @@ export const WgMermaid = (props: WgMermaidProps) => {
                 }
 
                 for (const element of pending) {
-                    if (lifetime.signal.aborted || !element.isConnected || theme.matches !== (mode === "dark")) {
+                    if (isStale(element)) {
                         return;
                     }
 
@@ -115,7 +122,7 @@ export const WgMermaid = (props: WgMermaidProps) => {
                             measurement,
                         );
 
-                        if (lifetime.signal.aborted || !element.isConnected || theme.matches !== (mode === "dark")) {
+                        if (isStale(element)) {
                             return;
                         }
 

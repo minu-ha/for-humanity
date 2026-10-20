@@ -6,7 +6,6 @@ import {reading_line_slack_px} from "@/component/widget/sidebar/_constant/readin
 import type {TocGroup} from "@/component/widget/sidebar/_type/toc-group";
 import {scroll_user_input_events} from "@/constant/scroll";
 import {findHashLink} from "@/util/dom/find-hash-link";
-import {findHashTarget} from "@/util/dom/find-hash-target";
 import {isRestoringNavigation} from "@/util/dom/is-restoring-navigation";
 import {toHashId} from "@/util/dom/to-hash-id";
 import "./_wg-toc.css";
@@ -36,6 +35,19 @@ export const WgToc = (props: WgTocProps) => {
         const lock = {slug: isRestoringNavigation() ? undefined : toHashId(location.hash)};
 
         /**
+         * 접히지 않은 제목의 화면 기준 도착 위치. scroll-margin 반영
+         */
+        const toVisibleHeadings = () => {
+            return headings.flatMap((heading) => {
+                const target = document.getElementById(heading.slug);
+
+                return target?.checkVisibility()
+                    ? [{slug: heading.slug, target, top: target.getBoundingClientRect().top - Number.parseFloat(getComputedStyle(target).scrollMarginTop)}]
+                    : [];
+            });
+        };
+
+        /**
          * 연속 스크롤의 프레임당 1회 현재 제목 갱신
          *
          *   - 접힌 본문 제목은 제외하고 읽는 선을 통과한 마지막 제목 선택
@@ -49,13 +61,7 @@ export const WgToc = (props: WgTocProps) => {
             frame.id = requestAnimationFrame(() => {
                 frame.id = 0;
 
-                const visible = headings.flatMap((heading) => {
-                    const target = findHashTarget(`#${heading.slug}`);
-
-                    return target?.checkVisibility()
-                        ? [{slug: heading.slug, top: target.getBoundingClientRect().top - Number.parseFloat(getComputedStyle(target).scrollMarginTop)}]
-                        : [];
-                });
+                const visible = toVisibleHeadings();
 
                 setCurrentSlug(
                     visible.find((heading) => heading.slug === lock.slug)?.slug ?? visible.findLast((heading) => heading.top <= reading_line_slack_px)?.slug ?? visible[0]?.slug,
@@ -71,16 +77,10 @@ export const WgToc = (props: WgTocProps) => {
          */
         const handleLayoutChange = () => {
             for (const heading of headings) {
-                findHashTarget(`#${heading.slug}`)?.style.removeProperty(anchor_shift_property);
+                document.getElementById(heading.slug)?.style.removeProperty(anchor_shift_property);
             }
 
-            const anchors = headings.flatMap((heading) => {
-                const target = findHashTarget(`#${heading.slug}`);
-
-                return target?.checkVisibility()
-                    ? [{target, arrival: scrollY + target.getBoundingClientRect().top - Number.parseFloat(getComputedStyle(target).scrollMarginTop)}]
-                    : [];
-            });
+            const anchors = toVisibleHeadings().map((heading) => ({target: heading.target, arrival: scrollY + heading.top}));
 
             const last = anchors.at(-1);
             const scrollEnd = document.documentElement.scrollHeight - innerHeight;
@@ -157,7 +157,7 @@ export const WgToc = (props: WgTocProps) => {
             observer.disconnect();
 
             for (const heading of headings) {
-                findHashTarget(`#${heading.slug}`)?.style.removeProperty(anchor_shift_property);
+                document.getElementById(heading.slug)?.style.removeProperty(anchor_shift_property);
             }
         };
     }, [props.groups]);

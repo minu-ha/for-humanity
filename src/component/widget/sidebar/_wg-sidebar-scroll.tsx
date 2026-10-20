@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import {type Child, type DOMAttributes, type RefObject, useLayoutEffect, useRef, useState} from "hono/jsx";
+import {overflow_slack_px} from "@/component/widget/sidebar/_constant/overflow";
 
 /**
  * 탐색 좌표를 제어하는 부모와 넘침 표시를 소유하는 스크롤 영역의 경계
@@ -50,8 +51,8 @@ export const WgSidebarScroll = (props: WgSidebarScrollProps) => {
             return;
         }
 
-        const above = props.portRef.current.scrollTop > 1;
-        const below = props.portRef.current.scrollHeight - props.portRef.current.clientHeight - props.portRef.current.scrollTop > 1;
+        const above = props.portRef.current.scrollTop > overflow_slack_px;
+        const below = props.portRef.current.scrollHeight - props.portRef.current.clientHeight - props.portRef.current.scrollTop > overflow_slack_px;
 
         setOverflow((state) => (state.above === above && state.below === below ? state : {above, below}));
     };

@@ -9,7 +9,7 @@ import {WgSidebarScroll} from "@/component/widget/sidebar/_wg-sidebar-scroll";
 import {WgToc} from "@/component/widget/sidebar/_wg-toc";
 import type {createNavigationStores} from "@/store/navigation/create-navigation-stores";
 import type {NavigationLayout} from "@/store/navigation/navigation-state";
-import {revealHashTarget} from "@/util/dom/reveal-hash-target";
+import {findSameTabLink} from "@/util/dom/find-same-tab-link";
 import "./wg-sidebar.css";
 
 /**
@@ -61,9 +61,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
     });
 
     const [drawerOpen, setDrawerOpen] = useState(false);
-    const navigationRef = useRef<HTMLDivElement | null>(null);
     const documentsRef = useRef<HTMLDivElement | null>(null);
-    const drawerNavigationRef = useRef<HTMLDivElement | null>(null);
     const drawerDocumentsRef = useRef<HTMLDivElement | null>(null);
     const outlineRef = useRef<HTMLDivElement | null>(null);
     const dialogRef = useRef<HTMLDialogElement | null>(null);
@@ -101,35 +99,39 @@ export const WgSidebar = (props: WgSidebarProps) => {
     };
 
     /**
+     * 모바일 배치에서 모달이 닫혀 문서 목록이 보이지 않는 상태
+     */
+    const isDrawerHidden = () => {
+        return layoutRef.current === "drawer" && dialogRef.current?.open !== true;
+    };
+
+    /**
      * 닫기, 이동보다 먼저 실제 좌표 보존. 숨긴 모달과 아직 복원하지 않은 배치는 저장하지 않음
      */
     const saveScroll = () => {
         const documents = getDocumentsPort();
-        const outline = outlineRef.current;
 
         if (
             props.stores === undefined ||
             documents === null ||
-            outline === null ||
+            outlineRef.current === null ||
             restorePendingRef.current ||
             layoutRef.current !== getNavigationLayout() ||
-            (layoutRef.current === "drawer" && dialogRef.current?.open !== true)
+            isDrawerHidden()
         ) {
             return;
         }
 
-        props.stores.scroll.setState((state) => {
-            return {
-                positions: {
-                    ...state.positions,
-                    [layoutRef.current]: {
-                        navigation: navigationSignature,
-                        pathname: location.pathname,
-                        documents: documents.scrollTop,
-                        outline: outline.scrollTop,
-                    },
+        props.stores.scroll.setState({
+            positions: {
+                ...props.stores.scroll.getState().positions,
+                [layoutRef.current]: {
+                    navigation: navigationSignature,
+                    pathname: location.pathname,
+                    documents: documents.scrollTop,
+                    outline: outlineRef.current.scrollTop,
                 },
-            };
+            },
         });
     };
 
@@ -145,7 +147,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
             return;
         }
 
-        if (layoutRef.current === "drawer" && dialogRef.current?.open !== true) {
+        if (isDrawerHidden()) {
             return;
         }
 
@@ -231,39 +233,13 @@ export const WgSidebar = (props: WgSidebarProps) => {
     };
 
     /**
-     * 보조키, 새 탭 링크는 모달 유지. 기본 문서 이동만 닫고 같은 문서 제목에 키보드 위치 전달
+     * 보조키, 새 탭 링크는 모달 유지. 같은 탭의 기본 이동만 모달을 닫고 진행
      */
     const handleNavigationClick: DOMAttributes["onClick"] = (event) => {
         saveScroll();
 
-        if (
-            dialogRef.current?.open !== true ||
-            event.defaultPrevented ||
-            event.button !== 0 ||
-            event.metaKey ||
-            event.ctrlKey ||
-            event.shiftKey ||
-            event.altKey ||
-            !(event.target instanceof Element)
-        ) {
-            return;
-        }
-
-        const link = event.target.closest("a[href]");
-
-        if (!(link instanceof HTMLAnchorElement) || (link.target !== "" && link.target !== "_self") || link.hasAttribute("download")) {
-            return;
-        }
-
-        closeNavigation();
-
-        if (link.origin === location.origin && link.pathname === location.pathname && link.search === location.search && link.hash) {
-            const target = revealHashTarget(link.hash);
-
-            if (target !== null) {
-                target.tabIndex = -1;
-                target.focus({preventScroll: true});
-            }
+        if (dialogRef.current?.open === true && findSameTabLink(event) !== null) {
+            closeNavigation();
         }
     };
 
@@ -358,17 +334,14 @@ export const WgSidebar = (props: WgSidebarProps) => {
                 return;
             }
 
-            // 배치마다 따로 둔 목록 참조. 이전 배치 노드가 정리돼도 새 배치 참조 유지
-            const navigation = layoutRef.current === "drawer" ? drawerNavigationRef.current : navigationRef.current;
+            const documents = getDocumentsPort();
 
             if (layout === "drawer") {
                 if (focusRef.current.navigation) {
                     openButtonRef.current?.focus({preventScroll: true});
                 }
-            } else if (focusRef.current.navigation && navigation !== null) {
-                const href = focusRef.current.href;
-
-                [...navigation.querySelectorAll<HTMLElement>("a[href]")].find((element) => element.getAttribute("href") === href)?.focus({preventScroll: true});
+            } else if (focusRef.current.navigation && documents !== null) {
+                [...documents.querySelectorAll<HTMLElement>("a[href]")].find((element) => element.getAttribute("href") === focusRef.current?.href)?.focus({preventScroll: true});
             } else if (focusRef.current.drawer) {
                 brandRef.current?.focus({preventScroll: true});
             }
@@ -427,7 +400,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
                  * JavaScript 없이도 전체 문서 링크를 표시. 브라우저 모바일에서는 드로어가 같은 목록을 소유
                  */}
                 {layout !== "drawer" && (
-                    <div ref={props.stores === undefined ? undefined : navigationRef} className={clsx("wg_sidebar__docsPanel")} data-sidebar-docs="" data-sidebar-layout={layout}>
+                    <div className={clsx("wg_sidebar__docsPanel")} data-sidebar-docs="" data-sidebar-layout={layout}>
                         <WgSidebarScroll portRef={documentsRef} kind="documents" ready={props.stores !== undefined} onScroll={saveScroll} onClick={handleNavigationClick}>
                             <WgDocTree groups={props.data.groups} />
                         </WgSidebarScroll>
@@ -488,12 +461,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
                  */}
                 <div className={clsx("wg_sidebar__drawerContent")}>
                     {layout === "drawer" && (
-                        <div
-                            ref={props.stores === undefined ? undefined : drawerNavigationRef}
-                            className={clsx("wg_sidebar__docsPanel")}
-                            data-sidebar-docs=""
-                            data-sidebar-layout={layout}
-                        >
+                        <div className={clsx("wg_sidebar__docsPanel")} data-sidebar-docs="" data-sidebar-layout={layout}>
                             <WgSidebarScroll portRef={drawerDocumentsRef} kind="documents" ready={props.stores !== undefined} onScroll={saveScroll} onClick={handleNavigationClick}>
                                 <WgDocTree groups={props.data.groups} />
                             </WgSidebarScroll>
