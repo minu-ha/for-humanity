@@ -7,7 +7,7 @@ order: 10
 ---
 
 그룹은 클릭할 수 없는 분류 제목입니다. 문서는 각각 본문과 URL이 있는 링크입니다.
-`parent`는 문서를 다른 문서 아래에 배치하며 `0.3.0`부터 지원합니다.
+`parent`는 문서를 다른 문서 아래에 배치합니다. `0.3.0`부터 지원합니다.
 이 안내도 사이드바에서 [Writing](writing.md) 아래에 있는 하위 문서입니다.
 
 ## Group and parent
@@ -23,7 +23,7 @@ Guide
    └─ Themes
 ```
 
-예를 들어 `settings.md`의 머리말은 다음과 같습니다.
+예를 들어 `settings.md`의 frontmatter는 다음과 같습니다.
 
 ```yaml
 name: Settings

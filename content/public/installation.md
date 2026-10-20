@@ -20,7 +20,7 @@ pnpm add -D --save-exact for-humanity@0.14.2
 
 ## Your first site
 
-`content/public` 폴더를 만들고 `content/README.md`에 홈에 표시할 내용을 작성합니다. 기본 파일을 복사해서 시작하려면 아래 [Content layout](#content-layout)을 참고합니다.
+`content/public` 폴더를 만들고 홈에 표시할 내용을 `content/README.md`에 작성합니다. 기본 파일을 복사해서 시작하려면 아래 [Content layout](#content-layout)을 참고합니다.
 
 ```markdown
 # Project notes

@@ -70,12 +70,12 @@ export default {
 이 경우 홈은 `knowledge/README.md`, 문서는 `knowledge/published`와 `knowledge/internal`, 출력은 `knowledge/dist`입니다. 설정 파일은 계속 프로젝트 루트에 둡니다.
 공개 문서 `published/guide.md`의 URL은 `/guide/`, 내부 문서 `internal/plan.md`의 로컬 URL은 `/private/plan/`입니다.
 
-경로는 프로젝트 내부의 상대 경로를 사용합니다. `content.root: "."`도 가능하지만 public과 private은 서로 다른 하위 폴더여야 합니다. 두 경로가 같거나 한쪽이 다른 쪽 안에 들어갈 수 없습니다.
+경로는 프로젝트 내부의 상대 경로를 사용합니다. `content.root: "."`도 가능하지만 public과 private은 서로 다른 하위 폴더여야 합니다. 두 경로는 같을 수 없고 한쪽이 다른 쪽 안에 들어갈 수도 없습니다.
 `..`, `dist`, `.git`, `node_modules`가 포함된 경로는 사용할 수 없습니다. 공개 폴더와 내부 폴더 자체를 symlink로 지정할 수 없습니다. symlink로 프로젝트 밖이나 예약 폴더를 가리킬 수도 없습니다.
 
 ### Public and private content
 
-`dev`는 양쪽 문서를 보여 줍니다. `build`는 홈과 공개 문서만 생성하며 `preview`로 그 결과를 확인합니다.
+`dev`는 양쪽 문서를 보여 줍니다. `build`는 홈과 공개 문서만 생성합니다. 그 결과는 `preview`로 확인합니다.
 홈이나 공개 문서에서 private 문서, 이미지, 첨부, 스니펫을 참조하면 빌드가 실패합니다.
 
 공용 자료는 `content/asset`, 내부 자료는 `content/private/asset`에 보관합니다. `asset` 이름은 자유롭게 바꿀 수 있으며 링크를 수정하면 됩니다. 별도 설정은 필요하지 않습니다.

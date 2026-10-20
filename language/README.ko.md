@@ -6,7 +6,7 @@
 
 **사람이 읽는 문서를 위한 Markdown 문서 도구**
 
-Markdown으로 작성하고, 맥락을 남기고, 정적 사이트로 공유.
+Markdown으로 작성합니다. 맥락을 남깁니다. 정적 사이트로 공유합니다.
 
 [Documentation](https://for-humanity.fyi) | [npm](https://www.npmjs.com/package/for-humanity) | [Releases](https://github.com/minu-ha/for-humanity/releases)
 
@@ -23,7 +23,7 @@ Markdown으로 작성하고, 맥락을 남기고, 정적 사이트로 공유.
 
 Markdown에 코드 예제, 표, 이미지와 Mermaid 다이어그램을 작성합니다. 문서를 그룹과 하위 문서로 정리합니다. 보충 설명은 Note에, 긴 설명은 접을 수 있는 Details에 담습니다.
 
-빌드 결과는 글꼴이 포함된 정적 사이트입니다. 밝은 테마와 어두운 테마, 키보드 탐색과 좁은 화면에 맞는 배치를 제공합니다.
+빌드 결과는 글꼴이 포함된 정적 사이트입니다. 밝은 테마와 어두운 테마, 키보드 탐색, 좁은 화면에 맞는 배치를 제공합니다.
 
 ## Quick start
 

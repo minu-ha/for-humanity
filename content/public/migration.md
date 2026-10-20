@@ -41,7 +41,7 @@ project/
 1. 설정 파일을 프로젝트 루트로 옮깁니다. `.ts` 또는 `.mjs` 하나만 유지합니다. 이웃 모듈을 import했다면 그 경로도 맞춥니다.
 2. 홈 README를 `content/README.md`로 옮깁니다. 프로젝트 소개용 루트 README는 따로 유지할 수 있습니다.
 3. 배포할 문서는 `content/public`, 로컬에서만 읽을 문서는 `content/private`으로 나눕니다. 각 폴더 안의 Markdown에는 기존 frontmatter가 필요합니다.
-4. 공용 자원을 `content/asset`, 내부 자원을 `content/private/asset`에 둡니다. 링크, 스니펫, 그림 경로를 새 파일 위치에 맞춥니다.
+4. 공용 자원을 `content/asset`, 내부 자원을 `content/private/asset`에 둡니다. 링크, 스니펫, 그림의 경로를 새 파일 위치에 맞춥니다.
 5. 실행 스크립트에서 문서 폴더 인자를 제거합니다. 다른 곳에서 실행한다면 **프로젝트 루트**를 지정합니다.
 6. `.gitignore`와 호스팅 출력 경로를 `content/dist`로 맞춥니다. 새 빌드 확인 후 예전 출력 폴더를 정리합니다.
 
@@ -60,7 +60,7 @@ export default {
 ```
 
 이 구성의 홈은 `docs/README.md`, 공개 문서는 `docs/published`, 내부 문서는 `docs/internal`, 출력은 `docs/dist`입니다. 설정 파일은 여전히 프로젝트 루트에 둡니다.
-문서 루트를 프로젝트와 같게 하려면 `content.root: "."`를 사용할 수 있습니다. 공개 폴더와 내부 폴더는 각각 별도 하위 폴더여야 하며 `public: "."`로 예전 평면 수집을 복원할 수는 없습니다.
+문서 루트를 프로젝트와 같게 하려면 `content.root: "."`를 사용할 수 있습니다. 공개 폴더와 내부 폴더는 각각 별도 하위 폴더여야 합니다. `public: "."`로 예전 평면 수집을 복원할 수는 없습니다.
 경로 검증 규칙은 [Settings](settings.md#content-paths)를 참고합니다.
 
 ## Update links and parent references

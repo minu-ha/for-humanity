@@ -79,7 +79,7 @@ order: 10
 
 ### File names
 
-공개 문서의 ID는 public 폴더 기준 경로에서 확장자를 뺀 소문자입니다. `public/guide/setup.md`는 `/guide/setup/`로 표시됩니다.
+공개 문서의 ID는 public 폴더 기준 경로에서 확장자를 뺀 소문자입니다. `public/guide/setup.md`는 `/guide/setup/`으로 표시됩니다.
 private 문서에는 `/private/`이 붙습니다. `.mdx`도 Markdown으로 읽으며 JSX는 실행하지 않습니다.
 
 같은 ID가 되는 파일 두 개는 함께 사용할 수 없습니다. 예를 들어 `Guide.md`와 `guide.mdx`는 충돌합니다.
@@ -206,4 +206,4 @@ Node.js 22.12.0 이상이 필요합니다.
 ```
 
 제목과 본문은 필수입니다. Details에 `{open}`을 붙이면 처음부터 펼칩니다.
-작성 예시, 중첩과 오류 규칙은 [Parts](parts.md)를 참고합니다.
+작성 예시, 중첩 규칙, 오류 규칙은 [Parts](parts.md)를 참고합니다.
