@@ -1,12 +1,12 @@
 import {createJSONStorage, persist, type StateStorage} from "zustand/middleware";
 import {createStore} from "zustand/vanilla";
+import {storage_scroll_key, storage_version} from "@/store/navigation/_constant/storage";
 import {type NavigationScrollState, navigationScrollStateSchema} from "@/store/navigation/navigation-state";
-import {navigation_scroll_storage_key, navigation_storage_version} from "@/store/navigation/navigation-storage";
 
 /**
  * 브라우저 저장소의 지연 조회 경계. 차단 환경과 테스트의 메모리 저장소 지원
  */
-interface NavigationStorage {
+interface NavigationStoresParams {
     /**
      * 같은 탭 안에서만 복원할 스크롤 위치
      */
@@ -19,22 +19,22 @@ interface NavigationStorage {
  *   - 브라우저 진입점에서만 생성, 서버 요청 간 상태 공유 금지
  *   - 읽기 오류는 persist에서 처리, 쓰기 오류는 메모리 상태 유지
  */
-export const createNavigationStores = (options: NavigationStorage) => {
+export const toNavigationStores = (params: NavigationStoresParams) => {
     const storage = createJSONStorage<NavigationScrollState>(() => {
         return {
             getItem: (key) => {
-                return options.session().getItem(key);
+                return params.session().getItem(key);
             },
             setItem: (key, value) => {
                 try {
-                    options.session().setItem(key, value);
+                    params.session().setItem(key, value);
                 } catch {
                     // 용량 부족, 저장소 차단 시 현재 탭의 상태 유지
                 }
             },
             removeItem: (key) => {
                 try {
-                    options.session().removeItem(key);
+                    params.session().removeItem(key);
                 } catch {
                     // 저장소 차단 시에도 기본 탐색 유지
                 }
@@ -45,8 +45,8 @@ export const createNavigationStores = (options: NavigationStorage) => {
     return {
         scroll: createStore<NavigationScrollState>()(
             persist(() => ({positions: {}}), {
-                name: navigation_scroll_storage_key,
-                version: navigation_storage_version,
+                name: storage_scroll_key,
+                version: storage_version,
                 storage,
                 merge: (persisted, current) => {
                     const result = navigationScrollStateSchema.safeParse(persisted);

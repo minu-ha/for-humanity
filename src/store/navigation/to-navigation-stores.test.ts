@@ -1,11 +1,11 @@
 import {describe, expect, test} from "vitest";
-import {createNavigationStores} from "@/store/navigation/create-navigation-stores";
-import {navigation_scroll_storage_key} from "@/store/navigation/navigation-storage";
+import {storage_scroll_key} from "@/store/navigation/_constant/storage";
+import {toNavigationStores} from "@/store/navigation/to-navigation-stores";
 
 /**
  * 세션 저장소의 읽기와 쓰기를 메모리에서 제공하는 테스트 준비
  */
-const createStorage = () => {
+const toMemoryStorage = () => {
     const session = new Map<string, string>();
 
     const storage = {
@@ -38,13 +38,13 @@ describe("탐색 스크롤 저장", () => {
          * GIVEN
          * 격리된 세션 저장소
          */
-        const setup = createStorage();
+        const setup = toMemoryStorage();
 
         /**
          * WHEN
          * 탐색 스토어 생성과 저장 상태 복원
          */
-        const stores = createNavigationStores(setup.options);
+        const stores = toNavigationStores(setup.options);
 
         stores.scroll.setState({
             positions: {
@@ -54,7 +54,7 @@ describe("탐색 스크롤 저장", () => {
             },
         });
 
-        const restored = createNavigationStores(setup.options).scroll.getState();
+        const restored = toNavigationStores(setup.options).scroll.getState();
 
         /**
          * THEN
@@ -68,15 +68,15 @@ describe("탐색 스크롤 저장", () => {
          * GIVEN
          * 격리된 세션 저장소
          */
-        const setup = createStorage();
+        const setup = toMemoryStorage();
 
-        setup.session.set(navigation_scroll_storage_key, value);
+        setup.session.set(storage_scroll_key, value);
 
         /**
          * WHEN
          * 탐색 스토어 생성과 저장 상태 복원
          */
-        const stores = createNavigationStores(setup.options);
+        const stores = toNavigationStores(setup.options);
 
         /**
          * THEN
@@ -90,10 +90,10 @@ describe("탐색 스크롤 저장", () => {
          * GIVEN
          * 격리된 세션 저장소
          */
-        const setup = createStorage();
+        const setup = toMemoryStorage();
 
         setup.session.set(
-            navigation_scroll_storage_key,
+            storage_scroll_key,
             JSON.stringify({
                 version: 1,
                 state: {
@@ -110,7 +110,7 @@ describe("탐색 스크롤 저장", () => {
          * WHEN
          * 탐색 스토어 생성과 저장 상태 복원
          */
-        const stores = createNavigationStores(setup.options);
+        const stores = toNavigationStores(setup.options);
 
         /**
          * THEN
@@ -124,7 +124,7 @@ describe("탐색 스크롤 저장", () => {
          * GIVEN
          * 접근할 때 예외를 발생시키는 저장소
          */
-        const stores = createNavigationStores({
+        const stores = toNavigationStores({
             session: () => {
                 throw new Error("Storage blocked");
             },
@@ -150,9 +150,9 @@ describe("탐색 스크롤 저장", () => {
          * GIVEN
          * 읽기는 가능하고 쓰기는 실패하는 세션 저장소
          */
-        const setup = createStorage();
+        const setup = toMemoryStorage();
 
-        const stores = createNavigationStores({
+        const stores = toNavigationStores({
             session: () => {
                 return {
                     ...setup.options.session(),

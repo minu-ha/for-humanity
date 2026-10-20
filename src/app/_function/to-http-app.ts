@@ -1,6 +1,6 @@
 import {readFile} from "node:fs/promises";
 import {extname} from "node:path";
-import {type Context, Hono} from "hono";
+import {type Handler, Hono} from "hono";
 import {asset_content_type_default, asset_content_types, asset_dir, asset_favicon_path} from "@/constant/asset";
 import {font_cache_control} from "@/constant/font";
 
@@ -30,14 +30,14 @@ export interface HttpParams {
  *   - dev 응답 전용. 정적 생성은 페이지 앱과 크롤러 앱을 직접 출력
  *   - 파일 응답과 정규식 페이지 라우트 분리
  */
-export const toHttpApp = (options: HttpParams) => {
+export const toHttpApp = (params: HttpParams) => {
     const app = new Hono();
 
     /**
      * 등록된 URL의 자원 응답. 미등록 시 404
      */
-    const handleAsset = async (c: Context) => {
-        const file = options.files.get(c.req.path);
+    const handleAsset: Handler = async (c) => {
+        const file = params.files.get(c.req.path);
 
         if (file === undefined) {
             return c.notFound();
@@ -55,11 +55,11 @@ export const toHttpApp = (options: HttpParams) => {
     app.get(`/${asset_dir}/*`, handleAsset);
     app.get(asset_favicon_path, handleAsset);
 
-    if (options.crawling !== undefined) {
-        app.route("/", options.crawling);
+    if (params.crawling !== undefined) {
+        app.route("/", params.crawling);
     }
 
-    app.all("/*", (c) => options.pages.fetch(c.req.raw, c.env));
+    app.all("/*", (c) => params.pages.fetch(c.req.raw, c.env));
 
     return app;
 };

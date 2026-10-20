@@ -3,7 +3,7 @@
 import {readFile} from "node:fs/promises";
 import {defineCommand, runMain} from "citty";
 import {z} from "zod/mini";
-import {cli_default_command, cli_docs_args} from "@/entry/cli/_constant/cli";
+import {command_args, command_default} from "@/entry/cli/_constant/command";
 import {copy_build_description, copy_dev_description, copy_error_option, copy_hint_help, copy_preview_description, copy_tool_description} from "@/entry/cli/_constant/copy";
 import {logger} from "@/util/logger/logger";
 
@@ -16,7 +16,7 @@ const main = defineCommand({
 
         return {...z.object({name: z.string(), version: z.string()}).parse(content), description: copy_tool_description};
     },
-    default: cli_default_command,
+    default: command_default,
 
     /**
      * Citty의 미지정 옵션 허용을 제한하는 CLI 입력 경계
@@ -40,7 +40,7 @@ const main = defineCommand({
             name,
             defineCommand({
                 meta: {name, description},
-                args: cli_docs_args,
+                args: command_args,
 
                 /**
                  * 도움말 조회와 분리한 사이트 실행

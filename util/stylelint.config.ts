@@ -8,7 +8,7 @@ import type {Config} from "stylelint";
 /**
  * 소유 클래스의 명명 계약. 외부 접두사 제외
  */
-const ownClassPattern = (scope: "pg" | "wg" | "ui") => {
+const toOwnClassPattern = (scope: "pg" | "wg" | "ui") => {
     return [
         "^(?:",
 
@@ -25,7 +25,7 @@ const ownClassPattern = (scope: "pg" | "wg" | "ui") => {
 /**
  * 직접 작성한 마크업의 금지 선택자
  */
-const ownMarkupPatterns = [
+const own_markup_patterns = [
     // 최상위 상태 선택자 금지
     /^\.[\w-]+:(hover|focus|focus-visible|focus-within|active|enabled|disabled|checked|visited)/,
 
@@ -36,8 +36,8 @@ const ownMarkupPatterns = [
 /**
  * 외부 소유 영역과 직접 작성한 마크업의 금지 선택자 결합
  */
-const disallowed = (foreignScopes: RegExp[]): [RegExp[], {splitList: true}] => {
-    return [[...foreignScopes, ...ownMarkupPatterns], {splitList: true}];
+const toDisallowedSelectors = (foreignScopes: RegExp[]): [RegExp[], {splitList: true}] => {
+    return [[...foreignScopes, ...own_markup_patterns], {splitList: true}];
 };
 
 export default {
@@ -72,22 +72,22 @@ export default {
         {
             files: ["src/page/**/*.css"],
             rules: {
-                "selector-class-pattern": ownClassPattern("pg"),
-                "selector-disallowed-list": disallowed([/^\.(wg|ui)_/]),
+                "selector-class-pattern": toOwnClassPattern("pg"),
+                "selector-disallowed-list": toDisallowedSelectors([/^\.(wg|ui)_/]),
             },
         },
         {
             files: ["src/component/widget/**/*.css"],
             rules: {
-                "selector-class-pattern": ownClassPattern("wg"),
-                "selector-disallowed-list": disallowed([/^\.(pg|ui)_/]),
+                "selector-class-pattern": toOwnClassPattern("wg"),
+                "selector-disallowed-list": toDisallowedSelectors([/^\.(pg|ui)_/]),
             },
         },
         {
             files: ["src/component/ui/**/*.css"],
             rules: {
-                "selector-class-pattern": ownClassPattern("ui"),
-                "selector-disallowed-list": disallowed([/^\.(pg|wg)_/]),
+                "selector-class-pattern": toOwnClassPattern("ui"),
+                "selector-disallowed-list": toDisallowedSelectors([/^\.(pg|wg)_/]),
             },
         },
         {

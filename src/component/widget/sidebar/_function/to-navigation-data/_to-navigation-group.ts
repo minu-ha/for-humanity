@@ -5,7 +5,7 @@ import type {NavigationGroup} from "@/component/widget/sidebar/_type/navigation-
 /**
  * 탐색 묶음 변환 입력
  */
-interface NavigationGroupOptions {
+interface NavigationGroupParams {
     /**
      * 하위 문서와 묶음을 가진 원본
      */
@@ -20,11 +20,11 @@ interface NavigationGroupOptions {
 /**
  * 전체 묶음 경로와 본문 없는 하위 가지
  */
-export const toNavigationGroup = (options: NavigationGroupOptions): NavigationGroup => {
+export const toNavigationGroup = (params: NavigationGroupParams): NavigationGroup => {
     return {
-        name: options.group.name,
-        path: options.group.path,
-        docs: options.group.docs.map((doc) => toNavigationDocument({doc, current: options.current})),
-        groups: options.group.groups.map((group) => toNavigationGroup({...options, group})),
+        name: params.group.name,
+        path: params.group.path,
+        docs: params.group.docs.map((doc) => toNavigationDocument({doc, current: params.current})),
+        groups: params.group.groups.map((group) => toNavigationGroup({...params, group})),
     };
 };

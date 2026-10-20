@@ -1,7 +1,7 @@
 /**
  * 변경 재처리의 실행과 오류 보고 계약
  */
-export interface ChangeQueueOptions {
+export interface ChangeQueueParams {
     /**
      * 한 번의 최신 입력 처리. 이전 실행이 끝난 뒤 호출
      */
@@ -18,7 +18,7 @@ export interface ChangeQueueOptions {
  *
  *   - 활성 실행의 반환 Promise는 대기 요청까지 끝나면 완료, 중첩 요청은 즉시 반환
  */
-export const toChangeQueue = (options: ChangeQueueOptions) => {
+export const toChangeQueue = (params: ChangeQueueParams) => {
     const state = {requested: 0, completed: 0, running: false};
 
     return async () => {
@@ -35,9 +35,9 @@ export const toChangeQueue = (options: ChangeQueueOptions) => {
                 const requested = state.requested;
 
                 try {
-                    await options.run();
+                    await params.run();
                 } catch (error) {
-                    options.onError(error);
+                    params.onError(error);
                 } finally {
                     state.completed = requested;
                 }

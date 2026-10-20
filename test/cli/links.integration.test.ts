@@ -2,9 +2,9 @@ import {mkdir, writeFile} from "node:fs/promises";
 import {join} from "node:path";
 import {test} from "@test/_fixture/unit";
 import {describe, expect} from "vitest";
-import {createProcessor} from "@/app/_function/create-processor/create-processor";
 import {readDocs} from "@/app/_function/read-docs";
 import {toPageApp} from "@/app/_function/to-page-app/to-page-app";
+import {toProcessor} from "@/app/_function/to-processor/to-processor";
 import {asset_style_path} from "@/constant/asset";
 import {siteConfigSchema} from "@/type/site-config";
 
@@ -42,7 +42,7 @@ describe("문서 링크와 목차", () => {
          * WHEN
          * 문서 링크와 목차 생성
          */
-        const docs = await readDocs({scope, processor: createProcessor({site, scope})});
+        const docs = await readDocs({scope, processor: toProcessor({site, scope})});
         const setup = docs.find((doc) => doc.id === "guide/setup");
 
         /**
@@ -73,7 +73,7 @@ describe("문서 링크와 목차", () => {
          * WHEN
          * 문서 로드
          */
-        const result = readDocs({scope, processor: createProcessor({site, scope})});
+        const result = readDocs({scope, processor: toProcessor({site, scope})});
 
         /**
          * THEN
@@ -99,7 +99,7 @@ describe("문서 링크와 목차", () => {
          * WHEN
          * 문서 링크와 목차 생성
          */
-        const docs = await readDocs({scope, processor: createProcessor({site, scope})});
+        const docs = await readDocs({scope, processor: toProcessor({site, scope})});
 
         const app = toPageApp({
             site,

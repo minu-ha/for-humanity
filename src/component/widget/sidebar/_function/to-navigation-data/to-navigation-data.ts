@@ -11,7 +11,7 @@ import type {ResolvedSiteConfig} from "@/type/site-config";
 /**
  * 브라우저 탐색에 전달할 문서 자료
  */
-interface NavigationDataOptions {
+interface NavigationDataParams {
     /**
      * 기본값을 적용한 사이트 설정
      */
@@ -39,14 +39,14 @@ interface NavigationDataOptions {
  *   - 목차는 h2별 h3 수집, 가름 시작 절에서 목차 묶음 분리
  *   - 첫 h2 앞의 h3은 목차 제외
  */
-export const toNavigationData = (options: NavigationDataOptions): NavigationData => {
+export const toNavigationData = (params: NavigationDataParams): NavigationData => {
     // 1. 목차 대상 제목과 같은 순서의 절 정보. 본문 제목 계층이 없으면 빈 목차
     const entries =
-        options.outline === undefined
+        params.outline === undefined
             ? []
             : zip(
-                  options.outline.headings.filter((heading) => heading.depth === section_heading_depth.section || heading.depth === section_heading_depth.sub),
-                  options.outline.sections,
+                  params.outline.headings.filter((heading) => heading.depth === section_heading_depth.section || heading.depth === section_heading_depth.sub),
+                  params.outline.sections,
               );
 
     // 2. h2마다 다음 h2 전까지의 h3 수집
@@ -67,8 +67,8 @@ export const toNavigationData = (options: NavigationDataOptions): NavigationData
     });
 
     return {
-        title: options.site.title,
-        groups: toDocGroups({docs: options.docs, navigation: options.site.navigation}).map((group) => toNavigationGroup({group, current: options.current})),
+        title: params.site.title,
+        groups: toDocGroups({docs: params.docs, navigation: params.site.navigation}).map((group) => toNavigationGroup({group, current: params.current})),
 
         // 3. 가름이 시작하는 절마다 다음 가름 전까지의 절을 한 묶음으로
         outline: sections.flatMap((section, index) => {
@@ -83,7 +83,7 @@ export const toNavigationData = (options: NavigationDataOptions): NavigationData
                 },
             ];
         }),
-        home: options.current === undefined,
-        cursorFace: options.site.cursorFace,
+        home: params.current === undefined,
+        cursorFace: params.site.cursorFace,
     };
 };

@@ -2,9 +2,9 @@ import {writeFile} from "node:fs/promises";
 import {join} from "node:path";
 import {test} from "@test/_fixture/unit";
 import {describe, expect} from "vitest";
-import {createProcessor} from "@/app/_function/create-processor/create-processor";
 import {readDocs} from "@/app/_function/read-docs";
 import {readHome} from "@/app/_function/read-home";
+import {toProcessor} from "@/app/_function/to-processor/to-processor";
 import {siteConfigSchema} from "@/type/site-config";
 
 describe("다이어그램", () => {
@@ -24,7 +24,7 @@ describe("다이어그램", () => {
              * WHEN
              * 문서 조립
              */
-            const [result] = await readDocs({scope, processor: createProcessor({site, scope})});
+            const [result] = await readDocs({scope, processor: toProcessor({site, scope})});
 
             /**
              * THEN
@@ -51,7 +51,7 @@ describe("다이어그램", () => {
              * WHEN
              * 홈 문서 조립
              */
-            const result = await readHome({scope, processor: createProcessor({site, scope, mermaid})});
+            const result = await readHome({scope, processor: toProcessor({site, scope, mermaid})});
 
             /**
              * THEN

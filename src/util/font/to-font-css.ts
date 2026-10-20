@@ -6,7 +6,7 @@ import {font_display_strategy, font_hash_length} from "@/constant/font";
 /**
  * 글꼴 스타일 변환 입력
  */
-interface FontCssOptions {
+interface FontCssParams {
     /**
      * 원본 font-face CSS 파일 경로
      */
@@ -23,16 +23,16 @@ interface FontCssOptions {
  *
  *   - 늦은 글꼴 교체와 문서 이동마다 같은 글꼴을 다시 받는 현상 방지
  */
-export const toFontCss = (options: FontCssOptions) => {
+export const toFontCss = (params: FontCssParams) => {
     const files = new Map<string, string>();
 
-    const css = [...readFileSync(options.css, "utf8").matchAll(/@font-face\s*\{[^}]*\}/g)]
+    const css = [...readFileSync(params.css, "utf8").matchAll(/@font-face\s*\{[^}]*\}/g)]
         .map((match) => {
             return match[0].replace(/font-display:\s*[^;]+;/g, `font-display: ${font_display_strategy};`).replace(/url\(([^)]+)\)/g, (_match: string, relativeUrl: string) => {
-                const file = join(dirname(options.css), relativeUrl);
+                const file = join(dirname(params.css), relativeUrl);
                 const extension = extname(file);
                 const hash = createHash("sha256").update(readFileSync(file)).digest("hex").slice(0, font_hash_length);
-                const url = `${options.fontDir}/${basename(file, extension)}.${hash}${extension}`;
+                const url = `${params.fontDir}/${basename(file, extension)}.${hash}${extension}`;
 
                 files.set(url, file);
 

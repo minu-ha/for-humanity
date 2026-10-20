@@ -5,7 +5,7 @@ import {readFile, writeFile} from "node:fs/promises";
  *
  *   - 버전별 본문은 유지하고 문서 탐색 정보와 업데이트 안내만 추가
  */
-const header = [
+const changelog_header = [
     "---",
     "name: Changelog",
     "label: 버전별 변경 사항과 업데이트 방법",
@@ -28,4 +28,4 @@ const header = [
 
 const source = await readFile(new URL("../CHANGELOG.md", import.meta.url), "utf8");
 
-await writeFile(new URL("../content/public/changelog.md", import.meta.url), `${header}\n\n${source.replace(/^# Changelog\s*\n/, "").trim()}\n`);
+await writeFile(new URL("../content/public/changelog.md", import.meta.url), `${changelog_header}\n\n${source.replace(/^# Changelog\s*\n/, "").trim()}\n`);

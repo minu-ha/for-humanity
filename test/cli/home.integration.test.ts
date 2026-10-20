@@ -2,10 +2,10 @@ import {mkdir, writeFile} from "node:fs/promises";
 import {join} from "node:path";
 import {test} from "@test/_fixture/unit";
 import {describe, expect} from "vitest";
-import {createProcessor} from "@/app/_function/create-processor/create-processor";
 import {readDocs} from "@/app/_function/read-docs";
 import {readHome} from "@/app/_function/read-home";
 import {toPageApp} from "@/app/_function/to-page-app/to-page-app";
+import {toProcessor} from "@/app/_function/to-processor/to-processor";
 import {asset_style_path} from "@/constant/asset";
 import {siteConfigSchema} from "@/type/site-config";
 
@@ -16,7 +16,7 @@ describe("홈페이지", () => {
          * 홈페이지와 문서 입력
          */
         const site = siteConfigSchema.parse({});
-        const processor = createProcessor({site, scope});
+        const processor = toProcessor({site, scope});
 
         await mkdir(join(scope.publicRoot, "guide"));
 
@@ -74,7 +74,7 @@ describe("홈페이지", () => {
          * WHEN
          * 홈페이지 렌더
          */
-        const home = await readHome({scope, processor: createProcessor({site, scope})});
+        const home = await readHome({scope, processor: toProcessor({site, scope})});
 
         const app = toPageApp({
             site,

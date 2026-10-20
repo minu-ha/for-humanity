@@ -6,7 +6,7 @@ import type {ResolvedSiteConfig} from "@/type/site-config";
 /**
  * 문서 묶음의 계층과 순서 입력
  */
-interface DocGroupsOptions {
+interface DocGroupsParams {
     /**
      * 검증한 전체 문서
      */
@@ -24,10 +24,10 @@ interface DocGroupsOptions {
  *   - 같은 조상의 중복 지정은 최초 순서 유지
  *   - 미지정 형제 묶음은 이름순
  */
-export const toDocGroups = (options: DocGroupsOptions) => {
+export const toDocGroups = (params: DocGroupsParams) => {
     const positions = new Map(
         uniqBy(
-            options.navigation.flatMap((path, index) => {
+            params.navigation.flatMap((path, index) => {
                 return path.map((_name, depth) => [JSON.stringify(path.slice(0, depth + 1)), index] as const);
             }),
             (entry) => entry[0],
@@ -35,10 +35,10 @@ export const toDocGroups = (options: DocGroupsOptions) => {
     );
 
     return toDocGroupBranches({
-        docs: options.docs,
-        children: Map.groupBy(options.docs, (doc) => doc.data.parent),
+        docs: params.docs,
+        children: Map.groupBy(params.docs, (doc) => doc.data.parent),
         path: [],
         positions,
-        unlistedPosition: options.navigation.length,
+        unlistedPosition: params.navigation.length,
     });
 };

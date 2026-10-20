@@ -2,13 +2,13 @@ import {existsSync, readFileSync, realpathSync, statSync} from "node:fs";
 import {join, relative} from "node:path";
 import {copy_error_content_folder, copy_error_content_root_missing, copy_error_public_missing, copy_hint_content_layout} from "@/app/_constant/copy";
 import {crawling_reserved_roots} from "@/app/_constant/crawling";
-import {createProcessor} from "@/app/_function/create-processor/create-processor";
 import {loadMermaidAssets} from "@/app/_function/load-mermaid-assets";
 import {readDocs} from "@/app/_function/read-docs";
 import {readHome} from "@/app/_function/read-home";
 import {toCrawlingApp} from "@/app/_function/to-crawling-app";
 import {toHttpApp} from "@/app/_function/to-http-app";
 import {toPageApp} from "@/app/_function/to-page-app/to-page-app";
+import {toProcessor} from "@/app/_function/to-processor/to-processor";
 import {asset_favicon_path, asset_font_dir, asset_style_path} from "@/constant/asset";
 import {font_body_css, font_brand_css, font_mono_css} from "@/constant/font";
 import type {ContentScope} from "@/type/content-scope";
@@ -96,7 +96,7 @@ export const loadSite = async (params: SiteParams) => {
     }
 
     const scope: ContentScope = {root, publicRoot, privateRoot, includePrivate: params.includePrivate === true};
-    const processor = createProcessor({site: params.site, scope, files, mermaid: loadMermaidAssets(params.kitRoot)});
+    const processor = toProcessor({site: params.site, scope, files, mermaid: loadMermaidAssets(params.kitRoot)});
 
     const [docs, home] = await Promise.all([
         readDocs({scope, processor, reserved: params.site.url === undefined ? undefined : crawling_reserved_roots}),

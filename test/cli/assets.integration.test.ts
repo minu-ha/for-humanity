@@ -2,9 +2,9 @@ import {mkdir, symlink, writeFile} from "node:fs/promises";
 import {join} from "node:path";
 import {test} from "@test/_fixture/unit";
 import {describe, expect} from "vitest";
-import {createProcessor} from "@/app/_function/create-processor/create-processor";
 import {readDocs} from "@/app/_function/read-docs";
 import {readHome} from "@/app/_function/read-home";
+import {toProcessor} from "@/app/_function/to-processor/to-processor";
 import {siteConfigSchema} from "@/type/site-config";
 
 describe("문서 자원", () => {
@@ -29,7 +29,7 @@ describe("문서 자원", () => {
          * WHEN
          * 문서 자원 처리
          */
-        const docs = await readDocs({scope, processor: createProcessor({site: siteConfigSchema.parse({}), scope, files})});
+        const docs = await readDocs({scope, processor: toProcessor({site: siteConfigSchema.parse({}), scope, files})});
 
         /**
          * THEN
@@ -55,7 +55,7 @@ describe("문서 자원", () => {
          * WHEN
          * 문서 자원 처리
          */
-        const result = readDocs({scope, processor: createProcessor({site: siteConfigSchema.parse({}), scope})});
+        const result = readDocs({scope, processor: toProcessor({site: siteConfigSchema.parse({}), scope})});
 
         /**
          * THEN
@@ -74,7 +74,7 @@ describe("문서 자원", () => {
 
         const files = new Map<string, string>();
         const site = siteConfigSchema.parse({});
-        const home = await readHome({scope, processor: createProcessor({site, scope, files})});
+        const home = await readHome({scope, processor: toProcessor({site, scope, files})});
         const before = [...files.keys()][0];
 
         /**
@@ -84,7 +84,7 @@ describe("문서 자원", () => {
         await writeFile(join(scope.root, "local image.png"), "changed");
 
         const updated = new Map<string, string>();
-        const changed = await readHome({scope, processor: createProcessor({site, scope, files: updated})});
+        const changed = await readHome({scope, processor: toProcessor({site, scope, files: updated})});
         const after = [...updated.keys()][0];
 
         /**
@@ -115,7 +115,7 @@ describe("문서 자원", () => {
          * WHEN
          * 링크된 이미지를 포함한 홈 처리
          */
-        const result = readHome({scope, processor: createProcessor({site: siteConfigSchema.parse({}), scope})});
+        const result = readHome({scope, processor: toProcessor({site: siteConfigSchema.parse({}), scope})});
 
         /**
          * THEN

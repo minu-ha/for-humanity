@@ -169,7 +169,7 @@ CSS와 글꼴 선언은 최초 HTML의 `<head>`에 포함합니다. JavaScript�
 
 ### Document processing lifetime
 
-`src/app/_function`이 파일 읽기·frontmatter 검증·Markdown 처리·서버 구성을 소유합니다. `create-processor`의 전용 플러그인은 그 함수 폴더의 `_` 파일에 둡니다. 본문의 표현을 만드는 플러그인은 `article` 위젯이 계속 소유합니다.
+`src/app/_function`이 파일 읽기·frontmatter 검증·Markdown 처리·서버 구성을 소유합니다. `to-processor`의 전용 플러그인은 그 함수 폴더의 `_` 파일에 둡니다. 본문의 표현을 만드는 플러그인은 `article` 위젯이 계속 소유합니다.
 
 - `build`: Markdown을 한 번 처리하고 페이지 앱의 라우트를 정적 HTML로 출력합니다.
 - `dev` 첫 요청: Vite 초기화 이후 전체 문서와 README를 읽어 본문 HTML을 메모리에 준비합니다.
@@ -227,7 +227,7 @@ Hono의 최초 레이아웃 효과는 아직 연결되지 않은 fragment에서 
 ### Store ownership and lifetime
 
 `src/store/navigation`에 생성기·저장 키·상태 계약·저장 자료 검증을 모읍니다. JSX 이벤트·반응형 배치·스크롤 영역·현재 헤딩은 `src/component/widget/sidebar`이 소유하며 구독을 설치한 효과에서 정리합니다.
-`createNavigationStores`는 브라우저의 탐색 진입점에서 페이지마다 생성하며, 서버 요청이나 정적 빌드에서는 실행하지 않습니다. 페이지 사이의 스크롤 위치는 `persist`가 이어받고, BFCache 복귀에서는 `persist.rehydrate()`로 최신 상태를 다시 읽습니다. 저장 자료는 스토어의 Zod 스키마로 한 번 검증하고, 손상된 저장값은 전체를 제외합니다. 스크롤 상태 타입도 같은 스키마에서 추론합니다.
+`toNavigationStores`는 브라우저의 탐색 진입점에서 페이지마다 생성하며, 서버 요청이나 정적 빌드에서는 실행하지 않습니다. 페이지 사이의 스크롤 위치는 `persist`가 이어받고, BFCache 복귀에서는 `persist.rehydrate()`로 최신 상태를 다시 읽습니다. 저장 자료는 스토어의 Zod 스키마로 한 번 검증하고, 손상된 저장값은 전체를 제외합니다. 스크롤 상태 타입도 같은 스키마에서 추론합니다.
 
 실제 저장 위치는 `sessionStorage`입니다. `createJSONStorage`는 Zustand 상태 객체와 저장소의 문자열 사이에서 JSON 직렬화, 역직렬화를 담당하는 어댑터입니다. `localStorage`로 바꾸는 경우에도 같은 어댑터를 사용할 수 있지만, 탐색 위치는 현재 탭에서만 유지하는 정책이므로 `sessionStorage`를 연결합니다. 저장소 조회는 어댑터에서 지연 실행하고, 저장 차단이나 용량 부족은 메모리 상태를 유지하도록 처리합니다.
 

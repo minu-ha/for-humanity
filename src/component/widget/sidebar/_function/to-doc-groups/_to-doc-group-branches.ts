@@ -6,7 +6,7 @@ import type {Doc} from "@/type/doc";
 /**
  * 같은 부모의 문서를 다음 경로 단계로 묶는 재귀 입력
  */
-interface DocGroupBranchesOptions {
+interface DocGroupBranchesParams {
     /**
      * 부모 경로에 속한 문서
      */
@@ -36,21 +36,21 @@ interface DocGroupBranchesOptions {
 /**
  * 각 단계의 직접 문서와 하위 묶음을 분리. 고정된 깊이 제한 없이 구성
  */
-export const toDocGroupBranches = (options: DocGroupBranchesOptions): DocGroup[] => {
+export const toDocGroupBranches = (params: DocGroupBranchesParams): DocGroup[] => {
     return [
         ...Map.groupBy(
-            options.docs.filter((doc) => doc.data.group.length > options.path.length),
-            (doc) => doc.data.group[options.path.length],
+            params.docs.filter((doc) => doc.data.group.length > params.path.length),
+            (doc) => doc.data.group[params.path.length],
         ),
     ]
         .map(([name, docs]) => {
-            const path = [...options.path, name];
+            const path = [...params.path, name];
 
             return {
                 name,
                 path,
                 docs,
-                position: options.positions.get(JSON.stringify(path)) ?? options.unlistedPosition,
+                position: params.positions.get(JSON.stringify(path)) ?? params.unlistedPosition,
             };
         })
         .toSorted((a, b) => a.position - b.position || a.name.localeCompare(b.name, locale_doc_group))
@@ -60,14 +60,14 @@ export const toDocGroupBranches = (options: DocGroupBranchesOptions): DocGroup[]
                 path: group.path,
                 docs: toDocBranches({
                     docs: group.docs.filter((doc) => doc.data.group.length === group.path.length && doc.data.parent === undefined),
-                    children: options.children,
+                    children: params.children,
                 }),
                 groups: toDocGroupBranches({
                     docs: group.docs,
-                    children: options.children,
+                    children: params.children,
                     path: group.path,
-                    positions: options.positions,
-                    unlistedPosition: options.unlistedPosition,
+                    positions: params.positions,
+                    unlistedPosition: params.unlistedPosition,
                 }),
             };
         });

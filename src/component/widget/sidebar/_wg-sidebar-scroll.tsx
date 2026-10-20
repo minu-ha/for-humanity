@@ -44,7 +44,7 @@ export const WgSidebarScroll = (props: WgSidebarScrollProps) => {
     /**
      * 소수 픽셀 반올림을 제외한 실제 남은 내용만 위, 아래 흐림으로 알림
      */
-    const updateOverflow = () => {
+    const measureOverflow = () => {
         frameRef.current = 0;
 
         if (props.portRef.current === null) {
@@ -60,9 +60,9 @@ export const WgSidebarScroll = (props: WgSidebarScrollProps) => {
     /**
      * 연속 스크롤과 관찰자 알림은 프레임당 한 번 측정
      */
-    const scheduleOverflow = () => {
+    const handleOverflowMeasure = () => {
         if (frameRef.current === 0) {
-            frameRef.current = requestAnimationFrame(updateOverflow);
+            frameRef.current = requestAnimationFrame(measureOverflow);
         }
     };
 
@@ -71,7 +71,7 @@ export const WgSidebarScroll = (props: WgSidebarScrollProps) => {
      */
     const handlePortScroll: DOMAttributes["onScroll"] = (_event) => {
         props.onScroll?.();
-        scheduleOverflow();
+        handleOverflowMeasure();
     };
 
     /**
@@ -82,7 +82,7 @@ export const WgSidebarScroll = (props: WgSidebarScrollProps) => {
             return;
         }
 
-        const observer = new ResizeObserver(scheduleOverflow);
+        const observer = new ResizeObserver(handleOverflowMeasure);
         let active = true;
 
         observer.observe(props.portRef.current);
@@ -91,15 +91,15 @@ export const WgSidebarScroll = (props: WgSidebarScrollProps) => {
             observer.observe(props.portRef.current.firstElementChild);
         }
 
-        addEventListener("pageshow", scheduleOverflow);
+        addEventListener("pageshow", handleOverflowMeasure);
 
         if (props.portRef.current.isConnected) {
-            updateOverflow();
+            measureOverflow();
         } else {
             // Hono 최초 레이아웃 효과는 분리된 fragment에서 실행, DOM 연결 후 첫 페인트 전 측정
             queueMicrotask(() => {
                 if (active) {
-                    updateOverflow();
+                    measureOverflow();
                 }
             });
         }
@@ -107,7 +107,7 @@ export const WgSidebarScroll = (props: WgSidebarScrollProps) => {
         return () => {
             active = false;
             observer.disconnect();
-            removeEventListener("pageshow", scheduleOverflow);
+            removeEventListener("pageshow", handleOverflowMeasure);
             cancelAnimationFrame(frameRef.current);
             frameRef.current = 0;
         };
@@ -118,7 +118,7 @@ export const WgSidebarScroll = (props: WgSidebarScrollProps) => {
      */
     useLayoutEffect(() => {
         if (props.ready && props.portRef.current?.isConnected) {
-            updateOverflow();
+            measureOverflow();
         }
     }, [props.children, props.ready]);
 

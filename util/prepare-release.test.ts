@@ -9,7 +9,7 @@ import {describe, expect} from "vitest";
 /**
  * 별도 작업 폴더에서 실행할 릴리스 검증 입력
  */
-interface ReleaseRun {
+interface ReleaseRunParams {
     /**
      * 임시 패키지 루트
      */
@@ -24,17 +24,17 @@ interface ReleaseRun {
 /**
  * 실제 릴리스 도구 실행, 저장소 경로 별칭과 임시 출력 파일 지정
  */
-const runRelease = (options: ReleaseRun) => {
+const runRelease = (params: ReleaseRunParams) => {
     const env = {...process.env};
 
     env.TSX_TSCONFIG_PATH = resolve("tsconfig.json");
-    env.GITHUB_OUTPUT = join(options.root, "outputs");
+    env.GITHUB_OUTPUT = join(params.root, "outputs");
 
     return spawnSync(
         process.execPath,
-        ["--import", import.meta.resolve("tsx"), fileURLToPath(new URL("prepare-release.ts", import.meta.url)), options.tag, join(options.root, "release")],
+        ["--import", import.meta.resolve("tsx"), fileURLToPath(new URL("prepare-release.ts", import.meta.url)), params.tag, join(params.root, "release")],
         {
-            cwd: options.root,
+            cwd: params.root,
             env,
             encoding: "utf8",
         },

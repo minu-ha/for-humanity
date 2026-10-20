@@ -1,7 +1,7 @@
 import {expect} from "@playwright/test";
 import {test} from "@test/_fixture/navigation";
 import {readNavigationScroll} from "@test/_fixture/read-navigation-scroll";
-import {navigation_scroll_storage_key} from "@/store/navigation/navigation-storage";
+import {storage_scroll_key} from "@/store/navigation/_constant/storage";
 
 test.use({viewport: {width: 1920, height: 600}});
 
@@ -228,7 +228,7 @@ test.describe("문서 탐색", () => {
                 sessionStorage.removeItem(options.key);
                 sessionStorage.setItem(`${options.key}:desktop`, JSON.stringify({navigation: options.signature, pathname: "/guide/", documents: 180, outline: 120}));
             },
-            {key: navigation_scroll_storage_key, signature},
+            {key: storage_scroll_key, signature},
         );
 
         /**

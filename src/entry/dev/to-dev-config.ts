@@ -9,7 +9,7 @@ import type {loadSite, SiteParams} from "@/app/load-site";
 import {config_file_names} from "@/constant/config";
 import {copy_error_prefix} from "@/constant/copy";
 import {copy_error_prepare} from "@/entry/dev/_constant/copy";
-import {dev_ignored_dirs, dev_reload_delay_ms} from "@/entry/dev/_constant/dev";
+import {watch_ignored_dirs, watch_reload_delay_ms} from "@/entry/dev/_constant/watch";
 import {toChangeQueue} from "@/util/async/to-change-queue";
 import {toErrorMessage} from "@/util/error/to-error-message";
 import {isOutsideRoot} from "@/util/file/is-outside-root";
@@ -125,7 +125,7 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                         },
                     });
 
-                    const reload = debounce(refresh, dev_reload_delay_ms);
+                    const reload = debounce(refresh, watch_reload_delay_ms);
 
                     /**
                      * 문서와 소스 변경 시 스냅샷 갱신, 기존 CSS 수정은 Vite HMR 사용
@@ -133,7 +133,7 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                     const handleChange = (event: string, file: string) => {
                         const documentPath = relative(root, file);
 
-                        const isDocument = !isOutsideRoot(documentPath) && !documentPath.split(sep).some((part) => dev_ignored_dirs.includes(part.toLowerCase()));
+                        const isDocument = !isOutsideRoot(documentPath) && !documentPath.split(sep).some((part) => watch_ignored_dirs.includes(part.toLowerCase()));
 
                         const extension = extname(file);
 
@@ -177,7 +177,7 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                           /^\/src\/entry\/browser\//,
                       ]
                     : viteClientPaths,
-                ignoreWatching: dev_ignored_dirs.map((dir) => `**/${dir}/**`),
+                ignoreWatching: watch_ignored_dirs.map((dir) => `**/${dir}/**`),
                 handleHotUpdate: (context) => {
                     return context.file.endsWith(".css") ? undefined : [];
                 },

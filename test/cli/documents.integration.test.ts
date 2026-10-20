@@ -2,8 +2,8 @@ import {mkdir, writeFile} from "node:fs/promises";
 import {join} from "node:path";
 import {test} from "@test/_fixture/unit";
 import {describe, expect} from "vitest";
-import {createProcessor} from "@/app/_function/create-processor/create-processor";
 import {readDocs} from "@/app/_function/read-docs";
+import {toProcessor} from "@/app/_function/to-processor/to-processor";
 import {siteConfigSchema} from "@/type/site-config";
 
 describe("문서 로드", () => {
@@ -23,7 +23,7 @@ describe("문서 로드", () => {
          * WHEN
          * 문서 로드
          */
-        const docs = await readDocs({scope, processor: createProcessor({site, scope})});
+        const docs = await readDocs({scope, processor: toProcessor({site, scope})});
 
         /**
          * THEN
@@ -49,7 +49,7 @@ describe("문서 로드", () => {
          * WHEN
          * 문서 로드
          */
-        const result = readDocs({scope, processor: createProcessor({site, scope})});
+        const result = readDocs({scope, processor: toProcessor({site, scope})});
 
         /**
          * THEN
@@ -72,7 +72,7 @@ describe("문서 로드", () => {
          * WHEN
          * 문서 로드
          */
-        const result = readDocs({scope, processor: createProcessor({site, scope})});
+        const result = readDocs({scope, processor: toProcessor({site, scope})});
 
         /**
          * THEN
@@ -99,7 +99,7 @@ describe("문서 로드", () => {
          * WHEN
          * 문서 로드
          */
-        const result = readDocs({scope, processor: createProcessor({site, scope})});
+        const result = readDocs({scope, processor: toProcessor({site, scope})});
 
         /**
          * THEN
@@ -122,7 +122,7 @@ describe("문서 로드", () => {
          * WHEN
          * 문서 로드
          */
-        const result = readDocs({scope, processor: createProcessor({site, scope})});
+        const result = readDocs({scope, processor: toProcessor({site, scope})});
 
         /**
          * THEN
@@ -147,7 +147,7 @@ describe("문서 로드", () => {
          * WHEN
          * 문서 로드
          */
-        const docs = await readDocs({scope, processor: createProcessor({site, scope})});
+        const docs = await readDocs({scope, processor: toProcessor({site, scope})});
 
         const api = docs.find((doc) => doc.id === "api");
         const empty = docs.find((doc) => doc.id === "empty");
@@ -177,7 +177,7 @@ describe("문서 로드", () => {
          * WHEN
          * 문서 로드
          */
-        const result = readDocs({scope, processor: createProcessor({site, scope})});
+        const result = readDocs({scope, processor: toProcessor({site, scope})});
 
         /**
          * THEN
@@ -204,7 +204,7 @@ describe("문서 로드", () => {
          * WHEN
          * 문서 로드
          */
-        const docs = await readDocs({scope, processor: createProcessor({site, scope})});
+        const docs = await readDocs({scope, processor: toProcessor({site, scope})});
 
         /**
          * THEN
@@ -234,7 +234,7 @@ describe("문서 로드", () => {
          * WHEN
          * 문서 로드
          */
-        const docs = await readDocs({scope, processor: createProcessor({site, scope})});
+        const docs = await readDocs({scope, processor: toProcessor({site, scope})});
 
         /**
          * THEN

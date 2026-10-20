@@ -8,11 +8,21 @@ import {status_candidate_pattern, status_date_pattern} from "@/component/widget/
 import type {ResolvedSiteConfig} from "@/type/site-config";
 
 /**
+ * 상태 표지로 바꿀 설정 문구
+ */
+interface StatusOptions {
+    /**
+     * 사이트 설정의 문구와 색 종류, 날짜 포함 여부
+     */
+    status: ResolvedSiteConfig["status"];
+}
+
+/**
  * 설정 문구의 상태 표지 변환. 괄호 제거. 제목, 링크 제외
  *
  *   - 미등록 날짜 문구는 파일 경고. remark-report에서 출력
  */
-export const remarkStatus = (options: Pick<ResolvedSiteConfig, "status">) => {
+export const remarkStatus = (options: StatusOptions) => {
     const statuses = orderBy(options.status, [(item) => item.phrase.length], ["desc"]);
     const phrases = statuses.map((item) => [escapeRegExp(item.phrase), ...(item.date ? [`(?: ${status_date_pattern})?`] : [])].join("")).join("|");
     const pattern = new RegExp(String.raw`\((${phrases})\)|(${phrases})`, "g");

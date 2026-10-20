@@ -3,10 +3,10 @@ import {join} from "node:path";
 import {toNavigationHtml} from "@test/_fixture/to-navigation-html";
 import {test} from "@test/_fixture/unit";
 import {describe, expect} from "vitest";
-import {createProcessor} from "@/app/_function/create-processor/create-processor";
 import {readDocs} from "@/app/_function/read-docs";
 import {readHome} from "@/app/_function/read-home";
 import {toPageApp} from "@/app/_function/to-page-app/to-page-app";
+import {toProcessor} from "@/app/_function/to-processor/to-processor";
 import {navigationDataSchema} from "@/component/widget/sidebar/_constant/navigation-data-schema";
 import {toDocGroups} from "@/component/widget/sidebar/_function/to-doc-groups/to-doc-groups";
 import {toNavigationData} from "@/component/widget/sidebar/_function/to-navigation-data/to-navigation-data";
@@ -29,7 +29,7 @@ describe("문서 탐색", () => {
          * WHEN
          * 탐색 데이터와 마크업 생성
          */
-        const docs = await readDocs({scope, processor: createProcessor({site, scope})});
+        const docs = await readDocs({scope, processor: toProcessor({site, scope})});
         const data = toNavigationData({site, docs, current: "guide"});
         const json = toScriptJson(data);
 
@@ -57,7 +57,7 @@ describe("문서 탐색", () => {
          * WHEN
          * 탐색 데이터와 마크업 생성
          */
-        const home = await readHome({scope, processor: createProcessor({site, scope})});
+        const home = await readHome({scope, processor: toProcessor({site, scope})});
         const assets = {fontCss: "", preload: [], browser: {kind: "inline" as const, code: ""}, stylePaths: [asset_style_path]};
         const html = await (await toPageApp({site, store: {docs: [], home}, assets}).request("/")).text();
         const rail = html.match(/<aside\b[^>]*data-sidebar-toc=""[^>]*>([\s\S]*?)<\/aside>/)?.[1];
@@ -88,7 +88,7 @@ describe("문서 탐색", () => {
          * WHEN
          * 탐색 데이터와 마크업 생성
          */
-        const docs = await readDocs({scope, processor: createProcessor({site, scope})});
+        const docs = await readDocs({scope, processor: toProcessor({site, scope})});
         const html = toNavigationHtml({site, docs, current: "writing"});
         const groups = [...html.matchAll(/<section\b[^>]*aria-label="([^"]+)"/g)];
 
@@ -127,7 +127,7 @@ describe("문서 탐색", () => {
          * WHEN
          * 탐색 데이터와 마크업 생성
          */
-        const docs = await readDocs({scope, processor: createProcessor({site, scope})});
+        const docs = await readDocs({scope, processor: toProcessor({site, scope})});
         const groups = toDocGroups({docs, navigation: site.navigation});
 
         /**
@@ -183,7 +183,7 @@ describe("문서 탐색", () => {
          * WHEN
          * 탐색 데이터와 마크업 생성
          */
-        const docs = await readDocs({scope, processor: createProcessor({site, scope})});
+        const docs = await readDocs({scope, processor: toProcessor({site, scope})});
         const groups = toDocGroups({docs, navigation: site.navigation});
         const guide = groups[0].groups[0].groups[0];
 
@@ -247,7 +247,7 @@ describe("문서 탐색", () => {
              * WHEN
              * 공개 폴더별 탐색 데이터 생성
              */
-            const docs = await readDocs({scope: current, processor: createProcessor({site, scope: current})});
+            const docs = await readDocs({scope: current, processor: toProcessor({site, scope: current})});
             const groups = toDocGroups({docs, navigation: site.navigation});
 
             /**

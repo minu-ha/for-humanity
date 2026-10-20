@@ -5,7 +5,7 @@ import type {ParsedArgs} from "citty";
 import {toSSG} from "hono/ssg";
 import {readProject} from "@/app/_function/read-project";
 import {loadSite} from "@/app/load-site";
-import type {cli_docs_args} from "@/entry/cli/_constant/cli";
+import type {command_args} from "@/entry/cli/_constant/command";
 import {copy_error_project_args} from "@/entry/cli/_constant/copy";
 import {toPreviewConfig} from "@/entry/preview/to-preview-config";
 import {toErrorMessage} from "@/util/error/to-error-message";
@@ -23,7 +23,7 @@ interface CliCommandParams {
     /**
      * 기본 문서 경로를 적용한 Citty 인자
      */
-    args: ParsedArgs<typeof cli_docs_args>;
+    args: ParsedArgs<typeof command_args>;
 }
 
 /**

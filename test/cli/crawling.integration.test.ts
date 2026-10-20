@@ -3,11 +3,11 @@ import {join} from "node:path";
 import {test} from "@test/_fixture/unit";
 import {toSSG} from "hono/ssg";
 import {describe, expect} from "vitest";
-import {createProcessor} from "@/app/_function/create-processor/create-processor";
 import {readDocs} from "@/app/_function/read-docs";
 import {toCrawlingApp} from "@/app/_function/to-crawling-app";
 import {toHttpApp} from "@/app/_function/to-http-app";
 import {toPageApp} from "@/app/_function/to-page-app/to-page-app";
+import {toProcessor} from "@/app/_function/to-processor/to-processor";
 import {asset_style_path} from "@/constant/asset";
 import {siteConfigSchema} from "@/type/site-config";
 
@@ -52,7 +52,7 @@ describe("크롤러 파일", () => {
          * WHEN
          * 페이지와 크롤러 응답 생성
          */
-        const docs = await readDocs({scope, processor: createProcessor({site, scope})});
+        const docs = await readDocs({scope, processor: toProcessor({site, scope})});
         const store = {docs};
         const assets = {fontCss: "", preload: [], browser: {kind: "inline" as const, code: ""}, stylePaths: [asset_style_path]};
         const app = toHttpApp({pages: toPageApp({site, store, assets}), crawling: toCrawlingApp({url, store}), files: new Map()});
@@ -109,7 +109,7 @@ describe("크롤러 파일", () => {
          * WHEN
          * 페이지와 크롤러 응답 생성
          */
-        const docs = await readDocs({scope, processor: createProcessor({site, scope})});
+        const docs = await readDocs({scope, processor: toProcessor({site, scope})});
         const assets = {fontCss: "", preload: [], browser: {kind: "inline" as const, code: ""}, stylePaths: [asset_style_path]};
         const app = toPageApp({site, store: {docs}, assets});
         const result = await toSSG(app, {writeFile, mkdir}, {dir: scope.root});
@@ -139,7 +139,7 @@ describe("크롤러 파일", () => {
         await writeFile(join(scope.publicRoot, "sitemap.xml/guide.md"), "---\nname: Sitemap\nlabel: Sitemap\ngroup: Guide\n---\n\nText.\n");
 
         const site = siteConfigSchema.parse({});
-        const processor = createProcessor({site, scope});
+        const processor = toProcessor({site, scope});
         const params = {scope, processor, reserved: reserved ? ["robots.txt", "sitemap.xml"] : undefined};
 
         /**

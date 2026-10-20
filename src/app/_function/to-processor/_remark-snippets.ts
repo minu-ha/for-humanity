@@ -5,7 +5,7 @@ import {visit} from "unist-util-visit";
 import type {VFile} from "vfile";
 import {copy_error_file_missing, copy_error_not_file, copy_error_region_missing, copy_error_snippet} from "@/app/_constant/copy";
 import {snippet_language_by_extension, snippet_pattern} from "@/app/_constant/snippet";
-import {toSnippetBody} from "@/app/_function/create-processor/_to-snippet-body";
+import {toSnippetBody} from "@/app/_function/to-processor/_to-snippet-body";
 import type {ContentScope} from "@/type/content-scope";
 import {toErrorMessage} from "@/util/error/to-error-message";
 import {assertContentPath} from "@/util/file/assert-content-path";

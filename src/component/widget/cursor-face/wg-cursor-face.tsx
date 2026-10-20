@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import {useLayoutEffect, useRef} from "hono/jsx";
-import {cursor_face_offset_px, cursor_face_size_px, cursor_face_storage_key} from "@/component/widget/cursor-face/_constant/cursor-face";
+import {image_size_px} from "@/component/widget/cursor-face/_constant/image";
+import {position_offset_px, position_storage_key} from "@/component/widget/cursor-face/_constant/position";
 import {asset_favicon_path} from "@/constant/asset";
 import "./wg-cursor-face.css";
 
@@ -56,8 +57,8 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
             }
 
             faceRef.current.style.transform = `translate3d(
-                ${Math.max(0, Math.min(positionRef.current.x + cursor_face_offset_px, document.documentElement.clientWidth - faceRef.current.width - cursor_face_offset_px))}px,
-                ${Math.max(0, Math.min(positionRef.current.y + cursor_face_offset_px, document.documentElement.clientHeight - faceRef.current.height - cursor_face_offset_px))}px,
+                ${Math.max(0, Math.min(positionRef.current.x + position_offset_px, document.documentElement.clientWidth - faceRef.current.width - position_offset_px))}px,
+                ${Math.max(0, Math.min(positionRef.current.y + position_offset_px, document.documentElement.clientHeight - faceRef.current.height - position_offset_px))}px,
                 0
             )`;
 
@@ -100,7 +101,7 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
         }
 
         try {
-            sessionStorage.setItem(cursor_face_storage_key, JSON.stringify({x: positionRef.current.x, y: positionRef.current.y}));
+            sessionStorage.setItem(position_storage_key, JSON.stringify({x: positionRef.current.x, y: positionRef.current.y}));
         } catch {
             // 저장소 차단 시 현재 페이지의 포인터 동작 유지
         }
@@ -111,9 +112,9 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
      */
     const handlePageShow = () => {
         try {
-            const stored = sessionStorage.getItem(cursor_face_storage_key);
+            const stored = sessionStorage.getItem(position_storage_key);
 
-            sessionStorage.removeItem(cursor_face_storage_key);
+            sessionStorage.removeItem(position_storage_key);
 
             if (stored === null || !mediaRef.current?.matches) {
                 return;
@@ -175,8 +176,8 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
             ref={props.ready ? faceRef : undefined}
             className={clsx("wg_cursorFace__root")}
             src={asset_favicon_path}
-            width={cursor_face_size_px}
-            height={cursor_face_size_px}
+            width={image_size_px}
+            height={image_size_px}
             alt=""
             aria-hidden="true"
             draggable={false}

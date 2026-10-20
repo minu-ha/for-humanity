@@ -9,10 +9,10 @@ import remarkRehype from "remark-rehype";
 import remarkSmartypants from "remark-smartypants";
 import {createCssVariablesTheme} from "shiki";
 import {unified} from "unified";
-import {rehypeAssets} from "@/app/_function/create-processor/_rehype-assets";
-import {rehypeContentLinks} from "@/app/_function/create-processor/_rehype-content-links";
-import {remarkReport} from "@/app/_function/create-processor/_remark-report";
-import {remarkSnippets} from "@/app/_function/create-processor/_remark-snippets";
+import {rehypeAssets} from "@/app/_function/to-processor/_rehype-assets";
+import {rehypeContentLinks} from "@/app/_function/to-processor/_rehype-content-links";
+import {remarkReport} from "@/app/_function/to-processor/_remark-report";
+import {remarkSnippets} from "@/app/_function/to-processor/_remark-snippets";
 import {shikiTransformers} from "@/component/widget/article/_constant/shiki-transformers";
 import {rehypeHead} from "@/component/widget/article/_function/rehype-head";
 import {rehypeHeadingIds} from "@/component/widget/article/_function/rehype-heading-ids";
@@ -32,7 +32,7 @@ import type {ResolvedSiteConfig} from "@/type/site-config";
 /**
  * Markdown 처리기 조립 입력
  */
-interface ProcessorOptions {
+interface ProcessorParams {
     /**
      * 기본값을 적용한 사이트 설정
      */
@@ -61,24 +61,24 @@ interface ProcessorOptions {
  *   - 플러그인 HTML 조각은 rehype-raw에서 해석. 이후 링크, 자원 검사는 원시 HTML 포함
  *   - 코드 상자의 색상은 article CSS 소유, Shiki 토큰 색상은 --app-code-* 참조
  */
-export const createProcessor = (options: ProcessorOptions) => {
-    const files = options.files ?? new Map<string, string>();
+export const toProcessor = (params: ProcessorParams) => {
+    const files = params.files ?? new Map<string, string>();
 
     return unified()
         .use(remarkParse)
         .use(remarkFrontmatter, ["yaml"])
         .use(remarkGfm)
-        .use(remarkSnippets, {scope: options.scope})
+        .use(remarkSnippets, {scope: params.scope})
         .use(remarkSmartypants)
         .use(remarkDirective)
         .use(remarkBlocks)
         .use(remarkParts)
-        .use(remarkMermaid, {assets: options.mermaid, files})
-        .use(remarkStatus, {status: options.site.status})
+        .use(remarkMermaid, {assets: params.mermaid, files})
+        .use(remarkStatus, {status: params.site.status})
         .use(remarkSwatch)
-        .use(remarkLinks, {scope: options.scope})
+        .use(remarkLinks, {scope: params.scope})
         .use(remarkUnknownDirectives)
-        .use(remarkReport, {root: options.scope.root})
+        .use(remarkReport, {root: params.scope.root})
         .use(remarkRehype, {allowDangerousHtml: true})
         .use(rehypeShiki, {theme: createCssVariablesTheme({name: "for-humanity", variablePrefix: "--app-code-"}), transformers: shikiTransformers})
         .use(rehypeHead)
@@ -86,7 +86,7 @@ export const createProcessor = (options: ProcessorOptions) => {
         .use(rehypeSections)
         .use(rehypeTables)
         .use(rehypeRaw)
-        .use(rehypeContentLinks, {scope: options.scope})
-        .use(rehypeAssets, {scope: options.scope, files})
+        .use(rehypeContentLinks, {scope: params.scope})
+        .use(rehypeAssets, {scope: params.scope, files})
         .use(rehypeStringify, {allowDangerousHtml: true});
 };

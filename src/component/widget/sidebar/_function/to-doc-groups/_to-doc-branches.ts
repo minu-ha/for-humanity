@@ -5,7 +5,7 @@ import type {Doc} from "@/type/doc";
 /**
  * 문서 가지의 재귀 구성 입력
  */
-interface DocBranchesOptions {
+interface DocBranchesParams {
     /**
      * 현재 깊이의 형제 문서
      */
@@ -20,12 +20,12 @@ interface DocBranchesOptions {
 /**
  * 검증된 부모 관계로 문서 가지를 재귀 구성. 형제 순서와 URL 유지
  */
-export const toDocBranches = (options: DocBranchesOptions): DocBranch[] => {
-    return options.docs
+export const toDocBranches = (params: DocBranchesParams): DocBranch[] => {
+    return params.docs
         .toSorted((a, b) => a.data.order - b.data.order || a.data.name.localeCompare(b.data.name, locale_doc_name) || a.id.localeCompare(b.id, locale_doc_name))
         .map((doc) => {
-            const children = options.children.get(doc.id);
+            const children = params.children.get(doc.id);
 
-            return {...doc, children: children === undefined ? undefined : toDocBranches({docs: children, children: options.children})};
+            return {...doc, children: children === undefined ? undefined : toDocBranches({docs: children, children: params.children})};
         });
 };

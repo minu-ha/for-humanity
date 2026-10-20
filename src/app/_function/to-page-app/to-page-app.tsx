@@ -34,18 +34,18 @@ export interface PageParams {
  *   - 자원 wildcard와 정규식 매개변수 혼합 시 TrieRouter fallback으로 중첩 경로 불일치
  *   - 자원 응답은 toHttpApp의 별도 앱 소유
  */
-export const toPageApp = (options: PageParams) => {
+export const toPageApp = (params: PageParams) => {
     const app = new Hono();
 
-    app.get("/", (c) => c.html(toHtml(<PgHome site={options.site} docs={options.store.docs} assets={options.assets} home={options.store.home} />)));
+    app.get("/", (c) => c.html(toHtml(<PgHome site={params.site} docs={params.store.docs} assets={params.assets} home={params.store.home} />)));
 
     app.get(
         "/:slug{.+}/",
-        ssgParams(() => options.store.docs.map((doc) => ({slug: doc.id}))),
+        ssgParams(() => params.store.docs.map((doc) => ({slug: doc.id}))),
         (c) => {
-            const doc = options.store.docs.find((entry) => entry.id === c.req.param("slug"));
+            const doc = params.store.docs.find((entry) => entry.id === c.req.param("slug"));
 
-            return doc === undefined ? c.notFound() : c.html(toHtml(<PgDoc site={options.site} docs={options.store.docs} assets={options.assets} doc={doc} />));
+            return doc === undefined ? c.notFound() : c.html(toHtml(<PgDoc site={params.site} docs={params.store.docs} assets={params.assets} doc={doc} />));
         },
     );
 

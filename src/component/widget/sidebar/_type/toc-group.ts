@@ -1,4 +1,5 @@
 import type {DocHeading} from "@/type/doc-heading";
+import type {DocSection} from "@/type/doc-section";
 
 /**
  * 목차 소제목 항목
@@ -17,7 +18,7 @@ export interface TocSection extends TocSub {
     /**
      * 이 절에서 시작하는 가름 이름
      */
-    part?: string;
+    part?: DocSection["part"];
 
     /**
      * 해당 절의 소제목. 현재 위치와 무관하게 전체 표시
@@ -32,7 +33,7 @@ export interface TocGroup {
     /**
      * 묶음 위의 가름 이름
      */
-    part?: string;
+    part?: DocSection["part"];
 
     /**
      * 묶음의 절 목록

@@ -7,8 +7,8 @@ import type {NavigationData} from "@/component/widget/sidebar/_type/navigation-d
 import {WgDocTree} from "@/component/widget/sidebar/_wg-doc-tree";
 import {WgSidebarScroll} from "@/component/widget/sidebar/_wg-sidebar-scroll";
 import {WgToc} from "@/component/widget/sidebar/_wg-toc";
-import type {createNavigationStores} from "@/store/navigation/create-navigation-stores";
 import type {NavigationLayout} from "@/store/navigation/navigation-state";
+import type {toNavigationStores} from "@/store/navigation/to-navigation-stores";
 import {findSameTabLink} from "@/util/dom/find-same-tab-link";
 import "./wg-sidebar.css";
 
@@ -44,7 +44,7 @@ export interface WgSidebarProps {
     /**
      * 브라우저 진입점만 제공. 없으면 저장소와 전역 DOM을 읽지 않음
      */
-    stores?: ReturnType<typeof createNavigationStores>;
+    stores?: ReturnType<typeof toNavigationStores>;
 }
 
 export const WgSidebar = (props: WgSidebarProps) => {
@@ -108,7 +108,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
     /**
      * 닫기, 이동보다 먼저 실제 좌표 보존. 숨긴 모달과 아직 복원하지 않은 배치는 저장하지 않음
      */
-    const saveScroll = () => {
+    const handleScrollSave = () => {
         const documents = getDocumentsPort();
 
         if (
@@ -162,7 +162,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
         }
 
         restorePendingRef.current = false;
-        saveScroll();
+        handleScrollSave();
 
         // 첫 페인트의 넘침 표시 동기화, 비동기 scroll 이벤트 전 반영
         documents.dispatchEvent(new Event("scroll"));
@@ -185,7 +185,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
      * 네이티브 포커스 복원을 유지하면서 링크의 기본 이동보다 먼저 배경 잠금 해제
      */
     const closeNavigation = () => {
-        saveScroll();
+        handleScrollSave();
         dialogRef.current?.close();
         document.body.classList.remove("wg_shell__root--drawerOpen");
         setDrawerOpen(false);
@@ -236,7 +236,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
      * 보조키, 새 탭 링크는 모달 유지. 같은 탭의 기본 이동만 모달을 닫고 진행
      */
     const handleNavigationClick: DOMAttributes["onClick"] = (event) => {
-        saveScroll();
+        handleScrollSave();
 
         if (dialogRef.current?.open === true && findSameTabLink(event) !== null) {
             closeNavigation();
@@ -296,7 +296,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
         wideRef.current = matchMedia(navigation_wide_query);
         mobileRef.current.addEventListener("change", handleLayoutChange);
         wideRef.current.addEventListener("change", handleLayoutChange);
-        addEventListener("pagehide", saveScroll);
+        addEventListener("pagehide", handleScrollSave);
         addEventListener("pageshow", handlePageShow);
 
         return () => {
@@ -304,7 +304,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
             wideRef.current?.removeEventListener("change", handleLayoutChange);
             mobileRef.current = null;
             wideRef.current = null;
-            removeEventListener("pagehide", saveScroll);
+            removeEventListener("pagehide", handleScrollSave);
             removeEventListener("pageshow", handlePageShow);
             document.body.classList.remove("wg_shell__root--drawerOpen");
         };
@@ -401,7 +401,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
                  */}
                 {layout !== "drawer" && (
                     <div className={clsx("wg_sidebar__docsPanel")} data-sidebar-docs="" data-sidebar-layout={layout}>
-                        <WgSidebarScroll portRef={documentsRef} kind="documents" ready={props.stores !== undefined} onScroll={saveScroll} onClick={handleNavigationClick}>
+                        <WgSidebarScroll portRef={documentsRef} kind="documents" ready={props.stores !== undefined} onScroll={handleScrollSave} onClick={handleNavigationClick}>
                             <WgDocTree groups={props.data.groups} />
                         </WgSidebarScroll>
                     </div>
@@ -413,7 +413,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
              */}
             <aside className={clsx("wg_sidebar__tocColumn")} data-sidebar-toc="">
                 <div className={clsx("wg_sidebar__tocPanel")}>
-                    <WgSidebarScroll portRef={outlineRef} kind="outline" ready={props.stores !== undefined} onScroll={saveScroll} onClick={handleNavigationClick}>
+                    <WgSidebarScroll portRef={outlineRef} kind="outline" ready={props.stores !== undefined} onScroll={handleScrollSave} onClick={handleNavigationClick}>
                         {props.data.outline.length > 0 && <WgToc groups={props.data.outline} />}
                     </WgSidebarScroll>
                 </div>
@@ -462,7 +462,13 @@ export const WgSidebar = (props: WgSidebarProps) => {
                 <div className={clsx("wg_sidebar__drawerContent")}>
                     {layout === "drawer" && (
                         <div className={clsx("wg_sidebar__docsPanel")} data-sidebar-docs="" data-sidebar-layout={layout}>
-                            <WgSidebarScroll portRef={drawerDocumentsRef} kind="documents" ready={props.stores !== undefined} onScroll={saveScroll} onClick={handleNavigationClick}>
+                            <WgSidebarScroll
+                                portRef={drawerDocumentsRef}
+                                kind="documents"
+                                ready={props.stores !== undefined}
+                                onScroll={handleScrollSave}
+                                onClick={handleNavigationClick}
+                            >
                                 <WgDocTree groups={props.data.groups} />
                             </WgSidebarScroll>
                         </div>

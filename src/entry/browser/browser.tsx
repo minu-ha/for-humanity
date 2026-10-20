@@ -4,7 +4,7 @@
 import {createRoot} from "hono/jsx/dom/client";
 import {WgShellControls} from "@/component/widget/shell-controls/wg-shell-controls";
 import {navigationDataSchema} from "@/component/widget/sidebar/_constant/navigation-data-schema";
-import {createNavigationStores} from "@/store/navigation/create-navigation-stores";
+import {toNavigationStores} from "@/store/navigation/to-navigation-stores";
 
 const root = document.querySelector<HTMLElement>("[data-shell-browser-root]");
 const payload = document.getElementById("fh-navigation-data");
@@ -14,7 +14,7 @@ if (root !== null && payload !== null) {
         createRoot(root).render(
             <WgShellControls
                 data={navigationDataSchema.parse(JSON.parse(payload.textContent))}
-                stores={createNavigationStores({
+                stores={toNavigationStores({
                     session: () => {
                         return sessionStorage;
                     },

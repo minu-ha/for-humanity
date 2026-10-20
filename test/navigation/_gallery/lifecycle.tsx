@@ -2,7 +2,7 @@ import {flushSync} from "hono/jsx/dom";
 import {createRoot} from "hono/jsx/dom/client";
 import {WgShellControls} from "@/component/widget/shell-controls/wg-shell-controls";
 import {navigationDataSchema} from "@/component/widget/sidebar/_constant/navigation-data-schema";
-import {createNavigationStores} from "@/store/navigation/create-navigation-stores";
+import {toNavigationStores} from "@/store/navigation/to-navigation-stores";
 
 const root = document.querySelector<HTMLElement>("[data-shell-browser-root]");
 const data = document.getElementById("fh-navigation-data");
@@ -13,7 +13,7 @@ if (root === null || data === null) {
 
 const navigation = navigationDataSchema.parse(JSON.parse(data.textContent));
 
-const stores = createNavigationStores({
+const stores = toNavigationStores({
     session: () => {
         return sessionStorage;
     },
