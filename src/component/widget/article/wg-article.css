@@ -229,7 +229,7 @@
         border-top: 1px dotted var(--app-color-border);
     }
 
-    /* stylelint-disable selector-class-pattern -- Shiki 가 만드는 line, highlighted, diff 클래스 */
+    /* Shiki가 만드는 line, highlighted, diff 클래스 */
 
     /* 코드 줄, 바탕을 상자 가로 전체로, 표기 없는 줄은 보이는 차이 없음 */
     & pre code .line {
@@ -340,7 +340,6 @@
         counter-increment: line;
         user-select: none;
     }
-    /* stylelint-enable selector-class-pattern */
     /* stylelint-enable selector-disallowed-list */
 }
 
@@ -367,12 +366,12 @@
     padding-bottom: var(--app-space-block);
     border-bottom: 1px dotted var(--app-color-border);
 
-    /* stylelint-disable-next-line selector-disallowed-list -- Markdown 생성 머리 */
+    /* 작성한 블록의 종류와 무관하게 마지막 블록의 아래 여백 제거 */
     & > :last-child {
         margin-bottom: 0;
     }
 
-    /* stylelint-disable selector-disallowed-list -- README의 가운데 정렬 HTML 소개 */
+    /* README의 가운데 정렬 HTML 소개, 작성자 마크업이라 요소 선택자 사용 */
     & [align="center"] {
         padding: var(--app-space-group) 0;
         text-align: center;
@@ -391,7 +390,6 @@
         width: 72px;
         image-rendering: pixelated;
     }
-    /* stylelint-enable selector-disallowed-list */
 }
 
 /* 제목 글자만 강조, 여러 줄에서도 각 줄을 칠하고 문서 배치는 유지 */

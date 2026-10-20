@@ -32,6 +32,7 @@ export interface WgArticleProps {
 export const WgArticle = (props: WgArticleProps) => {
     return (
         <Fragment>
+            {/* biome-ignore lint/security/noDangerouslySetInnerHtml: 빌드 처리기가 만든 문서 HTML. 작성자의 원시 HTML 허용이 문서 계약 */}
             {props.html !== undefined && <article className={clsx("wg_article__root")} dangerouslySetInnerHTML={{__html: props.html}} />}
             {props.html === undefined && (
                 <article className={clsx("wg_article__root")}>

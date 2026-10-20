@@ -44,14 +44,12 @@
                 }
             },
             "correctness": {
+                "noUnusedImports": "error",
                 "noUnusedFunctionParameters": "error",
                 "noNestedComponentDefinitions": "error"
             },
             "suspicious": {
                 "noExplicitAny": "error"
-            },
-            "security": {
-                "noDangerouslySetInnerHtml": "off"
             },
             "performance": {
                 "noNamespaceImport": "error",

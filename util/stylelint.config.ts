@@ -23,6 +23,13 @@ const toOwnClassPattern = (scope: "pg" | "wg" | "ui") => {
 };
 
 /**
+ * 이름을 정하지 않는 라이브러리 클래스. 소유 root 아래에서만 선택
+ *
+ *   - Shiki의 코드 줄 표기, Mermaid의 공유 툴팁
+ */
+const library_prefixes = [/^\.(shiki|line|highlighted|diff|has-)/, /^\.mermaid/];
+
+/**
  * 직접 작성한 마크업의 금지 선택자
  */
 const own_markup_patterns = [
@@ -34,14 +41,17 @@ const own_markup_patterns = [
 ];
 
 /**
- * 외부 소유 영역과 직접 작성한 마크업의 금지 선택자 결합
+ * 외부 소유 영역, 라이브러리, 직접 작성한 마크업의 금지 선택자 결합
  */
 const toDisallowedSelectors = (foreignScopes: RegExp[]): [RegExp[], {splitList: true}] => {
-    return [[...foreignScopes, ...own_markup_patterns], {splitList: true}];
+    return [[...foreignScopes, ...library_prefixes, ...own_markup_patterns], {splitList: true}];
 };
 
 export default {
     extends: ["stylelint-config-standard"],
+
+    // 더 이상 필요 없는 disable 주석 검출. 예외 주석이 실제 위반에만 남도록 유지
+    reportNeedlessDisables: true,
 
     // 외부 글꼴 CSS 제외
     ignoreFiles: ["src/asset/**/*.css"],

@@ -81,8 +81,10 @@ Stylelint: CSS 클래스, 선택자, 중첩, 토큰 규칙.
 Biome와 Grit의 커스텀 진단 메시지는 영어.
 
 의미·소유권·주석·접근성·문장 사이 빈 줄은 수동 리뷰 대상. 린트만으로 컨벤션 충족 판정 불가.
+훅 의존성 목록도 수동 리뷰 대상. Biome의 의존성 검사는 `hono/jsx` 훅을 인식하지 않음.
+`dangerouslySetInnerHTML`은 사용처마다 `biome-ignore`와 escape 근거를 남김. Stylelint는 불필요해진 disable 주석도 오류로 보고.
 
-공통 문서 읽기·Markdown 조립·Hono 앱은 `src/app`, 인자·정적 출력·실행기 선택은 `src/entry/cli`, Vite 개발 서버 연결은 `src/entry/dev`, 정적 미리보기 설정은 `src/entry/preview`가 소유합니다. 문서 그룹과 부모 트리 계산은 `navigation` 위젯, 서버와 브라우저가 공유하는 제어 UI는 `shell-controls` 위젯이 소유합니다. `src/entry/browser`는 자료 검증·스토어 생성·root 마운트를 연결하며 위젯의 생명주기를 복제하지 않습니다. 실행 시점과 폴더 경계는 [Architecture](architecture.md#document-processing-lifetime)를 참고합니다.
+공통 문서 읽기·Markdown 조립·Hono 앱은 `src/app`, 인자·정적 출력·실행기 선택은 `src/entry/cli`, Vite 개발 서버 연결은 `src/entry/dev`, 정적 미리보기 설정은 `src/entry/preview`가 소유합니다. 문서 그룹과 부모 트리 계산은 `sidebar` 위젯, 서버와 브라우저가 공유하는 제어 UI는 `shell-controls` 위젯이 소유합니다. `src/entry/browser`는 자료 검증·스토어 생성·root 마운트를 연결하며 위젯의 생명주기를 복제하지 않습니다. 실행 시점과 폴더 경계는 [Architecture](architecture.md#document-processing-lifetime)를 참고합니다.
 
 ### Mermaid renderer
 

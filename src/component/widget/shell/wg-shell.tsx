@@ -99,7 +99,9 @@ export const WgShell = (props: WgShellProps) => {
                 {/**
                  * 서버 탐색 자료와 브라우저 진입점 연결
                  */}
+                {/* biome-ignore lint/security/noDangerouslySetInnerHtml: toScriptJson이 script 종료 태그와 줄 구분자를 escape한 JSON */}
                 <script type="application/json" id="fh-navigation-data" dangerouslySetInnerHTML={{__html: toScriptJson(navigationData)}} />
+                {/* biome-ignore lint/security/noDangerouslySetInnerHtml: 패키지에 포함한 브라우저 번들. 문서 입력 미포함 */}
                 {props.assets.browser.kind === "inline" && <script dangerouslySetInnerHTML={{__html: props.assets.browser.code}} />}
                 {props.assets.browser.kind === "module" && <script type="module" src={props.assets.browser.path} />}
                 <main className={clsx("wg_shell__main")}>{props.children}</main>
