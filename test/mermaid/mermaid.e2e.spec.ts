@@ -88,6 +88,31 @@ test.describe("다이어그램", () => {
                 .toBeLessThanOrEqual(2);
         });
 
+        test("[MRM-024] 직접 연 접힌 제목을 닫은 뒤 다시 렌더해도 닫힌 상태를 유지한다", {tag: "@high"}, async ({page}) => {
+            /**
+             * GIVEN
+             * 주소의 hash로 공개한 접힌 제목과 렌더를 마친 다이어그램
+             */
+            await page.goto("/folded/#folded-heading");
+            await expect(page.locator('[data-mermaid-status="rendered"]')).toHaveCount(1);
+            await expect(page.locator(".wg_article__details")).toHaveAttribute("open");
+
+            /**
+             * WHEN
+             * 사용자가 접은 뒤 테마 변경으로 다이어그램 재렌더
+             */
+            await page.locator(".wg_article__detailsSummary").click();
+            await expect(page.locator(".wg_article__details")).not.toHaveAttribute("open");
+            await page.emulateMedia({colorScheme: "dark"});
+            await expect(page.locator('[data-mermaid-theme="dark"]')).toHaveCount(1);
+
+            /**
+             * THEN
+             * 사용자가 접은 상태 유지
+             */
+            await expect(page.locator(".wg_article__details")).not.toHaveAttribute("open");
+        });
+
         test("[MRM-012] 모바일 문서에 가로 스크롤이 생기지 않는다", {tag: "@mid"}, async ({page}) => {
             /**
              * GIVEN

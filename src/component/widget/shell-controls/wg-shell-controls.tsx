@@ -111,19 +111,20 @@ export const WgShellControls = (props: WgShellControlsProps) => {
     };
 
     /**
-     * 초기 폰트 로드 후 앵커 보정. 해제된 인스턴스와 사용자 이동에 개입하지 않음
+     * 초기 폰트 로드와 다이어그램 렌더 후 앵커 보정. 해제된 인스턴스와 사용자 이동에 개입하지 않음
      *
      *   - 새로고침, 뒤로가기는 브라우저의 이전 위치 복원 사용
+     *   - 사용자 입력 이후의 렌더 완료는 접은 Details를 다시 열지 않음
      *   - 부드러운 절 이동은 보정 후 활성화, 복원 진입은 첫 사용자 입력까지 즉시 스크롤 유지
      */
     const handlePageLoad = async () => {
+        if (isRestoringNavigation() || userScrollRef.current?.signal.aborted) {
+            return;
+        }
+
         const lifetime = lifetimeRef.current;
         const hash = location.hash;
         const target = revealHashTarget(hash);
-
-        if (isRestoringNavigation()) {
-            return;
-        }
 
         await document.fonts.ready;
 

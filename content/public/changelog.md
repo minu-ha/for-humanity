@@ -23,6 +23,7 @@ pnpm add -D --save-exact for-humanity@latest
 - Show CLI help, build errors and warnings, and the diagram failure notice in English, for example `Invalid asset: ./missing.png (file not found)`.
 - Report a link or image path with a malformed `%` escape as `Invalid percent-encoding` with its file and line, instead of failing with `URI malformed`.
 - Skip Markdown files inside `dist`, `.git` and `node_modules` folders at any depth of the document folders instead of failing the build, and treat these folder names case-insensitively when checking references.
+- Keep a Details block closed after you close it, even when diagrams render again, for example after a theme change. A block opened by the address hash used to reopen.
 
 ## 0.14.1 — 2026-10-19
 

@@ -56,6 +56,11 @@ export const test = base.extend<{runtime: BrowserRuntime}, {mermaidSite: string}
                     "---\nname: Hidden\nlabel: Hidden\ngroup: Guide\n---\n\n:::details[Hidden diagram]\n\n```mermaid\nflowchart LR\n    Hidden --> Visible\n```\n:::\n",
                 );
 
+                await writeFile(
+                    join(root, "public/folded.md"),
+                    "---\nname: Folded\nlabel: Folded\ngroup: Guide\n---\n\n## Diagram\n\n```mermaid\nflowchart LR\n    Theme --> Change\n```\n\n:::details[Folded context]\n### Folded heading\n\nFolded text.\n:::\n",
+                );
+
                 await Promise.all(
                     diagram_cases.map((diagram) => {
                         return writeFile(
