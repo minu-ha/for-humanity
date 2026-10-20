@@ -2,6 +2,7 @@ import {dirname, resolve} from "node:path";
 import type {Root} from "hast";
 import {visit} from "unist-util-visit";
 import type {VFile} from "vfile";
+import {copy_error_private_url} from "@/app/_constant/copy";
 import type {ContentScope} from "@/type/content-scope";
 import {assertContentPath} from "@/util/file/assert-content-path";
 import {toContentId} from "@/util/file/to-content-id";
@@ -46,7 +47,7 @@ export const rehypeContentLinks = (options: ContentLinkOptions) => (tree: Root, 
                         const pathname = new URL(path, "https://content.invalid").pathname.toLowerCase();
 
                         if (!scope.includePrivate && (pathname === "/private" || pathname.startsWith("/private/"))) {
-                            throw new Error(`공개 문서에서 private URL을 참조할 수 없습니다: ${url}`);
+                            throw new Error(`${copy_error_private_url}: ${url}`);
                         }
 
                         continue;

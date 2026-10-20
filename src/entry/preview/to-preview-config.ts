@@ -3,8 +3,8 @@ import {join, resolve} from "node:path";
 import type {InlineConfig} from "vite";
 import type {SiteParams} from "@/app/load-site";
 import {asset_font_dir} from "@/constant/asset";
-import {copy_error_missing_build} from "@/constant/copy";
 import {font_cache_control} from "@/constant/font";
+import {copy_error_missing_build} from "@/entry/preview/_constant/copy";
 import type {ResolvedSiteConfig} from "@/type/site-config";
 
 /**

@@ -153,7 +153,7 @@ describe("크롤러 파일", () => {
          * 크롤러 예약 경로는 공개 주소를 지정한 경우에만 거부한 결과
          */
         if (reserved) {
-            await expect(result).rejects.toThrow(/문서 id에 사용할 수 없는 경로/);
+            await expect(result).rejects.toThrow(/Path cannot be used as a document id/);
         } else {
             await expect(result).resolves.toHaveLength(2);
         }

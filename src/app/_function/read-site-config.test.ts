@@ -79,7 +79,7 @@ describe("설정 파일 조회", () => {
          * THEN
          * 두 파일 이름을 포함한 중복 안내
          */
-        await expect(result).rejects.toThrow(/설정 파일은 하나만.*for-humanity.config.ts.*for-humanity.config.mjs/);
+        await expect(result).rejects.toThrow(/More than one config file.*for-humanity.config.ts.*for-humanity.config.mjs/);
     });
 
     test.for(["ts", "mjs"])("%s 설정 실행이 실패하면 재실행하지 않고 원래 오류를 전달한다", async (extension, {root}) => {

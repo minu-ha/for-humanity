@@ -1,0 +1,119 @@
+/**
+ * 설정 검증 오류. 항목 경로와 이유 추가
+ */
+export const copy_error_config = "Invalid configuration";
+
+/**
+ * 설정 파일이 둘 이상인 오류
+ */
+export const copy_error_config_clash = "More than one config file";
+
+/**
+ * 대소문자만 다른 README 중복 오류
+ */
+export const copy_error_home_clash = "More than one home README";
+
+/**
+ * 프로젝트 밖을 가리키는 content 루트 오류
+ */
+export const copy_error_content_root_outside = "The content root must be inside the project";
+
+/**
+ * 예약 폴더 안의 content 루트 오류
+ */
+export const copy_error_content_root_reserved = "The content root cannot be inside dist, .git or node_modules";
+
+/**
+ * 없는 content 루트 오류
+ */
+export const copy_error_content_root_missing = "Content root not found";
+
+/**
+ * 없는 공개 문서 폴더 오류
+ */
+export const copy_error_public_missing = "Public document folder not found";
+
+/**
+ * 공개 문서 폴더 누락 시 확인할 설정 안내
+ */
+export const copy_hint_content_layout = "Check the content/public layout or the content setting";
+
+/**
+ * symlink이거나 content 밖에 있는 문서 폴더 오류
+ */
+export const copy_error_content_folder = "Document folders must be real folders inside the content root";
+
+/**
+ * 문서 frontmatter 오류. 파일과 항목 추가
+ */
+export const copy_error_frontmatter = "Invalid frontmatter";
+
+/**
+ * 빈 id, 예약 경로, URL 예약 문자 오류
+ */
+export const copy_error_doc_id = "Path cannot be used as a document id";
+
+/**
+ * 확장자, 대소문자 정규화 후 문서 경로 중복
+ */
+export const copy_error_doc_id_clash = "Duplicate document ids";
+
+/**
+ * 누락되거나 홈을 가리키는 부모 문서 참조
+ */
+export const copy_error_doc_parent_missing = "Parent document not found";
+
+/**
+ * 자기 참조 또는 순환하는 문서 부모 경로
+ */
+export const copy_error_doc_parent_cycle = "Circular document parents";
+
+/**
+ * 분류 경로가 다른 문서 사이의 부모 참조
+ */
+export const copy_error_doc_parent_group = "Parent document is in another group";
+
+/**
+ * 공개 문서의 원시 HTML에서 내부 문서 URL을 가리키는 링크 오류
+ */
+export const copy_error_private_url = "Public documents cannot link to private URLs";
+
+/**
+ * 문서에서 참조한 로컬 자원의 경로, 형식 오류
+ */
+export const copy_error_asset = "Invalid asset";
+
+/**
+ * `<<<`로 불러온 코드 스니펫의 경로, 파일, region 오류
+ */
+export const copy_error_snippet = "Invalid code snippet";
+
+/**
+ * 로컬 참조 오류의 이유. 문서 폴더 밖 경로
+ */
+export const copy_error_outside_docs = "outside the document folder";
+
+/**
+ * 로컬 참조 오류의 이유. 없는 파일
+ */
+export const copy_error_file_missing = "file not found";
+
+/**
+ * 로컬 참조 오류의 이유. 실제 경로가 문서 폴더 밖이거나 일반 파일이 아님
+ */
+export const copy_error_not_regular_file = "outside the document folder or not a regular file";
+
+/**
+ * 자원 오류의 이유. 지원하지 않는 이미지 형식
+ */
+export const copy_error_image_format = "unsupported image format";
+
+/**
+ * 스니펫 오류의 이유. 없는 region
+ */
+export const copy_error_region_missing = "region not found";
+
+/**
+ * 패키지 빌드 전 Mermaid 진입 모듈 누락 오류
+ */
+export const copy_error_mermaid_entry = "Missing Mermaid browser entry. Run pnpm build:kit before using the CLI";

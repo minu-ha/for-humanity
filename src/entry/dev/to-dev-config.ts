@@ -8,6 +8,7 @@ import {z} from "zod";
 import type {loadSite, SiteParams} from "@/app/load-site";
 import {config_file_names} from "@/constant/config";
 import {copy_error_prefix} from "@/constant/copy";
+import {copy_error_prepare} from "@/entry/dev/_constant/copy";
 import {dev_ignored_paths, dev_reload_delay_ms} from "@/entry/dev/_constant/dev";
 import {toChangeQueue} from "@/util/async/to-change-queue";
 import {toErrorMessage} from "@/util/error/to-error-message";
@@ -188,7 +189,7 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                     await ready;
 
                     if (currentSite === undefined) {
-                        throw new Error("문서 준비에 실패했습니다. 위 오류를 수정하면 다시 반영합니다.");
+                        throw new Error(copy_error_prepare);
                     }
 
                     const app = currentSite.app;

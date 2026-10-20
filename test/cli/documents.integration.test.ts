@@ -55,7 +55,7 @@ describe("문서 로드", () => {
          * THEN
          * 정규화한 문서 주소가 겹치면 로드를 거부한 결과
          */
-        await expect(result).rejects.toThrow(/문서 id가 겹친다: guide/);
+        await expect(result).rejects.toThrow(/Duplicate document ids: guide/);
     });
 
     test.for(["missing", "readme", "guide.md", "/guide/"])("찾을 수 없는 부모 %s를 거부한다", async (parent, {root}) => {
@@ -78,7 +78,7 @@ describe("문서 로드", () => {
          * THEN
          * 존재하지 않거나 홈페이지를 가리키는 부모를 거부한 결과
          */
-        await expect(result).rejects.toThrow(/부모 문서가 없다: child/);
+        await expect(result).rejects.toThrow(/Parent document not found: child/);
     });
 
     test.for([
@@ -105,7 +105,7 @@ describe("문서 로드", () => {
          * THEN
          * 부모의 자기 참조와 순환 참조를 거부한 결과
          */
-        await expect(result).rejects.toThrow(/문서 parent가 순환한다/);
+        await expect(result).rejects.toThrow(/Circular document parents/);
     });
 
     test("부모와 자식의 전체 묶음 경로가 다르면 거부한다", async ({root}) => {
@@ -128,7 +128,7 @@ describe("문서 로드", () => {
          * THEN
          * 부모와 자식의 전체 묶음 경로가 다르면 거부한 결과
          */
-        await expect(result).rejects.toThrow(/부모 문서와 group이 다르다: child/);
+        await expect(result).rejects.toThrow(/Parent document is in another group: child/);
     });
 
     test("문서 메타는 BOM과 CRLF와 파일 끝의 닫는 구분자를 처리한다", async ({root}) => {

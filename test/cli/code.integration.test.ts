@@ -107,9 +107,9 @@ describe("코드 블록", () => {
     });
 
     test.for([
-        {reference: "../outside.ts", expected: /문서 폴더 밖/},
-        {reference: "./missing.ts", expected: /파일이 없다/},
-        {reference: "./present.ts#nope", expected: /region 이 없다/},
+        {reference: "../outside.ts", expected: /outside the document folder/},
+        {reference: "./missing.ts", expected: /file not found/},
+        {reference: "./present.ts#nope", expected: /region not found/},
     ])("유효하지 않은 스니펫 $reference 참조를 거부한다", async (scenario, {root}) => {
         /**
          * GIVEN

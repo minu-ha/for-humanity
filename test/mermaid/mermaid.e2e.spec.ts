@@ -154,7 +154,7 @@ test.describe("다이어그램", () => {
              */
             await expect(page.locator('[data-mermaid-status="error"]')).toHaveCount(2);
             await expect(page.locator('[data-mermaid-status="rendered"]')).toHaveCount(1);
-            await expect(page.locator(".wg_mermaid__error").first()).toContainText("원문");
+            await expect(page.locator(".wg_mermaid__error").first()).toContainText("Check the source");
             await expect(page.locator(".wg_mermaid__source").first()).toBeVisible();
             await expect(page.locator(".wg_mermaid__source").nth(2)).toBeVisible();
             await expect(page.locator(".wg_mermaid__measurement")).toHaveCount(0);

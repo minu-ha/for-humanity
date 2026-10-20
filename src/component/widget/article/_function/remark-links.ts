@@ -3,7 +3,7 @@ import {dirname, posix, relative, resolve, sep} from "node:path";
 import type {Root} from "mdast";
 import {visit} from "unist-util-visit";
 import type {VFile} from "vfile";
-import {copy_warn_broken_link} from "@/constant/copy";
+import {copy_warn_broken_link} from "@/component/widget/article/_constant/copy";
 import type {ContentScope} from "@/type/content-scope";
 import {assertContentPath} from "@/util/file/assert-content-path";
 import {toContentId} from "@/util/file/to-content-id";

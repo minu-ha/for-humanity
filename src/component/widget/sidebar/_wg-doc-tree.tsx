@@ -1,7 +1,7 @@
 import clsx from "clsx";
+import {copy_nav_aria_label} from "@/component/widget/sidebar/_constant/copy";
 import type {NavigationGroup} from "@/component/widget/sidebar/_type/navigation-data";
 import {WgDocList} from "@/component/widget/sidebar/_wg-doc-list";
-import {copy_nav_aria_label} from "@/constant/copy";
 import "./_wg-doc-tree.css";
 
 /**

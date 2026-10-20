@@ -51,7 +51,7 @@ describe("다이어그램", () => {
              * THEN
              * 누락된 진입 모듈과 빌드 명령 안내
              */
-            expect(result).toThrow("Missing Mermaid browser entry. Run pnpm build:kit before using the CLI.");
+            expect(result).toThrow(/Missing Mermaid browser entry.*pnpm build:kit/);
         });
     });
 });

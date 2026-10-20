@@ -19,7 +19,7 @@ describe("프로젝트 문서 루트", () => {
              * WHEN / THEN
              * 실제 경로의 예약 폴더 검사
              */
-            await expect(readProject(root)).rejects.toThrow("content");
+            await expect(readProject(root)).rejects.toThrow("content root cannot be inside");
         });
     }
 });

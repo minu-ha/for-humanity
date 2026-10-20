@@ -4,8 +4,6 @@ import {dirname, join, posix, relative, resolve, sep} from "node:path";
 import {isEqual} from "es-toolkit/predicate";
 import {VFile} from "vfile";
 import {parse as parseYaml} from "yaml";
-import type {Processor} from "@/app/_type/processor";
-import {asset_dir, asset_favicon_path} from "@/constant/asset";
 import {
     copy_error_doc_id,
     copy_error_doc_id_clash,
@@ -13,7 +11,9 @@ import {
     copy_error_doc_parent_group,
     copy_error_doc_parent_missing,
     copy_error_frontmatter,
-} from "@/constant/copy";
+} from "@/app/_constant/copy";
+import type {Processor} from "@/app/_type/processor";
+import {asset_dir, asset_favicon_path} from "@/constant/asset";
 import type {ContentScope} from "@/type/content-scope";
 import type {Doc} from "@/type/doc";
 import {docDataSchema} from "@/type/doc-data";

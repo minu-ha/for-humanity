@@ -2,9 +2,21 @@ import type {Root} from "mdast";
 import {toString as toPlainText} from "mdast-util-to-string";
 import {visit} from "unist-util-visit";
 import type {VFile} from "vfile";
+import {
+    copy_error_directive_syntax,
+    copy_error_part_attribute,
+    copy_error_part_attribute_syntax,
+    copy_error_part_body,
+    copy_error_part_code_fence,
+    copy_error_part_container,
+    copy_error_part_empty_title,
+    copy_error_part_fence,
+    copy_error_part_heading,
+    copy_error_part_plain_title,
+    copy_error_part_top_level,
+} from "@/component/widget/article/_constant/copy";
 import {section_heading_depth} from "@/component/widget/article/_constant/section";
 import {hasBlockContent} from "@/component/widget/article/_function/remark-blocks/_has-block-content";
-import {copy_error_directive_syntax} from "@/constant/copy";
 
 /**
  * Note, Details의 제목, 본문, 속성, 닫힘 계약
@@ -16,7 +28,7 @@ export const remarkBlocks = () => (tree: Root, file: VFile) => {
 
     visit(tree, (node, _index, parent) => {
         if (node.type === "leafDirective" && node.name === "part" && parent?.type !== "root") {
-            file.fail(`${copy_error_directive_syntax}: part · 문서 최상위에 작성`, node);
+            file.fail(`${copy_error_directive_syntax}: ${node.name} ${copy_error_part_top_level}`, node);
         }
 
         if (node.type !== "containerDirective" && node.type !== "leafDirective" && node.type !== "textDirective") {
@@ -28,36 +40,36 @@ export const remarkBlocks = () => (tree: Root, file: VFile) => {
         }
 
         if (node.type !== "containerDirective") {
-            file.fail(`${copy_error_directive_syntax}: ${node.name} · ::: 블록으로 작성`, node);
+            file.fail(`${copy_error_directive_syntax}: ${node.name} ${copy_error_part_container}`, node);
         }
 
         const label = node.children.at(0);
 
         if (label?.type !== "paragraph" || label.data?.directiveLabel !== true || label.children.some((child) => child.type !== "text")) {
-            file.fail(`${copy_error_directive_syntax}: ${node.name} · 일반 텍스트 제목 필수`, node);
+            file.fail(`${copy_error_directive_syntax}: ${node.name} ${copy_error_part_plain_title}`, node);
         }
 
         const title = toPlainText(label).trim();
 
         if (title === "") {
-            file.fail(`${copy_error_directive_syntax}: ${node.name} · 비어 있지 않은 제목 필수`, node);
+            file.fail(`${copy_error_directive_syntax}: ${node.name} ${copy_error_part_empty_title}`, node);
         }
 
         if (!node.children.slice(1).some(hasBlockContent)) {
-            file.fail(`${copy_error_directive_syntax}: ${node.name} · 본문 필수`, node);
+            file.fail(`${copy_error_directive_syntax}: ${node.name} ${copy_error_part_body}`, node);
         }
 
         const unsupported = node.attributes ? Object.keys(node.attributes).find((key) => node.name !== "details" || key !== "open") : undefined;
 
         if (unsupported !== undefined) {
-            file.fail(`${copy_error_directive_syntax}: ${node.name} · 미지원 속성 ${unsupported}`, node);
+            file.fail(`${copy_error_directive_syntax}: ${node.name} ${copy_error_part_attribute} ${unsupported}`, node);
         }
 
         const attributeSource = source.slice(label.position?.end.offset, node.position?.end.offset).split(/\r?\n/, 1)[0].trim();
 
         // 속성 정규화 이전의 표기. 중복 open과 open="" 거부
         if (attributeSource !== "" && (node.name !== "details" || !/^\{[ \t]*open[ \t]*\}$/.test(attributeSource))) {
-            file.fail(`${copy_error_directive_syntax}: ${node.name} · 허용 속성은 Details의 {open}, 나머지는 생략`, node);
+            file.fail(`${copy_error_directive_syntax}: ${node.name} ${copy_error_part_attribute_syntax}`, node);
         }
 
         const original = source.slice(node.position?.start.offset, node.position?.end.offset);
@@ -71,12 +83,12 @@ export const remarkBlocks = () => (tree: Root, file: VFile) => {
             closing[1].length < opening[1].length ||
             node.position?.end.offset === node.children.at(-1)?.position?.end.offset
         ) {
-            file.fail(`${copy_error_directive_syntax}: ${node.name} · 블록을 닫는 fence 필수`, node);
+            file.fail(`${copy_error_directive_syntax}: ${node.name} ${copy_error_part_fence}`, node);
         }
 
         visit(node, "heading", (heading) => {
             if (heading.depth <= section_heading_depth.section) {
-                file.fail(`${copy_error_directive_syntax}: ${node.name} · #·## 제목은 부품 밖에 작성`, heading);
+                file.fail(`${copy_error_directive_syntax}: ${node.name} ${copy_error_part_heading}`, heading);
             }
         });
 
@@ -93,7 +105,7 @@ export const remarkBlocks = () => (tree: Root, file: VFile) => {
                     codeClosing[1][0] !== codeOpening[1][0] ||
                     codeClosing[1].length < codeOpening[1].length)
             ) {
-                file.fail(`${copy_error_directive_syntax}: ${node.name} · 코드 fence를 닫고, 코드 안의 :보다 긴 바깥 fence 사용`, code);
+                file.fail(`${copy_error_directive_syntax}: ${node.name} ${copy_error_part_code_fence}`, code);
             }
         });
 

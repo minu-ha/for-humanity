@@ -1,7 +1,7 @@
 import type {Root} from "mdast";
 import {SKIP, visit} from "unist-util-visit";
 import type {VFile} from "vfile";
-import {copy_error_unknown_directive} from "@/constant/copy";
+import {copy_error_unknown_directive} from "@/component/widget/article/_constant/copy";
 
 /**
  * hName 없는 블록 지시문은 작성 오류

@@ -1,5 +1,5 @@
 /*
- * 화면, CLI 공통 문구. 번역 분리의 단일 출처
+ * 소유자가 없는 설정, 경로 검사와 로그의 문구. 소유자 전용 문구는 소유자의 _constant/copy.ts
  */
 
 /**
@@ -8,121 +8,56 @@
 export const copy_site_title_default = "for humanity";
 
 /**
- * 사이드바의 접근 가능한 이름
- */
-export const copy_nav_aria_label = "Document navigation";
-
-/**
- * 모바일 문서 탐색 열기 버튼
- */
-export const copy_nav_open = "Open navigation";
-
-/**
- * 모바일 문서 탐색 닫기 버튼
- */
-export const copy_nav_close = "Close navigation";
-
-/**
- * 모바일 문서 탐색 대화상자 제목
- */
-export const copy_nav_title = "Navigation";
-
-/**
- * README가 없는 홈의 안내
- */
-export const copy_home_missing = "문서 폴더에 README.md를 추가하면 이곳에 홈 화면으로 표시됩니다.";
-
-/**
- * 현재 문서 목차 라벨
- */
-export const copy_nav_toc_label = "On this page";
-
-/**
- * 대소문자만 다른 README 중복 오류
- */
-export const copy_error_home_clash = "홈 README가 겹친다";
-
-/**
  * 터미널 로그 접두사
  */
 export const copy_error_prefix = "for-humanity";
 
 /**
- * 정적 미리보기의 빌드 결과 누락 오류
- */
-export const copy_error_missing_build = "빌드 결과가 없습니다. 먼저 build 명령을 실행하세요";
-
-/**
- * 설정 검증 오류. 항목 경로와 이유 추가
- */
-export const copy_error_config = "설정이 틀렸다";
-
-/**
  * 공개 사이트 URL의 미지원 경로, 자격 증명, 검색, 앵커 오류
  */
-export const copy_error_site_url = "url은 사용자 정보·하위 경로·query·hash가 없는 HTTP(S) 사이트 루트여야 한다";
-
-/**
- * 문서 frontmatter 오류. 파일과 항목 추가
- */
-export const copy_error_frontmatter = "frontmatter가 올바르지 않다";
+export const copy_error_site_url = "url must be an HTTP(S) site root without credentials, a subpath, a query or a hash";
 
 /**
  * 탐색 순서에 같은 묶음을 두 번 지정한 설정 오류
  */
-export const copy_error_navigation_clash = "navigation의 묶음이 겹친다";
+export const copy_error_navigation_clash = "Duplicate navigation groups";
 
 /**
- * 빈 id, 예약 경로, URL 예약 문자 오류
+ * content 경로 설정의 프로젝트 밖, 예약 폴더 오류
  */
-export const copy_error_doc_id = "문서 id에 사용할 수 없는 경로";
+export const copy_error_content_path = "Use a relative path inside the project; dist, node_modules and .git are not allowed";
 
 /**
- * 확장자, 대소문자 정규화 후 문서 경로 중복
+ * 공개 문서 폴더를 content 루트로 지정한 설정 오류
  */
-export const copy_error_doc_id_clash = "문서 id가 겹친다";
+export const copy_error_public_folder = "Public documents need their own subfolder";
 
 /**
- * 누락되거나 홈을 가리키는 부모 문서 참조
+ * 내부 문서 폴더를 content 루트로 지정한 설정 오류
  */
-export const copy_error_doc_parent_missing = "부모 문서가 없다";
+export const copy_error_private_folder = "Private documents need their own subfolder";
 
 /**
- * 자기 참조 또는 순환하는 문서 부모 경로
+ * 공개, 내부 문서 폴더의 중복, 중첩 설정 오류
  */
-export const copy_error_doc_parent_cycle = "문서 parent가 순환한다";
+export const copy_error_content_overlap = "Public and private document folders cannot be the same or nested";
 
 /**
- * 분류 경로가 다른 문서 사이의 부모 참조
+ * 문서 범위 밖이나 예약 폴더를 가리키는 참조 오류
  */
-export const copy_error_doc_parent_group = "부모 문서와 group이 다르다";
+export const copy_error_reference_outside = "Reference outside the document scope";
 
 /**
- * 미지원 블록 지시문 오류
+ * 공개 문서에서 내부 자료를 가리키는 참조 오류
  */
-export const copy_error_unknown_directive = "모르는 부품이다";
+export const copy_error_private_reference = "Public documents cannot reference private files";
 
 /**
- * 부품의 작성 계약 오류. 이름과 수정 기준 추가
+ * 공개 문서 id가 내부 문서 URL 접두사로 시작하는 오류
  */
-export const copy_error_directive_syntax = "부품 문법이 올바르지 않다";
+export const copy_error_private_id = "The private URL prefix is reserved for internal documents";
 
 /**
- * 없는 Markdown 링크 경고. 빌드 계속
+ * 공개, 내부 문서 폴더 밖의 Markdown 참조 오류
  */
-export const copy_warn_broken_link = "없는 문서로 건 링크다";
-
-/**
- * 미등록 날짜 상태 문구 경고
- */
-export const copy_warn_unknown_status = "설정에 없는 상태 문구다";
-
-/**
- * 문서에서 참조한 로컬 자원의 경로, 형식 오류
- */
-export const copy_error_asset = "자원이 올바르지 않다";
-
-/**
- * `<<<` 로 불러온 코드 스니펫의 경로, 파일, region 오류
- */
-export const copy_error_snippet = "코드 스니펫이 올바르지 않다";
+export const copy_error_markdown_outside = "Markdown reference outside the public and private document folders";

@@ -1,12 +1,12 @@
 import clsx from "clsx";
 import {type DOMAttributes, Fragment, useLayoutEffect, useRef, useState} from "hono/jsx";
 import {flushSync} from "hono/jsx/dom";
+import {copy_nav_close, copy_nav_open, copy_nav_title} from "@/component/widget/sidebar/_constant/copy";
 import {navigation_mobile_query, navigation_wide_query} from "@/component/widget/sidebar/_constant/navigation";
 import type {NavigationData} from "@/component/widget/sidebar/_type/navigation-data";
 import {WgDocTree} from "@/component/widget/sidebar/_wg-doc-tree";
 import {WgSidebarScroll} from "@/component/widget/sidebar/_wg-sidebar-scroll";
 import {WgToc} from "@/component/widget/sidebar/_wg-toc";
-import {copy_nav_close, copy_nav_open, copy_nav_title} from "@/constant/copy";
 import type {createNavigationStores} from "@/store/navigation/create-navigation-stores";
 import type {NavigationLayout} from "@/store/navigation/navigation-state";
 import {revealHashTarget} from "@/util/dom/reveal-hash-target";

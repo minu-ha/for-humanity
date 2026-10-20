@@ -3,8 +3,8 @@ import {join} from "node:path";
 import {pathToFileURL} from "node:url";
 import {createJiti} from "jiti";
 import {z} from "zod";
+import {copy_error_config, copy_error_config_clash} from "@/app/_constant/copy";
 import {config_file_names} from "@/constant/config";
-import {copy_error_config} from "@/constant/copy";
 import {site_config_absent} from "@/constant/site";
 import {siteConfigSchema} from "@/type/site-config";
 
@@ -18,7 +18,7 @@ export const readSiteConfig = async (root: string) => {
     const files = config_file_names.map((name) => join(root, name)).filter((file) => existsSync(file));
 
     if (files.length > 1) {
-        throw new Error(`${copy_error_config}: 설정 파일은 하나만 사용하세요 (${config_file_names.join(", ")})`);
+        throw new Error(`${copy_error_config_clash}: ${config_file_names.join(", ")}`);
     }
 
     const file = files[0];

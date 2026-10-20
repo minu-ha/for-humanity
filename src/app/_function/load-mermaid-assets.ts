@@ -1,5 +1,6 @@
 import {readdirSync} from "node:fs";
 import {join} from "node:path";
+import {copy_error_mermaid_entry} from "@/app/_constant/copy";
 import {asset_mermaid_dir} from "@/constant/asset";
 import type {MermaidAssets} from "@/type/mermaid-assets";
 
@@ -12,7 +13,7 @@ export const loadMermaidAssets = (kitRoot: string): MermaidAssets => {
     const entry = names.find((name) => name.startsWith("mermaid-") && name.endsWith(".js"));
 
     if (entry === undefined) {
-        throw new Error("Missing Mermaid browser entry. Run pnpm build:kit before using the CLI.");
+        throw new Error(copy_error_mermaid_entry);
     }
 
     return {

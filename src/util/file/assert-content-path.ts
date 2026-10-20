@@ -1,5 +1,6 @@
 import {existsSync, realpathSync} from "node:fs";
 import {isAbsolute, relative, resolve, sep} from "node:path";
+import {copy_error_private_reference, copy_error_reference_outside} from "@/constant/copy";
 import type {ContentScope} from "@/type/content-scope";
 
 /**
@@ -26,11 +27,11 @@ export const assertContentPath = (params: ContentPathParams) => {
         const internal = relative(params.scope.privateRoot, path);
 
         if (location === ".." || location.startsWith(`..${sep}`) || isAbsolute(location) || location.split(sep).some((part) => ["dist", ".git", "node_modules"].includes(part))) {
-            throw new Error(`문서 범위 밖의 참조: ${params.path}`);
+            throw new Error(`${copy_error_reference_outside}: ${params.path}`);
         }
 
         if (!params.scope.includePrivate && internal !== ".." && !internal.startsWith(`..${sep}`) && !isAbsolute(internal)) {
-            throw new Error(`공개 문서에서 private 자료를 참조할 수 없습니다: ${params.path}`);
+            throw new Error(`${copy_error_private_reference}: ${params.path}`);
         }
     }
 };

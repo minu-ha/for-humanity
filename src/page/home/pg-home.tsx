@@ -1,6 +1,6 @@
 import {WgArticle} from "@/component/widget/article/wg-article";
 import {WgShell} from "@/component/widget/shell/wg-shell";
-import {copy_home_missing} from "@/constant/copy";
+import {copy_readme_missing} from "@/page/home/_constant/copy";
 import type {Doc} from "@/type/doc";
 import type {DocContent} from "@/type/doc-content";
 import type {SiteAssets} from "@/type/site-assets";
@@ -42,7 +42,7 @@ export const PgHome = (props: PgHomeProps) => {
             {/**
              * README 부재 시 파일 작성 안내
              */}
-            {props.home === undefined && <WgArticle head={{title: props.site.title, lead: copy_home_missing}} />}
+            {props.home === undefined && <WgArticle head={{title: props.site.title, lead: copy_readme_missing}} />}
         </WgShell>
     );
 };

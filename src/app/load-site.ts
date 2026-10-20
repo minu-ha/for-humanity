@@ -1,5 +1,6 @@
 import {existsSync, readFileSync, realpathSync, statSync} from "node:fs";
 import {isAbsolute, join, relative, sep} from "node:path";
+import {copy_error_content_folder, copy_error_content_root_missing, copy_error_public_missing, copy_hint_content_layout} from "@/app/_constant/copy";
 import {crawling_reserved_roots} from "@/app/_constant/crawling";
 import {createProcessor} from "@/app/_function/create-processor/create-processor";
 import {loadMermaidAssets} from "@/app/_function/load-mermaid-assets";
@@ -70,7 +71,7 @@ export const loadSite = async (params: SiteParams) => {
 
     // 문서 범위. 공개 폴더 필수, 내부 폴더 선택, 범위 폴더의 symlink 별칭 금지
     if (!existsSync(params.root) || !statSync(params.root).isDirectory()) {
-        throw new Error(`content 문서 루트가 없습니다: ${params.root}`);
+        throw new Error(`${copy_error_content_root_missing}: ${params.root}`);
     }
 
     const root = realpathSync(params.root);
@@ -83,14 +84,14 @@ export const loadSite = async (params: SiteParams) => {
                 continue;
             }
 
-            throw new Error(`공개 문서 폴더가 없습니다: ${path}. content/public 구조 또는 content 설정을 확인하세요`);
+            throw new Error(`${copy_error_public_missing}: ${path}. ${copy_hint_content_layout}`);
         }
 
         const actual = realpathSync(path);
         const location = relative(root, actual);
 
         if (!statSync(path).isDirectory() || actual !== path || location === ".." || location.startsWith(`..${sep}`) || isAbsolute(location)) {
-            throw new Error(`문서 폴더는 content 내부의 실제 폴더여야 합니다: ${path}`);
+            throw new Error(`${copy_error_content_folder}: ${path}`);
         }
     }
 

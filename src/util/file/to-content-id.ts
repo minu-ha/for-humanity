@@ -1,4 +1,5 @@
 import {isAbsolute, relative, sep} from "node:path";
+import {copy_error_markdown_outside, copy_error_private_id} from "@/constant/copy";
 import type {ContentScope} from "@/type/content-scope";
 
 /**
@@ -41,11 +42,11 @@ export const toContentId = (params: ContentIdParams) => {
             .toLowerCase();
 
         if (prefix === "" && id.split("/")[0] === "private") {
-            throw new Error(`private URL은 내부 문서 전용입니다: ${params.path}`);
+            throw new Error(`${copy_error_private_id}: ${params.path}`);
         }
 
         return `${prefix}${id}`;
     }
 
-    throw new Error(`공개 또는 내부 문서 폴더에 없는 Markdown 참조: ${params.path}`);
+    throw new Error(`${copy_error_markdown_outside}: ${params.path}`);
 };

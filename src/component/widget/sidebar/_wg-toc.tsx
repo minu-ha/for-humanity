@@ -1,9 +1,9 @@
 import clsx from "clsx";
 import {useLayoutEffect, useState} from "hono/jsx";
 import {anchor_shift_property} from "@/component/widget/article/_constant/anchor-shift";
+import {copy_nav_toc_label} from "@/component/widget/sidebar/_constant/copy";
 import {reading_line_slack_px} from "@/component/widget/sidebar/_constant/reading-line";
 import type {TocGroup} from "@/component/widget/sidebar/_type/toc-group";
-import {copy_nav_toc_label} from "@/constant/copy";
 import {scroll_user_input_events} from "@/constant/scroll";
 import {findHashLink} from "@/util/dom/find-hash-link";
 import {findHashTarget} from "@/util/dom/find-hash-target";

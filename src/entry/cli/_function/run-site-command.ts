@@ -6,6 +6,7 @@ import {toSSG} from "hono/ssg";
 import {readProject} from "@/app/_function/read-project";
 import {loadSite} from "@/app/load-site";
 import type {cli_docs_args} from "@/entry/cli/_constant/cli";
+import {copy_error_project_args} from "@/entry/cli/_constant/copy";
 import {toPreviewConfig} from "@/entry/preview/to-preview-config";
 import {toErrorMessage} from "@/util/error/to-error-message";
 import {logger} from "@/util/logger/logger";
@@ -31,7 +32,7 @@ interface CliCommandParams {
 export const runSiteCommand = async (params: CliCommandParams) => {
     try {
         if (params.args._.length > 1) {
-            throw new Error("프로젝트 폴더는 하나만 지정하세요");
+            throw new Error(copy_error_project_args);
         }
 
         // dist의 실행 청크 기준 패키지 루트

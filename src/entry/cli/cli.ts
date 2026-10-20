@@ -4,6 +4,7 @@ import {readFile} from "node:fs/promises";
 import {defineCommand, runMain} from "citty";
 import {z} from "zod/mini";
 import {cli_default_command, cli_docs_args} from "@/entry/cli/_constant/cli";
+import {copy_build_description, copy_dev_description, copy_error_option, copy_hint_help, copy_preview_description, copy_tool_description} from "@/entry/cli/_constant/copy";
 import {logger} from "@/util/logger/logger";
 
 const main = defineCommand({
@@ -13,7 +14,7 @@ const main = defineCommand({
     meta: async () => {
         const content: unknown = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
 
-        return {...z.object({name: z.string(), version: z.string()}).parse(content), description: "Markdown 문서 사이트 개발·빌드·미리보기"};
+        return {...z.object({name: z.string(), version: z.string()}).parse(content), description: copy_tool_description};
     },
     default: cli_default_command,
 
@@ -24,13 +25,13 @@ const main = defineCommand({
         const option = Object.keys(context.args).find((key) => key !== "_");
 
         if (option !== undefined) {
-            logger.error(`지원하지 않는 옵션: ${option}. --help로 사용법을 확인하세요`);
+            logger.error(`${copy_error_option}: ${option}. ${copy_hint_help}`);
             process.exit(1);
         }
     },
     subCommands: {
         dev: defineCommand({
-            meta: {name: "dev", description: "문서 변경을 반영하는 개발 서버"},
+            meta: {name: "dev", description: copy_dev_description},
             args: cli_docs_args,
 
             /**
@@ -43,7 +44,7 @@ const main = defineCommand({
             },
         }),
         build: defineCommand({
-            meta: {name: "build", description: "content/dist에 공개 문서 사이트 생성"},
+            meta: {name: "build", description: copy_build_description},
             args: cli_docs_args,
 
             /**
@@ -56,7 +57,7 @@ const main = defineCommand({
             },
         }),
         preview: defineCommand({
-            meta: {name: "preview", description: "빌드한 정적 사이트의 로컬 미리보기"},
+            meta: {name: "preview", description: copy_preview_description},
             args: cli_docs_args,
 
             /**

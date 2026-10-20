@@ -42,8 +42,8 @@ describe("문서 자원", () => {
     });
 
     test.for([
-        {path: "missing.png", error: /자원/},
-        {path: "../outside.png", error: /문서 폴더 밖/},
+        {path: "missing.png", error: /file not found/},
+        {path: "../outside.png", error: /outside the document folder/},
     ])("유효하지 않은 이미지 $path 경로를 거부한다", async (scenario, {root}) => {
         /**
          * GIVEN
@@ -123,6 +123,6 @@ describe("문서 자원", () => {
          * THEN
          * 루트 이탈 오류
          */
-        await expect(result).rejects.toThrow(/문서 폴더 밖/);
+        await expect(result).rejects.toThrow(/outside the document folder/);
     });
 });

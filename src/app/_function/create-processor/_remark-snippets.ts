@@ -3,9 +3,9 @@ import {dirname, extname, isAbsolute, relative, resolve, sep} from "node:path";
 import type {Root} from "mdast";
 import {visit} from "unist-util-visit";
 import type {VFile} from "vfile";
+import {copy_error_file_missing, copy_error_not_regular_file, copy_error_outside_docs, copy_error_region_missing, copy_error_snippet} from "@/app/_constant/copy";
 import {snippet_language_by_extension, snippet_pattern} from "@/app/_constant/snippet";
 import {toSnippetBody} from "@/app/_function/create-processor/_to-snippet-body";
-import {copy_error_snippet} from "@/constant/copy";
 import type {ContentScope} from "@/type/content-scope";
 import {assertContentPath} from "@/util/file/assert-content-path";
 
@@ -58,24 +58,24 @@ export const remarkSnippets = (options: SnippetOptions) => (tree: Root, file: VF
         const location = relative(options.root, target);
 
         if (location === ".." || location.startsWith(`..${sep}`) || isAbsolute(location)) {
-            file.fail(`${copy_error_snippet}: 문서 폴더 밖 · ${path}`, node);
+            file.fail(`${copy_error_snippet}: ${path} (${copy_error_outside_docs})`, node);
         }
 
         if (!existsSync(target)) {
-            file.fail(`${copy_error_snippet}: 파일이 없다 · ${path}`, node);
+            file.fail(`${copy_error_snippet}: ${path} (${copy_error_file_missing})`, node);
         }
 
         const actual = realpathSync(target);
         const actualLocation = relative(realpathSync(options.root), actual);
 
         if (actualLocation === ".." || actualLocation.startsWith(`..${sep}`) || isAbsolute(actualLocation) || !statSync(actual).isFile()) {
-            file.fail(`${copy_error_snippet}: 문서 폴더 밖이거나 일반 파일이 아니다 · ${path}`, node);
+            file.fail(`${copy_error_snippet}: ${path} (${copy_error_not_regular_file})`, node);
         }
 
         const body = toSnippetBody(readFileSync(actual, "utf8"), region);
 
         if (body === undefined) {
-            file.fail(`${copy_error_snippet}: region 이 없다 · ${path}#${region}`, node);
+            file.fail(`${copy_error_snippet}: ${path}#${region} (${copy_error_region_missing})`, node);
 
             return;
         }
