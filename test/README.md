@@ -6,15 +6,17 @@
 
 ## 층
 
-| 층 | 실행기 | 바꾸는 입력 | 확인하는 것 | 자리 |
+| 층 | 실행기 · 프로젝트 | 바꾸는 입력 | 확인하는 것 | 자리 |
 | --- | --- | --- | --- | --- |
 | static | TypeScript · Biome · Stylelint | 코드 | 타입, 이름, 가져오기, CSS 규칙 | `pnpm check` |
-| unit | Vitest · Node | 인자 | 함수 하나의 반환값, 임시 폴더의 파일 조회 | `src/**/*.test.ts` · `util/*.test.ts` |
-| node integration | Vitest · Node | 임시 프로젝트의 문서, 설정, CLI 인자 | 실제 파일과 Markdown 처리기를 연결한 문서 조립, CLI 출력, preview HTTP | `*.integration.test.ts` |
-| browser integration | Playwright | 갤러리에서 마운트한 위젯 | 테마, 툴팁, 구독과 타이머의 수명 | `*.integration.spec.ts` |
-| e2e | Playwright | 실제 CLI 빌드나 개발 서버의 URL, 클릭, 화면 환경 | 배치, 스크롤 복원, 앵커, 지연 수신, 문서 갱신 | `*.e2e.spec.ts` |
+| unit | Vitest `unit` | 인자 | 함수 하나의 반환값, 임시 폴더의 파일 조회 | `src/**/*.test.ts` · `util/*.test.ts` |
+| node | Vitest `node` | 임시 프로젝트의 문서, 설정, CLI 인자 | Node에서 실제 파일, Markdown 처리기, CLI 프로세스, 미리보기 HTTP 서버를 연결한 결과 | `*.node.test.ts` |
+| integration | Playwright `integration` | 갤러리에서 마운트한 위젯 | 테마, 툴팁, 구독과 타이머의 수명 | `*.integration.spec.ts` |
+| e2e | Playwright `e2e` | 실제 CLI 빌드나 개발 서버의 URL, 클릭, 화면 환경 | 배치, 스크롤 복원, 앵커, 지연 수신, 문서 갱신 | `*.e2e.spec.ts` |
 
-고르는 질문은 셋입니다. 브라우저 없이 답이 나오면 unit이나 node integration, 위젯을 그려야 알 수 있으면 browser integration, 빌드한 사이트나 개발 서버를 지나야 하면 e2e입니다.
+unit과 node는 Vitest, integration과 e2e는 Playwright입니다. 접미사가 곧 실행기 프로젝트 이름이라 테스트 목록과 결과의 각 줄 앞에 `unit`, `node`, `integration`, `e2e`가 붙습니다.
+
+고르는 질문은 넷입니다. 함수 하나로 답이 나오면 unit, 브라우저 없이 실제 파일과 프로세스를 연결해야 하면 node, 위젯을 그려야 알 수 있으면 integration, 빌드한 사이트나 개발 서버를 지나야 하면 e2e입니다.
 같은 조건을 두 층에서 보지 않습니다. 예를 들어 HTML 이스케이프는 변환 검사에서, 스크립트 비활성 상태의 가독성은 실제 브라우저에서 확인합니다. jsdom으로 SVG 배치, 폰트, Shadow DOM, 시스템 테마를 대신 판정하지 않습니다.
 
 ## 구조
@@ -27,31 +29,31 @@ test/
   _gallery/     공개 번들 밖에서 위젯을 마운트하고 해제하는 페이지 스크립트(mermaid-lifecycle · navigation-lifecycle)
   _type/        갤러리와 spec이 공유하는 브라우저 전역 계약(browser.d.ts)
   0-command/
-    0.1-command.integration.test.ts       ↔ src/entry/cli                                        CMD
-    0.2-config.integration.test.ts        ↔ src/app/_function/read-site-config.ts                CFG
-    0.3-content.integration.test.ts       ↔ src/app/load-site.ts · src/util/file                 CNT
+    0.1-command.node.test.ts     ↔ src/entry/cli                                    CMD
+    0.2-config.node.test.ts      ↔ src/app/_function/read-site-config.ts            CFG
+    0.3-content.node.test.ts     ↔ src/app/load-site.ts · src/util/file             CNT
   1-document/
-    1.1-document.integration.test.ts      ↔ src/app/_function/read-docs.ts                       DOC
-    1.2-home.integration.test.ts          ↔ src/app/_function/read-home.ts · src/page/home       HOM
-    1.3-link.integration.test.ts          ↔ remark-links · _rehype-content-links                 LNK
-    1.4-code.integration.test.ts          ↔ shiki-transformers · _remark-snippets                COD
-    1.5-asset.integration.test.ts         ↔ _rehype-assets                                       AST
-    1.6-crawling.integration.test.ts      ↔ src/app/_function/to-crawling-app.ts                 CRW
+    1.1-document.node.test.ts    ↔ src/app/_function/read-docs.ts                   DOC
+    1.2-home.node.test.ts        ↔ src/app/_function/read-home.ts · src/page/home   HOM
+    1.3-link.node.test.ts        ↔ remark-links · _rehype-content-links             LNK
+    1.4-code.node.test.ts        ↔ shiki-transformers · _remark-snippets            COD
+    1.5-asset.node.test.ts       ↔ _rehype-assets                                   AST
+    1.6-crawling.node.test.ts    ↔ src/app/_function/to-crawling-app.ts             CRW
   2-page/
-    2.1-shell.integration.test.ts         ↔ src/component/widget/shell                           SHL
+    2.1-shell.node.test.ts       ↔ src/component/widget/shell                       SHL
     2.1-shell.e2e.spec.ts
-    2.2-navigation.e2e.spec.ts            ↔ sidebar · shell-controls · cursor-face 위젯           NAV
+    2.2-navigation.e2e.spec.ts   ↔ sidebar · shell-controls · cursor-face           NAV
     2.2-navigation.integration.spec.ts
-    2.2-navigation.integration.test.ts
-    2.3-mermaid.e2e.spec.ts               ↔ src/component/widget/mermaid                         MRM
+    2.2-navigation.node.test.ts
+    2.3-mermaid.e2e.spec.ts      ↔ src/component/widget/mermaid                     MRM
     2.3-mermaid.integration.spec.ts
-    2.3-mermaid.integration.test.ts
+    2.3-mermaid.node.test.ts
   3-server/
-    3.1-dev.e2e.spec.ts                   ↔ src/entry/dev                                        DEV
-    3.2-preview.integration.test.ts       ↔ src/entry/preview                                    PRV
+    3.1-dev.e2e.spec.ts          ↔ src/entry/dev                                    DEV
+    3.2-preview.node.test.ts     ↔ src/entry/preview                                PRV
 ```
 
-- 영역 하나는 한 폴더 안에서 한 이름으로 묶습니다. 층은 접미사가 말하고 실행기는 확장자로 갈립니다. `.test.ts`는 Vitest, `.spec.ts`는 Playwright가 읽습니다.
+- 영역 하나는 한 폴더 안에서 한 이름으로 묶습니다. 층과 실행기 프로젝트는 접미사(`.node.test.ts`, `.integration.spec.ts`, `.e2e.spec.ts`)가 말합니다. 프로젝트는 접미사로 파일을 고르므로 접미사가 없는 파일은 어느 프로젝트에도 들어가지 않습니다.
 - 폴더와 파일은 사용자 흐름 순서 번호를 씁니다. 명령과 설정 → 문서 조립 → 페이지 → 서버입니다. 1층은 정수(`1-document`), 2층은 부모 번호를 이어 붙인 점 번호(`1.3-link`)라 번호 모양이 층을 말합니다. 한 층이 열 개를 넘으면 그 폴더만 `1.01`로 채웁니다.
 - 이름은 영역입니다. 케이스 코드와 1:1이고 컴포넌트 심볼(`wg-`, `pg-`)은 붙이지 않습니다. 대응하는 `src` 경로는 파일 머리 주석에 적습니다.
 - 새 영역은 그 흐름의 끝 번호로 붙입니다. 흐름상 중간에 끼워야 할 때만 번호를 밉니다. 케이스 번호는 파일 번호와 무관합니다.
@@ -66,6 +68,7 @@ test/
 pnpm test
 pnpm test:watch
 pnpm exec vitest run test/1-document
+pnpm exec vitest run --project node
 pnpm exec vitest run -t 'DOC-003'
 
 pnpm exec playwright install chromium
@@ -73,6 +76,7 @@ pnpm test:browser
 pnpm test:navigation
 pnpm test:mermaid --grep MRM-019
 pnpm test:browser --grep @high
+pnpm exec playwright test --project integration
 FH_TEST_BROWSER_CHANNEL=chrome pnpm test:mermaid
 
 pnpm exec playwright show-report .cache/playwright/report
@@ -186,7 +190,8 @@ test("[MRM-010] 접힌 다이어그램을 열면 모듈을 요청하고 표시�
 | step 이름 | 조건이면 결과다 | `Escape로 닫으면 탐색 열기 버튼으로 포커스가 복귀한다` |
 
 - 파일명은 영어, describe와 제목은 한국어입니다. 영어 토큰은 화면이나 터미널에 그렇게 보이는 문구(`On this page`, `Invalid asset`), 파일과 명령 이름에만 씁니다.
-- 조사는 앞말에 붙여 씁니다. 라틴 문자와 숫자 토큰도 같습니다(`README가`, `hash로`).
+- 조사는 앞말에 붙여 씁니다. 라틴 문자와 숫자 토큰도 같습니다(`README가`, `해시로`).
+- Vitest 제목의 `$이름` 자리 표시자 바로 뒤에는 조사를 붙이지 않습니다. 한글까지 변수 이름으로 읽어 `undefined`를 찍으므로 `$parent 입력은`처럼 띄어 씁니다.
 
 ## locator
 

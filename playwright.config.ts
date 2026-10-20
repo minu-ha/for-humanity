@@ -2,7 +2,6 @@ import {defineConfig} from "@playwright/test";
 
 export default defineConfig({
     testDir: "./test",
-    testMatch: "**/*.spec.ts",
     fullyParallel: true,
     forbidOnly: Boolean(process.env.CI),
     retries: 0,
@@ -19,4 +18,10 @@ export default defineConfig({
         trace: "retain-on-failure",
         screenshot: "only-on-failure",
     },
+
+    // 파일 접미사와 같은 프로젝트 이름. 결과 목록의 [integration], [e2e] 표시와 --project 선택 기준
+    projects: [
+        {name: "integration", testMatch: "**/*.integration.spec.ts"},
+        {name: "e2e", testMatch: "**/*.e2e.spec.ts"},
+    ],
 });

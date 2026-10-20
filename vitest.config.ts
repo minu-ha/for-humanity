@@ -11,9 +11,16 @@ export default defineConfig({
     },
     test: {
         environment: "node",
-        include: ["src/**/*.test.ts", "test/**/*.test.ts", "util/*.test.ts"],
         testTimeout: 15000,
         restoreMocks: true,
         clearMocks: true,
+
+        // 파일 접미사와 같은 프로젝트 이름. 결과 목록의 |unit|, |node| 표시와 --project 선택 기준
+        projects: [
+            {extends: true, test: {name: "unit", include: ["src/**/*.test.ts", "util/*.test.ts"]}},
+
+            // 실제 파일, Shiki 초기화, CLI 프로세스를 포함해 함수 검사보다 긴 시간 한도
+            {extends: true, test: {name: "node", include: ["test/**/*.node.test.ts"], testTimeout: 30000}},
+        ],
     },
 });

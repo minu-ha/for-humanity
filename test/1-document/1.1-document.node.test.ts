@@ -69,7 +69,7 @@ describe("문서", () => {
             {caseId: "DOC-004", parent: "readme"},
             {caseId: "DOC-005", parent: "guide.md"},
             {caseId: "DOC-006", parent: "/guide/"},
-        ])("[$caseId] 찾을 수 없는 부모 $parent를 거부한다", async (scenario, {scope}) => {
+        ])("[$caseId] 찾을 수 없는 부모 $parent 입력은 거부한다", async (scenario, {scope}) => {
             /**
              * GIVEN
              * 찾을 수 없는 부모를 지정한 문서

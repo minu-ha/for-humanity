@@ -67,7 +67,7 @@ describe("문서 링크와 목차", () => {
         test.for([
             {caseId: "LNK-002", source: "[Guide](setup%zz.md)"},
             {caseId: "LNK-003", source: '<img src="image%zz.png" alt="">'},
-        ])("[$caseId] 잘못된 퍼센트 인코딩 참조 $source는 작성 위치와 함께 거부한다", async (scenario, {scope}) => {
+        ])("[$caseId] 잘못된 퍼센트 인코딩 참조 $source 입력은 작성 위치와 함께 거부한다", async (scenario, {scope}) => {
             /**
              * GIVEN
              * 해석할 수 없는 인코딩을 포함한 상대 참조
