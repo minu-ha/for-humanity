@@ -1,15 +1,7 @@
 .wg_sidebar__brandRow {
     display: flex;
-
-    /* 두 스크롤 영역 바깥, 목록과 목차 위에서 이름 고정 */
-    position: sticky;
-    top: 0;
-    z-index: var(--app-z-index-sticky);
-    align-self: start;
-    min-width: 0;
     height: var(--app-size-brand);
     padding-block: var(--app-space-page-top) var(--app-space-group);
-    background: var(--app-color-ground);
     gap: var(--app-space-inline);
     align-items: start;
 }
@@ -174,14 +166,13 @@
 }
 
 .wg_sidebar__drawerHeader {
-    /* 두 스크롤 영역 바깥에서 닫기 버튼 유지 */
+    /* 목록 스크롤 바깥에서 닫기 버튼 유지 */
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--app-space-inline);
     min-height: var(--app-size-mobile-header);
     margin-bottom: var(--app-space-block);
-    background: var(--app-color-ground);
 }
 
 .wg_sidebar__drawerTitle {
@@ -261,7 +252,6 @@
     }
 
     .wg_sidebar__brandRow {
-        position: static;
         height: var(--app-size-mobile-header);
         padding-block: 0;
         align-items: center;

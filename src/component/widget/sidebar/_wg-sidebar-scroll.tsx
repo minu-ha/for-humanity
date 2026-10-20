@@ -113,15 +113,6 @@ export const WgSidebarScroll = (props: WgSidebarScrollProps) => {
         };
     }, [props.portRef, props.ready]);
 
-    /**
-     * 접힘 선택의 렌더가 바뀐 직후 측정. 좌표 복원은 부모의 연결 후 처리보다 앞서 저장하지 않음
-     */
-    useLayoutEffect(() => {
-        if (props.ready && props.portRef.current?.isConnected) {
-            measureOverflow();
-        }
-    }, [props.children, props.ready]);
-
     return (
         // biome-ignore lint/a11y/noStaticElementInteractions lint/a11y/useKeyWithClickEvents: 자식 링크와 버튼의 네이티브 키보드 이벤트를 부모에서 위임 처리
         <div

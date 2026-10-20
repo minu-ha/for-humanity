@@ -30,7 +30,7 @@ export const WgShellControls = (props: WgShellControlsProps) => {
     const timerRef = useRef(0);
     const arrivalRef = useRef<AbortController | null>(null);
     const lifetimeRef = useRef<AbortController | null>(null);
-    const userScrollRef = useRef<AbortController | null>(null);
+    const userScrolledRef = useRef(false);
 
     /**
      * 다음 앵커 이동과 해제에서 이전 강조, 도착 감시, 타이머 함께 정리
@@ -45,16 +45,12 @@ export const WgShellControls = (props: WgShellControlsProps) => {
     };
 
     /**
-     * 본문 스크롤 도착 후 3초 확보. 사이드바 자체의 scrollend는 제외
+     * 본문 스크롤 도착 후 강조 유지 시간 재시작
+     *
+     *   - 제약: document 구독은 본문 스크롤의 scrollend만 수신. 요소의 scrollend는 버블링 없음
      */
-    const handleHighlightArrival = (event: Event) => {
-        if (event.target !== document) {
-            return;
-        }
-
+    const handleHighlightArrival = () => {
         clearTimeout(timerRef.current);
-        arrivalRef.current?.abort();
-        arrivalRef.current = null;
         timerRef.current = window.setTimeout(clearHeadingHighlight, heading_highlight_hold_ms);
     };
 
@@ -72,7 +68,7 @@ export const WgShellControls = (props: WgShellControlsProps) => {
         headingRef.current.classList.add("wg_article__headingText--highlighted");
         timerRef.current = window.setTimeout(clearHeadingHighlight, heading_highlight_hold_ms);
         arrivalRef.current = new AbortController();
-        document.addEventListener("scrollend", handleHighlightArrival, {signal: arrivalRef.current.signal});
+        document.addEventListener("scrollend", handleHighlightArrival, {once: true, signal: arrivalRef.current.signal});
     };
 
     /**
@@ -106,7 +102,7 @@ export const WgShellControls = (props: WgShellControlsProps) => {
      * 첫 사용자 입력. 초기 앵커 보정 중단, 부드러운 절 이동 활성화
      */
     const handleUserScroll = () => {
-        userScrollRef.current?.abort();
+        userScrolledRef.current = true;
         document.documentElement.classList.add("wg_shell__document--smoothScroll");
     };
 
@@ -118,7 +114,7 @@ export const WgShellControls = (props: WgShellControlsProps) => {
      *   - 부드러운 절 이동은 보정 후 활성화, 복원 진입은 첫 사용자 입력까지 즉시 스크롤 유지
      */
     const handlePageLoad = async () => {
-        if (isRestoringNavigation() || userScrollRef.current?.signal.aborted) {
+        if (isRestoringNavigation() || userScrolledRef.current) {
             return;
         }
 
@@ -132,7 +128,7 @@ export const WgShellControls = (props: WgShellControlsProps) => {
             return;
         }
 
-        if (target !== null && !userScrollRef.current?.signal.aborted && hash === location.hash) {
+        if (target !== null && !userScrolledRef.current && hash === location.hash) {
             target.scrollIntoView({behavior: "instant"});
             highlightHeading(target);
         }
@@ -158,7 +154,6 @@ export const WgShellControls = (props: WgShellControlsProps) => {
         const lifetime = new AbortController();
 
         lifetimeRef.current = lifetime;
-        userScrollRef.current = new AbortController();
         document.addEventListener("click", handleHashClick, {signal: lifetime.signal});
         addEventListener("hashchange", handleHashChange, {signal: lifetime.signal});
         addEventListener("load", handlePageLoad, {once: true, signal: lifetime.signal});
@@ -176,8 +171,6 @@ export const WgShellControls = (props: WgShellControlsProps) => {
         return () => {
             lifetime.abort();
             lifetimeRef.current = null;
-            userScrollRef.current?.abort();
-            userScrollRef.current = null;
             clearHeadingHighlight();
             document.documentElement.classList.remove("wg_shell__document--smoothScroll");
         };

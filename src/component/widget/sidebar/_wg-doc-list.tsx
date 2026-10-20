@@ -1,5 +1,4 @@
 import clsx from "clsx";
-import {Fragment} from "hono/jsx";
 import type {NavigationGroup} from "@/component/widget/sidebar/_type/navigation-data";
 import "./_wg-doc-list.css";
 
@@ -17,44 +16,36 @@ export const WgDocList = (props: WgDocListProps) => {
     return (
         <ul className={clsx("wg_docList__root")} aria-label={props.group.name}>
             {/**
-             * 문서 링크는 원래 파일 URL 사용
+             * 문서 링크. 부모도 원래 파일 URL의 독립 페이지, 현재 한 문서에만 페이지 상태 부여
              */}
-            {[
-                ...props.group.docs.map((doc) => ({kind: "document" as const, key: `doc:${doc.id}`, doc})),
-                ...props.group.groups.map((group) => ({kind: "group" as const, key: `group:${JSON.stringify(group.path)}`, group})),
-            ].map((entry) => {
+            {props.group.docs.map((doc) => {
                 return (
-                    <li className={clsx("wg_docList__item")} key={entry.key}>
-                        {/**
-                         * 문서 링크. 부모도 독립 페이지, 현재 한 문서에만 페이지 상태 부여
-                         */}
-                        {entry.kind === "document" && (
-                            <Fragment>
-                                <a
-                                    className={clsx("wg_docList__link", entry.doc.active && "wg_docList__link--active")}
-                                    href={`/${entry.doc.id}/`}
-                                    title={entry.doc.label}
-                                    aria-current={entry.doc.active ? "page" : undefined}
-                                >
-                                    {entry.doc.name}
-                                </a>
-
-                                {/**
-                                 * 하위 문서. 부모 아래에서도 기존 목록의 들여쓰기와 키보드 이동 유지
-                                 */}
-                                {entry.doc.children.length > 0 && <WgDocList group={{name: entry.doc.name, path: props.group.path, docs: entry.doc.children, groups: []}} />}
-                            </Fragment>
-                        )}
+                    <li className={clsx("wg_docList__item")} key={`doc:${doc.id}`}>
+                        <a
+                            className={clsx("wg_docList__link", doc.active && "wg_docList__link--active")}
+                            href={`/${doc.id}/`}
+                            title={doc.label}
+                            aria-current={doc.active ? "page" : undefined}
+                        >
+                            {doc.name}
+                        </a>
 
                         {/**
-                         * 하위 묶음. 같은 목록의 재귀 렌더, 깊이별 들여쓰기
+                         * 하위 문서. 부모 아래에서도 기존 목록의 들여쓰기와 키보드 이동 유지
                          */}
-                        {entry.kind === "group" && (
-                            <Fragment>
-                                <span className={clsx("wg_docList__branch")}>{entry.group.name}</span>
-                                <WgDocList group={entry.group} />
-                            </Fragment>
-                        )}
+                        {doc.children.length > 0 && <WgDocList group={{name: doc.name, path: props.group.path, docs: doc.children, groups: []}} />}
+                    </li>
+                );
+            })}
+
+            {/**
+             * 하위 묶음. 같은 목록의 재귀 렌더, 깊이별 들여쓰기
+             */}
+            {props.group.groups.map((group) => {
+                return (
+                    <li className={clsx("wg_docList__item")} key={`group:${JSON.stringify(group.path)}`}>
+                        <span className={clsx("wg_docList__branch")}>{group.name}</span>
+                        <WgDocList group={group} />
                     </li>
                 );
             })}

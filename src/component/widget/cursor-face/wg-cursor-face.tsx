@@ -10,7 +10,7 @@ import "./wg-cursor-face.css";
  */
 export interface WgCursorFaceProps {
     /**
-     * 브라우저 셸이 준비한 DOM ref, 이벤트 연결 활성화
+     * 브라우저 진입점에서만 참. ref와 전역 이벤트 연결 조건
      */
     ready: boolean;
 }
@@ -32,7 +32,7 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
     /**
      * 비활성 전환에서만 장식 숨김, 새 마우스 이동은 취소 없음
      *
-     *   - 마지막 좌표는 유지, 다음 문서가 자기 표시 조건으로 복원 여부 판정
+     *   - 마지막 좌표는 유지, 복원 여부는 다음 문서의 표시 조건으로 판정
      *   - Windows Chromium은 새로고침 직전 이 조건을 잠시 비활성으로 전환
      */
     const handleCursorMediaChange = () => {

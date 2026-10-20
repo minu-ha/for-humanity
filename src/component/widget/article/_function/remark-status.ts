@@ -27,7 +27,7 @@ interface StatusOptions {
  */
 export const remarkStatus = (options: StatusOptions) => {
     const statuses = orderBy(options.status, [(item) => item.phrase.length], ["desc"]);
-    const phrases = statuses.map((item) => [escapeRegExp(item.phrase), ...(item.date ? [`(?: ${status_date_pattern})?`] : [])].join("")).join("|");
+    const phrases = statuses.map((item) => `${escapeRegExp(item.phrase)}${item.date ? `(?: ${status_date_pattern})?` : ""}`).join("|");
     const pattern = new RegExp(String.raw`\((${phrases})\)|(${phrases})`, "g");
     const ignore = ["link", "linkReference", "heading"];
 

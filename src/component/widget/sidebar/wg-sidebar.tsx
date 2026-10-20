@@ -139,8 +139,6 @@ export const WgSidebar = (props: WgSidebarProps) => {
      * 연결된 영역에서 첫 페인트 전 복원. 문서 목록은 페이지 간 공유, 목차는 같은 경로에서만 재사용
      */
     const restoreScroll = () => {
-        layoutRef.current = getNavigationLayout();
-
         const documents = getDocumentsPort();
 
         if (props.stores === undefined || documents === null || outlineRef.current === null) {
@@ -321,7 +319,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
         let active = true;
 
         /**
-         * 연결된 배치의 좌표 복원 후 전환 전 포커스를 같은 링크나 진입 버튼으로 이동
+         * 연결된 배치의 좌표 복원 후 전환 전 포커스 이동. 대상은 같은 링크, 진입 버튼, 브랜드
          */
         const restoreNavigation = () => {
             if (!active) {
