@@ -418,7 +418,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
             </aside>
 
             {/**
-             * 브라우저 top layer의 포커스, Escape, 배경 클릭 동작과 모바일 문서 목록
+             * 브라우저 최상위 레이어의 포커스, Escape, 배경 클릭 동작과 모바일 문서 목록
              */}
             {/**
              * biome-ignore lint/a11y/useKeyWithClickEvents: 배경 클릭의 키보드 대안은 네이티브 dialog의 cancel과 닫기 버튼

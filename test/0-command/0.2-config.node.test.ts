@@ -1,7 +1,7 @@
 import {execFileSync} from "node:child_process";
 import {mkdir, readFile, writeFile} from "node:fs/promises";
 import {join} from "node:path";
-import {test} from "@test/_fixture/unit";
+import {test} from "@test/_fixture/temp-root";
 import {describe, expect} from "vitest";
 
 /**

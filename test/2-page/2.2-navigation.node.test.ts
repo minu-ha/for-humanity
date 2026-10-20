@@ -1,7 +1,7 @@
 import {mkdir, writeFile} from "node:fs/promises";
 import {join} from "node:path";
+import {test} from "@test/_fixture/temp-root";
 import {toNavigationHtml} from "@test/_fixture/to-navigation-html";
-import {test} from "@test/_fixture/unit";
 import {describe, expect} from "vitest";
 import {readDocs} from "@/app/_function/read-docs";
 import {readHome} from "@/app/_function/read-home";

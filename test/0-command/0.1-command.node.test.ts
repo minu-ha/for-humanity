@@ -1,7 +1,7 @@
 import {spawnSync} from "node:child_process";
 import {mkdir, readFile, writeFile} from "node:fs/promises";
 import {join, resolve} from "node:path";
-import {test} from "@test/_fixture/unit";
+import {test} from "@test/_fixture/temp-root";
 import {describe, expect} from "vitest";
 import {z} from "zod/mini";
 

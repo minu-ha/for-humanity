@@ -1,7 +1,7 @@
 import {spawnSync} from "node:child_process";
 import {mkdir, readFile, writeFile} from "node:fs/promises";
 import {join, resolve} from "node:path";
-import {test as base} from "@test/_fixture/unit";
+import {test as base} from "@test/_fixture/temp-root";
 import {type PreviewServer, preview} from "vite";
 import {describe, expect} from "vitest";
 import {toPreviewConfig} from "@/entry/preview/to-preview-config";

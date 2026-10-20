@@ -1,6 +1,6 @@
 import {writeFile} from "node:fs/promises";
 import {join} from "node:path";
-import {test} from "@test/_fixture/unit";
+import {test} from "@test/_fixture/temp-root";
 import {describe, expect} from "vitest";
 import {asset_font_dir} from "@/constant/asset";
 import {font_body_css, font_brand_css, font_mono_css} from "@/constant/font";

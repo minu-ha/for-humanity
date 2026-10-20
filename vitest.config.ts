@@ -15,7 +15,7 @@ export default defineConfig({
         restoreMocks: true,
         clearMocks: true,
 
-        // 파일 접미사와 같은 프로젝트 이름. 결과 목록의 |unit|, |node| 표시와 --project 선택 기준
+        // 테스트 층과 같은 프로젝트 이름. 결과 목록의 |unit|, |node| 표시와 --project 선택 기준
         projects: [
             {extends: true, test: {name: "unit", include: ["src/**/*.test.ts", "util/*.test.ts"]}},
 

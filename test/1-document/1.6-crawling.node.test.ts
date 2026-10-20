@@ -1,6 +1,6 @@
 import {mkdir, readFile, writeFile} from "node:fs/promises";
 import {join} from "node:path";
-import {test} from "@test/_fixture/unit";
+import {test} from "@test/_fixture/temp-root";
 import {toSSG} from "hono/ssg";
 import {describe, expect} from "vitest";
 import {readDocs} from "@/app/_function/read-docs";

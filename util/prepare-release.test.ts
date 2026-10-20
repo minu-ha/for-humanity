@@ -2,7 +2,7 @@ import {spawnSync} from "node:child_process";
 import {mkdir, readFile, writeFile} from "node:fs/promises";
 import {join, resolve} from "node:path";
 import {fileURLToPath} from "node:url";
-import {test} from "@test/_fixture/unit";
+import {test} from "@test/_fixture/temp-root";
 import {packReportSchema} from "@tool/_type/pack-report";
 import {describe, expect} from "vitest";
 

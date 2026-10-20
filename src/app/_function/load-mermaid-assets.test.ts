@@ -1,6 +1,6 @@
 import {mkdir, writeFile} from "node:fs/promises";
 import {join} from "node:path";
-import {test} from "@test/_fixture/unit";
+import {test} from "@test/_fixture/temp-root";
 import {describe, expect} from "vitest";
 import {loadMermaidAssets} from "@/app/_function/load-mermaid-assets";
 

@@ -1,4 +1,4 @@
-import {test} from "@test/_fixture/unit";
+import {test} from "@test/_fixture/temp-root";
 import {describe, expect} from "vitest";
 import {toPageApp} from "@/app/_function/to-page-app/to-page-app";
 import {asset_style_path} from "@/constant/asset";
