@@ -8,11 +8,17 @@ describe("예약 폴더 판정", () => {
         {location: ".GIT/config", expected: true},
         {location: "public/distribution/a.png", expected: false},
         {location: "public/guide.md", expected: false},
-    ])("$location 경로는 예약 폴더 여부 $expected 값을 반환한다", (scenario) => {
+    ])("$location 경로의 예약 폴더 판정은 $expected 값이다", (scenario) => {
         /**
-         * WHEN / THEN
-         * 구분자와 대소문자를 무시한 폴더 이름 비교
+         * WHEN
+         * 상대 경로의 예약 폴더 판정
          */
-        expect(hasReservedFolder(scenario.location)).toBe(scenario.expected);
+        const result = hasReservedFolder(scenario.location);
+
+        /**
+         * THEN
+         * 구분자와 대소문자를 무시한 폴더 이름 비교 결과
+         */
+        expect(result).toBe(scenario.expected);
     });
 });

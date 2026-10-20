@@ -29,7 +29,7 @@ window.shellFixture = {
         shell.render(<WgShellControls data={navigation} stores={stores} />);
 
         window.shellFixture.unmount = () => {
-            return flushSync(() => shell.unmount());
+            flushSync(() => shell.unmount());
         };
     },
     unmount: () => {},

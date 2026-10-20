@@ -15,7 +15,7 @@ describe("문서 자원", () => {
         test("[AST-001] Markdown과 HTML 이미지는 첨부 파일과 내용 지문 자원을 공유한다", async ({scope}) => {
             /**
              * GIVEN
-             * 로컬 이미지, 첨부 파일과 이를 참조하는 문서
+             * 로컬 이미지와 첨부 파일을 참조하는 문서
              */
             await mkdir(join(scope.publicRoot, "guide"));
             await mkdir(join(scope.publicRoot, "img"));
@@ -42,7 +42,7 @@ describe("문서 자원", () => {
             expect(files.size).toBe(2);
             expect(docs[0].html.match(/src="\/_fh\/media\/asset\.[a-f0-9]+\.svg"/g)?.length).toBe(3);
             expect(docs[0].html).toMatch(/href="\/_fh\/media\/asset\.[a-f0-9]+\.csv\?download=1#rows"/);
-            expect(docs[0].html).toMatch(/src="https:\/\/example.com\/image.png"/);
+            expect(docs[0].html).toMatch(/src="https:\/\/example\.com\/image\.png"/);
         });
 
         test("[AST-002] 홈 이미지의 내용이 바뀌면 렌더한 주소와 자원 지문을 함께 갱신한다", async ({scope}) => {

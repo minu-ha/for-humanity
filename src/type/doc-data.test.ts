@@ -47,7 +47,7 @@ describe("문서 메타", () => {
 
         /**
          * THEN
-         * 선택 계약과 식별자 유지
+         * 생략한 부모 없음과 공백을 정리한 식별자
          */
         expect(result).toStrictEqual({absent: undefined, present: "guide/settings"});
     });

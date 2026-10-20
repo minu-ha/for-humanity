@@ -11,7 +11,7 @@ import {test} from "@test/_fixture/dev";
  */
 test.describe("개발 서버", () => {
     test.describe("설치 번들", () => {
-        test("[DEV-001] 문서 추가, 변경, 삭제가 브라우저에 반영되고 잘못된 문서에서 복구한다", {tag: "@high"}, async ({page, devSite}) => {
+        test("[DEV-001] 문서 추가, 변경, 삭제를 브라우저에 반영하고 잘못된 문서에서 복구한다", {tag: "@high"}, async ({page, devSite}) => {
             /**
              * GIVEN
              * 실제 개발 서버와 갱신 통신이 연결된 홈
@@ -35,10 +35,10 @@ test.describe("개발 서버", () => {
                 await expect(page.getByText("Updated content.", {exact: true})).toBeVisible();
             });
 
-            await test.step("문법 오류 동안 마지막 정상 문서를 유지한다", async () => {
+            await test.step("문법 오류가 있는 동안 마지막 정상 문서를 유지한다", async () => {
                 /**
                  * WHEN
-                 * 잘못된 frontmatter 저장
+                 * 잘못된 머리말 저장
                  */
                 await writeFile(join(devSite.root, "public/guide.md"), "---\nname: [\n---\n");
                 await expect.poll(() => devSite.errors.length).toBeGreaterThan(0);
@@ -56,7 +56,7 @@ test.describe("개발 서버", () => {
             await test.step("같은 파일의 오류를 수정하면 새 내용으로 복구한다", async () => {
                 /**
                  * WHEN
-                 * 잘못된 frontmatter를 정상 문서로 교체
+                 * 잘못된 머리말을 정상 문서로 교체
                  */
                 await writeFile(join(devSite.root, "public/guide.md"), "---\nname: Recovered guide\nlabel: Recovered guide\ngroup: Guide\n---\n\n## Recovered section\n");
 
@@ -164,7 +164,7 @@ test.describe("개발 서버", () => {
                 expect((await page.request.get(previousImage)).status()).toBe(404);
             });
 
-            await test.step("참조 삭제 오류를 고친 뒤 README 삭제까지 반영한다", async () => {
+            await test.step("참조 파일을 삭제하면 마지막 정상 문서를 유지하고 README 삭제는 반영한다", async () => {
                 /**
                  * WHEN
                  * 참조 파일 삭제 후 README 제거
@@ -217,7 +217,7 @@ test.describe("개발 서버", () => {
         test("[DEV-006] 첫 문서 준비가 실패해도 파일을 수정하면 같은 서버에서 복구한다", {tag: ["@high", "@negative"]}, async ({page, devSite}) => {
             /**
              * GIVEN
-             * 첫 요청 전부터 잘못된 frontmatter가 있는 문서
+             * 첫 요청 전부터 잘못된 머리말이 있는 문서
              */
             const document = join(devSite.root, "public/guide.md");
 
@@ -386,7 +386,7 @@ test.describe("개발 서버", () => {
         test("[DEV-003] CSS 변경은 페이지 상태를 유지하고 TSX 변경은 서버와 브라우저에 반영한다", {tag: "@high"}, async ({page, devSite}) => {
             /**
              * GIVEN
-             * 최초 HTML의 stylesheet에 테두리가 있는 개발 페이지
+             * 최초 HTML의 스타일시트에 테두리가 있는 개발 페이지
              */
             const path = join(devSite.kitRoot, "src/component/widget/shell/wg-shell.css");
             const original = await readFile(path, "utf8");
@@ -399,7 +399,7 @@ test.describe("개발 서버", () => {
             await page.setViewportSize({width: 760, height: 900});
             await page.goto("/");
             await expect(page.getByText("Initial content.", {exact: true})).toBeVisible();
-            await expect(page.locator("main")).toHaveCSS("outline-style", "solid");
+            await expect(page.getByRole("main")).toHaveCSS("outline-style", "solid");
             await page.getByRole("button", {name: "Open navigation", exact: true}).click();
             await expect(page.getByRole("dialog", {name: "Navigation", exact: true})).toBeVisible();
             await page.getByRole("button", {name: "Close navigation", exact: true}).click();
@@ -408,15 +408,15 @@ test.describe("개발 서버", () => {
             await test.step("CSS 갱신은 전체 문서를 다시 열지 않는다", async () => {
                 /**
                  * WHEN
-                 * 최초 stylesheet의 테두리 선언 삭제
+                 * 최초 스타일시트의 테두리 선언 삭제
                  */
                 await writeFile(path, original);
 
                 /**
                  * THEN
-                 * 초기 stylesheet의 이전 선언 제거와 같은 페이지 상태 유지
+                 * 최초 스타일시트의 이전 선언 제거와 같은 페이지 상태 유지
                  */
-                await expect(page.locator("main")).toHaveCSS("outline-style", "none");
+                await expect(page.getByRole("main")).toHaveCSS("outline-style", "none");
                 await expect(page.locator("html")).toHaveAttribute("data-dev-marker", "retained");
             });
 

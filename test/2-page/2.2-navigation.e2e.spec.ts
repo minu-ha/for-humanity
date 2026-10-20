@@ -64,9 +64,9 @@ test.describe("문서 탐색", () => {
                  */
                 await page.goto("/guide/");
 
-                const mobile = layout.options.viewport.width < 1024;
+                const hasDrawer = layout.options.viewport.width < 1024 && layout.options.javaScriptEnabled !== false;
 
-                if (mobile && layout.options.javaScriptEnabled !== false) {
+                if (hasDrawer) {
                     await page.getByRole("button", {name: "Open navigation", exact: true}).click();
                     expect(await page.getByRole("dialog", {name: "Navigation", exact: true}).evaluate((element) => element.matches(":modal"))).toBe(true);
                 }
@@ -76,10 +76,7 @@ test.describe("문서 탐색", () => {
                  * 수평 넘침 없는 문서와 화면별 탐색 배치
                  */
                 expect(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)).toBe(false);
-
-                const outline = page.getByRole("navigation", {name: "On this page", exact: true});
-
-                await expect(outline).toBeVisible({visible: layout.options.viewport.width >= 1360});
+                await expect(page.getByRole("navigation", {name: "On this page", exact: true})).toBeVisible({visible: layout.options.viewport.width >= 1360});
 
                 const documents = page.locator('[data-sidebar-scroll="documents"]');
 
@@ -97,14 +94,14 @@ test.describe("문서 탐색", () => {
                         // 본문은 1920px 페이지 안에서 양쪽 바깥 여백 28px, 사이드바 200px, 간격 32px을 뺀 나머지 전체
                         const fill = await page.evaluate(() => Math.min(document.documentElement.getBoundingClientRect().width, 1920) - (28 + 200 + 32) * 2);
 
-                        expect(await page.locator("main").evaluate((element) => element.getBoundingClientRect().width)).toBe(fill);
+                        expect(await page.getByRole("main").evaluate((element) => element.getBoundingClientRect().width)).toBe(fill);
                     }
 
                     if (layout.options.forcedColors === "active") {
                         expect(await documents.evaluate((element) => getComputedStyle(element).scrollbarWidth)).toBe("thin");
                     }
 
-                    if (mobile) {
+                    if (hasDrawer) {
                         await test.step("Escape로 닫으면 탐색 열기 버튼으로 포커스가 복귀한다", async () => {
                             await page.keyboard.press("Escape");
                             await expect(page.getByRole("dialog", {name: "Navigation", exact: true})).toBeHidden();
@@ -229,7 +226,7 @@ test.describe("문서 탐색", () => {
                 await expect(details).toHaveJSProperty("open", true);
                 await expect(hiddenHeading).toHaveClass(/wg_article__headingText--highlighted/);
 
-                const body = await page.locator("main").elementHandle();
+                const body = await page.getByRole("main").elementHandle();
 
                 await page.setViewportSize({width: 1280, height: 600});
                 await expect(navigation).toHaveAttribute("data-sidebar-layout", "desktop");
@@ -244,7 +241,7 @@ test.describe("문서 탐색", () => {
 
                 await focused.focus();
 
-                const desktopPosition = await page.locator('[data-sidebar-scroll="documents"]').evaluate((element) => element.scrollTop);
+                const desktopPosition = await documents.evaluate((element) => element.scrollTop);
 
                 await page.setViewportSize({width: 390, height: 844});
                 await expect(page.getByRole("button", {name: "Open navigation", exact: true})).toBeFocused();
@@ -255,7 +252,7 @@ test.describe("문서 탐색", () => {
                 });
 
                 await expect.poll(async () => (await readNavigationScroll(page))?.drawer?.documents).toBe(180);
-                await page.getByRole("link", {name: "Page 10", exact: true}).focus();
+                await focused.focus();
                 await page.setViewportSize({width: 1280, height: 600});
                 await expect(navigation).toHaveAttribute("data-sidebar-layout", "desktop");
                 await expect(focused).toBeFocused();
@@ -267,7 +264,7 @@ test.describe("문서 탐색", () => {
             await test.step("접힌 제목으로 이동하면 내용을 공개하고 강조를 정리한다", async () => {
                 await page.setViewportSize({width: 1920, height: 600});
                 await expect(navigation).toHaveAttribute("data-sidebar-layout", "wide");
-                await page.locator("details summary").click();
+                await page.getByText("Folded context", {exact: true}).click();
                 await expect(details).toHaveJSProperty("open", false);
                 await page.getByRole("link", {name: "Hidden detail", exact: true}).click();
                 await expect(details).toHaveJSProperty("open", true);
@@ -290,6 +287,9 @@ test.describe("문서 탐색", () => {
              */
             await page.goto("/guide/");
             await page.mouse.move(500, 200);
+
+            // 커서 표시가 반영되는 화면 갱신 대기
+            await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
 
             /**
              * THEN
@@ -417,6 +417,10 @@ test.describe("문서 탐색", () => {
 
     test.describe("목차와 앵커", () => {
         test("[NAV-016] 문서 끝 구간의 목차는 제목을 건너뛰지 않고 이동한 제목은 스크롤 전까지 유지한다", {tag: "@high"}, async ({page}) => {
+            /**
+             * GIVEN
+             * 목차 순서와 스크롤 끝 위치를 조회한 문서
+             */
             await page.goto("/guide/");
 
             const current = page.locator('[aria-current="location"]');
@@ -451,7 +455,7 @@ test.describe("문서 탐색", () => {
                 expect(seen.at(-1)).toBe("#detail-23");
             });
 
-            await test.step("끝 구간 제목으로 이동하면 다른 제목을 거치지 않고 도착 위치와 목차가 같다", async () => {
+            await test.step("끝 구간 제목으로 이동하면 목차는 다른 제목을 거치지 않고 도착한 제목을 표시한다", async () => {
                 /**
                  * GIVEN
                  * 끝 구간 제목으로 이동한 뒤 목차 변경을 기록하는 문서
@@ -514,10 +518,12 @@ test.describe("문서 탐색", () => {
              */
             await page.goto("/guide/#detail-10");
 
-            const heading = page.locator("#detail-10");
-
             await expect
-                .poll(() => heading.evaluate((element) => Math.abs(element.getBoundingClientRect().top - Number.parseFloat(getComputedStyle(element).scrollMarginTop))))
+                .poll(() => {
+                    return page
+                        .locator("#detail-10")
+                        .evaluate((element) => Math.abs(element.getBoundingClientRect().top - Number.parseFloat(getComputedStyle(element).scrollMarginTop)));
+                })
                 .toBeLessThanOrEqual(1);
 
             await expect(page.locator("html")).toHaveCSS("scroll-behavior", "smooth");
@@ -573,6 +579,10 @@ test.describe("문서 탐색", () => {
 
     test.describe("스크롤 입력", () => {
         test("[NAV-018] 화면에 들어가는 탐색 영역의 휠은 본문을 스크롤하고 넘치는 목록은 끝에서 휠 전파를 막는다", {tag: "@high"}, async ({page}) => {
+            /**
+             * GIVEN
+             * 1600px 높이 화면에서 연 문서
+             */
             await page.setViewportSize({width: 1920, height: 1600});
             await page.goto("/guide/");
 
@@ -636,6 +646,9 @@ test.describe("문서 탐색", () => {
                 await page.mouse.move(100, 300);
                 await page.mouse.wheel(0, 300);
 
+                // 휠 스크롤이 반영되는 화면 갱신 대기
+                await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+
                 /**
                  * THEN
                  * 본문 위치 유지
@@ -652,7 +665,7 @@ test.describe("문서 탐색", () => {
         test("[NAV-019] 스크립트 연결 전 문서 스크롤은 즉시 이동한다", {tag: "@mid"}, async ({page}) => {
             /**
              * WHEN
-             * 스크립트 없이 문서 열기
+             * 스크립트 없이 문서 조회
              */
             await page.goto("/guide/");
 

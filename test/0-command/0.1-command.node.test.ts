@@ -21,23 +21,29 @@ describe("CLI 명령", () => {
             const manifest = z.object({version: z.string()}).parse(JSON.parse(await readFile("package.json", "utf8")));
 
             /**
-             * WHEN / THEN
-             * 루트, 명령별 도움말, 실제 패키지 버전의 독립 실행
+             * WHEN
+             * 루트와 명령별 도움말, 버전 플래그의 독립 실행
              */
-            for (const args of [["--help"], ["-h"], ["dev", "--help"], ["build", "--help"], ["preview", "--help"]]) {
-                const result = spawnSync(process.execPath, [cli, ...args], {cwd: root, encoding: "utf8", timeout: 5000});
+            const helps = [["--help"], ["-h"], ["dev", "--help"], ["build", "--help"], ["preview", "--help"]].map((args) => {
+                return {args, result: spawnSync(process.execPath, [cli, ...args], {cwd: root, encoding: "utf8", timeout: 5000})};
+            });
 
-                expect(result.status, result.stderr).toBe(0);
-                expect(result.stdout).toContain("USAGE");
-                expect(result.stdout).toContain(args.length === 1 ? "COMMANDS" : "[DIR]");
-                expect(result.stderr).toBe("");
+            const versions = ["--version", "-v"].map((flag) => spawnSync(process.execPath, [cli, flag], {cwd: root, encoding: "utf8", timeout: 5000}));
+
+            /**
+             * THEN
+             * 설정 실행 없는 사용법 안내와 실제 패키지 버전
+             */
+            for (const help of helps) {
+                expect(help.result.status, help.result.stderr).toBe(0);
+                expect(help.result.stdout).toContain("USAGE");
+                expect(help.result.stdout).toContain(help.args.length === 1 ? "COMMANDS" : "[DIR]");
+                expect(help.result.stderr).toBe("");
             }
 
-            for (const flag of ["--version", "-v"]) {
-                const result = spawnSync(process.execPath, [cli, flag], {cwd: root, encoding: "utf8", timeout: 5000});
-
-                expect(result.status, result.stderr).toBe(0);
-                expect(result.stdout.trim()).toBe(manifest.version);
+            for (const version of versions) {
+                expect(version.status, version.stderr).toBe(0);
+                expect(version.stdout.trim()).toBe(manifest.version);
             }
         });
 
@@ -51,15 +57,21 @@ describe("CLI 명령", () => {
             const cli = resolve("dist/cli.js");
 
             /**
-             * WHEN / THEN
+             * WHEN
+             * 잘못된 명령, 옵션, 초과 인자의 CLI 실행
+             */
+            const runs = [["unknown"], ["build", "--unknown"], ["--unknown", "build"], ["build", ".", "extra"]].map((args) => {
+                return {args, result: spawnSync(process.execPath, [cli, ...args], {cwd: root, encoding: "utf8", timeout: 5000})};
+            });
+
+            /**
+             * THEN
              * 잘못된 입력의 종료 코드와 설정 미실행
              */
-            for (const args of [["unknown"], ["build", "--unknown"], ["--unknown", "build"], ["build", ".", "extra"]]) {
-                const result = spawnSync(process.execPath, [cli, ...args], {cwd: root, encoding: "utf8", timeout: 5000});
-
-                expect(result.status, JSON.stringify(args)).toBe(1);
-                expect(result.stderr).not.toContain("CONFIG_MUST_NOT_RUN");
-                expect(result.stderr).not.toBe("");
+            for (const run of runs) {
+                expect(run.result.status, JSON.stringify(run.args)).toBe(1);
+                expect(run.result.stderr).not.toContain("CONFIG_MUST_NOT_RUN");
+                expect(run.result.stderr).not.toBe("");
             }
         });
     });

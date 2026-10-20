@@ -85,7 +85,7 @@ export const test = base.extend<DevFixture>({
                     customLogger: {
                         ...createLogger("silent"),
                         error: (message: string) => {
-                            return errors.push(message);
+                            errors.push(message);
                         },
                     },
                     server: {port: 0, host: "127.0.0.1"},

@@ -22,10 +22,10 @@ describe("글꼴 자원", () => {
         expect(result.css).not.toMatch(/font-display:\s*swap;/);
     });
 
-    test("같은 글꼴 내용은 같은 URL이고 내용이 바뀌면 새 URL을 생성한다", async ({root}) => {
+    test("글꼴 URL은 내용이 같으면 유지하고 바뀌면 새로 만든다", async ({root}) => {
         /**
          * GIVEN
-         * 지역 글꼴과 이를 가리키는 CSS
+         * 글꼴 파일과 이 파일을 참조하는 CSS
          */
         const file = join(root, "example.woff2");
         const css = join(root, "font.css");

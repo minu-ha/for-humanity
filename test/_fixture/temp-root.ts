@@ -11,7 +11,7 @@ import type {ContentScope} from "@/type/content-scope";
 export const test = base.extend<{root: string; scope: ContentScope}>({
     // biome-ignore lint/correctness/noEmptyPattern: Vitest가 구조분해 매개변수로 fixture 의존성을 조회
     root: async ({}, use) => {
-        // 문서 범위 검사와 같은 실제 경로. macOS 임시 폴더의 symlink 해소
+        // macOS 임시 폴더의 심볼릭 링크 해소, 문서 범위 검사의 실제 경로와 일치
         const root = await realpath(await mkdtemp(join(tmpdir(), "for-humanity-test-")));
 
         try {

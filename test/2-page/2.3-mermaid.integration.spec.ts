@@ -47,7 +47,7 @@ test.describe("다이어그램", () => {
                             const channels = color.match(/[\d.]+/g);
 
                             if (channels === null) {
-                                throw new Error(`Unsupported color: ${color}`);
+                                throw new Error(`지원하지 않는 색 형식입니다: ${color}`);
                             }
 
                             return channels
@@ -77,7 +77,7 @@ test.describe("다이어그램", () => {
             await test.step("노드를 가리키면 툴팁이 표시되고 벗어나면 숨겨진다", async () => {
                 await page.locator(".wg_mermaid__result").first().locator(".node").first().hover();
                 await expect(page.locator(".mermaidTooltip")).toHaveText("Tooltip text");
-                await expect.poll(() => page.locator(".mermaidTooltip").evaluate((element) => Number(getComputedStyle(element).opacity))).toBeGreaterThan(0);
+                await expect(page.locator(".mermaidTooltip")).not.toHaveCSS("opacity", "0");
                 await page.getByRole("heading", {name: "Guide", exact: true}).hover();
                 await expect(page.locator(".mermaidTooltip")).toBeHidden();
             });
@@ -87,7 +87,7 @@ test.describe("다이어그램", () => {
                 await expect(page.locator('[data-mermaid-status="rendered"]')).toHaveCount(diagram_cases.length + 1);
                 await page.locator(".wg_mermaid__result").first().locator(".node").first().hover();
                 await expect(page.locator(".mermaidTooltip")).toHaveText("Tooltip text");
-                await expect.poll(() => page.locator(".mermaidTooltip").evaluate((element) => Number(getComputedStyle(element).opacity))).toBeGreaterThan(0);
+                await expect(page.locator(".mermaidTooltip")).not.toHaveCSS("opacity", "0");
             });
         });
     });
@@ -96,7 +96,7 @@ test.describe("다이어그램", () => {
         test("[MRM-023] 렌더 응답 대기 중 재마운트하면 이전 결과가 새 SVG를 덮지 않는다", {tag: "@high"}, async ({page}) => {
             /**
              * GIVEN
-             * 실제 Mermaid 렌더의 첫 응답을 지연하는 위젯
+             * 실제 Mermaid 렌더의 첫 응답이 지연된 위젯
              */
             await page.goto("/lifecycle/");
 
@@ -233,7 +233,7 @@ test.describe("다이어그램", () => {
                 const path = document.querySelector<HTMLElement>("[data-mermaid-module]")?.dataset.mermaidModule;
 
                 if (path === undefined) {
-                    throw new Error("Missing Mermaid module in lifecycle fixture");
+                    throw new Error("테스트 Mermaid 모듈이 없습니다");
                 }
 
                 await import(path);
@@ -259,7 +259,7 @@ test.describe("다이어그램", () => {
             await page.evaluate(() => window.diagramFixture.mount());
             await expect(page.locator('[data-mermaid-status="rendered"]')).toHaveCount(diagram_cases.length);
             await page.locator(".wg_mermaid__result").first().locator(".node").first().hover();
-            await expect.poll(() => page.locator(".mermaidTooltip").evaluate((element) => Number(getComputedStyle(element).opacity))).toBeGreaterThan(0);
+            await expect(page.locator(".mermaidTooltip")).not.toHaveCSS("opacity", "0");
 
             /**
              * WHEN
@@ -303,7 +303,7 @@ test.describe("다이어그램", () => {
              */
             await expect(page.locator('[data-mermaid-status="rendered"]')).toHaveCount(diagram_cases.length);
             await expect(page.locator(".mermaidTooltip")).toHaveText("Tooltip text");
-            await expect.poll(() => page.locator(".mermaidTooltip").evaluate((element) => Number(getComputedStyle(element).opacity))).toBeGreaterThan(0);
+            await expect(page.locator(".mermaidTooltip")).not.toHaveCSS("opacity", "0");
             await expect(page.locator(".wg_mermaid__measurement")).toHaveCount(0);
         });
     });

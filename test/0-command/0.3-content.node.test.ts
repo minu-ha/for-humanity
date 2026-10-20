@@ -42,6 +42,7 @@ describe("공개와 내부 문서", () => {
             const entries = await readdir(output, {recursive: true});
             const html = await readFile(join(output, "index.html"), "utf8");
             const local = await loadSite({root: join(root, "content"), kitRoot: resolve("."), site: siteConfigSchema.parse({}), includePrivate: true});
+            const privatePage = await local.app.request("/private/maintenance/");
 
             /**
              * THEN
@@ -52,8 +53,8 @@ describe("공개와 내부 문서", () => {
             expect(entries.some((entry) => /private|secret|mermaid|scratch/.test(entry))).toBe(false);
             expect(html).not.toContain("INTERNAL_");
             expect(await readFile(join(output, "sitemap.xml"), "utf8")).not.toContain("private");
-            expect((await local.app.request("/private/maintenance/")).status).toBe(200);
-            expect(await (await local.app.request("/private/maintenance/")).text()).toContain("INTERNAL_BODY");
+            expect(privatePage.status).toBe(200);
+            expect(await privatePage.text()).toContain("INTERNAL_BODY");
         });
     });
 
@@ -80,18 +81,22 @@ describe("공개와 내부 문서", () => {
                 }
 
                 /**
-                 * WHEN / THEN
-                 * 빌드 종료 코드와 작성 위치
+                 * WHEN
+                 * 실제 CLI의 정적 사이트 빌드
                  */
                 const result = spawnSync(process.execPath, [resolve("dist/cli.js"), "build", root], {encoding: "utf8"});
 
+                /**
+                 * THEN
+                 * 빌드 종료 코드와 작성 위치
+                 */
                 expect(result.status).toBe(1);
                 expect(result.stderr).toContain("guide.md");
                 expect(result.stderr).toContain("private");
             });
         }
 
-        test("[CNT-008] 공개 이미지의 symlink로 내부 파일을 참조하면 실패한다", async ({root}) => {
+        test("[CNT-008] 공개 이미지가 심볼릭 링크로 내부 파일을 가리키면 실패한다", async ({root}) => {
             /**
              * GIVEN
              * 공개 경로 안의 링크가 가리키는 내부 자원
@@ -103,11 +108,15 @@ describe("공개와 내부 문서", () => {
             await writeFile(join(root, "content/public/guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n![Image](image.svg)");
 
             /**
-             * WHEN / THEN
-             * 실제 파일 경로 기준 공개 범위 검사
+             * WHEN
+             * 실제 CLI의 정적 사이트 빌드
              */
             const result = spawnSync(process.execPath, [resolve("dist/cli.js"), "build", root], {encoding: "utf8"});
 
+            /**
+             * THEN
+             * 실제 파일 경로 기준의 공개 범위 위반 실패
+             */
             expect(result.status).toBe(1);
             expect(result.stderr).toContain("private");
         });
@@ -125,17 +134,21 @@ describe("공개와 내부 문서", () => {
             await writeFile(join(root, "knowledge/published/guide/setup.md"), "---\nname: Setup\nlabel: Setup\ngroup: Guide\n---\n\n[Home](../../README.md)");
 
             /**
-             * WHEN / THEN
-             * 내부 폴더 없이도 사용자 경로 빌드 성공
+             * WHEN
+             * 실제 CLI의 정적 사이트 빌드
              */
             const result = spawnSync(process.execPath, [resolve("dist/cli.js"), "build", root], {encoding: "utf8"});
 
+            /**
+             * THEN
+             * 내부 폴더 없이도 사용자 경로 빌드 성공
+             */
             expect(result.status, result.stderr).toBe(0);
             expect(await readFile(join(root, "knowledge/dist/index.html"), "utf8")).toContain('href="/guide/setup/"');
             expect(await readFile(join(root, "knowledge/dist/guide/setup/index.html"), "utf8")).toContain('href="/"');
         });
 
-        test("[CNT-010] 공개 폴더 누락 시 루트 전체를 대신 게시하지 않는다", async ({root}) => {
+        test("[CNT-010] 공개 폴더가 없으면 루트 전체를 대신 게시하지 않는다", async ({root}) => {
             /**
              * GIVEN
              * 이전 방식의 루트 문서만 존재하는 프로젝트
@@ -143,13 +156,17 @@ describe("공개와 내부 문서", () => {
             await writeFile(join(root, "README.md"), "# Must not publish");
 
             /**
-             * WHEN / THEN
-             * 마이그레이션이 필요한 입력의 명시적 실패
+             * WHEN
+             * 실제 CLI의 정적 사이트 빌드
              */
             const result = spawnSync(process.execPath, [resolve("dist/cli.js"), "build", root], {encoding: "utf8"});
 
+            /**
+             * THEN
+             * 마이그레이션이 필요한 입력의 명시적 실패
+             */
             expect(result.status).toBe(1);
-            expect(result.stderr).toContain("content");
+            expect(result.stderr).toContain("Content root not found");
         });
 
         test("[CNT-011] 내부 문서의 상대 부모와 링크는 사용자 지정 공개 폴더를 해소한다", async ({root}) => {

@@ -13,6 +13,6 @@ window.diagramFixture = {
         flushSync(() => mounted.render(<WgMermaid />));
     },
     unmount: () => {
-        return flushSync(() => mounted.unmount());
+        flushSync(() => mounted.unmount());
     },
 };

@@ -13,7 +13,7 @@ import {toPreviewConfig} from "@/entry/preview/to-preview-config";
  */
 export const test = base.extend<Record<never, never>, {navigationSite: string}>({
     navigationSite: [
-        // biome-ignore lint/correctness/noEmptyPattern: Playwright fixture 의존성 조회 계약
+        // biome-ignore lint/correctness/noEmptyPattern: Playwright가 구조분해 매개변수로 fixture 의존성을 조회
         async ({}, use) => {
             const root = await mkdtemp(join(tmpdir(), "for-humanity-navigation-"));
 

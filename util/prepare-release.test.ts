@@ -3,7 +3,6 @@ import {mkdir, readFile, writeFile} from "node:fs/promises";
 import {join, resolve} from "node:path";
 import {fileURLToPath} from "node:url";
 import {test} from "@test/_fixture/temp-root";
-import {packReportSchema} from "@tool/_type/pack-report";
 import {describe, expect} from "vitest";
 
 /**
@@ -41,6 +40,29 @@ const runRelease = (params: ReleaseRunParams) => {
     );
 };
 
+/**
+ * 현재 버전 압축 파일의 npm pack 항목. 필수 산출물과 내장 글꼴 포함
+ */
+const release_pack = {
+    name: "for-humanity",
+    version: "0.1.1",
+    filename: "for-humanity-0.1.1.tgz",
+    integrity: "sha512-example",
+    files: [
+        "dist/cli.js",
+        "dist/site.js",
+        "dist/cli.css",
+        "dist/browser.js",
+        "dist/config.js",
+        "dist/type/site-config.d.ts",
+        "src/asset/favicon.svg",
+        "README.md",
+        "LICENSE",
+        "CHANGELOG.md",
+        "src/asset/font/example.woff2",
+    ].map((path) => ({path})),
+};
+
 describe("릴리스 산출물", () => {
     test.beforeEach(async ({root}) => {
         await mkdir(join(root, "language"));
@@ -52,30 +74,7 @@ describe("릴리스 산출물", () => {
             await writeFile(join(root, file), "pnpm add -D --save-exact for-humanity@0.1.1\n");
         }
 
-        await writeFile(
-            join(root, "release/pack.json"),
-            JSON.stringify([
-                {
-                    name: "for-humanity",
-                    version: "0.1.1",
-                    filename: "for-humanity-0.1.1.tgz",
-                    integrity: "sha512-example",
-                    files: [
-                        "dist/cli.js",
-                        "dist/site.js",
-                        "dist/cli.css",
-                        "dist/browser.js",
-                        "dist/config.js",
-                        "dist/type/site-config.d.ts",
-                        "src/asset/favicon.svg",
-                        "README.md",
-                        "LICENSE",
-                        "CHANGELOG.md",
-                        "src/asset/font/example.woff2",
-                    ].map((path) => ({path})),
-                },
-            ]),
-        );
+        await writeFile(join(root, "release/pack.json"), JSON.stringify([release_pack]));
     });
 
     test("태그의 변경 기록과 설치 안내만 릴리스 노트로 생성한다", async ({root}) => {
@@ -104,9 +103,7 @@ describe("릴리스 산출물", () => {
          * GIVEN
          * npm의 객체 형태 패키지 보고서
          */
-        const pack = packReportSchema.parse(JSON.parse(await readFile(join(root, "release/pack.json"), "utf8")));
-
-        await writeFile(join(root, "release/pack.json"), JSON.stringify({[pack.name]: pack}));
+        await writeFile(join(root, "release/pack.json"), JSON.stringify({[release_pack.name]: release_pack}));
 
         /**
          * WHEN
@@ -142,11 +139,11 @@ describe("릴리스 산출물", () => {
     });
 
     test.for([
-        {file: "CHANGELOG.md", contents: "# Changelog\n\n## 0.1.0 — 2026-10-03\n\n- First release.\n", error: /changelog entry/},
-        {file: "language/README.ko.md", contents: "pnpm add -D --save-exact for-humanity@0.1.0\n", error: /README\.ko\.md/},
-        {file: "release/pack.json", contents: "[]", error: /Too small/},
-        {file: "release/pack.json", contents: '{"broken":null}', error: /Invalid input/},
-    ])("$file 파일의 잘못된 배포 정보를 거부한다", async (scenario, {root}) => {
+        {name: "현재 버전 기록이 없는 CHANGELOG.md", file: "CHANGELOG.md", contents: "# Changelog\n\n## 0.1.0 — 2026-10-03\n\n- First release.\n", error: /changelog entry/},
+        {name: "이전 버전을 설치하는 README.ko.md", file: "language/README.ko.md", contents: "pnpm add -D --save-exact for-humanity@0.1.0\n", error: /README\.ko\.md/},
+        {name: "빈 패키지 보고서", file: "release/pack.json", contents: "[]", error: /Too small/},
+        {name: "형식이 잘못된 패키지 보고서", file: "release/pack.json", contents: '{"broken":null}', error: /Invalid input/},
+    ])("$name 입력은 거부한다", async (scenario, {root}) => {
         /**
          * GIVEN
          * 현재 버전과 맞지 않거나 손상된 배포 정보
@@ -172,9 +169,7 @@ describe("릴리스 산출물", () => {
          * GIVEN
          * 필수 파일이 누락된 패키지 보고서
          */
-        const pack = packReportSchema.parse(JSON.parse(await readFile(join(root, "release/pack.json"), "utf8")));
-
-        await writeFile(join(root, "release/pack.json"), JSON.stringify([{...pack, files: pack.files.filter((file) => file.path !== missing)}]));
+        await writeFile(join(root, "release/pack.json"), JSON.stringify([{...release_pack, files: release_pack.files.filter((file) => file.path !== missing)}]));
 
         /**
          * WHEN

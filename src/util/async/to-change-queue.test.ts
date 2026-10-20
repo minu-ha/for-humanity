@@ -29,7 +29,7 @@ describe("변경 처리 큐", () => {
                 running -= 1;
             },
             onError: (error) => {
-                return errors.push(error);
+                errors.push(error);
             },
         });
 
@@ -80,7 +80,7 @@ describe("변경 처리 큐", () => {
                 renders.push(current);
             },
             onError: (error) => {
-                return errors.push(error);
+                errors.push(error);
             },
         });
 

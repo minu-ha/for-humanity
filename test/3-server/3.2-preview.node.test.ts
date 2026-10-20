@@ -74,7 +74,7 @@ describe("정적 미리보기", () => {
              * HTTP 서버 대기 대신 명시적 실패와 다음 명령 안내
              */
             expect(result.status).toBe(1);
-            expect(result.stderr).toContain("build");
+            expect(result.stderr).toContain("Build output not found. Run the build command first");
         });
 
         test("[PRV-002] 설정 포트가 사용 중이면 다른 포트로 옮기지 않고 종료 코드 1을 반환한다", async ({previewUrl, root}) => {

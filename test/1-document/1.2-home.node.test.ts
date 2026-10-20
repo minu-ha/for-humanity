@@ -14,7 +14,7 @@ import {siteConfigSchema} from "@/type/site-config";
  */
 describe("홈", () => {
     describe("README 홈", () => {
-        test("[HOM-001] 루트 README는 홈으로 렌더되고 중첩 문서의 홈 링크를 해석한다", async ({scope}) => {
+        test("[HOM-001] 루트 README는 홈으로 렌더하고 중첩 문서의 홈 링크를 해석한다", async ({scope}) => {
             /**
              * GIVEN
              * 루트 README와 홈으로 연결하는 중첩 문서

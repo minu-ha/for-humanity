@@ -40,10 +40,10 @@ describe("설정 파일 조회", () => {
         expect(result.title).toBe("Async site");
     });
 
-    test("TypeScript 설정은 이웃 모듈을 불러오고 타입 문법을 제거한다", async ({root}) => {
+    test("TypeScript 설정은 같은 폴더의 모듈을 불러오고 타입 문법을 제거한다", async ({root}) => {
         /**
          * GIVEN
-         * 타입 전용 가져오기와 이웃 TypeScript 모듈
+         * 타입 문법이 있는 설정과 같은 폴더의 TypeScript 모듈
          */
         await writeFile(join(root, "title.ts"), 'export const title: string = "Imported site";');
         await writeFile(join(root, "for-humanity.config.ts"), 'import {title} from "./title.ts"; export default {title} satisfies {title: string};');
@@ -61,10 +61,10 @@ describe("설정 파일 조회", () => {
         expect(result.title).toBe("Imported site");
     });
 
-    test("설정 파일이 둘이면 어느 쪽도 실행하지 않고 중복 오류를 반환한다", async ({root}) => {
+    test("설정 파일이 둘이면 어느 쪽도 실행하지 않고 거부한다", async ({root}) => {
         /**
          * GIVEN
-         * 중복한 TypeScript와 ESM 설정
+         * 함께 있는 TypeScript와 ESM 설정
          */
         await writeFile(join(root, "for-humanity.config.ts"), 'throw new Error("실행되면 안 됨");');
         await writeFile(join(root, "for-humanity.config.mjs"), 'throw new Error("실행되면 안 됨");');
@@ -107,7 +107,7 @@ describe("설정 파일 조회", () => {
 
         /**
          * THEN
-         * 최초 오류와 정확히 한 번의 실행
+         * 최초 오류와 실행 기록 한 줄
          */
         await expect(result).rejects.toThrow("최초 설정 오류");
         expect(await readFile(marker, "utf8")).toBe("run\n");
@@ -116,11 +116,10 @@ describe("설정 파일 조회", () => {
     test.for([
         {name: "기본 내보내기 누락", source: "export const title = 'Named';", error: /default/},
         {name: "잘못된 포트", source: "export default {port: '4321'};", error: /port/},
-        {name: "모듈 실행 실패", source: "throw new Error('설정 실행 실패');", error: /설정 실행 실패/},
-    ])("$name 상태는 기본값으로 숨기지 않는다", async (scenario, {root}) => {
+    ])("$name 설정은 기본값으로 대체하지 않고 거부한다", async (scenario, {root}) => {
         /**
          * GIVEN
-         * 로드 또는 검증에 실패하는 설정
+         * 검증에 실패하는 설정
          */
         await writeFile(join(root, "for-humanity.config.ts"), scenario.source);
 

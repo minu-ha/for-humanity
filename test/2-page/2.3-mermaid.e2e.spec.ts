@@ -104,7 +104,7 @@ test.describe("다이어그램", () => {
              * WHEN
              * 사용자가 접은 뒤 테마 변경으로 다이어그램 재렌더
              */
-            await page.locator(".wg_article__detailsSummary").click();
+            await page.getByText("Folded context", {exact: true}).click();
             await expect(page.locator(".wg_article__details")).not.toHaveAttribute("open");
             await page.emulateMedia({colorScheme: "dark"});
             await expect(page.locator('[data-mermaid-theme="dark"]')).toHaveCount(1);

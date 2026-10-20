@@ -1,5 +1,4 @@
-import {test} from "@test/_fixture/temp-root";
-import {describe, expect} from "vitest";
+import {describe, expect, test} from "vitest";
 import {toPageApp} from "@/app/_function/to-page-app/to-page-app";
 import {asset_style_path} from "@/constant/asset";
 import {docDataSchema} from "@/type/doc-data";
@@ -31,7 +30,7 @@ describe("페이지 셸", () => {
 
             /**
              * THEN
-             * 각 자원은 한 번만 선언, 본문보다 앞선 CSS와 글꼴 선언
+             * 중복 없는 자원 선언, 본문보다 앞선 CSS와 글꼴 선언
              */
             expect([...head.matchAll(/rel="stylesheet" href="([^"]+)"/g)].map((match) => match[1])).toStrictEqual(["/base.css", "/theme.css"]);
             expect([...head.matchAll(/rel="preload"/g)]).toHaveLength(1);
@@ -99,7 +98,7 @@ describe("페이지 셸", () => {
     });
 
     describe("자원과 실행 순서", () => {
-        test("[SHL-004] 페이지 자원은 내용 지문 경로와 하나의 인라인 브라우저 진입점을 사용한다", async () => {
+        test("[SHL-004] 페이지 자원은 내용 지문 경로와 인라인 브라우저 진입점 하나를 사용한다", async () => {
             /**
              * GIVEN
              * 페이지 설정과 자원 입력

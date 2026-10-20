@@ -125,7 +125,6 @@ describe("크롤러 파일", () => {
              * THEN
              * 크롤러 파일과 일반 문서의 정적 파일
              */
-
             expect(result.success).toBe(true);
             expect(crawlerResult.success).toBe(true);
             expect(result.files.length + crawlerResult.files.length, "home, both documents and both crawler files must be emitted").toBe(5);
@@ -135,10 +134,7 @@ describe("크롤러 파일", () => {
             expect(await readFile(join(scope.root, "sitemap.xml"), "utf8")).toMatch(/<loc>https:\/\/docs\.example\.org\/<\/loc>/);
         });
 
-        test.for([
-            {caseId: "CRW-004", name: "공개 주소를 지정하면 크롤러 파일과 겹치는 문서 경로를 거부한다", reserved: true},
-            {caseId: "CRW-005", name: "공개 주소가 없으면 크롤러 파일 이름의 문서 경로도 수집한다", reserved: false},
-        ])("[$caseId] $name", async (scenario, {scope}) => {
+        test("[CRW-004] 공개 주소를 지정하면 크롤러 파일과 겹치는 문서 경로를 거부한다", async ({scope}) => {
             /**
              * GIVEN
              * 크롤러 파일 이름과 겹치는 문서 경로
@@ -147,25 +143,39 @@ describe("크롤러 파일", () => {
             await writeFile(join(scope.publicRoot, "Robots.txt.md"), "---\nname: Robots\nlabel: Robots\ngroup: Guide\n---\n\nText.\n");
             await writeFile(join(scope.publicRoot, "sitemap.xml/guide.md"), "---\nname: Sitemap\nlabel: Sitemap\ngroup: Guide\n---\n\nText.\n");
 
-            const site = siteConfigSchema.parse({});
-            const processor = toProcessor({site, scope});
-            const params = {scope, processor, reserved: scenario.reserved ? ["robots.txt", "sitemap.xml"] : undefined};
-
             /**
              * WHEN
-             * 문서 로드
+             * 크롤러 파일 경로를 예약한 문서 로드
              */
-            const result = readDocs(params);
+            const result = readDocs({scope, processor: toProcessor({site: siteConfigSchema.parse({}), scope}), reserved: ["robots.txt", "sitemap.xml"]});
 
             /**
              * THEN
-             * 공개 주소를 지정한 경우에만 크롤러 예약 경로 거부
+             * 크롤러 예약 경로 거부
              */
-            if (scenario.reserved) {
-                await expect(result).rejects.toThrow(/Path cannot be used as a document id/);
-            } else {
-                await expect(result).resolves.toHaveLength(2);
-            }
+            await expect(result).rejects.toThrow(/Path cannot be used as a document id/);
+        });
+
+        test("[CRW-005] 공개 주소가 없으면 크롤러 파일 이름의 문서 경로도 수집한다", async ({scope}) => {
+            /**
+             * GIVEN
+             * 크롤러 파일 이름과 겹치는 문서 경로
+             */
+            await mkdir(join(scope.publicRoot, "sitemap.xml"));
+            await writeFile(join(scope.publicRoot, "Robots.txt.md"), "---\nname: Robots\nlabel: Robots\ngroup: Guide\n---\n\nText.\n");
+            await writeFile(join(scope.publicRoot, "sitemap.xml/guide.md"), "---\nname: Sitemap\nlabel: Sitemap\ngroup: Guide\n---\n\nText.\n");
+
+            /**
+             * WHEN
+             * 예약 경로 없는 문서 로드
+             */
+            const result = readDocs({scope, processor: toProcessor({site: siteConfigSchema.parse({}), scope})});
+
+            /**
+             * THEN
+             * 크롤러 파일 이름의 두 문서 수집
+             */
+            await expect(result).resolves.toHaveLength(2);
         });
     });
 });

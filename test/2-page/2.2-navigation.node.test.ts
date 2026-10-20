@@ -67,7 +67,7 @@ describe("문서 탐색", () => {
 
             /**
              * THEN
-             * 오른쪽 영역 하나의 목차
+             * 오른쪽 영역의 목차 하나
              */
             expect(rail).toContain('data-sidebar-scroll="outline"');
             expect(rail).toMatch(/Read here/);
@@ -134,6 +134,7 @@ describe("문서 탐색", () => {
              */
             const docs = await readDocs({scope, processor: toProcessor({site, scope})});
             const groups = toNavigationData({site, docs}).groups;
+            const html = toNavigationHtml({site, docs, current: "authoring"});
 
             /**
              * THEN
@@ -148,9 +149,6 @@ describe("문서 탐색", () => {
             expect(groups[1].groups[1].groups[0].docs.map((doc) => doc.id)).toStrictEqual(["other"]);
             expect(groups[1].groups[0].groups[0].groups[0].groups[0].name).toBe("Drafts");
             expect(toNavigationData({site, docs: docs.toReversed()}).groups).toStrictEqual(groups);
-
-            const html = toNavigationHtml({site, docs, current: "authoring"});
-
             expect(html).toMatch(/href="\/authoring\/"[^>]*aria-current="page"/);
             expect(html).toMatch(/Atlas<\/span><ul\b/);
             expect(html).toMatch(/Research<\/span><ul\b/);
@@ -161,7 +159,7 @@ describe("문서 탐색", () => {
             expect(html).not.toMatch(/<details\b/);
         });
 
-        test("[NAV-025] 부모 문서는 정렬한 자식, 독립 주소, 하나의 현재 페이지를 표시한다", async ({scope}) => {
+        test("[NAV-025] 부모 문서는 정렬한 자식, 독립 주소, 현재 페이지 하나를 표시한다", async ({scope}) => {
             /**
              * GIVEN
              * 부모와 여러 단계 자식이 있는 문서
@@ -189,11 +187,18 @@ describe("문서 탐색", () => {
 
             /**
              * WHEN
-             * 탐색 자료와 마크업 생성
+             * 탐색 자료, 마크업, 페이지 앱 생성
              */
             const docs = await readDocs({scope, processor: toProcessor({site, scope})});
             const groups = toNavigationData({site, docs}).groups;
             const guide = groups[0].groups[0].groups[0];
+            const html = toNavigationHtml({site, docs, current: "details"});
+
+            const app = toPageApp({
+                site,
+                store: {docs},
+                assets: {stylePaths: [asset_style_path], browser: {kind: "inline" as const, code: ""}, fontCss: "", preload: []},
+            });
 
             /**
              * THEN
@@ -204,9 +209,6 @@ describe("문서 탐색", () => {
             expect(guide.docs[0].children[1].children.map((doc) => doc.id)).toStrictEqual(["details"]);
             expect(docs.find((doc) => doc.id === "details")?.ancestors).toStrictEqual(["settings", "guide/site"]);
             expect(toNavigationData({site, docs: docs.toReversed()}).groups).toStrictEqual(groups);
-
-            const html = toNavigationHtml({site, docs, current: "details"});
-
             expect(html).toMatch(/href="\/settings\/"[^>]*>Settings<\/a><ul\b[^>]*aria-label="Settings"/);
             expect(html).toMatch(/href="\/guide\/site\/"[^>]*>Site<\/a><ul\b[^>]*aria-label="Site"/);
             expect(html).toMatch(/href="\/details\/"[^>]*aria-current="page"/);
@@ -219,12 +221,6 @@ describe("문서 탐색", () => {
 
             expect(html.indexOf('href="/themes/"')).toBeLessThan(html.indexOf('href="/guide/site/"'));
             expect(toNavigationHtml({site, docs})).not.toMatch(/aria-current="page"/);
-
-            const app = toPageApp({
-                site,
-                store: {docs},
-                assets: {stylePaths: [asset_style_path], browser: {kind: "inline" as const, code: ""}, fontCss: "", preload: []},
-            });
 
             for (const doc of docs) {
                 expect((await app.request(`/${doc.id}/`)).status).toBe(200);

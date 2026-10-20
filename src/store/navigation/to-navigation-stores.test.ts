@@ -63,10 +63,10 @@ describe("탐색 스크롤 저장", () => {
         expect(restored).toStrictEqual(stores.scroll.getState());
     });
 
-    test.each(["{", "null", '{"state":null,"version":1}'])("손상된 저장값 %s는 기본 상태로 복원한다", (value) => {
+    test.each(["{", "null", '{"state":null,"version":1}'])("손상된 저장값 %s 입력은 기본 상태로 복원한다", (value) => {
         /**
          * GIVEN
-         * 격리된 세션 저장소
+         * 손상된 스크롤 값이 있는 세션 저장소
          */
         const setup = toMemoryStorage();
 
@@ -88,7 +88,7 @@ describe("탐색 스크롤 저장", () => {
     test("잘못된 좌표가 포함된 저장값은 전체를 초기화한다", () => {
         /**
          * GIVEN
-         * 격리된 세션 저장소
+         * 음수와 문자열 좌표가 섞인 세션 저장소
          */
         const setup = toMemoryStorage();
 

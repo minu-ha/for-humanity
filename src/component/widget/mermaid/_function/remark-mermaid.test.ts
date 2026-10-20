@@ -17,17 +17,15 @@ describe("다이어그램", () => {
              */
             remarkMermaid({files: new Map()})(tree);
 
-            const result = tree.children[0];
-
             /**
              * THEN
              * 이스케이프한 원문과 숨겨진 렌더 영역
              */
-            expect(result.type).toBe("html");
-            expect(result).toHaveProperty("value", expect.stringContaining("한글 &lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt; &amp; guide.md"));
-            expect(result).toHaveProperty("value", expect.stringContaining('class="wg_mermaid__result" hidden'));
-            expect(result).toHaveProperty("value", expect.stringContaining('role="status" hidden'));
-            expect(result).toHaveProperty("value", expect.not.stringMatching(/<script>|<svg|data-mermaid-module=/));
+            expect(tree.children[0].type).toBe("html");
+            expect(tree.children[0]).toHaveProperty("value", expect.stringContaining("한글 &lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt; &amp; guide.md"));
+            expect(tree.children[0]).toHaveProperty("value", expect.stringContaining('class="wg_mermaid__result" hidden'));
+            expect(tree.children[0]).toHaveProperty("value", expect.stringContaining('role="status" hidden'));
+            expect(tree.children[0]).toHaveProperty("value", expect.not.stringMatching(/<script>|<svg|data-mermaid-module=/));
         });
 
         test("일반 코드 블록은 다이어그램으로 변환되지 않는다", () => {
@@ -43,13 +41,11 @@ describe("다이어그램", () => {
              */
             remarkMermaid({files: new Map()})(tree);
 
-            const result = tree.children;
-
             /**
              * THEN
              * 원래 코드 블록 유지
              */
-            expect(result).toStrictEqual([{type: "code", lang: "text", value: "docs/\n└── guide.md"}]);
+            expect(tree.children).toStrictEqual([{type: "code", lang: "text", value: "docs/\n└── guide.md"}]);
         });
 
         test("다이어그램이 있으면 전체 모듈 그래프와 고지가 등록된다", () => {
@@ -76,14 +72,12 @@ describe("다이어그램", () => {
              */
             remarkMermaid({assets, files})(tree);
 
-            const result = {markup: tree.children[0], files};
-
             /**
              * THEN
              * 기존 자원과 전체 모듈 목록 유지
              */
-            expect(result.markup).toHaveProperty("value", expect.stringContaining('data-mermaid-module="/_fh/mermaid/mermaid-HASH.js"'));
-            expect(result.files).toStrictEqual(new Map([["/_fh/existing.css", "/kit/existing.css"], ...assets.files]));
+            expect(tree.children[0]).toHaveProperty("value", expect.stringContaining('data-mermaid-module="/_fh/mermaid/mermaid-HASH.js"'));
+            expect(files).toStrictEqual(new Map([["/_fh/existing.css", "/kit/existing.css"], ...assets.files]));
         });
 
         test("다이어그램이 없으면 모듈 그래프가 등록되지 않는다", () => {
@@ -101,13 +95,11 @@ describe("다이어그램", () => {
              */
             remarkMermaid({assets, files})(tree);
 
-            const result = files;
-
             /**
              * THEN
              * 추가 자원 없음
              */
-            expect(result.size).toBe(0);
+            expect(files.size).toBe(0);
         });
     });
 });

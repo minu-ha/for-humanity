@@ -28,7 +28,7 @@ test.describe("페이지 셸", () => {
 
                 /**
                  * THEN
-                 * 태그와 엔티티 모양의 입력은 텍스트, 초기 CSS와 글꼴 선언은 유지
+                 * 태그와 엔티티 모양의 입력은 원문으로 표시, 초기 CSS와 글꼴 선언 유지
                  */
                 expect(response?.status()).toBe(200);
                 await expect(page).toHaveTitle(site.title);

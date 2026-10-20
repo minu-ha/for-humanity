@@ -7,8 +7,7 @@ describe("사이트 설정", () => {
          * WHEN
          * 빈 공개 설정의 검증
          */
-        const input = {} satisfies SiteConfig;
-        const result = siteConfigSchema.parse(input);
+        const result = siteConfigSchema.parse({} satisfies SiteConfig);
 
         /**
          * THEN
@@ -25,8 +24,6 @@ describe("사이트 설정", () => {
                 {phrase: "확인되지 않았다", kind: "unverified"},
             ],
         });
-
-        expectTypeOf<NonNullable<SiteConfig["navigation"]>[number]>().toEqualTypeOf<string | string[]>();
     });
 
     test.each([
@@ -49,7 +46,7 @@ describe("사이트 설정", () => {
     test("공개 입력은 단일 묶음과 중첩 경로를 함께 허용한다", () => {
         /**
          * GIVEN
-         * 기본값과 다른 포트, 명시적 커서 설정
+         * 단일 묶음과 중첩 경로를 섞은 탐색, 기본값과 다른 포트와 커서 설정
          */
         const input = {port: 4322, cursorFace: true, navigation: [" Guide ", ["Projects", "Research"]], status: []} satisfies SiteConfig;
 
@@ -61,7 +58,7 @@ describe("사이트 설정", () => {
 
         /**
          * THEN
-         * 설정 값 유지와 탐색 경로 정규화
+         * 설정 값 유지, 탐색 경로 정규화, 탐색 항목 타입
          */
         expect(result).toStrictEqual({
             content: {root: "content", public: "public", private: "private"},
@@ -71,6 +68,8 @@ describe("사이트 설정", () => {
             navigation: [["Guide"], ["Projects", "Research"]],
             status: [],
         });
+
+        expectTypeOf<NonNullable<SiteConfig["navigation"]>[number]>().toEqualTypeOf<string | string[]>();
     });
 
     test.each([
@@ -88,7 +87,7 @@ describe("사이트 설정", () => {
             "https://docs.example.org/docs/",
             "https://docs.example.org/?q=guide",
             "https://docs.example.org/#guide",
-        ].map((url) => ({name: url, input: {url}})),
+        ].map((url) => ({name: `공개 주소 "${url}"`, input: {url}})),
         {name: "중복 탐색 경로", input: {navigation: ["Guide", [" Guide "]]}},
         {name: "빈 탐색 경로", input: {navigation: [["Projects", ""]]}},
         {name: "빈 상태 문구", input: {status: [{phrase: " ", kind: "verified"}]}},
@@ -138,9 +137,15 @@ describe("사이트 설정", () => {
         {public: "guide?draft"},
     ])("문서 범위를 모호하게 만드는 경로 %j는 거부한다", (content) => {
         /**
-         * WHEN / THEN
+         * WHEN
+         * 문서 경로 설정 검증
+         */
+        const result = siteConfigSchema.safeParse({content});
+
+        /**
+         * THEN
          * 외부 경로, 예약 경로와 중첩된 수집 범위 거부
          */
-        expect(siteConfigSchema.safeParse({content}).success).toBe(false);
+        expect(result.success).toBe(false);
     });
 });
