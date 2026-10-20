@@ -96,11 +96,11 @@ export const loadSite = async (params: SiteParams) => {
     }
 
     const scope: ContentScope = {root, publicRoot, privateRoot, includePrivate: params.includePrivate === true};
-    const processor = createProcessor({site: params.site, root: scope.root, files, mermaid: loadMermaidAssets(params.kitRoot), scope});
+    const processor = createProcessor({site: params.site, scope, files, mermaid: loadMermaidAssets(params.kitRoot)});
 
     const [docs, home] = await Promise.all([
-        readDocs({root: scope.root, scope, processor, reserved: params.site.url === undefined ? undefined : crawling_reserved_roots}),
-        readHome({root: scope.root, scope, processor}),
+        readDocs({scope, processor, reserved: params.site.url === undefined ? undefined : crawling_reserved_roots}),
+        readHome({scope, processor}),
     ]);
 
     const store = {docs, home};

@@ -1,12 +1,13 @@
 import {existsSync, readFileSync, realpathSync, statSync} from "node:fs";
-import {dirname, extname, isAbsolute, relative, resolve, sep} from "node:path";
+import {dirname, extname, resolve} from "node:path";
 import type {Root} from "mdast";
 import {visit} from "unist-util-visit";
 import type {VFile} from "vfile";
-import {copy_error_file_missing, copy_error_not_regular_file, copy_error_outside_docs, copy_error_region_missing, copy_error_snippet} from "@/app/_constant/copy";
+import {copy_error_file_missing, copy_error_not_file, copy_error_region_missing, copy_error_snippet} from "@/app/_constant/copy";
 import {snippet_language_by_extension, snippet_pattern} from "@/app/_constant/snippet";
 import {toSnippetBody} from "@/app/_function/create-processor/_to-snippet-body";
 import type {ContentScope} from "@/type/content-scope";
+import {toErrorMessage} from "@/util/error/to-error-message";
 import {assertContentPath} from "@/util/file/assert-content-path";
 
 /**
@@ -14,14 +15,9 @@ import {assertContentPath} from "@/util/file/assert-content-path";
  */
 export interface SnippetOptions {
     /**
-     * 스니펫을 읽을 수 있는 문서 루트
+     * 스니펫 경로를 해석하고 공개 범위를 검사할 문서 범위
      */
-    root: string;
-
-    /**
-     * 사이트 빌드에서 적용할 공개 범위
-     */
-    scope?: ContentScope;
+    scope: ContentScope;
 }
 
 /**
@@ -47,18 +43,11 @@ export const remarkSnippets = (options: SnippetOptions) => (tree: Root, file: VF
         const [, path = "", region, meta] = match;
         const target = resolve(dirname(file.path), path);
 
-        if (options.scope !== undefined) {
-            try {
-                assertContentPath({scope: options.scope, path: target});
-            } catch (error) {
-                file.fail(error instanceof Error ? error.message : String(error), node);
-            }
-        }
-
-        const location = relative(options.root, target);
-
-        if (location === ".." || location.startsWith(`..${sep}`) || isAbsolute(location)) {
-            file.fail(`${copy_error_snippet}: ${path} (${copy_error_outside_docs})`, node);
+        // 경로와 symlink 대상의 문서 범위 검사
+        try {
+            assertContentPath({scope: options.scope, path: target});
+        } catch (error) {
+            file.fail(toErrorMessage(error), node);
         }
 
         if (!existsSync(target)) {
@@ -66,10 +55,9 @@ export const remarkSnippets = (options: SnippetOptions) => (tree: Root, file: VF
         }
 
         const actual = realpathSync(target);
-        const actualLocation = relative(realpathSync(options.root), actual);
 
-        if (actualLocation === ".." || actualLocation.startsWith(`..${sep}`) || isAbsolute(actualLocation) || !statSync(actual).isFile()) {
-            file.fail(`${copy_error_snippet}: ${path} (${copy_error_not_regular_file})`, node);
+        if (!statSync(actual).isFile()) {
+            file.fail(`${copy_error_snippet}: ${path} (${copy_error_not_file})`, node);
         }
 
         const body = toSnippetBody(readFileSync(actual, "utf8"), region);

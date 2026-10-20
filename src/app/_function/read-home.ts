@@ -11,16 +11,11 @@ import {assertContentPath} from "@/util/file/assert-content-path";
 /**
  * 홈 문서 조회 입력
  */
-interface ReadHomeOptions {
+interface ReadHomeParams {
     /**
-     * 문서 루트의 절대 경로
+     * 홈 원본을 찾을 문서 루트와 공개 범위
      */
-    root: string;
-
-    /**
-     * 홈 원본의 공개 범위와 symlink 검사
-     */
-    scope?: ContentScope;
+    scope: ContentScope;
 
     /**
      * 홈 본문에 적용할 Markdown 처리기
@@ -34,8 +29,8 @@ interface ReadHomeOptions {
  *   - 대소문자 무시, frontmatter 불필요
  *   - 파일 부재 시 생성 안내 표시, 이름만 다른 README 중복은 오류
  */
-export const readHome = async (options: ReadHomeOptions): Promise<DocContent | undefined> => {
-    const paths = (await readdir(options.root)).filter((path) => path.toLowerCase() === "readme.md");
+export const readHome = async (params: ReadHomeParams): Promise<DocContent | undefined> => {
+    const paths = (await readdir(params.scope.root)).filter((path) => path.toLowerCase() === "readme.md");
 
     if (paths.length > 1) {
         throw new Error(`${copy_error_home_clash}: ${paths.join(", ")}`);
@@ -45,18 +40,16 @@ export const readHome = async (options: ReadHomeOptions): Promise<DocContent | u
         return undefined;
     }
 
-    const path = join(options.root, paths[0]);
+    const path = join(params.scope.root, paths[0]);
 
-    if (options.scope !== undefined) {
-        assertContentPath({scope: options.scope, path});
-    }
+    assertContentPath({scope: params.scope, path});
 
     const fh: DocFileData = {headings: [], sections: []};
 
     // 파서와 지시문 원문의 offset 일치, UTF-8 BOM 제외
     const file = new VFile({value: (await readFile(path, "utf8")).replace(/^\uFEFF/, ""), path, data: {fh}});
 
-    await options.processor.process(file);
+    await params.processor.process(file);
 
     return {html: String(file), outline: {headings: fh.headings, sections: fh.sections}};
 };

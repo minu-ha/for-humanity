@@ -39,14 +39,9 @@ interface ProcessorOptions {
     site: ResolvedSiteConfig;
 
     /**
-     * 상대 링크와 자원을 해석할 문서 루트
+     * 상대 링크, 자원, 스니펫을 해석하고 공개 범위를 검사할 문서 범위
      */
-    root: string;
-
-    /**
-     * 사이트 실행의 문서 공개 범위
-     */
-    scope?: ContentScope;
+    scope: ContentScope;
 
     /**
      * 사용한 자원의 URL과 원본 경로 수집
@@ -73,7 +68,7 @@ export const createProcessor = (options: ProcessorOptions) => {
         .use(remarkParse)
         .use(remarkFrontmatter, ["yaml"])
         .use(remarkGfm)
-        .use(remarkSnippets, {root: options.root, scope: options.scope})
+        .use(remarkSnippets, {scope: options.scope})
         .use(remarkSmartypants)
         .use(remarkDirective)
         .use(remarkBlocks)
@@ -81,9 +76,9 @@ export const createProcessor = (options: ProcessorOptions) => {
         .use(remarkMermaid, {assets: options.mermaid, files})
         .use(remarkStatus, {status: options.site.status})
         .use(remarkSwatch)
-        .use(remarkLinks, {root: options.root, scope: options.scope})
+        .use(remarkLinks, {scope: options.scope})
         .use(remarkUnknownDirectives)
-        .use(remarkReport, {root: options.root})
+        .use(remarkReport, {root: options.scope.root})
         .use(remarkRehype, {allowDangerousHtml: true})
         .use(rehypeShiki, {theme: createCssVariablesTheme({name: "for-humanity", variablePrefix: "--app-code-"}), transformers: shikiTransformers})
         .use(rehypeHead)
@@ -92,6 +87,6 @@ export const createProcessor = (options: ProcessorOptions) => {
         .use(rehypeTables)
         .use(rehypeRaw)
         .use(rehypeContentLinks, {scope: options.scope})
-        .use(rehypeAssets, {root: options.root, files, scope: options.scope})
+        .use(rehypeAssets, {scope: options.scope, files})
         .use(rehypeStringify, {allowDangerousHtml: true});
 };

@@ -7,14 +7,14 @@ import {readDocs} from "@/app/_function/read-docs";
 import {siteConfigSchema} from "@/type/site-config";
 
 describe("코드 블록", () => {
-    test("코드 줄 표기와 메타 정보가 강조와 줄 번호로 표시된다", async ({root}) => {
+    test("코드 줄 표기와 메타 정보가 강조와 줄 번호로 표시된다", async ({scope}) => {
         /**
          * GIVEN
          * 줄별 오류, 변경 표시와 강조 메타를 포함한 코드
          */
 
         await writeFile(
-            join(root, "guide.md"),
+            join(scope.publicRoot, "guide.md"),
             "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Read\n\n```ts line-numbers\nconst a = 1; // [!code error]\nconst b = 2; // [!code ++]\nconst c = 3;\n```\n\n```txt\n# [!code highlight]\nfirst\nsecond\n```\n\n```css {2}\n.a {\n  color: red;\n}\n```\n",
         );
 
@@ -24,7 +24,7 @@ describe("코드 블록", () => {
          * WHEN
          * Markdown 처리
          */
-        const [doc] = await readDocs({root, processor: createProcessor({site, root})});
+        const [doc] = await readDocs({scope, processor: createProcessor({site, scope})});
 
         /**
          * THEN
@@ -38,14 +38,14 @@ describe("코드 블록", () => {
         expect(doc.html.split('<span class="line highlighted">').length - 1, "a standalone txt notation line and the css {2} meta each highlight one line").toBe(2);
     });
 
-    test("대괄호 메타는 코드 색상을 유지한 파일 제목으로 표시된다", async ({root}) => {
+    test("대괄호 메타는 코드 색상을 유지한 파일 제목으로 표시된다", async ({scope}) => {
         /**
          * GIVEN
          * 파일 제목과 상태 메타를 가진 코드, 제목 없는 코드
          */
 
         await writeFile(
-            join(root, "guide.md"),
+            join(scope.publicRoot, "guide.md"),
             "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Read\n\n```ts bad [page/products.ts]\nconst a = 1;\n```\n\n```ts {1}\nconst b = 2;\n```\n",
         );
 
@@ -55,7 +55,7 @@ describe("코드 블록", () => {
          * WHEN
          * Markdown 처리
          */
-        const [doc] = await readDocs({root, processor: createProcessor({site, root})});
+        const [doc] = await readDocs({scope, processor: createProcessor({site, scope})});
 
         /**
          * THEN
@@ -67,21 +67,21 @@ describe("코드 블록", () => {
         expect(doc.html.split("<figure").length - 1, "braces meta is not a title").toBe(1);
     });
 
-    test("스니펫은 문서 루트의 파일과 영역을 불러오고 코드 메타를 전달한다", async ({root}) => {
+    test("스니펫은 문서 루트의 파일과 영역을 불러오고 코드 메타를 전달한다", async ({scope}) => {
         /**
          * GIVEN
          * region 지시문과 들여쓰기를 포함한 TypeScript 스니펫
          */
 
-        await mkdir(join(root, "snippet"));
+        await mkdir(join(scope.publicRoot, "snippet"));
 
         await writeFile(
-            join(root, "snippet", "example.ts"),
+            join(scope.publicRoot, "snippet", "example.ts"),
             "const outside = 0;\n// #region picked\n    const a = 1; // [!code error]\n    const b = 2;\n// #endregion picked\nconst after = 3;\n",
         );
 
         await writeFile(
-            join(root, "guide.md"),
+            join(scope.publicRoot, "guide.md"),
             "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Read\n\n<<< ./snippet/example.ts#picked bad line-numbers\n\n<<< ./snippet/example.ts\n",
         );
 
@@ -91,7 +91,7 @@ describe("코드 블록", () => {
          * WHEN
          * Markdown 처리
          */
-        const [doc] = await readDocs({root, processor: createProcessor({site, root})});
+        const [doc] = await readDocs({scope, processor: createProcessor({site, scope})});
 
         /**
          * THEN
@@ -107,29 +107,24 @@ describe("코드 블록", () => {
     });
 
     test.for([
-        {reference: "../outside.ts", expected: /outside the document folder/},
+        {reference: "../../outside.ts", expected: /Reference outside the document scope/},
         {reference: "./missing.ts", expected: /file not found/},
         {reference: "./present.ts#nope", expected: /region not found/},
-    ])("유효하지 않은 스니펫 $reference 참조를 거부한다", async (scenario, {root}) => {
+    ])("유효하지 않은 스니펫 $reference 참조를 거부한다", async (scenario, {scope}) => {
         /**
          * GIVEN
-         * 문서 루트 안팎의 파일과 실패 경로
+         * 문서 범위 안의 스니펫 파일과 실패 경로
          */
-
-        await mkdir(join(root, "docs"));
-        await writeFile(join(root, "outside.ts"), "const x = 1;\n");
-        await writeFile(join(root, "docs", "present.ts"), "const y = 2;\n");
-
         const site = siteConfigSchema.parse({});
-        const docsRoot = join(root, "docs");
 
-        await writeFile(join(docsRoot, "guide.md"), `---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n<<< ${scenario.reference}\n`);
+        await writeFile(join(scope.publicRoot, "present.ts"), "const y = 2;\n");
+        await writeFile(join(scope.publicRoot, "guide.md"), `---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n<<< ${scenario.reference}\n`);
 
         /**
          * WHEN
          * Markdown 처리
          */
-        const result = readDocs({root: docsRoot, processor: createProcessor({site, root: docsRoot})});
+        const result = readDocs({scope, processor: createProcessor({site, scope})});
 
         /**
          * THEN

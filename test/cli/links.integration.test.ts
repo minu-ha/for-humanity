@@ -9,25 +9,25 @@ import {asset_style_path} from "@/constant/asset";
 import {siteConfigSchema} from "@/type/site-config";
 
 describe("문서 링크와 목차", () => {
-    test("상대 Markdown 링크는 쿼리와 앵커를 보존한다", async ({root}) => {
+    test("상대 Markdown 링크는 쿼리와 앵커를 보존한다", async ({scope}) => {
         /**
          * GIVEN
          * 링크와 제목을 포함한 문서 입력
          */
         const site = siteConfigSchema.parse({});
 
-        await mkdir(join(root, "guide"));
+        await mkdir(join(scope.publicRoot, "guide"));
 
         await Promise.all([
-            writeFile(join(root, "README.md"), "# Home\n\n## Start\n"),
-            writeFile(join(root, "api.mdx"), "---\nname: API\nlabel: API\ngroup: Guide\n---\n\n## Details\n"),
+            writeFile(join(scope.root, "README.md"), "# Home\n\n## Start\n"),
+            writeFile(join(scope.publicRoot, "api.mdx"), "---\nname: API\nlabel: API\ngroup: Guide\n---\n\n## Details\n"),
             writeFile(
-                join(root, "guide/setup.md"),
+                join(scope.publicRoot, "guide/setup.md"),
                 [
                     "---\nname: Setup\nlabel: Setup\ngroup: Guide\n---",
                     "[API](../api.mdx?mode=compact&lang=ko#details)",
                     "[Query only](../api.mdx?mode=compact)",
-                    "[Home](../README.md?lang=ko#start)",
+                    "[Home](../../README.md?lang=ko#start)",
                     "[Reference][api]\n\n[api]: ../api.mdx?mode=reference#details",
                     "[Fragment](../api.mdx#details?literal=yes)",
                     "[External](https://example.com/api.md?mode=compact#details)",
@@ -42,7 +42,7 @@ describe("문서 링크와 목차", () => {
          * WHEN
          * 문서 링크와 목차 생성
          */
-        const docs = await readDocs({root, processor: createProcessor({site, root})});
+        const docs = await readDocs({scope, processor: createProcessor({site, scope})});
         const setup = docs.find((doc) => doc.id === "guide/setup");
 
         /**
@@ -60,7 +60,7 @@ describe("문서 링크와 목차", () => {
         expect(setup?.html).toMatch(/href="#details\?literal=yes"/);
     });
 
-    test("제목과 목차는 작성한 텍스트와 번호를 보존한다", async ({root}) => {
+    test("제목과 목차는 작성한 텍스트와 번호를 보존한다", async ({scope}) => {
         /**
          * GIVEN
          * 링크와 제목을 포함한 문서 입력
@@ -68,7 +68,7 @@ describe("문서 링크와 목차", () => {
         const site = siteConfigSchema.parse({});
 
         await writeFile(
-            join(root, "guide.md"),
+            join(scope.publicRoot, "guide.md"),
             "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n### Before the first section\n\n::part[Setup]\n\n## Overview\n\n### 01. Keep this number\n\n:::details[More]\n### Nested heading\n\nBody.\n:::\n\n## Overview\n",
         );
 
@@ -76,7 +76,7 @@ describe("문서 링크와 목차", () => {
          * WHEN
          * 문서 링크와 목차 생성
          */
-        const docs = await readDocs({root, processor: createProcessor({site, root})});
+        const docs = await readDocs({scope, processor: createProcessor({site, scope})});
 
         const app = toPageApp({
             site,

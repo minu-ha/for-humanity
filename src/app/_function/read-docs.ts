@@ -26,14 +26,9 @@ import {toContentId} from "@/util/file/to-content-id";
  */
 export interface ReadDocsParams {
     /**
-     * 설정에서 해소한 content 루트의 절대 경로
+     * 공개, 내부 문서 폴더와 참조 범위
      */
-    root: string;
-
-    /**
-     * 사이트 실행의 공개 범위, 개별 Markdown 처리에서는 생략
-     */
-    scope?: ContentScope;
+    scope: ContentScope;
 
     /**
      * 설정, 자원 목록을 연결한 Markdown 처리기
@@ -47,35 +42,23 @@ export interface ReadDocsParams {
 }
 
 /**
- * 공개 범위의 Markdown 수집과 렌더링, 범위 미지정 시 독립 Markdown 처리
+ * 공개 범위의 Markdown 수집과 렌더링
  *
- *   - 사이트 실행에서 공개와 내부 문서만 수집, content 루트 안내 파일 제외
+ *   - 공개 문서와 개발 실행의 내부 문서만 수집
  *   - 머리말, 문서 식별자 중복, 플러그인 오류 시 실패
  */
-export const readDocs = async (options: ReadDocsParams): Promise<Doc[]> => {
-    const roots =
-        options.scope === undefined
-            ? [options.root]
-            : [options.scope.publicRoot, ...(options.scope.includePrivate && existsSync(options.scope.privateRoot) ? [options.scope.privateRoot] : [])];
+export const readDocs = async (params: ReadDocsParams): Promise<Doc[]> => {
+    const roots = [params.scope.publicRoot, ...(params.scope.includePrivate && existsSync(params.scope.privateRoot) ? [params.scope.privateRoot] : [])];
 
-    const paths = (await Promise.all(roots.map(async (root) => (await readdir(root, {recursive: true})).map((path) => relative(options.root, join(root, path))))))
+    const paths = (await Promise.all(roots.map(async (root) => (await readdir(root, {recursive: true})).map((path) => relative(params.scope.root, join(root, path))))))
         .flat()
-        .filter((path) => /\.mdx?$/i.test(path) && !/^(readme|agents|claude)\.md$/i.test(path) && !path.split(sep).includes("node_modules") && !path.startsWith(`dist${sep}`));
+        .filter((path) => /\.mdx?$/i.test(path) && !path.split(sep).includes("node_modules"));
 
     const docs = await Promise.all(
         paths.map(async (path): Promise<Doc> => {
-            if (options.scope !== undefined) {
-                assertContentPath({scope: options.scope, path: join(options.root, path)});
-            }
+            assertContentPath({scope: params.scope, path: join(params.scope.root, path)});
 
-            const id =
-                options.scope === undefined
-                    ? path
-                          .replace(/\.mdx?$/i, "")
-                          .split(sep)
-                          .join("/")
-                          .toLowerCase()
-                    : toContentId({scope: options.scope, path: join(options.root, path)});
+            const id = toContentId({scope: params.scope, path: join(params.scope.root, path)});
 
             const segments = id.split("/");
 
@@ -84,18 +67,18 @@ export const readDocs = async (options: ReadDocsParams): Promise<Doc[]> => {
                 segments.some((segment) => segment === "" || segment === "." || segment === ".." || segment === "index.html") ||
                 /[#?%*:\\]/.test(id) ||
                 /[\p{Cc}]/u.test(id) ||
-                options.reserved?.includes(segments[0]) === true ||
+                params.reserved?.includes(segments[0]) === true ||
                 segments[0] === asset_dir ||
                 segments[0] === asset_favicon_path.slice(1)
             ) {
                 throw new Error(`${copy_error_doc_id}: ${path}`);
             }
 
-            const source = await readFile(join(options.root, path), "utf8");
+            const source = await readFile(join(params.scope.root, path), "utf8");
 
             // remark가 제외하는 UTF-8 BOM을 원문에서도 제거. 지시문의 offset 기준 일치
-            const file = new VFile({value: source.replace(/^\uFEFF/, ""), path: join(options.root, path)});
-            const tree = options.processor.parse(file);
+            const file = new VFile({value: source.replace(/^\uFEFF/, ""), path: join(params.scope.root, path)});
+            const tree = params.processor.parse(file);
             const frontmatter = tree.children[0];
             const parsed = docDataSchema.safeParse(frontmatter?.type === "yaml" ? parseYaml(frontmatter.value) : {});
 
@@ -104,9 +87,13 @@ export const readDocs = async (options: ReadDocsParams): Promise<Doc[]> => {
             }
 
             // 상대 부모 id는 파일 위치 기준으로 한 번 해소. 문서 루트를 바꿔도 같은 관계 유지
-            const parentPath = parsed.data.parent !== undefined && /^\.\.?\//.test(parsed.data.parent) ? resolve(dirname(file.path), parsed.data.parent) : undefined;
-            const parent = parsed.data.parent !== undefined && parentPath !== undefined ? posix.join(posix.dirname(id), parsed.data.parent) : parsed.data.parent;
-            const data = {...parsed.data, parent: options.scope !== undefined && parentPath !== undefined ? toContentId({scope: options.scope, path: parentPath}) : parent};
+            const data = {
+                ...parsed.data,
+                parent:
+                    parsed.data.parent !== undefined && /^\.\.?\//.test(parsed.data.parent)
+                        ? toContentId({scope: params.scope, path: resolve(dirname(file.path), parsed.data.parent)})
+                        : parsed.data.parent,
+            };
 
             // 플러그인의 제목, 절 정보 공유
             const fh: DocFileData = {frontmatter: data, headings: [], sections: []};
@@ -116,13 +103,13 @@ export const readDocs = async (options: ReadDocsParams): Promise<Doc[]> => {
             // YAML 노드만 제외. 본문 위치와 오류의 원본 줄, 열, offset 유지
             tree.children = tree.children.filter((node) => node.type !== "yaml");
 
-            const rendered = await options.processor.run(tree, file);
+            const rendered = await params.processor.run(tree, file);
 
             return {
                 id,
                 data,
                 ancestors: [],
-                html: options.processor.stringify(rendered, file),
+                html: params.processor.stringify(rendered, file),
                 outline: {headings: fh.headings, sections: fh.sections},
             };
         }),

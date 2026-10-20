@@ -1,11 +1,12 @@
 import {existsSync, realpathSync, statSync} from "node:fs";
-import {dirname, extname, isAbsolute, relative, resolve, sep} from "node:path";
+import {dirname, extname, resolve} from "node:path";
 import type {Root} from "hast";
 import {visit} from "unist-util-visit";
 import type {VFile} from "vfile";
-import {copy_error_asset, copy_error_file_missing, copy_error_image_format, copy_error_not_regular_file, copy_error_outside_docs} from "@/app/_constant/copy";
+import {copy_error_asset, copy_error_file_missing, copy_error_image_format, copy_error_not_file} from "@/app/_constant/copy";
 import {asset_media_dir, asset_media_extensions} from "@/constant/asset";
 import type {ContentScope} from "@/type/content-scope";
+import {toErrorMessage} from "@/util/error/to-error-message";
 import {assertContentPath} from "@/util/file/assert-content-path";
 import {toAssetPath} from "@/util/file/to-asset-path";
 
@@ -14,14 +15,9 @@ import {toAssetPath} from "@/util/file/to-asset-path";
  */
 export interface AssetOptions {
     /**
-     * 자원을 읽을 수 있는 문서 루트
+     * 자원 경로를 해석하고 공개 범위를 검사할 문서 범위
      */
-    root: string;
-
-    /**
-     * 사이트 빌드에서 적용할 공개 범위
-     */
-    scope?: ContentScope;
+    scope: ContentScope;
 
     /**
      * dev 응답과 정적 복사가 공유하는 자원 URL별 파일 경로
@@ -64,18 +60,11 @@ export const rehypeAssets = (options: AssetOptions) => (tree: Root, file: VFile)
 
         const target = resolve(dirname(file.path), path);
 
-        if (options.scope !== undefined) {
-            try {
-                assertContentPath({scope: options.scope, path: target});
-            } catch (error) {
-                file.fail(error instanceof Error ? error.message : String(error), node);
-            }
-        }
-
-        const location = relative(options.root, target);
-
-        if (location === ".." || location.startsWith(`..${sep}`) || isAbsolute(location)) {
-            file.fail(`${copy_error_asset}: ${url} (${copy_error_outside_docs})`, node);
+        // 경로와 symlink 대상의 문서 범위 검사
+        try {
+            assertContentPath({scope: options.scope, path: target});
+        } catch (error) {
+            file.fail(toErrorMessage(error), node);
         }
 
         if (!existsSync(target)) {
@@ -83,10 +72,9 @@ export const rehypeAssets = (options: AssetOptions) => (tree: Root, file: VFile)
         }
 
         const actual = realpathSync(target);
-        const actualLocation = relative(realpathSync(options.root), actual);
 
-        if (actualLocation === ".." || actualLocation.startsWith(`..${sep}`) || isAbsolute(actualLocation) || !statSync(actual).isFile()) {
-            file.fail(`${copy_error_asset}: ${url} (${copy_error_not_regular_file})`, node);
+        if (!statSync(actual).isFile()) {
+            file.fail(`${copy_error_asset}: ${url} (${copy_error_not_file})`, node);
         }
 
         const assetUrl = toAssetPath({path: `${asset_media_dir}/asset${extension}`, file: actual});

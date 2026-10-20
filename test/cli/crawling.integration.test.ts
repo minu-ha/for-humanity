@@ -36,14 +36,14 @@ describe("크롤러 파일", () => {
         expect(sitemap.status).toBe(404);
     });
 
-    test("크롤러 파일은 현재 문서 목록의 인코딩한 주소를 제공한다", async ({root}) => {
+    test("크롤러 파일은 현재 문서 목록의 인코딩한 주소를 제공한다", async ({scope}) => {
         /**
          * GIVEN
          * 사이트 주소와 크롤러 문서 입력
          */
-        await mkdir(join(root, "guide"));
-        await writeFile(join(root, "guide.md"), "---\nname: Start\nlabel: Start\ngroup: Guide\n---\n\nStart here.\n");
-        await writeFile(join(root, "guide/한국어 & tools.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Read\n\nText.\n");
+        await mkdir(join(scope.publicRoot, "guide"));
+        await writeFile(join(scope.publicRoot, "guide.md"), "---\nname: Start\nlabel: Start\ngroup: Guide\n---\n\nStart here.\n");
+        await writeFile(join(scope.publicRoot, "guide/한국어 & tools.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Read\n\nText.\n");
 
         const url = "https://docs.example.org";
         const site = siteConfigSchema.parse({url});
@@ -52,7 +52,7 @@ describe("크롤러 파일", () => {
          * WHEN
          * 페이지와 크롤러 응답 생성
          */
-        const docs = await readDocs({root, processor: createProcessor({site, root})});
+        const docs = await readDocs({scope, processor: createProcessor({site, scope})});
         const store = {docs};
         const assets = {fontCss: "", preload: [], browser: {kind: "inline" as const, code: ""}, stylePaths: [asset_style_path]};
         const app = toHttpApp({pages: toPageApp({site, store, assets}), crawling: toCrawlingApp({url, store}), files: new Map()});
@@ -93,14 +93,14 @@ describe("크롤러 파일", () => {
         expect([...updated.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1])).toStrictEqual(["https://docs.example.org/"]);
     });
 
-    test("정적 빌드는 크롤러 파일과 일반 문서 경로를 함께 생성한다", async ({root}) => {
+    test("정적 빌드는 크롤러 파일과 일반 문서 경로를 함께 생성한다", async ({scope}) => {
         /**
          * GIVEN
          * 사이트 주소와 크롤러 문서 입력
          */
-        await mkdir(join(root, "guide"));
-        await writeFile(join(root, "guide.md"), "---\nname: Start\nlabel: Start\ngroup: Guide\n---\n\nStart here.\n");
-        await writeFile(join(root, "guide/details.md"), "---\nname: Details\nlabel: Details\ngroup: Guide\n---\n\nNested details.\n");
+        await mkdir(join(scope.publicRoot, "guide"));
+        await writeFile(join(scope.publicRoot, "guide.md"), "---\nname: Start\nlabel: Start\ngroup: Guide\n---\n\nStart here.\n");
+        await writeFile(join(scope.publicRoot, "guide/details.md"), "---\nname: Details\nlabel: Details\ngroup: Guide\n---\n\nNested details.\n");
 
         const url = "https://docs.example.org";
         const site = siteConfigSchema.parse({url});
@@ -109,11 +109,11 @@ describe("크롤러 파일", () => {
          * WHEN
          * 페이지와 크롤러 응답 생성
          */
-        const docs = await readDocs({root, processor: createProcessor({site, root})});
+        const docs = await readDocs({scope, processor: createProcessor({site, scope})});
         const assets = {fontCss: "", preload: [], browser: {kind: "inline" as const, code: ""}, stylePaths: [asset_style_path]};
         const app = toPageApp({site, store: {docs}, assets});
-        const result = await toSSG(app, {writeFile, mkdir}, {dir: root});
-        const crawlerResult = await toSSG(toCrawlingApp({url, store: {docs}}), {writeFile, mkdir}, {dir: root});
+        const result = await toSSG(app, {writeFile, mkdir}, {dir: scope.root});
+        const crawlerResult = await toSSG(toCrawlingApp({url, store: {docs}}), {writeFile, mkdir}, {dir: scope.root});
 
         /**
          * THEN
@@ -123,24 +123,24 @@ describe("크롤러 파일", () => {
         expect(result.success).toBe(true);
         expect(crawlerResult.success).toBe(true);
         expect(result.files.length + crawlerResult.files.length, "home, both documents and both crawler files must be emitted").toBe(5);
-        expect(await readFile(join(root, "guide/index.html"), "utf8")).toMatch(/Start here\./);
-        expect(await readFile(join(root, "guide/details/index.html"), "utf8")).toMatch(/Nested details\./);
-        expect(await readFile(join(root, "robots.txt"), "utf8")).toMatch(/Sitemap: https:\/\/docs\.example\.org\/sitemap\.xml/);
-        expect(await readFile(join(root, "sitemap.xml"), "utf8")).toMatch(/<loc>https:\/\/docs\.example\.org\/<\/loc>/);
+        expect(await readFile(join(scope.root, "guide/index.html"), "utf8")).toMatch(/Start here\./);
+        expect(await readFile(join(scope.root, "guide/details/index.html"), "utf8")).toMatch(/Nested details\./);
+        expect(await readFile(join(scope.root, "robots.txt"), "utf8")).toMatch(/Sitemap: https:\/\/docs\.example\.org\/sitemap\.xml/);
+        expect(await readFile(join(scope.root, "sitemap.xml"), "utf8")).toMatch(/<loc>https:\/\/docs\.example\.org\/<\/loc>/);
     });
 
-    test.for([true, false])("크롤러 예약 여부 %s에 따라 문서 경로의 사용을 결정한다", async (reserved, {root}) => {
+    test.for([true, false])("크롤러 예약 여부 %s에 따라 문서 경로의 사용을 결정한다", async (reserved, {scope}) => {
         /**
          * GIVEN
          * 사이트 주소와 크롤러 문서 입력
          */
-        await mkdir(join(root, "sitemap.xml"));
-        await writeFile(join(root, "Robots.txt.md"), "---\nname: Robots\nlabel: Robots\ngroup: Guide\n---\n\nText.\n");
-        await writeFile(join(root, "sitemap.xml/guide.md"), "---\nname: Sitemap\nlabel: Sitemap\ngroup: Guide\n---\n\nText.\n");
+        await mkdir(join(scope.publicRoot, "sitemap.xml"));
+        await writeFile(join(scope.publicRoot, "Robots.txt.md"), "---\nname: Robots\nlabel: Robots\ngroup: Guide\n---\n\nText.\n");
+        await writeFile(join(scope.publicRoot, "sitemap.xml/guide.md"), "---\nname: Sitemap\nlabel: Sitemap\ngroup: Guide\n---\n\nText.\n");
 
         const site = siteConfigSchema.parse({});
-        const processor = createProcessor({site, root});
-        const params = {root, processor, reserved: reserved ? ["robots.txt", "sitemap.xml"] : undefined};
+        const processor = createProcessor({site, scope});
+        const params = {scope, processor, reserved: reserved ? ["robots.txt", "sitemap.xml"] : undefined};
 
         /**
          * WHEN

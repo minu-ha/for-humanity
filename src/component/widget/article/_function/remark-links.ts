@@ -1,10 +1,11 @@
 import {existsSync} from "node:fs";
-import {dirname, posix, relative, resolve, sep} from "node:path";
+import {dirname, resolve} from "node:path";
 import type {Root} from "mdast";
 import {visit} from "unist-util-visit";
 import type {VFile} from "vfile";
 import {copy_warn_broken_link} from "@/component/widget/article/_constant/copy";
 import type {ContentScope} from "@/type/content-scope";
+import {toErrorMessage} from "@/util/error/to-error-message";
 import {assertContentPath} from "@/util/file/assert-content-path";
 import {toContentId} from "@/util/file/to-content-id";
 
@@ -13,14 +14,9 @@ import {toContentId} from "@/util/file/to-content-id";
  */
 interface LinkOptions {
     /**
-     * 문서 루트의 절대 경로
+     * 링크 대상을 해석하고 공개 범위를 검사할 문서 범위
      */
-    root: string;
-
-    /**
-     * 문서 폴더와 URL을 분리하는 사이트 공개 범위
-     */
-    scope?: ContentScope;
+    scope: ContentScope;
 }
 
 /**
@@ -29,8 +25,6 @@ interface LinkOptions {
  *   - 외부, 절대 URL과 같은 페이지 hash 유지. 없는 파일은 터미널 경고
  */
 export const remarkLinks = (options: LinkOptions) => (tree: Root, file: VFile) => {
-    const here = posix.dirname(relative(options.root, file.path).split(sep).join("/"));
-
     visit(tree, (node) => {
         if (node.type !== "link" && node.type !== "definition") {
             return;
@@ -39,34 +33,24 @@ export const remarkLinks = (options: LinkOptions) => (tree: Root, file: VFile) =
         // 셋째 capture: query, hash 접미사. 파일 확인과 경로 정규화에서 제외
         const match = /^(?![a-z]+:|\/|#)([^#?]+)(\.mdx?)([?#].*|)$/i.exec(node.url);
 
-        if (match) {
-            if (options.scope !== undefined) {
-                const target = resolve(dirname(file.path), decodeURIComponent(`${match[1]}${match[2]}`));
+        if (match === null) {
+            return;
+        }
 
-                try {
-                    assertContentPath({scope: options.scope, path: target});
+        const target = resolve(dirname(file.path), decodeURIComponent(`${match[1]}${match[2]}`));
 
-                    const id = toContentId({scope: options.scope, path: target});
+        try {
+            assertContentPath({scope: options.scope, path: target});
 
-                    if (!existsSync(target)) {
-                        file.message(`${copy_warn_broken_link}: ${node.url}`, node);
-                    }
+            const id = toContentId({scope: options.scope, path: target});
 
-                    node.url = `${id === "" ? "/" : `/${id}/`}${match[3]}`;
-                } catch (error) {
-                    file.fail(error instanceof Error ? error.message : String(error), node);
-                }
-
-                return;
-            }
-
-            if (!existsSync(resolve(dirname(file.path), `${match[1]}${match[2]}`))) {
+            if (!existsSync(target)) {
                 file.message(`${copy_warn_broken_link}: ${node.url}`, node);
             }
 
-            const target = posix.join(here, `${match[1]}${match[2]}`).toLowerCase();
-
-            node.url = target === "readme.md" ? `/${match[3]}` : `/${target.slice(0, -match[2].length)}/${match[3]}`;
+            node.url = `${id === "" ? "/" : `/${id}/`}${match[3]}`;
+        } catch (error) {
+            file.fail(toErrorMessage(error), node);
         }
     });
 };

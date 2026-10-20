@@ -9,14 +9,14 @@ import {siteConfigSchema} from "@/type/site-config";
 
 describe("다이어그램", () => {
     describe("문서 조립", () => {
-        test("문서의 다이어그램 원문은 한글과 특수문자를 유지한다", async ({root}) => {
+        test("문서의 다이어그램 원문은 한글과 특수문자를 유지한다", async ({scope}) => {
             /**
              * GIVEN
              * 한글과 HTML 문자가 포함된 Markdown 문서
              */
             const source = 'treeView-beta\n    docs/\n        "한글 <script>alert(1)</script> & guide.md"';
 
-            await writeFile(join(root, "guide.md"), `---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n\`\`\`mermaid\n${source}\n\`\`\`\n`);
+            await writeFile(join(scope.publicRoot, "guide.md"), `---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n\`\`\`mermaid\n${source}\n\`\`\`\n`);
 
             const site = siteConfigSchema.parse({});
 
@@ -24,7 +24,7 @@ describe("다이어그램", () => {
              * WHEN
              * 문서 조립
              */
-            const [result] = await readDocs({root, processor: createProcessor({site, root})});
+            const [result] = await readDocs({scope, processor: createProcessor({site, scope})});
 
             /**
              * THEN
@@ -37,7 +37,7 @@ describe("다이어그램", () => {
             expect(result.html).not.toMatch(/<script>|<svg|ascii-flow/);
         });
 
-        test("홈의 다이어그램도 브라우저 모듈 경로를 전달한다", async ({root}) => {
+        test("홈의 다이어그램도 브라우저 모듈 경로를 전달한다", async ({scope}) => {
             /**
              * GIVEN
              * 다이어그램을 포함한 홈 문서와 모듈 목록
@@ -45,13 +45,13 @@ describe("다이어그램", () => {
             const site = siteConfigSchema.parse({});
             const mermaid = {entry: "/_fh/mermaid/mermaid-HASH.js", files: new Map([["/_fh/mermaid/mermaid-HASH.js", "/kit/mermaid-HASH.js"]])};
 
-            await writeFile(join(root, "README.md"), "# Home\n\n```mermaid\nsequenceDiagram\n User->>Docs: Read\n```\n");
+            await writeFile(join(scope.root, "README.md"), "# Home\n\n```mermaid\nsequenceDiagram\n User->>Docs: Read\n```\n");
 
             /**
              * WHEN
              * 홈 문서 조립
              */
-            const result = await readHome({root, processor: createProcessor({site, root, mermaid})});
+            const result = await readHome({scope, processor: createProcessor({site, scope, mermaid})});
 
             /**
              * THEN

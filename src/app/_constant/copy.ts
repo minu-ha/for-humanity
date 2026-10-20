@@ -89,19 +89,14 @@ export const copy_error_asset = "Invalid asset";
 export const copy_error_snippet = "Invalid code snippet";
 
 /**
- * 로컬 참조 오류의 이유. 문서 폴더 밖 경로
- */
-export const copy_error_outside_docs = "outside the document folder";
-
-/**
  * 로컬 참조 오류의 이유. 없는 파일
  */
 export const copy_error_file_missing = "file not found";
 
 /**
- * 로컬 참조 오류의 이유. 실제 경로가 문서 폴더 밖이거나 일반 파일이 아님
+ * 로컬 참조 오류의 이유. 폴더 등 일반 파일이 아닌 대상
  */
-export const copy_error_not_regular_file = "outside the document folder or not a regular file";
+export const copy_error_not_file = "not a regular file";
 
 /**
  * 자원 오류의 이유. 지원하지 않는 이미지 형식

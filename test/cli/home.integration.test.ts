@@ -10,29 +10,29 @@ import {asset_style_path} from "@/constant/asset";
 import {siteConfigSchema} from "@/type/site-config";
 
 describe("홈페이지", () => {
-    test("루트 README는 홈으로 렌더되고 중첩 문서의 홈 링크를 해석한다", async ({root}) => {
+    test("루트 README는 홈으로 렌더되고 중첩 문서의 홈 링크를 해석한다", async ({scope}) => {
         /**
          * GIVEN
          * 홈페이지와 문서 입력
          */
         const site = siteConfigSchema.parse({});
-        const processor = createProcessor({site, root});
+        const processor = createProcessor({site, scope});
 
-        await mkdir(join(root, "guide"));
+        await mkdir(join(scope.publicRoot, "guide"));
 
         await Promise.all([
             writeFile(
-                join(root, "readme.md"),
-                '<div align="center">\n\n<img src="/favicon.svg" width="96" height="96" alt="Library face">\n\n# My library\n\nWelcome home.\n\n</div>\n\n## Start\n\n[Guide](guide/setup.md)\n\n```js\nconst ready = true;\n```\n',
+                join(scope.root, "readme.md"),
+                '<div align="center">\n\n<img src="/favicon.svg" width="96" height="96" alt="Library face">\n\n# My library\n\nWelcome home.\n\n</div>\n\n## Start\n\n[Guide](public/guide/setup.md)\n\n```js\nconst ready = true;\n```\n',
             ),
-            writeFile(join(root, "guide/setup.md"), "---\nname: Setup\nlabel: Setup\ngroup: Guide\n---\n\n[Home](../readme.md#start)\n\n## Details\n"),
+            writeFile(join(scope.publicRoot, "guide/setup.md"), "---\nname: Setup\nlabel: Setup\ngroup: Guide\n---\n\n[Home](../../readme.md#start)\n\n## Details\n"),
         ]);
 
         /**
          * WHEN
          * 홈페이지 렌더
          */
-        const [docs, home] = await Promise.all([readDocs({root, processor}), readHome({root, processor})]);
+        const [docs, home] = await Promise.all([readDocs({scope, processor}), readHome({scope, processor})]);
 
         const app = toPageApp({
             site,
@@ -63,7 +63,7 @@ describe("홈페이지", () => {
         expect((await app.request("/readme/")).status).toBe(404);
     });
 
-    test("README가 없으면 홈페이지 작성 안내를 표시한다", async ({root}) => {
+    test("README가 없으면 홈페이지 작성 안내를 표시한다", async ({scope}) => {
         /**
          * GIVEN
          * 홈페이지와 문서 입력
@@ -74,7 +74,7 @@ describe("홈페이지", () => {
          * WHEN
          * 홈페이지 렌더
          */
-        const home = await readHome({root, processor: createProcessor({site, root})});
+        const home = await readHome({scope, processor: createProcessor({site, scope})});
 
         const app = toPageApp({
             site,

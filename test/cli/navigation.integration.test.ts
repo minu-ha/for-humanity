@@ -15,7 +15,7 @@ import {siteConfigSchema} from "@/type/site-config";
 import {toScriptJson} from "@/util/json/to-script-json";
 
 describe("문서 탐색", () => {
-    test("탐색 데이터는 본문을 제외하고 작성한 이름을 안전하게 전달한다", async ({root}) => {
+    test("탐색 데이터는 본문을 제외하고 작성한 이름을 안전하게 전달한다", async ({scope}) => {
         /**
          * GIVEN
          * 탐색 계층과 문서 입력
@@ -23,13 +23,13 @@ describe("문서 탐색", () => {
         const title = "</script><script>window.injected=true</script>\u2028\u2029";
         const site = siteConfigSchema.parse({title});
 
-        await writeFile(join(root, "guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Read\n\nPrivate body marker.\n");
+        await writeFile(join(scope.publicRoot, "guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Read\n\nPrivate body marker.\n");
 
         /**
          * WHEN
          * 탐색 데이터와 마크업 생성
          */
-        const docs = await readDocs({root, processor: createProcessor({site, root})});
+        const docs = await readDocs({scope, processor: createProcessor({site, scope})});
         const data = toNavigationData({site, docs, current: "guide"});
         const json = toScriptJson(data);
 
@@ -44,12 +44,12 @@ describe("문서 탐색", () => {
         expect(navigationDataSchema.parse(JSON.parse(json))).toStrictEqual(data);
     });
 
-    test("페이지 목차는 오른쪽 영역에 한 번만 렌더된다", async ({root}) => {
+    test("페이지 목차는 오른쪽 영역에 한 번만 렌더된다", async ({scope}) => {
         /**
          * GIVEN
          * 탐색 계층과 문서 입력
          */
-        await writeFile(join(root, "README.md"), "# Home\n\n## Read here\n\n### More context\n\nText.\n");
+        await writeFile(join(scope.root, "README.md"), "# Home\n\n## Read here\n\n### More context\n\nText.\n");
 
         const site = siteConfigSchema.parse({});
 
@@ -57,7 +57,7 @@ describe("문서 탐색", () => {
          * WHEN
          * 탐색 데이터와 마크업 생성
          */
-        const home = await readHome({root, processor: createProcessor({site, root})});
+        const home = await readHome({scope, processor: createProcessor({site, scope})});
         const assets = {fontCss: "", preload: [], browser: {kind: "inline" as const, code: ""}, stylePaths: [asset_style_path]};
         const html = await (await toPageApp({site, store: {docs: [], home}, assets}).request("/")).text();
         const rail = html.match(/<aside\b[^>]*data-sidebar-toc=""[^>]*>([\s\S]*?)<\/aside>/)?.[1];
@@ -71,7 +71,7 @@ describe("문서 탐색", () => {
         expect([...html.matchAll(/data-sidebar-scroll="outline"/g)].length).toBe(1);
     });
 
-    test("탐색은 설정 순서대로 모든 묶음과 현재 문서를 표시한다", async ({root}) => {
+    test("탐색은 설정 순서대로 모든 묶음과 현재 문서를 표시한다", async ({scope}) => {
         /**
          * GIVEN
          * 탐색 계층과 문서 입력
@@ -79,16 +79,16 @@ describe("문서 탐색", () => {
         const site = siteConfigSchema.parse({navigation: ["Getting started", "Guide"]});
 
         await Promise.all([
-            writeFile(join(root, "commands.md"), "---\nname: Commands\nlabel: Commands\ngroup: Getting started\n---\n\nText.\n"),
-            writeFile(join(root, "writing.md"), "---\nname: Writing\nlabel: Writing\ngroup: Guide\norder: 1\n---\n\nText.\n"),
-            writeFile(join(root, "parts.md"), "---\nname: Parts\nlabel: Parts\ngroup: Guide\norder: 2\n---\n\nText.\n"),
+            writeFile(join(scope.publicRoot, "commands.md"), "---\nname: Commands\nlabel: Commands\ngroup: Getting started\n---\n\nText.\n"),
+            writeFile(join(scope.publicRoot, "writing.md"), "---\nname: Writing\nlabel: Writing\ngroup: Guide\norder: 1\n---\n\nText.\n"),
+            writeFile(join(scope.publicRoot, "parts.md"), "---\nname: Parts\nlabel: Parts\ngroup: Guide\norder: 2\n---\n\nText.\n"),
         ]);
 
         /**
          * WHEN
          * 탐색 데이터와 마크업 생성
          */
-        const docs = await readDocs({root, processor: createProcessor({site, root})});
+        const docs = await readDocs({scope, processor: createProcessor({site, scope})});
         const html = toNavigationHtml({site, docs, current: "writing"});
         const groups = [...html.matchAll(/<section\b[^>]*aria-label="([^"]+)"/g)];
 
@@ -105,7 +105,7 @@ describe("문서 탐색", () => {
         expect(html).toMatch(/href="\/writing\/"[^>]*aria-current="page"/);
     });
 
-    test("중첩 묶음은 메타 경로를 따르고 같은 이름의 형제 경로를 구분한다", async ({root}) => {
+    test("중첩 묶음은 메타 경로를 따르고 같은 이름의 형제 경로를 구분한다", async ({scope}) => {
         /**
          * GIVEN
          * 탐색 계층과 문서 입력
@@ -113,21 +113,21 @@ describe("문서 탐색", () => {
         const site = siteConfigSchema.parse({navigation: ["Guide", ["Projects", "Atlas", "Research"], ["Projects", "Atlas", "Decisions"]]});
 
         await Promise.all([
-            writeFile(join(root, "guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\nText.\n"),
-            writeFile(join(root, "guide-two.md"), "---\nname: More guide\nlabel: Guide\ngroup: [Guide]\n---\n\nText.\n"),
-            writeFile(join(root, "overview.md"), "---\nname: Overview\nlabel: Overview\ngroup: [Projects, Atlas]\n---\n\nText.\n"),
-            writeFile(join(root, "parts.md"), "---\nname: Parts\nlabel: Parts\ngroup: [Projects, Atlas, Research]\norder: 1\n---\n\nText.\n"),
-            writeFile(join(root, "authoring.md"), "---\nname: Authoring\nlabel: Authoring\ngroup: [Projects, Atlas, Research]\norder: 2\n---\n\nText.\n"),
-            writeFile(join(root, "decision.md"), "---\nname: Decision\nlabel: Decision\ngroup: [Projects, Atlas, Decisions]\n---\n\nText.\n"),
-            writeFile(join(root, "other.md"), "---\nname: Other research\nlabel: Other research\ngroup: [Projects, Beacon, Research]\n---\n\nText.\n"),
-            writeFile(join(root, "deep.md"), "---\nname: Deep research\nlabel: Deep research\ngroup: [Projects, Atlas, Research, Archive, Drafts]\n---\n\nText.\n"),
+            writeFile(join(scope.publicRoot, "guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\nText.\n"),
+            writeFile(join(scope.publicRoot, "guide-two.md"), "---\nname: More guide\nlabel: Guide\ngroup: [Guide]\n---\n\nText.\n"),
+            writeFile(join(scope.publicRoot, "overview.md"), "---\nname: Overview\nlabel: Overview\ngroup: [Projects, Atlas]\n---\n\nText.\n"),
+            writeFile(join(scope.publicRoot, "parts.md"), "---\nname: Parts\nlabel: Parts\ngroup: [Projects, Atlas, Research]\norder: 1\n---\n\nText.\n"),
+            writeFile(join(scope.publicRoot, "authoring.md"), "---\nname: Authoring\nlabel: Authoring\ngroup: [Projects, Atlas, Research]\norder: 2\n---\n\nText.\n"),
+            writeFile(join(scope.publicRoot, "decision.md"), "---\nname: Decision\nlabel: Decision\ngroup: [Projects, Atlas, Decisions]\n---\n\nText.\n"),
+            writeFile(join(scope.publicRoot, "other.md"), "---\nname: Other research\nlabel: Other research\ngroup: [Projects, Beacon, Research]\n---\n\nText.\n"),
+            writeFile(join(scope.publicRoot, "deep.md"), "---\nname: Deep research\nlabel: Deep research\ngroup: [Projects, Atlas, Research, Archive, Drafts]\n---\n\nText.\n"),
         ]);
 
         /**
          * WHEN
          * 탐색 데이터와 마크업 생성
          */
-        const docs = await readDocs({root, processor: createProcessor({site, root})});
+        const docs = await readDocs({scope, processor: createProcessor({site, scope})});
         const groups = toDocGroups({docs, navigation: site.navigation});
 
         /**
@@ -156,28 +156,34 @@ describe("문서 탐색", () => {
         expect(html).not.toMatch(/<details\b/);
     });
 
-    test("부모 문서는 정렬한 자식과 독립 주소와 하나의 현재 페이지를 표시한다", async ({root}) => {
+    test("부모 문서는 정렬한 자식과 독립 주소와 하나의 현재 페이지를 표시한다", async ({scope}) => {
         /**
          * GIVEN
          * 탐색 계층과 문서 입력
          */
         const site = siteConfigSchema.parse({navigation: [["Projects", "Atlas", "Guide"]]});
 
-        await mkdir(join(root, "guide"));
+        await mkdir(join(scope.publicRoot, "guide"));
 
         await Promise.all([
-            writeFile(join(root, "settings.md"), "---\nname: Settings\nlabel: Settings\ngroup: [Projects, Atlas, Guide]\norder: 10\n---\n\nSettings introduction.\n"),
-            writeFile(join(root, "guide/site.md"), "---\nname: Site\nlabel: Site\ngroup: [Projects, Atlas, Guide]\nparent: settings\norder: 20\n---\n\nSite introduction.\n"),
-            writeFile(join(root, "themes.md"), "---\nname: Themes\nlabel: Themes\ngroup: [Projects, Atlas, Guide]\nparent: settings\norder: 10\n---\n\nThemes introduction.\n"),
-            writeFile(join(root, "details.md"), "---\nname: Details\nlabel: Details\ngroup: [Projects, Atlas, Guide]\nparent: guide/site\n---\n\nDeep child.\n"),
-            writeFile(join(root, "writing.md"), "---\nname: Writing\nlabel: Writing\ngroup: [Projects, Atlas, Guide]\norder: 20\n---\n\nIndependent guide.\n"),
+            writeFile(join(scope.publicRoot, "settings.md"), "---\nname: Settings\nlabel: Settings\ngroup: [Projects, Atlas, Guide]\norder: 10\n---\n\nSettings introduction.\n"),
+            writeFile(
+                join(scope.publicRoot, "guide/site.md"),
+                "---\nname: Site\nlabel: Site\ngroup: [Projects, Atlas, Guide]\nparent: settings\norder: 20\n---\n\nSite introduction.\n",
+            ),
+            writeFile(
+                join(scope.publicRoot, "themes.md"),
+                "---\nname: Themes\nlabel: Themes\ngroup: [Projects, Atlas, Guide]\nparent: settings\norder: 10\n---\n\nThemes introduction.\n",
+            ),
+            writeFile(join(scope.publicRoot, "details.md"), "---\nname: Details\nlabel: Details\ngroup: [Projects, Atlas, Guide]\nparent: guide/site\n---\n\nDeep child.\n"),
+            writeFile(join(scope.publicRoot, "writing.md"), "---\nname: Writing\nlabel: Writing\ngroup: [Projects, Atlas, Guide]\norder: 20\n---\n\nIndependent guide.\n"),
         ]);
 
         /**
          * WHEN
          * 탐색 데이터와 마크업 생성
          */
-        const docs = await readDocs({root, processor: createProcessor({site, root})});
+        const docs = await readDocs({scope, processor: createProcessor({site, scope})});
         const groups = toDocGroups({docs, navigation: site.navigation});
         const guide = groups[0].groups[0].groups[0];
 
@@ -217,29 +223,31 @@ describe("문서 탐색", () => {
         }
     });
 
-    test("상대 부모 경로는 전체 문서와 하위 프로젝트 루트에서 모두 해석된다", async ({root}) => {
+    test("상대 부모 경로는 전체 문서와 하위 프로젝트 루트에서 모두 해석된다", async ({scope}) => {
         /**
          * GIVEN
          * 탐색 계층과 문서 입력
          */
         const site = siteConfigSchema.parse({});
 
-        await mkdir(join(root, "project/research"), {recursive: true});
-        await mkdir(join(root, "project/guide"));
+        await mkdir(join(scope.publicRoot, "project/research"), {recursive: true});
+        await mkdir(join(scope.publicRoot, "project/guide"));
 
         await Promise.all([
-            writeFile(join(root, "project/research/README.md"), "---\nname: Research\nlabel: Research\ngroup: Guide\n---\n\nResearch introduction.\n"),
-            writeFile(join(root, "project/research/parts.md"), "---\nname: Parts\nlabel: Parts\ngroup: Guide\nparent: ./readme\n---\n\nText.\n"),
-            writeFile(join(root, "project/guide/authoring.md"), "---\nname: Authoring\nlabel: Authoring\ngroup: Guide\nparent: ../research/readme\n---\n\nText.\n"),
+            writeFile(join(scope.publicRoot, "project/research/README.md"), "---\nname: Research\nlabel: Research\ngroup: Guide\n---\n\nResearch introduction.\n"),
+            writeFile(join(scope.publicRoot, "project/research/parts.md"), "---\nname: Parts\nlabel: Parts\ngroup: Guide\nparent: ./readme\n---\n\nText.\n"),
+            writeFile(join(scope.publicRoot, "project/guide/authoring.md"), "---\nname: Authoring\nlabel: Authoring\ngroup: Guide\nparent: ../research/readme\n---\n\nText.\n"),
         ]);
 
-        for (const scope of [root, join(root, "project")]) {
+        for (const [current, parentId] of [
+            [scope, "project/research/readme"],
+            [{...scope, publicRoot: join(scope.publicRoot, "project")}, "research/readme"],
+        ] as const) {
             /**
              * WHEN
-             * 탐색 데이터와 마크업 생성
+             * 공개 폴더별 탐색 데이터 생성
              */
-            const docs = await readDocs({root: scope, processor: createProcessor({site, root: scope})});
-            const parentId = scope === root ? "project/research/readme" : "research/readme";
+            const docs = await readDocs({scope: current, processor: createProcessor({site, scope: current})});
             const groups = toDocGroups({docs, navigation: site.navigation});
 
             /**
