@@ -15,7 +15,7 @@ import {toDecodedPath} from "@/util/file/to-decoded-path";
 /**
  * 명시적으로 참조한 로컬 이미지, 첨부의 수집 계약
  */
-export interface AssetOptions {
+interface AssetOptions {
     /**
      * 자원 경로를 해석하고 공개 범위를 검사할 문서 범위
      */

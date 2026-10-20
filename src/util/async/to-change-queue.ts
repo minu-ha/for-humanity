@@ -1,7 +1,7 @@
 /**
  * 변경 재처리의 실행과 오류 보고 계약
  */
-export interface ChangeQueueParams {
+interface ChangeQueueParams {
     /**
      * 한 번의 최신 입력 처리. 이전 실행이 끝난 뒤 호출
      */

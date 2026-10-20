@@ -17,7 +17,9 @@ export const startDevServer = async (params: DevParams) => {
     }
 
     /**
-     * 실행기 종료 신호에서 Vite 자원 해제 후 종료
+     * SIGINT에서 Vite 자원 해제 후 종료
+     *
+     *   - 제약: SIGTERM은 Vite가 서버 종료 후 코드 143으로 직접 종료
      */
     const handleExit = async () => {
         await server.close();
@@ -25,5 +27,4 @@ export const startDevServer = async (params: DevParams) => {
     };
 
     process.once("SIGINT", handleExit);
-    process.once("SIGTERM", handleExit);
 };

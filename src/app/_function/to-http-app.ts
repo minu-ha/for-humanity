@@ -7,7 +7,7 @@ import {font_cache_control} from "@/constant/font";
 /**
  * 페이지와 등록 자원의 HTTP 응답 계약
  */
-export interface HttpParams {
+interface HttpParams {
     /**
      * 정적 자원 외 요청을 처리할 페이지 앱
      */
@@ -43,9 +43,11 @@ export const toHttpApp = (params: HttpParams) => {
             return c.notFound();
         }
 
-        c.header("content-type", asset_content_types[extname(file).toLowerCase()] ?? asset_content_type_default);
+        const extension = extname(file).toLowerCase();
 
-        if (extname(file) === ".woff2") {
+        c.header("content-type", asset_content_types[extension] ?? asset_content_type_default);
+
+        if (extension === ".woff2") {
             c.header("Cache-Control", font_cache_control);
         }
 

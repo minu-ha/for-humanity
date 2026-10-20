@@ -22,7 +22,7 @@ interface ContentLinkOptions {
 }
 
 /**
- * 원시 HTML의 내부 참조 차단과 Markdown 링크의 사이트 URL 변환
+ * 원시 HTML의 내부 참조 차단과 Markdown 파일 링크의 사이트 URL 변환
  */
 export const rehypeContentLinks = (options: ContentLinkOptions) => (tree: Root, file: VFile) => {
     visit(tree, "element", (node) => {

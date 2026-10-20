@@ -110,7 +110,7 @@ export const loadSite = async (params: SiteParams) => {
         store,
         assets: {
             stylePaths,
-            browser: params.browser === undefined ? {kind: "inline", code: readFileSync(join(params.kitRoot, "dist/browser.js"), "utf8")} : params.browser,
+            browser: params.browser ?? {kind: "inline", code: readFileSync(join(params.kitRoot, "dist/browser.js"), "utf8")},
             fontCss: [mono.css, body.css, brand.css].join("\n"),
             preload: [...brand.files.keys(), ...mono.files.keys(), ...body.files.keys()],
         },

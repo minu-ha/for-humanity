@@ -11,9 +11,9 @@ import {toErrorMessage} from "@/util/error/to-error-message";
 import {assertContentPath} from "@/util/file/assert-content-path";
 
 /**
- * 스니펫 수집 계약
+ * 코드 스니펫 삽입 입력
  */
-export interface SnippetOptions {
+interface SnippetOptions {
     /**
      * 스니펫 경로를 해석하고 공개 범위를 검사할 문서 범위
      */
@@ -71,7 +71,7 @@ export const remarkSnippets = (options: SnippetOptions) => (tree: Root, file: VF
         parent.children.splice(index, 1, {
             type: "code",
             lang: snippet_language_by_extension.get(extension) ?? extension.slice(1),
-            meta: meta === undefined ? null : meta,
+            meta,
             value: body,
         });
     });

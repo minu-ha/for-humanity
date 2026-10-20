@@ -7,7 +7,7 @@ import type {ResolvedSiteConfig} from "@/type/site-config";
 /**
  * URL을 명시한 공개 프로젝트의 크롤러 응답 입력
  */
-export interface CrawlingParams {
+interface CrawlingParams {
     /**
      * 설정 검증에서 루트 origin으로 정규화한 공개 HTTP(S) URL
      */

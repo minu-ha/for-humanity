@@ -3,7 +3,7 @@ import {z} from "zod";
 /**
  * npm pack 결과의 배포 검증 필드
  */
-export const packSchema = z.object({
+const packSchema = z.object({
     /**
      * 패키지 공개 이름
      */

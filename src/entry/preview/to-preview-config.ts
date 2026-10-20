@@ -10,7 +10,7 @@ import type {ResolvedSiteConfig} from "@/type/site-config";
 /**
  * 정적 미리보기 실행 입력
  */
-export interface PreviewParams {
+interface PreviewParams {
     /**
      * dist 출력 폴더를 포함한 문서 루트
      */

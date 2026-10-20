@@ -5,7 +5,7 @@ import {posix} from "node:path";
 /**
  * 파일 내용으로 자원 URL을 구분하는 입력
  */
-export interface AssetPathParams {
+interface AssetPathParams {
     /**
      * 사이트 루트 기준 기본 자원 경로
      */

@@ -51,7 +51,7 @@ export const siteConfigSchema = z.object({
     navigation: z
         .array(groupPathSchema)
         .refine((groups) => new Set(groups.map((path) => JSON.stringify(path))).size === groups.length, copy_error_navigation_clash)
-        .default(site_navigation_default.map((name) => [name])),
+        .default(site_navigation_default),
 
     /**
      * 본문에서 상태 표지로 표시할 문구

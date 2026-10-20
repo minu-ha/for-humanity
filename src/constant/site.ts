@@ -6,7 +6,7 @@ export const site_config_absent = {};
 /**
  * 탐색 순서 생략 시 모든 묶음을 이름순 배치
  */
-export const site_navigation_default: readonly string[] = [];
+export const site_navigation_default: string[][] = [];
 
 /**
  * 커서 장식의 기본값. 설정에서 켠 사이트만 표시
