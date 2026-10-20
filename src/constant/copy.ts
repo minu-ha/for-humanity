@@ -61,3 +61,8 @@ export const copy_error_private_id = "The private URL prefix is reserved for int
  * 공개, 내부 문서 폴더 밖의 Markdown 참조 오류
  */
 export const copy_error_markdown_outside = "Markdown reference outside the public and private document folders";
+
+/**
+ * 해석할 수 없는 퍼센트 인코딩이 포함된 로컬 참조 오류
+ */
+export const copy_error_url_encoding = "Invalid percent-encoding";

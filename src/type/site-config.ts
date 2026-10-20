@@ -1,6 +1,7 @@
 import {z} from "zod";
+import {content_default} from "@/constant/content";
 import {copy_error_navigation_clash, copy_error_site_url, copy_site_title_default} from "@/constant/copy";
-import {content_default, site_navigation_default, site_port_default, site_port_max, site_port_min} from "@/constant/site";
+import {site_navigation_default, site_port_default, site_port_max, site_port_min} from "@/constant/site";
 import {status_default_phrases, status_kind} from "@/constant/status";
 import {contentConfigSchema} from "@/type/content-config";
 import {groupPathSchema} from "@/type/group-path";

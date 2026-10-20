@@ -2,7 +2,7 @@ import {mkdir, mkdtemp, realpath, rm} from "node:fs/promises";
 import {tmpdir} from "node:os";
 import {join} from "node:path";
 import {test as base} from "vitest";
-import {content_default} from "@/constant/site";
+import {content_default} from "@/constant/content";
 import type {ContentScope} from "@/type/content-scope";
 
 /**

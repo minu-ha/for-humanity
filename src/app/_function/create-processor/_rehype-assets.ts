@@ -5,10 +5,12 @@ import {visit} from "unist-util-visit";
 import type {VFile} from "vfile";
 import {copy_error_asset, copy_error_file_missing, copy_error_image_format, copy_error_not_file} from "@/app/_constant/copy";
 import {asset_media_dir, asset_media_extensions} from "@/constant/asset";
+import {copy_error_url_encoding} from "@/constant/copy";
 import type {ContentScope} from "@/type/content-scope";
 import {toErrorMessage} from "@/util/error/to-error-message";
 import {assertContentPath} from "@/util/file/assert-content-path";
 import {toAssetPath} from "@/util/file/to-asset-path";
+import {toDecodedPath} from "@/util/file/to-decoded-path";
 
 /**
  * 명시적으로 참조한 로컬 이미지, 첨부의 수집 계약
@@ -47,7 +49,12 @@ export const rehypeAssets = (options: AssetOptions) => (tree: Root, file: VFile)
             return;
         }
 
-        const path = decodeURIComponent(match[1]);
+        const path = toDecodedPath(match[1]);
+
+        if (path === undefined) {
+            file.fail(`${copy_error_url_encoding}: ${url}`, node);
+        }
+
         const extension = extname(path).toLowerCase();
 
         if (!asset_media_extensions.has(extension)) {

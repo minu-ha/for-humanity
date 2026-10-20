@@ -1,6 +1,7 @@
 import {z} from "zod";
+import {content_default} from "@/constant/content";
 import {copy_error_content_overlap, copy_error_content_path, copy_error_private_folder, copy_error_public_folder} from "@/constant/copy";
-import {content_default} from "@/constant/site";
+import {hasReservedFolder} from "@/util/file/has-reserved-folder";
 
 /**
  * 프로젝트 내부의 상대 경로, 출력 폴더와 시스템 폴더 제외
@@ -9,10 +10,7 @@ const contentPathSchema = z
     .string()
     .trim()
     .min(1)
-    .refine(
-        (value) => !/^[\\/]|[:?#%*\p{Cc}]/u.test(value) && !value.split(/[\\/]/).some((part) => ["..", "dist", "node_modules", ".git"].includes(part.toLowerCase())),
-        copy_error_content_path,
-    )
+    .refine((value) => !/^[\\/]|[:?#%*\p{Cc}]/u.test(value) && !value.split(/[\\/]/).includes("..") && !hasReservedFolder(value), copy_error_content_path)
     .transform((value) =>
         value
             .replaceAll("\\", "/")

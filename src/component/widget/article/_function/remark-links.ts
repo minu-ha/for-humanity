@@ -4,10 +4,12 @@ import type {Root} from "mdast";
 import {visit} from "unist-util-visit";
 import type {VFile} from "vfile";
 import {copy_warn_broken_link} from "@/component/widget/article/_constant/copy";
+import {copy_error_url_encoding} from "@/constant/copy";
 import type {ContentScope} from "@/type/content-scope";
 import {toErrorMessage} from "@/util/error/to-error-message";
 import {assertContentPath} from "@/util/file/assert-content-path";
 import {toContentId} from "@/util/file/to-content-id";
+import {toDecodedPath} from "@/util/file/to-decoded-path";
 
 /**
  * 상대 문서 링크 해석 기준
@@ -37,7 +39,13 @@ export const remarkLinks = (options: LinkOptions) => (tree: Root, file: VFile) =
             return;
         }
 
-        const target = resolve(dirname(file.path), decodeURIComponent(`${match[1]}${match[2]}`));
+        const path = toDecodedPath(`${match[1]}${match[2]}`);
+
+        if (path === undefined) {
+            file.fail(`${copy_error_url_encoding}: ${node.url}`, node);
+        }
+
+        const target = resolve(dirname(file.path), path);
 
         try {
             assertContentPath({scope: options.scope, path: target});

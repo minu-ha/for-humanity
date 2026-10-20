@@ -4,6 +4,8 @@
 
 - Keep the `cursorFace` pixel face at the last mouse position after a reload in Chromium on Windows. Chromium briefly turned off its display condition just before leaving the page, which dropped the position and failed the Windows browser check `NAV-010`.
 - Show CLI help, build errors and warnings, and the diagram failure notice in English, for example `Invalid asset: ./missing.png (file not found)`.
+- Report a link or image path with a malformed `%` escape as `Invalid percent-encoding` with its file and line, instead of failing with `URI malformed`.
+- Skip Markdown files inside `dist`, `.git` and `node_modules` folders at any depth of the document folders instead of failing the build, and treat these folder names case-insensitively when checking references.
 
 ## 0.14.1 — 2026-10-19
 

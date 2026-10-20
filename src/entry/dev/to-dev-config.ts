@@ -1,5 +1,5 @@
 import {realpathSync} from "node:fs";
-import {extname, isAbsolute, join, relative, sep} from "node:path";
+import {extname, join, relative, sep} from "node:path";
 import {fileURLToPath, pathToFileURL} from "node:url";
 import devServer from "@hono/vite-dev-server";
 import {debounce, escapeRegExp} from "es-toolkit";
@@ -9,9 +9,10 @@ import type {loadSite, SiteParams} from "@/app/load-site";
 import {config_file_names} from "@/constant/config";
 import {copy_error_prefix} from "@/constant/copy";
 import {copy_error_prepare} from "@/entry/dev/_constant/copy";
-import {dev_ignored_paths, dev_reload_delay_ms} from "@/entry/dev/_constant/dev";
+import {dev_ignored_dirs, dev_reload_delay_ms} from "@/entry/dev/_constant/dev";
 import {toChangeQueue} from "@/util/async/to-change-queue";
 import {toErrorMessage} from "@/util/error/to-error-message";
+import {isOutsideRoot} from "@/util/file/is-outside-root";
 
 /**
  * 같은 문서 앱을 소스 또는 설치 번들로 실행하는 개발 입력
@@ -132,11 +133,7 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                     const handleChange = (event: string, file: string) => {
                         const documentPath = relative(root, file);
 
-                        const isDocument =
-                            documentPath !== ".." &&
-                            !isAbsolute(documentPath) &&
-                            !documentPath.startsWith(`..${sep}`) &&
-                            !documentPath.split(sep).some((part) => ["dist", "node_modules", ".git", ".cache"].includes(part));
+                        const isDocument = !isOutsideRoot(documentPath) && !documentPath.split(sep).some((part) => dev_ignored_dirs.includes(part.toLowerCase()));
 
                         const extension = extname(file);
 
@@ -180,7 +177,7 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                           /^\/src\/entry\/browser\//,
                       ]
                     : viteClientPaths,
-                ignoreWatching: dev_ignored_paths,
+                ignoreWatching: dev_ignored_dirs.map((dir) => `**/${dir}/**`),
                 handleHotUpdate: (context) => {
                     return context.file.endsWith(".css") ? undefined : [];
                 },

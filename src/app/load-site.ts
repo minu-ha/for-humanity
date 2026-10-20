@@ -1,5 +1,5 @@
 import {existsSync, readFileSync, realpathSync, statSync} from "node:fs";
-import {isAbsolute, join, relative, sep} from "node:path";
+import {join, relative} from "node:path";
 import {copy_error_content_folder, copy_error_content_root_missing, copy_error_public_missing, copy_hint_content_layout} from "@/app/_constant/copy";
 import {crawling_reserved_roots} from "@/app/_constant/crawling";
 import {createProcessor} from "@/app/_function/create-processor/create-processor";
@@ -14,6 +14,7 @@ import {font_body_css, font_brand_css, font_mono_css} from "@/constant/font";
 import type {ContentScope} from "@/type/content-scope";
 import type {SiteAssets} from "@/type/site-assets";
 import type {ResolvedSiteConfig} from "@/type/site-config";
+import {isOutsideRoot} from "@/util/file/is-outside-root";
 import {toAssetPath} from "@/util/file/to-asset-path";
 import {toFontCss} from "@/util/font/to-font-css";
 
@@ -88,9 +89,8 @@ export const loadSite = async (params: SiteParams) => {
         }
 
         const actual = realpathSync(path);
-        const location = relative(root, actual);
 
-        if (!statSync(path).isDirectory() || actual !== path || location === ".." || location.startsWith(`..${sep}`) || isAbsolute(location)) {
+        if (!statSync(path).isDirectory() || actual !== path || isOutsideRoot(relative(root, actual))) {
             throw new Error(`${copy_error_content_folder}: ${path}`);
         }
     }

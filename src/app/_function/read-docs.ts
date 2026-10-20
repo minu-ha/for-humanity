@@ -1,6 +1,6 @@
 import {existsSync} from "node:fs";
 import {readdir, readFile} from "node:fs/promises";
-import {dirname, join, posix, relative, resolve, sep} from "node:path";
+import {dirname, join, relative, resolve} from "node:path";
 import {isEqual} from "es-toolkit/predicate";
 import {VFile} from "vfile";
 import {parse as parseYaml} from "yaml";
@@ -19,6 +19,7 @@ import type {Doc} from "@/type/doc";
 import {docDataSchema} from "@/type/doc-data";
 import type {DocFileData} from "@/type/doc-file-data";
 import {assertContentPath} from "@/util/file/assert-content-path";
+import {hasReservedFolder} from "@/util/file/has-reserved-folder";
 import {toContentId} from "@/util/file/to-content-id";
 
 /**
@@ -52,7 +53,7 @@ export const readDocs = async (params: ReadDocsParams): Promise<Doc[]> => {
 
     const paths = (await Promise.all(roots.map(async (root) => (await readdir(root, {recursive: true})).map((path) => relative(params.scope.root, join(root, path))))))
         .flat()
-        .filter((path) => /\.mdx?$/i.test(path) && !path.split(sep).includes("node_modules"));
+        .filter((path) => /\.mdx?$/i.test(path) && !hasReservedFolder(path));
 
     const docs = await Promise.all(
         paths.map(async (path): Promise<Doc> => {

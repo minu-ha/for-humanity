@@ -1,6 +1,8 @@
-import {isAbsolute, relative, sep} from "node:path";
+import {relative, sep} from "node:path";
+import {content_private_segment} from "@/constant/content";
 import {copy_error_markdown_outside, copy_error_private_id} from "@/constant/copy";
 import type {ContentScope} from "@/type/content-scope";
+import {isOutsideRoot} from "@/util/file/is-outside-root";
 
 /**
  * 원본 문서의 사이트 식별자 변환 입력
@@ -27,11 +29,11 @@ export const toContentId = (params: ContentIdParams) => {
 
     for (const [root, prefix] of [
         [params.scope.publicRoot, ""],
-        [params.scope.privateRoot, "private/"],
+        [params.scope.privateRoot, `${content_private_segment}/`],
     ]) {
         const location = relative(root, params.path);
 
-        if (location === ".." || location.startsWith(`..${sep}`) || isAbsolute(location)) {
+        if (isOutsideRoot(location)) {
             continue;
         }
 
@@ -41,7 +43,7 @@ export const toContentId = (params: ContentIdParams) => {
             .join("/")
             .toLowerCase();
 
-        if (prefix === "" && id.split("/")[0] === "private") {
+        if (prefix === "" && id.split("/")[0] === content_private_segment) {
             throw new Error(`${copy_error_private_id}: ${params.path}`);
         }
 

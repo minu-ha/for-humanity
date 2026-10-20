@@ -3,10 +3,13 @@ import type {Root} from "hast";
 import {visit} from "unist-util-visit";
 import type {VFile} from "vfile";
 import {copy_error_private_url} from "@/app/_constant/copy";
+import {content_private_segment} from "@/constant/content";
+import {copy_error_url_encoding} from "@/constant/copy";
 import type {ContentScope} from "@/type/content-scope";
 import {toErrorMessage} from "@/util/error/to-error-message";
 import {assertContentPath} from "@/util/file/assert-content-path";
 import {toContentId} from "@/util/file/to-content-id";
+import {toDecodedPath} from "@/util/file/to-decoded-path";
 
 /**
  * 원시 HTML을 포함한 문서 참조 검사 입력
@@ -35,13 +38,17 @@ export const rehypeContentLinks = (options: ContentLinkOptions) => (tree: Root, 
                     continue;
                 }
 
-                const path = decodeURIComponent(url.split(/[?#]/)[0]);
+                const path = toDecodedPath(url.split(/[?#]/)[0]);
+
+                if (path === undefined) {
+                    file.fail(`${copy_error_url_encoding}: ${url}`, node);
+                }
 
                 try {
                     if (path.startsWith("/")) {
                         const pathname = new URL(path, "https://content.invalid").pathname.toLowerCase();
 
-                        if (!options.scope.includePrivate && (pathname === "/private" || pathname.startsWith("/private/"))) {
+                        if (!options.scope.includePrivate && pathname.split("/")[1] === content_private_segment) {
                             throw new Error(`${copy_error_private_url}: ${url}`);
                         }
 

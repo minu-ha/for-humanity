@@ -60,6 +60,29 @@ describe("문서 링크와 목차", () => {
         expect(setup?.html).toMatch(/href="#details\?literal=yes"/);
     });
 
+    test.for(["[Guide](setup%zz.md)", '<img src="image%zz.png" alt="">'])("잘못된 퍼센트 인코딩 참조 %s는 작성 위치와 함께 거부한다", async (source, {scope}) => {
+        /**
+         * GIVEN
+         * 해석할 수 없는 인코딩을 포함한 상대 참조
+         */
+        const site = siteConfigSchema.parse({});
+
+        await writeFile(join(scope.publicRoot, "guide.md"), `---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n${source}\n`);
+
+        /**
+         * WHEN
+         * 문서 로드
+         */
+        const result = readDocs({scope, processor: createProcessor({site, scope})});
+
+        /**
+         * THEN
+         * 인코딩 오류와 원본 행 번호
+         */
+        await expect(result).rejects.toThrow(/Invalid percent-encoding/);
+        await expect(result).rejects.toHaveProperty("line", 7);
+    });
+
     test("제목과 목차는 작성한 텍스트와 번호를 보존한다", async ({scope}) => {
         /**
          * GIVEN

@@ -186,6 +186,33 @@ describe("문서 로드", () => {
         await expect(result).rejects.toHaveProperty("line", 7);
     });
 
+    test("문서 폴더 안의 생성물, 저장소, 설치 폴더는 문서로 수집하지 않는다", async ({scope}) => {
+        /**
+         * GIVEN
+         * 대소문자가 다른 예약 폴더 안의 Markdown과 일반 문서
+         */
+        const site = siteConfigSchema.parse({});
+
+        for (const folder of ["guide/dist", "guide/Node_Modules", ".GIT"]) {
+            await mkdir(join(scope.publicRoot, folder), {recursive: true});
+            await writeFile(join(scope.publicRoot, folder, "notes.md"), "---\nname: Notes\nlabel: Notes\ngroup: Guide\n---\n\nText.\n");
+        }
+
+        await writeFile(join(scope.publicRoot, "guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\nText.\n");
+
+        /**
+         * WHEN
+         * 문서 로드
+         */
+        const docs = await readDocs({scope, processor: createProcessor({site, scope})});
+
+        /**
+         * THEN
+         * 예약 폴더 밖의 문서만 수집한 결과
+         */
+        expect(docs.map((doc) => doc.id)).toStrictEqual(["guide"]);
+    });
+
     test("루트 에이전트 지침은 제외하고 하위 폴더의 같은 이름 문서는 표시한다", async ({scope}) => {
         /**
          * GIVEN
