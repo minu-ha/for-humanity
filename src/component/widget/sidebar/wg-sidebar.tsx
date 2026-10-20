@@ -411,12 +411,10 @@ export const WgSidebar = (props: WgSidebarProps) => {
             {/**
              * 와이드 화면 전용 목차. 드로어에는 문서 목록만 표시
              */}
-            <aside className={clsx("wg_sidebar__tocColumn")} data-sidebar-toc="">
-                <div className={clsx("wg_sidebar__tocPanel")}>
-                    <WgSidebarScroll portRef={outlineRef} kind="outline" ready={props.stores !== undefined} onScroll={handleScrollSave} onClick={handleNavigationClick}>
-                        {props.data.outline.length > 0 && <WgToc groups={props.data.outline} />}
-                    </WgSidebarScroll>
-                </div>
+            <aside className={clsx("wg_sidebar__tocColumn", props.data.outline.length === 0 && "wg_sidebar__tocColumn--empty")} data-sidebar-toc="">
+                <WgSidebarScroll portRef={outlineRef} kind="outline" ready={props.stores !== undefined} onScroll={handleScrollSave} onClick={handleNavigationClick}>
+                    {props.data.outline.length > 0 && <WgToc groups={props.data.outline} />}
+                </WgSidebarScroll>
             </aside>
 
             {/**

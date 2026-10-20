@@ -10,20 +10,17 @@
     margin: 0 0 var(--app-space-tree-label);
     color: var(--app-color-text-muted);
     font-size: var(--app-font-size-group);
-    line-height: calc(var(--app-font-size-dense) * var(--app-line-height-tight));
+    line-height: var(--app-line-height-group);
     text-box: trim-start cap alphabetic;
 }
 
 .wg_toc__group {
-    margin: 0 0 var(--app-space-tree-label);
+    /* 이름 있는 가름은 앞 묶음과 탐색 묶음 사이만큼 분리 */
+    margin: var(--app-space-tree-group) 0 var(--app-space-tree-label);
     color: var(--app-color-text-muted);
     font-size: var(--app-font-size-group);
-    line-height: calc(var(--app-font-size-dense) * var(--app-line-height-tight));
+    line-height: var(--app-line-height-group);
     text-box: trim-start cap alphabetic;
-}
-
-.wg_toc__groupSection--named {
-    margin-top: var(--app-space-tree-group);
 }
 
 .wg_toc__list {

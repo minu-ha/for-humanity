@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import {orderBy} from "es-toolkit/array";
 import {escape as escapeHtml, escapeRegExp} from "es-toolkit/string";
 import type {Root} from "mdast";
@@ -5,6 +6,7 @@ import {findAndReplace, type RegExpMatchObject} from "mdast-util-find-and-replac
 import type {VFile} from "vfile";
 import {copy_warn_unknown_status} from "@/component/widget/article/_constant/copy";
 import {status_candidate_pattern, status_date_pattern} from "@/component/widget/article/_constant/status";
+import {status_kind} from "@/constant/status";
 import type {ResolvedSiteConfig} from "@/type/site-config";
 
 /**
@@ -44,7 +46,7 @@ export const remarkStatus = (options: StatusOptions) => {
 
                     return {
                         type: "html",
-                        value: `<span class="wg_article__pill wg_article__pill--${item.kind}">${escapeHtml(text)}</span>`,
+                        value: `<span class="${clsx("wg_article__pill", item.kind === status_kind.verified && "wg_article__pill--verified", item.kind === status_kind.unverified && "wg_article__pill--unverified")}">${escapeHtml(text)}</span>`,
                     };
                 },
             ],

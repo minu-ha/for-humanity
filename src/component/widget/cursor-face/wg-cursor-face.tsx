@@ -56,11 +56,10 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
                 return;
             }
 
-            faceRef.current.style.transform = `translate3d(
-                ${Math.max(0, Math.min(positionRef.current.x + position_offset_px, document.documentElement.clientWidth - faceRef.current.width - position_offset_px))}px,
-                ${Math.max(0, Math.min(positionRef.current.y + position_offset_px, document.documentElement.clientHeight - faceRef.current.height - position_offset_px))}px,
-                0
-            )`;
+            faceRef.current.style.setProperty(
+                "--wg-cursor-face-position",
+                `${Math.max(0, Math.min(positionRef.current.x + position_offset_px, document.documentElement.clientWidth - faceRef.current.width - position_offset_px))}px ${Math.max(0, Math.min(positionRef.current.y + position_offset_px, document.documentElement.clientHeight - faceRef.current.height - position_offset_px))}px`,
+            );
 
             faceRef.current.classList.add("wg_cursorFace__root--visible");
         });

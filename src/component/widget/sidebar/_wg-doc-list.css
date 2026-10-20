@@ -12,7 +12,7 @@
     padding: var(--app-space-tree-row) 0;
     color: var(--app-color-text-muted);
     font-size: var(--app-font-size-group);
-    line-height: calc(var(--app-font-size-dense) * var(--app-line-height-tight));
+    line-height: var(--app-line-height-group);
     overflow-wrap: anywhere;
 }
 
@@ -37,7 +37,6 @@
 }
 
 .wg_docList__link--active {
-    color: var(--app-color-link);
     font-weight: var(--app-font-weight-active);
 }
 

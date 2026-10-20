@@ -107,7 +107,7 @@ export const WgShellControls = (props: WgShellControlsProps) => {
      */
     const handleUserScroll = () => {
         userScrollRef.current?.abort();
-        document.documentElement.style.scrollBehavior = "smooth";
+        document.documentElement.classList.add("wg_shell__document--smoothScroll");
     };
 
     /**
@@ -137,7 +137,7 @@ export const WgShellControls = (props: WgShellControlsProps) => {
             highlightHeading(target);
         }
 
-        document.documentElement.style.scrollBehavior = "smooth";
+        document.documentElement.classList.add("wg_shell__document--smoothScroll");
     };
 
     /**
@@ -179,7 +179,7 @@ export const WgShellControls = (props: WgShellControlsProps) => {
             userScrollRef.current?.abort();
             userScrollRef.current = null;
             clearHeadingHighlight();
-            document.documentElement.style.removeProperty("scroll-behavior");
+            document.documentElement.classList.remove("wg_shell__document--smoothScroll");
         };
     }, []);
 

@@ -36,7 +36,7 @@ describe("페이지 셸", () => {
         expect([...head.matchAll(/charset="utf-8"/g)]).toHaveLength(1);
         expect([...head.matchAll(/name="viewport"/g)]).toHaveLength(1);
         expect(head).not.toContain('name="description"');
-        expect(html).toContain('<html lang="ko">');
+        expect(html).toContain('<html lang="ko" class="wg_shell__document">');
     });
 
     test("동시 렌더에서 사이트와 문서의 제목·설명을 공유하지 않는다", async () => {

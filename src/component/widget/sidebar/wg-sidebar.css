@@ -77,8 +77,8 @@
     display: flex;
 }
 
-/* sticky 틀 안에서 문서 목록과 목차의 스크롤 높이를 독립 유지 */
 .wg_sidebar__docsColumn {
+    /* body의 왼쪽 grid 열, 문서 스크롤과 독립된 뷰포트 기준 sticky */
     grid-area: nav;
     position: sticky;
     top: 0;
@@ -92,17 +92,6 @@
     /* 모든 배치에서 남은 탐색 높이를 문서 목록 전체에 사용 */
     flex: 1;
     min-height: 0;
-}
-
-.wg_sidebar__tocPanel {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 0;
-
-    &:where(:has(.wg_sidebar__tocScroll:empty)) {
-        display: none;
-    }
 }
 
 .wg_sidebar__tocScroll {
@@ -124,18 +113,16 @@
     position: sticky;
     top: 0;
     align-self: start;
+    display: flex;
+    flex-direction: column;
     min-width: 0;
     height: 100dvh;
     margin-inline-start: var(--app-space-sidebar-gap);
     padding-top: var(--app-size-brand);
+}
 
-    & > .wg_sidebar__tocPanel {
-        height: 100%;
-    }
-
-    &:where(:has(.wg_sidebar__tocScroll:empty)) {
-        display: none;
-    }
+.wg_sidebar__tocColumn--empty {
+    display: none;
 }
 
 .wg_sidebar__scroll {
@@ -245,7 +232,7 @@
     }
 }
 
-/* 와이드 화면에서만 현재 문서 목차 표시 */
+/* 본문 최소 약 800px을 남기는 폭부터 목차 숨김, 셸 grid와 같은 기준 */
 @media (width < 1360px) {
     .wg_sidebar__tocColumn {
         display: none;
@@ -263,10 +250,6 @@
 
     .wg_sidebar__docsColumn > .wg_sidebar__docsPanel {
         height: auto;
-    }
-
-    .wg_sidebar__docsColumn > .wg_sidebar__docsPanel > .wg_sidebar__docsScroll {
-        max-height: none;
     }
 
     .wg_sidebar__docsColumn--ready {

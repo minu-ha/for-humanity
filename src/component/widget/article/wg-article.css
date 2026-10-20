@@ -71,14 +71,14 @@
     }
 
     & h4 {
-        margin: var(--app-space-group) 0 6px;
+        margin: var(--app-space-group) 0 var(--app-space-inline);
         color: var(--app-color-text-strong);
         font-size: var(--app-font-size-body);
         font-weight: var(--app-font-weight-strong);
     }
 
     & h5 {
-        margin: var(--app-space-block) 0 6px;
+        margin: var(--app-space-block) 0 var(--app-space-inline);
         color: var(--app-color-text-muted);
         font-size: var(--app-font-size-dense);
         font-weight: var(--app-font-weight-strong);
@@ -292,7 +292,7 @@
         margin: var(--app-space-block) 0;
     }
 
-    & .wg_article__codeFile pre {
+    & .wg_article__codeFile > .wg_article__code {
         margin: 0;
         border-top-left-radius: 0;
         border-top-right-radius: 0;
@@ -326,11 +326,11 @@
     }
 
     /* 줄 번호, 펜스 메타 line-numbers, 복사에 섞이지 않게 content 로 */
-    & pre.wg_article__lineNumbers code {
+    & .wg_article__lineNumbers code {
         counter-reset: line;
     }
 
-    & pre.wg_article__lineNumbers code .line::before {
+    & .wg_article__lineNumbers code .line::before {
         display: inline-block;
         width: 2em;
         margin-right: var(--app-space-stack);
@@ -470,6 +470,7 @@
     padding-left: var(--app-space-block);
     border-left: 2px solid var(--app-color-border);
 
+    /* 작성한 블록의 종류와 무관하게 마지막 블록의 아래 여백 제거 */
     & > :last-child {
         margin-bottom: 0;
     }
@@ -489,6 +490,7 @@
     border-top: 1px dotted var(--app-color-border);
     border-bottom: 1px dotted var(--app-color-border);
 
+    /* 작성한 블록의 종류와 무관하게 마지막 블록의 아래 여백 제거 */
     & > :last-child {
         margin-bottom: 0;
     }

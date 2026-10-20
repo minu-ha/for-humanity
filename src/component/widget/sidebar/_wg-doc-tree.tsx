@@ -20,16 +20,14 @@ export const WgDocTree = (props: WgDocTreeProps) => {
             {/**
              * 문서 이동. 클릭하지 않는 묶음과 독립 문서
              */}
-            <div className={clsx("wg_docTree__docs")}>
-                {props.groups.map((group) => {
-                    return (
-                        <section className={clsx("wg_docTree__docGroup")} key={JSON.stringify(group.path)} aria-label={group.name}>
-                            <div className={clsx("wg_docTree__group")}>{group.name}</div>
-                            <WgDocList group={group} />
-                        </section>
-                    );
-                })}
-            </div>
+            {props.groups.map((group) => {
+                return (
+                    <section className={clsx("wg_docTree__docGroup")} key={JSON.stringify(group.path)} aria-label={group.name}>
+                        <div className={clsx("wg_docTree__group")}>{group.name}</div>
+                        <WgDocList group={group} />
+                    </section>
+                );
+            })}
         </nav>
     );
 };

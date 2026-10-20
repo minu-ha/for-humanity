@@ -421,7 +421,7 @@ test.describe("저장소 소스 개발", () => {
              */
             const path = join(devSite.kitRoot, "src/component/widget/shell/wg-shell.tsx");
 
-            await writeFile(path, (await readFile(path, "utf8")).replace('<html lang="ko">', '<html lang="en">'));
+            await writeFile(path, (await readFile(path, "utf8")).replace('<html lang="ko"', '<html lang="en"'));
 
             /**
              * THEN

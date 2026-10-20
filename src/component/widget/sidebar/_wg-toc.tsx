@@ -171,7 +171,7 @@ export const WgToc = (props: WgTocProps) => {
              */}
             {props.groups.map((group) => {
                 return (
-                    <div className={clsx("wg_toc__groupSection", {"wg_toc__groupSection--named": group.part !== undefined})} key={group.sections[0].heading.slug}>
+                    <div className={clsx("wg_toc__groupSection")} key={group.sections[0].heading.slug}>
                         {group.part !== undefined && <div className={clsx("wg_toc__group")}>{group.part}</div>}
                         <ul className={clsx("wg_toc__list")}>
                             {group.sections.map((section) => {
@@ -181,7 +181,7 @@ export const WgToc = (props: WgTocProps) => {
                                          * 절 제목. 읽는 위치면 현재 위치로 표시
                                          */}
                                         <a
-                                            className={clsx("wg_toc__link", {"wg_toc__link--active": section.heading.slug === currentSlug})}
+                                            className={clsx("wg_toc__link", section.heading.slug === currentSlug && "wg_toc__link--active")}
                                             href={`#${section.heading.slug}`}
                                             data-toc-link=""
                                             aria-current={section.heading.slug === currentSlug ? "location" : undefined}
@@ -198,9 +198,7 @@ export const WgToc = (props: WgTocProps) => {
                                                     return (
                                                         <li className={clsx("wg_toc__subItem")} key={sub.heading.slug}>
                                                             <a
-                                                                className={clsx("wg_toc__subLink", {
-                                                                    "wg_toc__subLink--active": sub.heading.slug === currentSlug,
-                                                                })}
+                                                                className={clsx("wg_toc__subLink", sub.heading.slug === currentSlug && "wg_toc__subLink--active")}
                                                                 href={`#${sub.heading.slug}`}
                                                                 data-toc-sub-link=""
                                                                 aria-current={sub.heading.slug === currentSlug ? "location" : undefined}

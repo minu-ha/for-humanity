@@ -79,7 +79,7 @@ export const WgShell = (props: WgShellProps) => {
     });
 
     return (
-        <html lang="ko">
+        <html lang="ko" className={clsx("wg_shell__document")}>
             {/**
              * Unhead의 서버 직렬화 결과. 글꼴과 CSS는 JavaScript 수신 전에 로드
              */}

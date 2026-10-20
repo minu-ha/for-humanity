@@ -31,7 +31,7 @@ export const WgDocList = (props: WgDocListProps) => {
                         {entry.kind === "document" && (
                             <Fragment>
                                 <a
-                                    className={clsx("wg_docList__link", {"wg_docList__link--active": entry.doc.active})}
+                                    className={clsx("wg_docList__link", entry.doc.active && "wg_docList__link--active")}
                                     href={`/${entry.doc.id}/`}
                                     title={entry.doc.label}
                                     aria-current={entry.doc.active ? "page" : undefined}

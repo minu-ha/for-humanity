@@ -8,6 +8,9 @@
     pointer-events: none;
     user-select: none;
     image-rendering: pixelated;
+
+    /* 스크립트가 화면 안으로 제한한 포인터 좌표 */
+    translate: var(--wg-cursor-face-position);
 }
 
 .wg_cursorFace__root--visible {
