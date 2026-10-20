@@ -47,7 +47,7 @@ export const WgDocList = (props: WgDocListProps) => {
                         )}
 
                         {/**
-                         * 하위 묶음. 같은 목록을 재귀로 이어 깊이에 따라 들여쓰기
+                         * 하위 묶음. 같은 목록의 재귀 렌더, 깊이별 들여쓰기
                          */}
                         {entry.kind === "group" && (
                             <Fragment>

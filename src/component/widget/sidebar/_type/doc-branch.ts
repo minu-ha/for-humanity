@@ -1,7 +1,7 @@
 import type {Doc} from "@/type/doc";
 
 /**
- * 문서 탐색의 클릭 가능한 가지. 원래 URL과 본문을 유지
+ * 문서 탐색의 클릭 가능한 가지. 원래 URL과 본문 유지
  */
 export interface DocBranch extends Doc {
     /**

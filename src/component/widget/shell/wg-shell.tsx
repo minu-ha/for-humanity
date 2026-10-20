@@ -67,7 +67,7 @@ export const WgShell = (props: WgShellProps) => {
             {charset: "utf-8"},
             {name: "viewport", content: "width=device-width, initial-scale=1"},
 
-            // Unhead 속성 직렬화는 따옴표만 escape. 입력의 HTML 엔티티도 텍스트로 보존
+            // Unhead 속성 직렬화는 따옴표만 이스케이프. 입력의 HTML 엔티티도 텍스트로 보존
             {name: "description", content: props.site.description === undefined ? undefined : escapeHtml(props.site.description)},
         ],
         style: [{textContent: props.assets.fontCss}],
@@ -99,7 +99,7 @@ export const WgShell = (props: WgShellProps) => {
                 {/**
                  * 서버 탐색 자료와 브라우저 진입점 연결
                  */}
-                {/* biome-ignore lint/security/noDangerouslySetInnerHtml: toScriptJson이 script 종료 태그와 줄 구분자를 escape한 JSON */}
+                {/* biome-ignore lint/security/noDangerouslySetInnerHtml: toScriptJson이 script 종료 태그와 줄 구분자를 이스케이프한 JSON */}
                 <script type="application/json" id="fh-navigation-data" dangerouslySetInnerHTML={{__html: toScriptJson(navigationData)}} />
                 {/* biome-ignore lint/security/noDangerouslySetInnerHtml: 패키지에 포함한 브라우저 번들. 문서 입력 미포함 */}
                 {props.assets.browser.kind === "inline" && <script dangerouslySetInnerHTML={{__html: props.assets.browser.code}} />}

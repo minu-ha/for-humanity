@@ -29,7 +29,7 @@
         text-decoration: underline;
     }
 
-    /* hover와 같은 밑줄로 키보드 위치 표시 */
+    /* 호버와 같은 밑줄로 키보드 위치 표시 */
     &:where(:focus-visible) {
         outline: none;
         text-decoration: underline;

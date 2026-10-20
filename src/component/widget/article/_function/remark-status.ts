@@ -20,9 +20,10 @@ interface StatusOptions {
 }
 
 /**
- * 설정 문구의 상태 표지 변환. 괄호 제거. 제목, 링크 제외
+ * 설정 문구의 상태 표지 변환. 괄호 제거
  *
- *   - 미등록 날짜 문구는 파일 경고. remark-report에서 출력
+ *   - 제목, 링크 안의 문구 제외
+ *   - 미등록 날짜 문구는 파일 경고, remark-report에서 출력
  */
 export const remarkStatus = (options: StatusOptions) => {
     const statuses = orderBy(options.status, [(item) => item.phrase.length], ["desc"]);

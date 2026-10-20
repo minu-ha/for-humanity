@@ -56,7 +56,7 @@ export interface SiteParams {
 /**
  * 문서, 등록 자원과 Hono 앱의 일관된 스냅샷
  *
- *   - 실패한 준비 결과는 반환하지 않으며 이전 스냅샷 변경 없음
+ *   - 준비 실패 시 결과 미반환, 이전 스냅샷 유지
  *   - 파일 조회와 Markdown 변환은 준비 시에만 실행, 페이지 요청에서는 재사용
  */
 export const loadSite = async (params: SiteParams) => {

@@ -94,7 +94,7 @@ test.describe("다이어그램", () => {
         test("[MRM-024] 직접 연 접힌 제목을 닫은 뒤 다시 렌더해도 닫힌 상태를 유지한다", {tag: "@high"}, async ({page}) => {
             /**
              * GIVEN
-             * 주소의 hash로 공개한 접힌 제목과 렌더를 마친 다이어그램
+             * 주소의 해시로 공개한 접힌 제목과 렌더를 마친 다이어그램
              */
             await page.goto("/folded/#folded-heading");
             await expect(page.locator('[data-mermaid-status="rendered"]')).toHaveCount(1);
@@ -172,7 +172,7 @@ test.describe("다이어그램", () => {
         test("[MRM-015] 잘못된 문법과 길이 초과는 다른 다이어그램의 표시를 막지 않는다", {tag: ["@high", "@negative"]}, async ({page, runtime}) => {
             /**
              * GIVEN
-             * 잘못된 문법과 정상 다이어그램과 길이 초과 원문
+             * 잘못된 문법, 정상 다이어그램, 길이 초과 원문
              */
             await page.goto("/error/");
 

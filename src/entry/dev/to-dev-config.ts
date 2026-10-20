@@ -63,7 +63,7 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
             fs: {
                 allow: [kitRoot],
 
-                // 설치 모드는 정확한 Vite 내부 URL만 통과; dev .의 node_modules까지 차단하지 않음
+                // 설치 모드는 정확한 Vite 내부 URL만 통과. dev .의 node_modules는 차단하지 않음
                 deny: [
                     ".env",
                     ".env.*",
@@ -90,6 +90,9 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                 configureServer: (server) => {
                     const state = {generation: 0, closed: false};
 
+                    /**
+                     * 문서 스냅샷 재준비. 실행 중 요청은 다음 1회로 병합
+                     */
                     const refresh = toChangeQueue({
                         run: async () => {
                             if (state.closed) {
@@ -125,6 +128,9 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                         },
                     });
 
+                    /**
+                     * 연속 저장을 한 번의 재준비로 병합
+                     */
                     const reload = debounce(refresh, watch_reload_delay_ms);
 
                     /**

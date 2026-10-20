@@ -19,7 +19,7 @@ describe("크롤러 파일", () => {
         test("[CRW-001] 공개 주소가 없으면 크롤러 파일을 제공하지 않는다", async () => {
             /**
              * GIVEN
-             * 사이트 주소와 크롤러 문서 입력
+             * 공개 주소가 없는 사이트
              */
             const site = siteConfigSchema.parse({});
             const assets = {fontCss: "", preload: [], browser: {kind: "inline" as const, code: ""}, stylePaths: [asset_style_path]};
@@ -34,7 +34,7 @@ describe("크롤러 파일", () => {
 
             /**
              * THEN
-             * 공개 주소가 없으면 크롤러 파일을 제공하지 않는 결과
+             * 두 크롤러 파일의 404 응답
              */
             expect(robots.status).toBe(404);
             expect(sitemap.status).toBe(404);
@@ -43,7 +43,7 @@ describe("크롤러 파일", () => {
         test("[CRW-002] 크롤러 파일은 현재 문서 목록의 인코딩한 주소를 제공한다", async ({scope}) => {
             /**
              * GIVEN
-             * 사이트 주소와 크롤러 문서 입력
+             * 공개 주소와 한글 이름 문서가 있는 사이트
              */
             await mkdir(join(scope.publicRoot, "guide"));
             await writeFile(join(scope.publicRoot, "guide.md"), "---\nname: Start\nlabel: Start\ngroup: Guide\n---\n\nStart here.\n");
@@ -102,7 +102,7 @@ describe("크롤러 파일", () => {
         test("[CRW-003] 정적 빌드는 크롤러 파일과 일반 문서 경로를 함께 생성한다", async ({scope}) => {
             /**
              * GIVEN
-             * 사이트 주소와 크롤러 문서 입력
+             * 공개 주소와 중첩 문서가 있는 사이트
              */
             await mkdir(join(scope.publicRoot, "guide"));
             await writeFile(join(scope.publicRoot, "guide.md"), "---\nname: Start\nlabel: Start\ngroup: Guide\n---\n\nStart here.\n");
@@ -113,7 +113,7 @@ describe("크롤러 파일", () => {
 
             /**
              * WHEN
-             * 페이지와 크롤러 응답 생성
+             * 페이지와 크롤러 파일의 정적 출력
              */
             const docs = await readDocs({scope, processor: toProcessor({site, scope})});
             const assets = {fontCss: "", preload: [], browser: {kind: "inline" as const, code: ""}, stylePaths: [asset_style_path]};
@@ -123,7 +123,7 @@ describe("크롤러 파일", () => {
 
             /**
              * THEN
-             * 정적 빌드는 크롤러 파일과 일반 문서 경로를 함께 생성한 결과
+             * 크롤러 파일과 일반 문서의 정적 파일
              */
 
             expect(result.success).toBe(true);
@@ -136,12 +136,12 @@ describe("크롤러 파일", () => {
         });
 
         test.for([
-            {caseId: "CRW-004", reserved: true},
-            {caseId: "CRW-005", reserved: false},
-        ])("[$caseId] 크롤러 예약 여부 $reserved에 따라 문서 경로의 사용을 결정한다", async (scenario, {scope}) => {
+            {caseId: "CRW-004", name: "공개 주소를 지정하면 크롤러 파일과 겹치는 문서 경로를 거부한다", reserved: true},
+            {caseId: "CRW-005", name: "공개 주소가 없으면 크롤러 파일 이름의 문서 경로도 수집한다", reserved: false},
+        ])("[$caseId] $name", async (scenario, {scope}) => {
             /**
              * GIVEN
-             * 사이트 주소와 크롤러 문서 입력
+             * 크롤러 파일 이름과 겹치는 문서 경로
              */
             await mkdir(join(scope.publicRoot, "sitemap.xml"));
             await writeFile(join(scope.publicRoot, "Robots.txt.md"), "---\nname: Robots\nlabel: Robots\ngroup: Guide\n---\n\nText.\n");
@@ -153,13 +153,13 @@ describe("크롤러 파일", () => {
 
             /**
              * WHEN
-             * 페이지와 크롤러 응답 생성
+             * 문서 로드
              */
             const result = readDocs(params);
 
             /**
              * THEN
-             * 크롤러 예약 경로는 공개 주소를 지정한 경우에만 거부한 결과
+             * 공개 주소를 지정한 경우에만 크롤러 예약 경로 거부
              */
             if (scenario.reserved) {
                 await expect(result).rejects.toThrow(/Path cannot be used as a document id/);

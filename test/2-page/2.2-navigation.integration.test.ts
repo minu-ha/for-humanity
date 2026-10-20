@@ -21,7 +21,7 @@ describe("문서 탐색", () => {
         test("[NAV-021] 탐색 데이터는 본문을 제외하고 작성한 이름을 안전하게 전달한다", async ({scope}) => {
             /**
              * GIVEN
-             * 탐색 계층과 문서 입력
+             * 스크립트 종료 태그와 줄 구분자가 섞인 사이트 이름, 본문 표식이 있는 문서
              */
             const title = "</script><script>window.injected=true</script>\u2028\u2029";
             const site = siteConfigSchema.parse({title});
@@ -30,7 +30,7 @@ describe("문서 탐색", () => {
 
             /**
              * WHEN
-             * 탐색 데이터와 마크업 생성
+             * 탐색 자료와 script JSON 생성
              */
             const docs = await readDocs({scope, processor: toProcessor({site, scope})});
             const data = toNavigationData({site, docs, current: "guide"});
@@ -38,7 +38,7 @@ describe("문서 탐색", () => {
 
             /**
              * THEN
-             * 탐색 데이터는 본문을 제외하고 작성한 이름을 안전하게 전달한 결과
+             * 본문 표식 없이 이스케이프한 JSON, 원래 이름의 탐색 자료
              */
             expect(data.title).toBe(title);
             expect(data.groups[0].docs[0].active).toBe(true);
@@ -50,7 +50,7 @@ describe("문서 탐색", () => {
         test("[NAV-022] 페이지 목차는 오른쪽 영역에 한 번만 렌더된다", async ({scope}) => {
             /**
              * GIVEN
-             * 탐색 계층과 문서 입력
+             * 소제목이 있는 README 홈
              */
             await writeFile(join(scope.root, "README.md"), "# Home\n\n## Read here\n\n### More context\n\nText.\n");
 
@@ -58,7 +58,7 @@ describe("문서 탐색", () => {
 
             /**
              * WHEN
-             * 탐색 데이터와 마크업 생성
+             * 홈 렌더
              */
             const home = await readHome({scope, processor: toProcessor({site, scope})});
             const assets = {fontCss: "", preload: [], browser: {kind: "inline" as const, code: ""}, stylePaths: [asset_style_path]};
@@ -67,7 +67,7 @@ describe("문서 탐색", () => {
 
             /**
              * THEN
-             * 페이지 목차는 오른쪽 영역에 한 번만 렌더된 결과
+             * 오른쪽 영역 하나의 목차
              */
             expect(rail).toContain('data-sidebar-scroll="outline"');
             expect(rail).toMatch(/Read here/);
@@ -79,7 +79,7 @@ describe("문서 탐색", () => {
         test("[NAV-023] 탐색은 설정 순서대로 모든 묶음과 현재 문서를 표시한다", async ({scope}) => {
             /**
              * GIVEN
-             * 탐색 계층과 문서 입력
+             * 이름순과 다른 탐색 설정과 여러 묶음의 문서
              */
             const site = siteConfigSchema.parse({navigation: ["Getting started", "Guide"]});
 
@@ -91,7 +91,7 @@ describe("문서 탐색", () => {
 
             /**
              * WHEN
-             * 탐색 데이터와 마크업 생성
+             * 탐색 마크업 생성
              */
             const docs = await readDocs({scope, processor: toProcessor({site, scope})});
             const html = toNavigationHtml({site, docs, current: "writing"});
@@ -99,7 +99,7 @@ describe("문서 탐색", () => {
 
             /**
              * THEN
-             * 탐색은 설정 순서대로 모든 묶음과 현재 문서를 표시한 결과
+             * 설정 순서의 묶음과 현재 문서 표시
              */
             expect(groups.map((group) => group[1])).toStrictEqual(["Getting started", "Guide"]);
             expect(html).not.toMatch(/<details\b/);
@@ -113,7 +113,7 @@ describe("문서 탐색", () => {
         test("[NAV-024] 중첩 묶음은 메타 경로를 따르고 같은 이름의 형제 경로를 구분한다", async ({scope}) => {
             /**
              * GIVEN
-             * 탐색 계층과 문서 입력
+             * 중첩 경로와 같은 이름의 형제 묶음이 있는 문서
              */
             const site = siteConfigSchema.parse({navigation: ["Guide", ["Projects", "Atlas", "Research"], ["Projects", "Atlas", "Decisions"]]});
 
@@ -130,14 +130,14 @@ describe("문서 탐색", () => {
 
             /**
              * WHEN
-             * 탐색 데이터와 마크업 생성
+             * 탐색 자료와 마크업 생성
              */
             const docs = await readDocs({scope, processor: toProcessor({site, scope})});
             const groups = toNavigationData({site, docs}).groups;
 
             /**
              * THEN
-             * 중첩 묶음은 메타 경로를 따르고 같은 이름의 형제 경로를 구분한 결과
+             * 메타 경로의 중첩 묶음과 경로별 형제 구분
              */
             expect(groups.map((group) => group.name)).toStrictEqual(["Guide", "Projects"]);
             expect(groups[0].docs.map((doc) => doc.id)).toStrictEqual(["guide", "guide-two"]);
@@ -161,10 +161,10 @@ describe("문서 탐색", () => {
             expect(html).not.toMatch(/<details\b/);
         });
 
-        test("[NAV-025] 부모 문서는 정렬한 자식과 독립 주소와 하나의 현재 페이지를 표시한다", async ({scope}) => {
+        test("[NAV-025] 부모 문서는 정렬한 자식, 독립 주소, 하나의 현재 페이지를 표시한다", async ({scope}) => {
             /**
              * GIVEN
-             * 탐색 계층과 문서 입력
+             * 부모와 여러 단계 자식이 있는 문서
              */
             const site = siteConfigSchema.parse({navigation: [["Projects", "Atlas", "Guide"]]});
 
@@ -189,7 +189,7 @@ describe("문서 탐색", () => {
 
             /**
              * WHEN
-             * 탐색 데이터와 마크업 생성
+             * 탐색 자료와 마크업 생성
              */
             const docs = await readDocs({scope, processor: toProcessor({site, scope})});
             const groups = toNavigationData({site, docs}).groups;
@@ -197,7 +197,7 @@ describe("문서 탐색", () => {
 
             /**
              * THEN
-             * 부모 문서는 정렬한 자식과 독립 주소와 하나의 현재 페이지를 표시한 결과
+             * 정렬한 자식 트리, 문서마다 링크와 페이지 하나, 현재 페이지 하나
              */
             expect(guide.docs.map((doc) => doc.id)).toStrictEqual(["settings", "writing"]);
             expect(guide.docs[0].children.map((doc) => doc.id)).toStrictEqual(["themes", "guide/site"]);
@@ -234,7 +234,7 @@ describe("문서 탐색", () => {
         test("[NAV-026] 상대 부모 경로는 전체 문서와 하위 프로젝트 루트에서 모두 해석된다", async ({scope}) => {
             /**
              * GIVEN
-             * 탐색 계층과 문서 입력
+             * 상대 경로로 부모를 지정한 하위 프로젝트 문서
              */
             const site = siteConfigSchema.parse({});
 
@@ -261,7 +261,7 @@ describe("문서 탐색", () => {
 
                 /**
                  * THEN
-                 * 상대 부모 경로는 전체 문서와 하위 프로젝트 루트에서 모두 해석된 결과
+                 * 공개 폴더 기준의 부모 id와 조상 경로
                  */
                 expect(groups[0].docs.map((doc) => doc.id)).toStrictEqual([parentId]);
                 expect(groups[0].docs[0].children).toHaveLength(2);

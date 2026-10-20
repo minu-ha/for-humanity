@@ -34,7 +34,7 @@
     }
 
     &:focus-visible {
-        /* 브랜드도 hover와 같은 밑줄로 키보드 위치 표시 */
+        /* 브랜드도 호버와 같은 밑줄로 키보드 위치 표시 */
         outline: none;
         text-decoration: underline;
     }
@@ -131,7 +131,7 @@
 }
 
 .wg_sidebar__scroll--overflow {
-    /* 넘치는 목록만 끝의 휠을 가둠, Chrome은 넘침 없는 영역에도 적용해 본문 스크롤 차단 */
+    /* 넘치는 목록만 끝의 휠 전파 차단. Chrome은 넘침 없는 영역에도 적용, 본문 스크롤 불가 */
     overscroll-behavior-y: contain;
 }
 

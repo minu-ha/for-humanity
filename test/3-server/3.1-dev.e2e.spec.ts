@@ -11,7 +11,7 @@ import {test} from "@test/_fixture/dev";
  */
 test.describe("개발 서버", () => {
     test.describe("설치 번들", () => {
-        test("[DEV-001] 문서 추가와 변경과 삭제가 브라우저에 반영되고 잘못된 문서에서 복구한다", {tag: "@high"}, async ({page, devSite}) => {
+        test("[DEV-001] 문서 추가, 변경, 삭제가 브라우저에 반영되고 잘못된 문서에서 복구한다", {tag: "@high"}, async ({page, devSite}) => {
             /**
              * GIVEN
              * 실제 개발 서버와 갱신 통신이 연결된 홈
@@ -85,7 +85,7 @@ test.describe("개발 서버", () => {
             });
         });
 
-        test("[DEV-002] Vite 통신만 공개하고 문서 원본과 설정과 임의 파일은 제공하지 않는다", {tag: ["@high", "@negative"]}, async ({page, devSite}) => {
+        test("[DEV-002] Vite 통신만 공개하고 문서 원본, 설정, 임의 파일은 제공하지 않는다", {tag: ["@high", "@negative"]}, async ({page, devSite}) => {
             /**
              * GIVEN
              * 문서 루트의 서버 설정과 원본 파일
@@ -187,10 +187,10 @@ test.describe("개발 서버", () => {
             });
         });
 
-        test("[DEV-005] 서버 종료는 갱신 연결과 파일 감시와 HTTP 포트를 해제한다", {tag: "@high"}, async ({page, devSite}) => {
+        test("[DEV-005] 서버 종료는 갱신 연결, 파일 감시, HTTP 포트를 해제한다", {tag: "@high"}, async ({page, devSite}) => {
             /**
              * GIVEN
-             * 실제 WebSocket 연결을 가진 개발 서버
+             * 실제 WebSocket이 연결된 개발 서버
              */
             const [socket] = await Promise.all([page.waitForEvent("websocket"), page.goto("/")]);
             const closed = socket.waitForEvent("close");

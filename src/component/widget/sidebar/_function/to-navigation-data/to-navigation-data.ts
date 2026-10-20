@@ -70,7 +70,7 @@ export const toNavigationData = (params: NavigationDataParams): NavigationData =
         title: params.site.title,
         groups: toDocGroups({docs: params.docs, navigation: params.site.navigation}).map((group) => toNavigationGroup({group, current: params.current})),
 
-        // 3. 가름이 시작하는 절마다 다음 가름 전까지의 절을 한 묶음으로
+        // 3. 가름 시작 절부터 다음 가름 전까지 한 목차 묶음
         outline: sections.flatMap((section, index) => {
             if (index > 0 && section.part === undefined) {
                 return [];

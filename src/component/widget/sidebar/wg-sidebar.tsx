@@ -42,7 +42,7 @@ export interface WgSidebarProps {
     data: NavigationData;
 
     /**
-     * 브라우저 진입점만 제공. 없으면 저장소와 전역 DOM을 읽지 않음
+     * 브라우저 진입점만 제공. 없으면 저장소와 전역 DOM 미조회
      */
     stores?: ReturnType<typeof toNavigationStores>;
 }
@@ -77,7 +77,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
     const navigationSignature = JSON.stringify(props.data.groups, (key, value: unknown) => (key === "active" ? undefined : value));
 
     /**
-     * 저장된 배치와 현재 CSS 조건을 구분. 조건 변경 직후 잘린 좌표를 이전 배치에 저장하지 않음
+     * 저장된 배치와 현재 CSS 조건 구분. 조건 변경 직후 잘린 좌표는 이전 배치에 미저장
      */
     const getNavigationLayout = (): NavigationLayout => {
         if (mobileRef.current === null || wideRef.current === null) {
@@ -92,7 +92,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
     };
 
     /**
-     * 배치별 DOM은 분리하되 좌표 저장과 복원은 현재 표시되는 한 영역을 소비
+     * 배치별 DOM은 분리, 좌표 저장과 복원은 현재 표시되는 한 영역 사용
      */
     const getDocumentsPort = () => {
         return layoutRef.current === "drawer" ? drawerDocumentsRef.current : documentsRef.current;
@@ -136,7 +136,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
     };
 
     /**
-     * 연결된 영역에서 첫 paint 전 복원. 문서는 페이지 간 공유하고 목차는 같은 경로에서만 재사용
+     * 연결된 영역에서 첫 페인트 전 복원. 문서 목록은 페이지 간 공유, 목차는 같은 경로에서만 재사용
      */
     const restoreScroll = () => {
         layoutRef.current = getNavigationLayout();
@@ -170,7 +170,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
     };
 
     /**
-     * 네이티브 close가 이전 열기 이벤트보다 늦게 도착해도 새 모달을 잠금 해제하지 않음
+     * 네이티브 close 이벤트가 이전 열기보다 늦게 도착해도 새 모달의 잠금 유지
      */
     const handleDrawerClose = (_event: Event) => {
         if (dialogRef.current?.open === true) {
@@ -182,7 +182,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
     };
 
     /**
-     * 네이티브 포커스 복원을 유지하면서 링크의 기본 이동보다 먼저 배경 잠금 해제
+     * 링크의 기본 이동보다 먼저 배경 잠금 해제, 네이티브 포커스 복원 유지
      */
     const closeNavigation = () => {
         handleScrollSave();
@@ -192,7 +192,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
     };
 
     /**
-     * 모바일에서만 네이티브 모달을 열고 독립된 드로어 좌표를 즉시 복원
+     * 모바일에서만 네이티브 모달 열기, 독립된 드로어 좌표 즉시 복원
      */
     const handleOpenButtonClick: DOMAttributes["onClick"] = (_event) => {
         if (getNavigationLayout() !== "drawer" || dialogRef.current === null || dialogRef.current.open) {
@@ -210,7 +210,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
     };
 
     /**
-     * Escape의 네이티브 포커스 복원을 쓰되 좌표는 닫힌 모달이 되기 전에 보존
+     * Escape의 네이티브 포커스 복원 사용, 좌표는 모달이 닫히기 전에 보존
      */
     const handleDrawerCancel = (event: Event) => {
         event.preventDefault();
@@ -218,7 +218,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
     };
 
     /**
-     * 대화상자 내부 빈 공간은 유지하고 경계 밖 배경만 닫기
+     * 경계 밖 배경 클릭만 닫기, 대화상자 내부 빈 공간은 유지
      */
     const handleDrawerClick: DOMAttributes["onClick"] = (event) => {
         if (dialogRef.current === null || event.target !== dialogRef.current) {
@@ -233,7 +233,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
     };
 
     /**
-     * 보조키, 새 탭 링크는 모달 유지. 같은 탭의 기본 이동만 모달을 닫고 진행
+     * 보조키, 새 탭 링크는 모달 유지. 같은 탭의 기본 이동만 모달 닫기 후 진행
      */
     const handleNavigationClick: DOMAttributes["onClick"] = (event) => {
         handleScrollSave();
@@ -244,7 +244,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
     };
 
     /**
-     * 같은 목록을 한 배치에만 렌더. 전환 전 포커스를 기억하고 새 배치가 연결된 뒤 좌표 복원
+     * 같은 목록은 한 배치에만 렌더. 전환 전 포커스 기억, 새 배치 연결 후 좌표 복원
      */
     const handleLayoutChange = () => {
         const nextLayout = getNavigationLayout();
@@ -271,7 +271,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
     };
 
     /**
-     * BFCache 복귀 시 persist의 최신 저장 좌표를 다시 읽어 복원
+     * BFCache 복귀 시 persist의 최신 저장 좌표 재조회 후 복원
      */
     const handlePageShow = (event: PageTransitionEvent) => {
         if (!event.persisted || props.stores === undefined) {
@@ -311,7 +311,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
     }, [props.stores]);
 
     /**
-     * 최초 mount와 반응형 재연결의 paint 전 좌표, 포커스 복원. Hono의 fragment 연결 시점 보정
+     * 최초 마운트와 반응형 재연결의 페인트 전 좌표, 포커스 복원. Hono의 프래그먼트 연결 시점 보정
      */
     useLayoutEffect(() => {
         if (props.stores === undefined) {
@@ -352,7 +352,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
         if (getDocumentsPort()?.isConnected) {
             restoreNavigation();
         } else {
-            // Hono 최초 레이아웃 효과는 분리된 fragment에서 실행, DOM 연결 후 첫 페인트 전 보정
+            // Hono 최초 레이아웃 효과는 분리된 프래그먼트에서 실행, DOM 연결 후 첫 페인트 전 보정
             queueMicrotask(restoreNavigation);
         }
 
@@ -397,7 +397,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
                 </div>
 
                 {/**
-                 * JavaScript 없이도 전체 문서 링크를 표시. 브라우저 모바일에서는 드로어가 같은 목록을 소유
+                 * JavaScript 없이도 전체 문서 링크 표시. 브라우저 모바일에서는 드로어가 같은 목록 소유
                  */}
                 {layout !== "drawer" && (
                     <div className={clsx("wg_sidebar__docsPanel")} data-sidebar-docs="" data-sidebar-layout={layout}>

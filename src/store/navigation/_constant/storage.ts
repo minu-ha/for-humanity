@@ -1,5 +1,5 @@
 /**
- * 저장 형태가 바뀌면 기존 자료를 기본 상태로 돌리는 persist 버전
+ * 저장 형태 변경 시 기존 자료를 기본 상태로 초기화하는 persist 버전
  */
 export const storage_version = 1;
 

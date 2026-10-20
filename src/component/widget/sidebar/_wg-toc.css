@@ -42,7 +42,7 @@
         text-decoration: underline;
     }
 
-    /* 박스 대신 hover와 같은 진한 글과 밑줄로 키보드 위치 표시 */
+    /* 박스 대신 호버와 같은 진한 글과 밑줄로 키보드 위치 표시 */
     &:where(:focus-visible) {
         outline: none;
         color: var(--app-color-text-strong);

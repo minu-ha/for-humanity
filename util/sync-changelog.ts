@@ -1,9 +1,13 @@
 import {readFile, writeFile} from "node:fs/promises";
 
-/**
+/*
  * 변경 기록의 공개 문서 동기화. npm에 포함하는 CHANGELOG.md를 원본으로 사용
  *
- *   - 버전별 본문은 유지하고 문서 탐색 정보와 업데이트 안내만 추가
+ *   - 버전별 본문은 유지, 문서 탐색 정보와 업데이트 안내만 추가
+ */
+
+/**
+ * 공개 변경 기록 문서의 frontmatter와 업데이트 안내
  */
 const changelog_header = [
     "---",

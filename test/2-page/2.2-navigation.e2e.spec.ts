@@ -119,7 +119,7 @@ test.describe("문서 탐색", () => {
     }
 
     test.describe("위치와 포커스", () => {
-        test("[NAV-010] 화면 크기와 문서가 바뀌어도 위치와 포커스와 앵커를 유지한다", {tag: "@high"}, async ({page}) => {
+        test("[NAV-010] 화면 크기와 문서가 바뀌어도 위치, 포커스, 앵커를 유지한다", {tag: "@high"}, async ({page}) => {
             /**
              * GIVEN
              * 스크롤 가능한 문서 목록과 목차
@@ -145,7 +145,7 @@ test.describe("문서 탐색", () => {
             const details = page.locator("details");
             const hiddenHeading = page.locator("#hidden-detail .wg_article__headingText");
 
-            // 소수 높이와 scroll anchoring의 반올림만 허용
+            // 소수 높이와 스크롤 앵커링의 반올림만 허용
             const roundingTolerance = 1;
 
             await test.step("새로고침 첫 프레임부터 저장한 두 위치가 복원된다", async () => {
@@ -224,7 +224,7 @@ test.describe("문서 탐색", () => {
                 await expect(page.locator('a[href="#section-10"]')).not.toHaveAttribute("aria-current");
             });
 
-            await test.step("배치를 전환해도 독립 스크롤과 포커스와 본문을 유지한다", async () => {
+            await test.step("배치를 전환해도 독립 스크롤, 포커스, 본문을 유지한다", async () => {
                 await page.getByRole("link", {name: "Hidden detail", exact: true}).click();
                 await expect(details).toHaveJSProperty("open", true);
                 await expect(hiddenHeading).toHaveClass(/wg_article__headingText--highlighted/);
@@ -300,7 +300,7 @@ test.describe("문서 탐색", () => {
     });
 
     test.describe("커서 장식", () => {
-        test("[NAV-020] 새로고침 직전 커서 표시 조건이 잠시 꺼져도 마지막 좌표를 이어 받는다", {tag: "@mid"}, async ({page}) => {
+        test("[NAV-020] 새로고침 직전 커서 표시 조건이 잠시 꺼져도 마지막 좌표를 이어받는다", {tag: "@mid"}, async ({page}) => {
             /**
              * GIVEN
              * 마우스 좌표에 표시한 커서 장식
@@ -443,7 +443,7 @@ test.describe("문서 탐색", () => {
 
                 /**
                  * THEN
-                 * 목차 순서대로 이어지고 접힌 제목을 제외한 마지막 제목에서 끝남
+                 * 목차 순서의 연속 변경, 접힌 제목을 제외한 마지막 제목에서 종료
                  */
                 const indexes = seen.map((href) => order.indexOf(href));
 
@@ -479,7 +479,7 @@ test.describe("문서 탐색", () => {
 
                 /**
                  * WHEN
-                 * 읽는 선에 닿지 못하는 끝 절 제목을 사람처럼 누른 뒤 떼고 도착 후 조금 스크롤
+                 * 읽는 선에 닿지 못하는 끝 절 제목의 실제 클릭, 도착 후 짧은 스크롤
                  */
                 await page.getByRole("link", {name: "Section 23", exact: true}).hover();
                 await page.mouse.down();
@@ -507,10 +507,10 @@ test.describe("문서 탐색", () => {
             });
         });
 
-        test("[NAV-017] hash로 연 문서를 새로고침하면 앵커로 갔다가 다시 이동하지 않는다", {tag: "@high"}, async ({page}) => {
+        test("[NAV-017] 해시로 연 문서를 새로고침하면 앵커로 갔다가 다시 이동하지 않는다", {tag: "@high"}, async ({page}) => {
             /**
              * GIVEN
-             * hash 제목으로 연 뒤 휠로 다른 위치에 이동한 문서
+             * 해시 제목으로 연 뒤 휠로 다른 위치에 이동한 문서
              */
             await page.goto("/guide/#detail-10");
 
@@ -572,7 +572,7 @@ test.describe("문서 탐색", () => {
     });
 
     test.describe("스크롤 입력", () => {
-        test("[NAV-018] 화면에 들어가는 탐색 영역의 휠은 본문을 스크롤하고 넘치는 목록은 끝에서 휠을 가둔다", {tag: "@high"}, async ({page}) => {
+        test("[NAV-018] 화면에 들어가는 탐색 영역의 휠은 본문을 스크롤하고 넘치는 목록은 끝에서 휠 전파를 막는다", {tag: "@high"}, async ({page}) => {
             await page.setViewportSize({width: 1920, height: 1600});
             await page.goto("/guide/");
 
@@ -580,7 +580,7 @@ test.describe("문서 탐색", () => {
                 {kind: "documents", name: "문서 목록"},
                 {kind: "outline", name: "목차"},
             ]) {
-                await test.step(`${area.name} 위의 링크와 빈 영역`, async () => {
+                await test.step(`${area.name} 위의 링크와 빈 영역에서 휠을 굴리면 본문이 스크롤된다`, async () => {
                     /**
                      * GIVEN
                      * 화면 높이 안에 모두 들어가는 탐색 영역
@@ -613,7 +613,7 @@ test.describe("문서 탐색", () => {
                 });
             }
 
-            await test.step("넘치는 문서 목록의 끝", async () => {
+            await test.step("넘치는 문서 목록의 끝에서 휠을 굴리면 본문이 움직이지 않는다", async () => {
                 /**
                  * GIVEN
                  * 화면보다 긴 문서 목록을 끝까지 내린 상태

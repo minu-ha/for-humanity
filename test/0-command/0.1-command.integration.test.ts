@@ -22,7 +22,7 @@ describe("CLI 명령", () => {
 
             /**
              * WHEN / THEN
-             * 루트와 명령별 도움말과 실제 패키지 버전의 독립 실행
+             * 루트, 명령별 도움말, 실제 패키지 버전의 독립 실행
              */
             for (const args of [["--help"], ["-h"], ["dev", "--help"], ["build", "--help"], ["preview", "--help"]]) {
                 const result = spawnSync(process.execPath, [cli, ...args], {cwd: root, encoding: "utf8", timeout: 5000});
@@ -41,7 +41,7 @@ describe("CLI 명령", () => {
             }
         });
 
-        test("[CMD-002] 잘못된 명령·옵션·초과 인자는 빌드 전에 실패한다", async ({root}) => {
+        test("[CMD-002] 잘못된 명령, 옵션, 초과 인자는 빌드 전에 실패한다", async ({root}) => {
             /**
              * GIVEN
              * 인자 검증 뒤에만 읽을 설정

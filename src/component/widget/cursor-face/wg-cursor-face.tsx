@@ -30,7 +30,7 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
     };
 
     /**
-     * 비활성 전환에서만 숨겨 새 마우스 이동을 취소하지 않음
+     * 비활성 전환에서만 장식 숨김, 새 마우스 이동은 취소 없음
      *
      *   - 마지막 좌표는 유지, 다음 문서가 자기 표시 조건으로 복원 여부 판정
      *   - Windows Chromium은 새로고침 직전 이 조건을 잠시 비활성으로 전환
@@ -42,7 +42,7 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
     };
 
     /**
-     * 화면 갱신마다 한 번만 반영. transform으로 본문 재배치 방지
+     * 화면 갱신마다 한 번만 반영. translate 위치 변경으로 본문 재배치 방지
      */
     const renderCursorFace = () => {
         if (positionRef.current.frame !== 0) {
@@ -107,7 +107,7 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
     };
 
     /**
-     * 첫 진입, BFCache 복귀의 좌표를 한 번 소비. 외부 저장 값은 검증 후 사용
+     * 첫 진입, BFCache 복귀의 저장 좌표 1회 소비. 외부 저장 값은 검증 후 사용
      */
     const handlePageShow = () => {
         try {
@@ -142,7 +142,7 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
     };
 
     /**
-     * 첫 paint 전 좌표 복원. 해제 시 전역 이벤트와 예약 frame을 함께 정리
+     * 첫 페인트 전 좌표 복원. 해제 시 전역 이벤트와 예약 프레임 함께 정리
      */
     useLayoutEffect(() => {
         if (!props.ready) {

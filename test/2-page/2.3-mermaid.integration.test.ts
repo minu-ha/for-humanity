@@ -10,9 +10,6 @@ import {siteConfigSchema} from "@/type/site-config";
 /**
  * 다이어그램 원문 변환(src/component/widget/mermaid/_function/remark-mermaid.ts) 검증
  */
-/**
- * 다이어그램 원문 변환(src/component/widget/mermaid/_function/remark-mermaid.ts) 검증
- */
 describe("다이어그램", () => {
     describe("문서 조립", () => {
         test("[MRM-025] 문서의 다이어그램 원문은 한글과 특수문자를 유지한다", async ({scope}) => {

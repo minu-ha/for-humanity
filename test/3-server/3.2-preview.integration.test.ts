@@ -21,6 +21,9 @@ interface PreviewFixture {
     previewUrl: string;
 }
 
+/**
+ * 임시 루트의 빌드 결과를 제공하는 미리보기 서버 fixture
+ */
 const test = base.extend<PreviewFixture>({
     previewServer: async ({root}, use) => {
         await mkdir(join(root, "dist/guide/nested"), {recursive: true});
@@ -143,7 +146,7 @@ describe("정적 미리보기", () => {
         test("[PRV-005] 끝 슬래시가 없거나 점이 있는 문서 주소도 같은 빌드 결과를 반환한다", async ({previewUrl, root}) => {
             /**
              * WHEN
-             * 끝 슬래시 없이 query를 포함한 문서 요청
+             * 끝 슬래시 없이 쿼리를 포함한 문서 요청
              */
             const responses = await Promise.all(["/guide/nested?view=preview", "/guide/file.html?view=preview"].map((path) => fetch(new URL(path, previewUrl))));
 

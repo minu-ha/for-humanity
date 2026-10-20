@@ -43,7 +43,7 @@ describe("페이지 셸", () => {
             expect(html).toContain('<html lang="ko" class="wg_shell__document">');
         });
 
-        test("[SHL-002] 동시 렌더에서 사이트와 문서의 제목·설명을 공유하지 않는다", async () => {
+        test("[SHL-002] 동시 렌더에서 사이트와 문서의 제목과 설명을 공유하지 않는다", async () => {
             /**
              * GIVEN
              * 설명이 있는 사이트와 설명이 없는 다른 사이트
@@ -79,7 +79,7 @@ describe("페이지 셸", () => {
 
             /**
              * WHEN
-             * 설정으로부터 서버 HTML 생성
+             * 설정에서 서버 HTML 생성
              */
             const html = await (await toPageApp({site, store: {docs: []}, assets}).request("/")).text();
             const head = html.slice(html.indexOf("<head>"), html.indexOf("</head>"));
@@ -116,7 +116,7 @@ describe("페이지 셸", () => {
 
             /**
              * THEN
-             * 페이지 자원은 내용 지문 경로와 하나의 인라인 브라우저 진입점을 사용한 결과
+             * 내용 지문 경로의 자원과 인라인 진입점 하나
              */
             expect(html).toMatch(/rel="stylesheet" href="\/_fh\/style\.abc123\.css"/);
             expect([...html.matchAll(/<script>window\.shellReady = true;<\/script>/g)]).toHaveLength(1);
@@ -142,7 +142,7 @@ describe("페이지 셸", () => {
 
             /**
              * THEN
-             * 탐색 초기화는 탐색 DOM 뒤와 본문 앞에서 실행된 결과
+             * 탐색 DOM 뒤, 본문 앞의 초기화 스크립트
              */
             expect(html, "server HTML must not serialize browser refs or handlers").not.toMatch(/\sref="|\sonClick="/);
 

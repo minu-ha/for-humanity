@@ -15,7 +15,7 @@ describe("문서 자원", () => {
         test("[AST-001] Markdown과 HTML 이미지는 첨부 파일과 내용 지문 자원을 공유한다", async ({scope}) => {
             /**
              * GIVEN
-             * 지역 자원과 문서 입력
+             * 로컬 이미지, 첨부 파일과 이를 참조하는 문서
              */
             await mkdir(join(scope.publicRoot, "guide"));
             await mkdir(join(scope.publicRoot, "img"));
@@ -48,7 +48,7 @@ describe("문서 자원", () => {
         test("[AST-002] 홈 이미지의 내용이 바뀌면 렌더한 주소와 자원 지문을 함께 갱신한다", async ({scope}) => {
             /**
              * GIVEN
-             * 지역 자원과 문서 입력
+             * 로컬 이미지를 참조하는 홈
              */
             await writeFile(join(scope.root, "local image.png"), "first");
             await writeFile(join(scope.root, "README.md"), "# Home\n\n![Home](local%20image.png)\n");
@@ -88,7 +88,7 @@ describe("문서 자원", () => {
         ])("[$caseId] 유효하지 않은 이미지 $path 경로를 거부한다", async (scenario, {scope}) => {
             /**
              * GIVEN
-             * 지역 자원과 문서 입력
+             * 잘못된 이미지 경로를 참조하는 문서
              */
             await writeFile(join(scope.publicRoot, "page.md"), `---\nname: Media\nlabel: Media\ngroup: Guide\n---\n\n![Invalid](${scenario.path})\n`);
 

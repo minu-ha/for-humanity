@@ -42,7 +42,7 @@ export const WgSidebarScroll = (props: WgSidebarScrollProps) => {
     const frameRef = useRef(0);
 
     /**
-     * 소수 픽셀 반올림을 제외한 실제 남은 내용만 위, 아래 흐림으로 알림
+     * 소수 픽셀 반올림을 제외한 실제 남은 내용만 위, 아래 흐림으로 표시
      */
     const measureOverflow = () => {
         frameRef.current = 0;
@@ -67,7 +67,7 @@ export const WgSidebarScroll = (props: WgSidebarScrollProps) => {
     };
 
     /**
-     * 네이티브 좌표는 바로 저장하고 시각적 넘침만 프레임에 맞춰 갱신
+     * 네이티브 좌표는 즉시 저장, 시각적 넘침만 프레임 단위 갱신
      */
     const handlePortScroll: DOMAttributes["onScroll"] = (_event) => {
         props.onScroll?.();
@@ -75,7 +75,7 @@ export const WgSidebarScroll = (props: WgSidebarScrollProps) => {
     };
 
     /**
-     * 영역과 내용의 크기를 함께 추적. Hono 최초 mount의 분리된 fragment 측정은 연결 직후 실행
+     * 영역과 내용의 크기 함께 추적. Hono 최초 마운트의 분리된 프래그먼트 측정은 연결 직후 실행
      */
     useLayoutEffect(() => {
         if (!props.ready || props.portRef.current === null) {
@@ -96,7 +96,7 @@ export const WgSidebarScroll = (props: WgSidebarScrollProps) => {
         if (props.portRef.current.isConnected) {
             measureOverflow();
         } else {
-            // Hono 최초 레이아웃 효과는 분리된 fragment에서 실행, DOM 연결 후 첫 페인트 전 측정
+            // Hono 최초 레이아웃 효과는 분리된 프래그먼트에서 실행, DOM 연결 후 첫 페인트 전 측정
             queueMicrotask(() => {
                 if (active) {
                     measureOverflow();

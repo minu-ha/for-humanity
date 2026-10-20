@@ -19,7 +19,7 @@ test.describe("페이지 셸", () => {
 
             test.use({source: scenario.source, site, javaScriptEnabled: false});
 
-            test(`[${scenario.caseId}] JavaScript 없이 제목·설명을 원문으로 표시하고 스타일을 적용한다`, {tag: "@high"}, async ({page, devSite}) => {
+            test(`[${scenario.caseId}] JavaScript 없이 제목과 설명을 원문으로 표시하고 스타일을 적용한다`, {tag: "@high"}, async ({page, devSite}) => {
                 /**
                  * WHEN
                  * 서버가 만든 HTML을 브라우저로 파싱

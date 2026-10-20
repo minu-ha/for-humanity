@@ -1,7 +1,7 @@
 import {readFile, writeFile} from "node:fs/promises";
 
-/**
- * 이 저장소의 README를 문서 홈과 동기화. 본문은 유지하고 사이트용 링크만 변환
+/*
+ * 이 저장소의 README를 문서 홈과 동기화. 본문은 유지, 사이트용 링크만 변환
  *
  *   - 배포용 라이브러리에는 포함하지 않는 저장소 전용 작업
  */

@@ -9,6 +9,9 @@ import {chromium, expect} from "@playwright/test";
 import {packReportSchema} from "@tool/_type/pack-report";
 import {packageMetadataSchema} from "@tool/_type/package-metadata";
 
+/*
+ * 패키지 설치 검증. 별도 소비 프로젝트에 압축 파일 설치 후 CLI, 브라우저, 공개 타입, 빌드 출력 확인
+ */
 const [directory] = process.argv.slice(2);
 
 if (directory === undefined) {

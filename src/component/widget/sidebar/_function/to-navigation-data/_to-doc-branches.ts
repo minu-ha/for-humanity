@@ -18,7 +18,7 @@ interface DocBranchesParams {
 }
 
 /**
- * 검증된 부모 관계로 문서 가지를 재귀 구성. 형제 순서와 URL 유지
+ * 검증된 부모 관계로 문서 가지 재귀 구성. 형제 순서와 URL 유지
  */
 export const toDocBranches = (params: DocBranchesParams): DocBranch[] => {
     return params.docs

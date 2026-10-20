@@ -1,5 +1,5 @@
 /*
- * 넓은 화면은 같은 폭의 양쪽 탐색 사이를 본문이 채움, 좁은 화면은 문서 탐색만 표시
+ * 넓은 화면은 같은 폭의 양쪽 탐색과 나머지 폭의 본문, 좁은 화면은 문서 탐색만 표시
  */
 .wg_shell__root {
     display: grid;
@@ -22,7 +22,7 @@
 }
 
 .wg_shell__document--smoothScroll {
-    /* 초기 위치 보정 뒤의 절 이동만 부드럽게, 셸 스크립트가 활성화 */
+    /* 초기 위치 보정 뒤의 절 이동만 부드러운 스크롤, 셸 스크립트가 활성화 */
     scroll-behavior: smooth;
 }
 
@@ -45,7 +45,7 @@
     padding-inline: var(--app-space-column);
 }
 
-/* 본문 최소 약 800px을 남기도록 목차 숨김, 본문이 오른쪽 여백까지 채움 */
+/* 목차 숨김, 본문 최소 약 800px 확보와 오른쪽 여백까지 본문 확장 */
 @media (width < 1360px) {
     .wg_shell__root {
         grid-template: "nav main" 1fr / calc(var(--app-size-sidebar) + var(--app-space-sidebar-gap)) minmax(0, 1fr);

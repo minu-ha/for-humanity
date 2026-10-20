@@ -33,7 +33,7 @@ const toMemoryStorage = () => {
 };
 
 describe("탐색 스크롤 저장", () => {
-    test("와이드와 데스크톱과 드로어의 스크롤 위치를 독립적으로 복원한다", () => {
+    test("와이드, 데스크톱, 드로어의 스크롤 위치를 독립적으로 복원한다", () => {
         /**
          * GIVEN
          * 격리된 세션 저장소
@@ -58,7 +58,7 @@ describe("탐색 스크롤 저장", () => {
 
         /**
          * THEN
-         * 복원 상태 확인
+         * 배치별로 복원한 스크롤 위치
          */
         expect(restored).toStrictEqual(stores.scroll.getState());
     });

@@ -4,17 +4,17 @@
  */
 
 /**
- * 본문 영문, 코드, 흐름도 글꼴 CSS. 패키지 기준 경로. Regular, SemiBold 두 파일
+ * 본문 영문, 코드, 흐름도 글꼴 CSS. Regular, SemiBold 두 파일의 패키지 기준 경로
  */
 export const font_mono_css = "src/asset/font/monoplex-kr/monoplex-kr.css";
 
 /**
- * 본문 한글 글꼴 CSS. IBM Plex Sans KR Regular, SemiBold. 한글 unicode-range
+ * 본문 한글 글꼴 CSS. IBM Plex Sans KR Regular, SemiBold의 한글 unicode-range
  */
 export const font_body_css = "src/asset/font/ibm-plex-sans-kr/ibm-plex-sans-kr.css";
 
 /**
- * 사이트 이름 글꼴 CSS. Architects Daughter Regular. 라틴 subset
+ * 사이트 이름 글꼴 CSS. Architects Daughter Regular의 라틴 서브셋
  */
 export const font_brand_css = "src/asset/font/architects-daughter/architects-daughter.css";
 

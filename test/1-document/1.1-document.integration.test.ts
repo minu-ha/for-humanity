@@ -14,7 +14,7 @@ describe("문서", () => {
         test("[DOC-001] 첫 글자가 같은 문서도 서로 다른 주소를 유지한다", async ({scope}) => {
             /**
              * GIVEN
-             * 문서 파일과 메타 입력
+             * 첫 글자가 같은 두 문서
              */
             const site = siteConfigSchema.parse({});
 
@@ -31,7 +31,7 @@ describe("문서", () => {
 
             /**
              * THEN
-             * 첫 글자가 같은 문서도 서로 다른 주소를 유지한 결과
+             * 문서마다 다른 주소와 이름
              */
             expect(docs.map((doc) => doc.id).toSorted()).toStrictEqual(["api", "architecture"]);
             expect(docs.map((doc) => doc.data.name).toSorted()).toStrictEqual(["API", "Architecture"]);
@@ -40,7 +40,7 @@ describe("문서", () => {
         test("[DOC-002] 정규화한 문서 주소가 겹치면 로드를 거부한다", async ({scope}) => {
             /**
              * GIVEN
-             * 문서 파일과 메타 입력
+             * 확장자만 다른 같은 이름의 두 문서
              */
             const site = siteConfigSchema.parse({});
 
@@ -57,7 +57,7 @@ describe("문서", () => {
 
             /**
              * THEN
-             * 정규화한 문서 주소가 겹치면 로드를 거부한 결과
+             * 겹친 주소를 알리는 로드 오류
              */
             await expect(result).rejects.toThrow(/Duplicate document ids: guide/);
         });
@@ -72,7 +72,7 @@ describe("문서", () => {
         ])("[$caseId] 찾을 수 없는 부모 $parent를 거부한다", async (scenario, {scope}) => {
             /**
              * GIVEN
-             * 문서 파일과 메타 입력
+             * 찾을 수 없는 부모를 지정한 문서
              */
             const site = siteConfigSchema.parse({});
 
@@ -87,7 +87,7 @@ describe("문서", () => {
 
             /**
              * THEN
-             * 존재하지 않거나 홈페이지를 가리키는 부모를 거부한 결과
+             * 부모를 찾지 못한 문서를 알리는 로드 오류
              */
             await expect(result).rejects.toThrow(/Parent document not found: child/);
         });
@@ -98,7 +98,7 @@ describe("문서", () => {
         ])("[$caseId] 부모의 $name 관계를 거부한다", async (scenario, {scope}) => {
             /**
              * GIVEN
-             * 문서 파일과 메타 입력
+             * 자기 자신이나 순환 경로를 부모로 지정한 문서
              */
             const site = siteConfigSchema.parse({});
 
@@ -114,7 +114,7 @@ describe("문서", () => {
 
             /**
              * THEN
-             * 부모의 자기 참조와 순환 참조를 거부한 결과
+             * 순환 경로를 알리는 로드 오류
              */
             await expect(result).rejects.toThrow(/Circular document parents/);
         });
@@ -122,7 +122,7 @@ describe("문서", () => {
         test("[DOC-009] 부모와 자식의 전체 묶음 경로가 다르면 거부한다", async ({scope}) => {
             /**
              * GIVEN
-             * 문서 파일과 메타 입력
+             * 묶음 경로가 다른 부모와 자식 문서
              */
             const site = siteConfigSchema.parse({});
 
@@ -137,17 +137,17 @@ describe("문서", () => {
 
             /**
              * THEN
-             * 부모와 자식의 전체 묶음 경로가 다르면 거부한 결과
+             * 다른 묶음의 부모를 알리는 로드 오류
              */
             await expect(result).rejects.toThrow(/Parent document is in another group: child/);
         });
     });
 
     describe("머리말과 오류 위치", () => {
-        test("[DOC-010] 문서 메타는 BOM과 CRLF와 파일 끝의 닫는 구분자를 처리한다", async ({scope}) => {
+        test("[DOC-010] 문서 메타는 BOM, CRLF, 파일 끝의 닫는 구분자를 처리한다", async ({scope}) => {
             /**
              * GIVEN
-             * 문서 파일과 메타 입력
+             * BOM과 CRLF가 있는 문서, 닫는 구분자로 끝나는 문서
              */
             const site = siteConfigSchema.parse({});
 
@@ -167,7 +167,7 @@ describe("문서", () => {
 
             /**
              * THEN
-             * 문서 메타는 BOM과 CRLF와 파일 끝의 닫는 구분자를 처리한 결과
+             * 렌더한 본문과 frontmatter 이름의 제목
              */
             expect(api?.html).toMatch(/예:이것/);
             expect(empty?.html).toMatch(/<h1[^>]*><span[^>]*>Empty<\/span><\/h1>/);
@@ -180,7 +180,7 @@ describe("문서", () => {
         test("[DOC-011] 문서 지시문 오류는 메타를 포함한 원본 행 번호를 유지한다", async ({scope}) => {
             /**
              * GIVEN
-             * 문서 파일과 메타 입력
+             * 알 수 없는 지시문이 있는 문서
              */
             const site = siteConfigSchema.parse({});
 
@@ -194,7 +194,7 @@ describe("문서", () => {
 
             /**
              * THEN
-             * 문서 지시문 오류는 메타를 포함한 원본 행 번호를 유지한 결과
+             * 메타를 포함한 원본 행 번호의 오류
              */
             await expect(result).rejects.toHaveProperty("line", 7);
         });
@@ -223,7 +223,7 @@ describe("문서", () => {
 
             /**
              * THEN
-             * 예약 폴더 밖의 문서만 수집한 결과
+             * 예약 폴더 밖의 문서만 수집
              */
             expect(docs.map((doc) => doc.id)).toStrictEqual(["guide"]);
         });
@@ -231,7 +231,7 @@ describe("문서", () => {
         test("[DOC-013] 루트 에이전트 지침은 제외하고 하위 폴더의 같은 이름 문서는 표시한다", async ({scope}) => {
             /**
              * GIVEN
-             * 문서 파일과 메타 입력
+             * content 루트의 README, 에이전트 지침과 공개 폴더의 같은 이름 문서
              */
             const site = siteConfigSchema.parse({});
 
@@ -253,7 +253,7 @@ describe("문서", () => {
 
             /**
              * THEN
-             * 루트 에이전트 지침은 제외하고 하위 폴더의 같은 이름 문서는 표시한 결과
+             * 공개 폴더의 같은 이름 문서만 수집
              */
             expect(new Set(docs.map((doc) => doc.id))).toStrictEqual(new Set(["guide/agents", "guide/claude"]));
         });

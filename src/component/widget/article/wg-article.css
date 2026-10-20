@@ -138,7 +138,10 @@
         background: var(--app-color-code);
         color: var(--app-color-text-strong);
 
-        /* UA monospace 대신 부모 글꼴, 문단은 본문 정책, 코드 블록은 pre의 고정폭과 자간 0 */
+        /*
+         * 인라인 코드는 UA monospace 대신 부모 글꼴
+         * 코드 블록의 고정폭과 자간 0은 pre 담당
+         */
         font-family: inherit;
         font-size: 1em;
     }
@@ -156,7 +159,7 @@
         line-height: var(--app-line-height-code);
         letter-spacing: 0;
 
-        /* 탭 들여쓰기 코드, 브라우저 기본 8칸은 좁은 본문에서 너무 넓음 */
+        /* 탭 들여쓰기 코드, 브라우저 기본 8칸은 좁은 본문에 과다 */
         tab-size: 4;
     }
 
@@ -231,7 +234,7 @@
 
     /* Shiki가 만드는 line, highlighted, diff 클래스 */
 
-    /* 코드 줄, 바탕을 상자 가로 전체로, 표기 없는 줄은 보이는 차이 없음 */
+    /* 코드 줄 바탕은 상자 가로 전체 폭, 표기 없는 줄은 보이는 차이 없음 */
     & pre code .line {
         display: inline-block;
         width: calc(100% + 2 * var(--app-space-block));
@@ -260,7 +263,7 @@
         opacity: 0.8;
     }
 
-    /* 색 블록 위의 줄 표기, 바탕보다 한 단계 진하게 */
+    /* 색 블록 위의 줄 표기는 바탕보다 한 단계 진한 색 */
     & pre.wg_article__code--bad code .line.highlighted {
         background: var(--app-color-bad-mark);
     }
@@ -287,7 +290,7 @@
         background: var(--app-color-accent-soft);
     }
 
-    /* 파일 이름 띠, 펜스 메타 [파일 이름], 코드 상자와 한 몸, 여백은 figure 가 맡음 */
+    /* 펜스 메타 [파일 이름]의 제목 영역, 코드 상자와 연결, 여백은 figure 담당 */
     & .wg_article__codeFile {
         margin: var(--app-space-block) 0;
     }
@@ -325,7 +328,7 @@
         text-transform: uppercase;
     }
 
-    /* 줄 번호, 펜스 메타 line-numbers, 복사에 섞이지 않게 content 로 */
+    /* 펜스 메타 line-numbers의 줄 번호, content 표시로 복사 텍스트에서 제외 */
     & .wg_article__lineNumbers code {
         counter-reset: line;
     }
@@ -371,7 +374,7 @@
         margin-bottom: 0;
     }
 
-    /* README의 가운데 정렬 HTML 소개, 작성자 마크업이라 요소 선택자 사용 */
+    /* README의 가운데 정렬 HTML 소개, 작성자 마크업의 요소 선택자 사용 */
     & [align="center"] {
         padding: var(--app-space-group) 0;
         text-align: center;
@@ -392,11 +395,11 @@
     }
 }
 
-/* 제목 글자만 강조, 여러 줄에서도 각 줄을 칠하고 문서 배치는 유지 */
+/* 제목 글자만 강조, 여러 줄이면 줄마다 배경 적용, 문서 배치 유지 */
 .wg_article__headingText {
     box-decoration-break: clone;
 
-    /* 줄바꿈된 글자 뒤의 바탕은 opacity 레이어로 분리할 수 없어 배경색만 전환 */
+    /* 배경색만 전환, 줄바꿈된 글자 뒤 바탕은 opacity 레이어로 분리 불가 */
     transition: background-color var(--app-motion-duration-highlight-fade) var(--app-motion-easing-out);
 }
 
@@ -481,7 +484,7 @@
     font-weight: var(--app-font-weight-strong);
 }
 
-/* 구현 상세, 펼침 상태와 marker는 native Details 소유 */
+/* 구현 상세, 펼침 상태와 marker는 네이티브 Details 소유 */
 .wg_article__details {
     margin: var(--app-space-block) 0;
     padding-bottom: var(--app-space-stack);

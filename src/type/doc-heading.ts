@@ -8,7 +8,7 @@ export interface DocHeading {
     depth: number;
 
     /**
-     * 제목 id. URL hash 대상
+     * 제목 id. URL 해시 대상
      */
     slug: string;
 

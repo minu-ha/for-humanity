@@ -12,7 +12,7 @@ describe("사이트 설정", () => {
         test("[CFG-001] TypeScript 설정의 제목과 탐색 순서가 빌드에 반영된다", async ({root}) => {
             /**
              * GIVEN
-             * 이름순과 반대인 탐색 설정과 두 묶음의 문서
+             * 이름순과 반대인 탐색 설정, 두 묶음의 문서
              */
             await mkdir(join(root, "content/public"), {recursive: true});
             await writeFile(join(root, "content/README.md"), "# Home\n");

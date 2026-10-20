@@ -65,7 +65,7 @@ export const readDocs = async (params: ReadDocsParams): Promise<Doc[]> => {
 
             const segments = id.split("/");
 
-            // Hono, SSG, 정적 제공의 공통 URL 계약. 예약 문자에 의한 페이지 누락 방지
+            // Hono, SSG, 정적 제공의 공통 URL 계약. 예약 문자로 생기는 페이지 누락 방지
             if (
                 segments.some((segment) => segment === "" || segment === "." || segment === ".." || segment === "index.html") ||
                 /[#?%*:\\]/.test(id) ||
@@ -79,7 +79,7 @@ export const readDocs = async (params: ReadDocsParams): Promise<Doc[]> => {
 
             const source = await readFile(join(params.scope.root, path), "utf8");
 
-            // remark가 제외하는 UTF-8 BOM을 원문에서도 제거. 지시문의 offset 기준 일치
+            // 원문에서도 UTF-8 BOM 제거. remark 파서와 지시문 offset 기준 일치
             const file = new VFile({value: source.replace(/^\uFEFF/, ""), path: join(params.scope.root, path)});
             const tree = params.processor.parse(file);
             const frontmatter = tree.children[0];
@@ -124,7 +124,7 @@ export const readDocs = async (params: ReadDocsParams): Promise<Doc[]> => {
         throw new Error(`${copy_error_doc_id_clash}: ${duplicateIds.map((entry) => entry[0]).join(", ")}`);
     }
 
-    // 모든 파일을 수집한 뒤 부모 참조 검증. 파일 읽기 순서와 무관한 문서 경로
+    // 전체 파일 수집 후 부모 참조 검증. 파일 읽기 순서와 무관한 문서 경로
     const docsById = new Map(docs.map((doc) => [doc.id, doc]));
 
     return docs.map((doc) => {

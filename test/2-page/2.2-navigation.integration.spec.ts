@@ -90,7 +90,7 @@ test.describe("문서 탐색", () => {
                 });
             }
 
-            // 첫 Effect frame 이전 해제에서도 늦은 구독 설치 방지
+            // 첫 Effect 프레임 이전 해제에서도 늦은 구독 설치 방지
             await page.evaluate(() => {
                 window.shellFixture.mount();
                 window.shellFixture.unmount();

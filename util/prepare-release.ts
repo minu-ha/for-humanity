@@ -3,6 +3,9 @@ import {join, resolve} from "node:path";
 import {packReportSchema} from "@tool/_type/pack-report";
 import {packageMetadataSchema} from "@tool/_type/package-metadata";
 
+/*
+ * 릴리스 태그의 공개 준비. 버전, README, 변경 기록, 압축 파일 검증 후 릴리스 노트 생성
+ */
 const [tag, directory] = process.argv.slice(2);
 
 if (tag === undefined || !/^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(tag) || directory === undefined) {
@@ -16,6 +19,7 @@ if (tag !== `v${metadata.version}`) {
     throw new Error(`Tag ${tag} does not match package.json version ${metadata.version}`);
 }
 
+// README 두 언어의 설치 명령과 태그 버전 일치
 for (const file of ["README.md", "language/README.ko.md"]) {
     const readme = await readFile(file, "utf8");
 
@@ -24,6 +28,7 @@ for (const file of ["README.md", "language/README.ko.md"]) {
     }
 }
 
+// 태그 버전의 변경 기록 항목 필수
 const changelog = await readFile("CHANGELOG.md", "utf8");
 const entry = changelog.split(/^## /m).find((section) => section.startsWith(`${metadata.version} — `));
 
@@ -31,6 +36,7 @@ if (entry === undefined || !entry.includes("\n\n") || entry.slice(entry.indexOf(
     throw new Error(`Missing changelog entry for ${metadata.version}`);
 }
 
+// npm pack 보고서의 이름, 버전, 필수 파일 검증
 const artifactDirectory = resolve(directory);
 const pack = packReportSchema.parse(JSON.parse(await readFile(join(artifactDirectory, "pack.json"), "utf8")));
 
@@ -61,6 +67,7 @@ if (!pack.files.some((file) => file.path.startsWith("src/asset/font/") && file.p
     throw new Error("Packed package is missing its self-hosted fonts");
 }
 
+// 릴리스 노트와 워크플로 출력 작성
 const notes = join(artifactDirectory, "release-notes.md");
 
 await writeFile(

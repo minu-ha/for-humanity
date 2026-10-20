@@ -7,7 +7,7 @@ import type {NavigationGroup} from "@/component/widget/sidebar/_type/navigation-
  */
 interface NavigationGroupParams {
     /**
-     * 하위 문서와 묶음을 가진 원본
+     * 하위 문서와 묶음이 있는 원본
      */
     group: DocGroup;
 

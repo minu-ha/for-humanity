@@ -29,7 +29,7 @@ test.describe("다이어그램", () => {
 
             /**
              * THEN
-             * 공식 어두운 팔레트와 작성자 테마와 읽을 수 있는 파일 트리
+             * 공식 어두운 팔레트, 작성자 테마, 읽을 수 있는 파일 트리
              */
             await expect(page.locator('[data-mermaid-theme="dark"]')).toHaveCount(diagram_cases.length);
             await expect(node).not.toHaveCSS("fill", light);
@@ -40,6 +40,9 @@ test.describe("다이어그램", () => {
                     .locator(".treeView-node-label")
                     .first()
                     .evaluate((label) => {
+                        /**
+                         * CSS 색의 상대 휘도. WCAG 대비 계산 기준
+                         */
                         const toLuminance = (color: string) => {
                             const channels = color.match(/[\d.]+/g);
 
@@ -239,7 +242,7 @@ test.describe("다이어그램", () => {
 
             /**
              * THEN
-             * 늦은 SVG와 측정 요소와 툴팁 없음
+             * 늦은 SVG, 측정 요소, 툴팁 없음
              */
             await expect(page.locator(".wg_mermaid__result svg")).toHaveCount(0);
             await expect(page.locator(".wg_mermaid__measurement")).toHaveCount(0);

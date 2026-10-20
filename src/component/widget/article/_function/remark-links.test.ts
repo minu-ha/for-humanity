@@ -33,7 +33,7 @@ describe("Windows 문서 링크", () => {
 
         /**
          * THEN
-         * 상위 경로와 쿼리와 앵커 유지
+         * 상위 경로, 쿼리, 앵커 유지
          */
         expect(result).toHaveProperty("children.0.url", scenario.target);
     });

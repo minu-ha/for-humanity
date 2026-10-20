@@ -41,7 +41,7 @@ export const siteConfigSchema = z.object({
     port: z.int().min(site_port_min).max(site_port_max).default(site_port_default),
 
     /**
-     * 데스크톱 커서 옆 픽셀 얼굴. 기본 꺼짐. favicon 은 설정과 무관
+     * 데스크톱 커서 옆 픽셀 얼굴, 기본 꺼짐. favicon은 설정과 무관
      */
     cursorFace: z.boolean().default(site_cursor_face_default),
 

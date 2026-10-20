@@ -16,7 +16,7 @@ describe("문서 링크와 목차", () => {
         test("[LNK-001] 상대 Markdown 링크는 쿼리와 앵커를 보존한다", async ({scope}) => {
             /**
              * GIVEN
-             * 링크와 제목을 포함한 문서 입력
+             * 쿼리와 앵커가 있는 상대 링크 문서
              */
             const site = siteConfigSchema.parse({});
 
@@ -51,7 +51,7 @@ describe("문서 링크와 목차", () => {
 
             /**
              * THEN
-             * 상대 Markdown 링크는 쿼리와 앵커를 보존한 결과
+             * 쿼리와 앵커를 유지한 사이트 주소
              */
             expect(setup?.html).toMatch(/href="\/api\/\?mode=compact&#x26;lang=ko#details"/);
             expect(setup?.html).toMatch(/href="\/api\/\?mode=compact"/);
@@ -95,7 +95,7 @@ describe("문서 링크와 목차", () => {
         test("[LNK-004] 제목과 목차는 작성한 텍스트와 번호를 보존한다", async ({scope}) => {
             /**
              * GIVEN
-             * 링크와 제목을 포함한 문서 입력
+             * 번호, 가름, 중복 제목이 있는 문서
              */
             const site = siteConfigSchema.parse({});
 
@@ -120,7 +120,7 @@ describe("문서 링크와 목차", () => {
 
             /**
              * THEN
-             * 제목과 목차는 작성한 텍스트와 번호를 보존한 결과
+             * 작성한 텍스트와 번호를 유지한 제목 id와 목차
              */
             expect(html).toMatch(/<h2[^>]*id="overview"[^>]*><span class="wg_article__headingText">Overview<\/span><\/h2>/);
             expect(html).toMatch(/<h3[^>]*id="01-keep-this-number"[^>]*><span class="wg_article__headingText">01\. Keep this number<\/span><\/h3>/);

@@ -28,7 +28,7 @@ export const readSiteConfig = async (root: string) => {
         return siteConfigSchema.parse(site_config_absent);
     }
 
-    // ESM 실행 오류를 변환 재시도로 숨기지 않고 기존 Node import 계약 유지
+    // ESM 실행 오류는 변환 재시도 없이 그대로 전달, 기존 Node import 계약 유지
     const input: unknown = file.endsWith(".mjs")
         ? await import(pathToFileURL(file).href)
         : await createJiti(import.meta.url, {interopDefault: false, tryNative: false}).import(file);

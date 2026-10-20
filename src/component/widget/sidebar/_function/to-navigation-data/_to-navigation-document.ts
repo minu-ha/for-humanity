@@ -6,7 +6,7 @@ import type {NavigationDoc} from "@/component/widget/sidebar/_type/navigation-da
  */
 interface NavigationDocumentParams {
     /**
-     * 하위 문서를 가진 원본 문서
+     * 하위 문서가 있는 원본 문서
      */
     doc: DocBranch;
 

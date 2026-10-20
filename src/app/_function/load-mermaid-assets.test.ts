@@ -6,10 +6,10 @@ import {loadMermaidAssets} from "@/app/_function/load-mermaid-assets";
 
 describe("다이어그램", () => {
     describe("패키지 자원", () => {
-        test("진입 모듈과 공유 청크와 라이선스 고지가 같은 공개 경로에 등록된다", async ({root}) => {
+        test("진입 모듈, 공유 청크, 라이선스 고지가 같은 공개 경로에 등록된다", async ({root}) => {
             /**
              * GIVEN
-             * 빌드된 모듈과 공유 청크와 고지 파일
+             * 빌드된 모듈, 공유 청크, 고지 파일
              */
             const directory = join(root, "dist/mermaid");
             const names = ["mermaid-HASH.js", "chunk-HASH.js", "THIRD-PARTY-NOTICES.txt"];

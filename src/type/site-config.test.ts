@@ -2,7 +2,7 @@ import {describe, expect, expectTypeOf, test} from "vitest";
 import {type SiteConfig, siteConfigSchema} from "@/type/site-config";
 
 describe("사이트 설정", () => {
-    test("설정을 생략하면 기본 이름과 포트와 탐색 순서를 적용한다", () => {
+    test("설정을 생략하면 기본 이름, 포트, 탐색 순서를 적용한다", () => {
         /**
          * WHEN
          * 빈 공개 설정의 검증
@@ -49,7 +49,7 @@ describe("사이트 설정", () => {
     test("공개 입력은 단일 묶음과 중첩 경로를 함께 허용한다", () => {
         /**
          * GIVEN
-         * 기본값과 다른 포트와 명시적 커서 설정
+         * 기본값과 다른 포트, 명시적 커서 설정
          */
         const input = {port: 4322, cursorFace: true, navigation: [" Guide ", ["Projects", "Research"]], status: []} satisfies SiteConfig;
 

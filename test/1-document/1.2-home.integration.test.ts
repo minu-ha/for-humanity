@@ -17,7 +17,7 @@ describe("홈", () => {
         test("[HOM-001] 루트 README는 홈으로 렌더되고 중첩 문서의 홈 링크를 해석한다", async ({scope}) => {
             /**
              * GIVEN
-             * 홈페이지와 문서 입력
+             * 루트 README와 홈으로 연결하는 중첩 문서
              */
             const site = siteConfigSchema.parse({});
             const processor = toProcessor({site, scope});
@@ -34,7 +34,7 @@ describe("홈", () => {
 
             /**
              * WHEN
-             * 홈페이지 렌더
+             * 홈 렌더
              */
             const [docs, home] = await Promise.all([readDocs({scope, processor}), readHome({scope, processor})]);
 
@@ -49,7 +49,7 @@ describe("홈", () => {
 
             /**
              * THEN
-             * 루트 README는 홈으로 렌더되고 중첩 문서의 홈 링크를 해석한 결과
+             * README 본문의 홈과 중첩 문서의 홈 링크
              */
             expect(response.status).toBe(200);
             expect(docs.map((doc) => doc.id)).toStrictEqual(["guide/setup"]);
@@ -70,13 +70,13 @@ describe("홈", () => {
         test("[HOM-002] README가 없으면 홈페이지 작성 안내를 표시한다", async ({scope}) => {
             /**
              * GIVEN
-             * 홈페이지와 문서 입력
+             * README가 없는 문서 루트
              */
             const site = siteConfigSchema.parse({});
 
             /**
              * WHEN
-             * 홈페이지 렌더
+             * 홈 렌더
              */
             const home = await readHome({scope, processor: toProcessor({site, scope})});
 
@@ -90,7 +90,7 @@ describe("홈", () => {
 
             /**
              * THEN
-             * README가 없으면 홈페이지 작성 안내를 표시한 결과
+             * 홈 작성 안내
              */
             expect(home).toBe(undefined);
             expect(html).toMatch(/문서 폴더에 README\.md를 추가/);

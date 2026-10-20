@@ -7,7 +7,7 @@ import {groupPathSchema} from "@/type/group-path";
  */
 export const docDataSchema = z.object({
     /**
-     * 문서 이름. 제목, 목록. 같은 첫 글자 허용
+     * 문서 이름. 제목과 목록에 표시, 같은 첫 글자 허용
      */
     name: z.string().trim().min(1),
 

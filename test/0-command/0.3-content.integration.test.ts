@@ -117,7 +117,7 @@ describe("공개와 내부 문서", () => {
         test("[CNT-009] 사용자 지정 경로에서도 공개 폴더 이름은 URL에 포함하지 않는다", async ({root}) => {
             /**
              * GIVEN
-             * 기본값과 다른 세 경로와 공개 문서의 상대 링크
+             * 기본값과 다른 세 경로, 공개 문서의 상대 링크
              */
             await mkdir(join(root, "knowledge/published/guide"), {recursive: true});
             await writeFile(join(root, "for-humanity.config.mjs"), 'export default {content: {root: "knowledge", public: "published", private: "internal"}};');

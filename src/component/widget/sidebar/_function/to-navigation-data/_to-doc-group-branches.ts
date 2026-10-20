@@ -28,13 +28,13 @@ interface DocGroupBranchesParams {
     positions: ReadonlyMap<string, number>;
 
     /**
-     * 미지정 경로를 지정한 묶음 뒤에 놓는 위치
+     * 미지정 경로를 지정한 묶음 뒤에 배치하는 위치
      */
     unlistedPosition: number;
 }
 
 /**
- * 각 단계의 직접 문서와 하위 묶음을 분리. 고정된 깊이 제한 없이 구성
+ * 각 단계의 직접 문서와 하위 묶음 분리. 고정된 깊이 제한 없이 구성
  */
 export const toDocGroupBranches = (params: DocGroupBranchesParams): DocGroup[] => {
     return [

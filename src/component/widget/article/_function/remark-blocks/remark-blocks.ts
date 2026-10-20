@@ -21,7 +21,8 @@ import {hasBlockContent} from "@/component/widget/article/_function/remark-block
 /**
  * Note, Details의 제목, 본문, 속성, 닫힘 계약
  *
- *   - label은 첫 자식. summary는 Details의 첫 요소. 원문 위치는 오류 기준
+ *   - label은 첫 자식, summary는 Details의 첫 요소
+ *   - 원문 위치는 오류 기준
  */
 export const remarkBlocks = () => (tree: Root, file: VFile) => {
     const source = String(file.value);

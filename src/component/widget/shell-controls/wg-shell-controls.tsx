@@ -33,7 +33,7 @@ export const WgShellControls = (props: WgShellControlsProps) => {
     const userScrollRef = useRef<AbortController | null>(null);
 
     /**
-     * 다음 앵커 이동과 해제에서 이전 강조, 도착 감시, 타이머를 함께 정리
+     * 다음 앵커 이동과 해제에서 이전 강조, 도착 감시, 타이머 함께 정리
      */
     const clearHeadingHighlight = () => {
         clearTimeout(timerRef.current);
@@ -59,7 +59,7 @@ export const WgShellControls = (props: WgShellControlsProps) => {
     };
 
     /**
-     * 도착 제목만 강조. 같은 hash 재클릭도 유지 시간 재시작
+     * 도착 제목만 강조. 같은 해시 재클릭도 유지 시간 재시작
      */
     const highlightHeading = (target: HTMLElement | null) => {
         clearHeadingHighlight();
@@ -76,7 +76,7 @@ export const WgShellControls = (props: WgShellControlsProps) => {
     };
 
     /**
-     * 탐색 DOM이 다시 만들어져도 같은 hash의 접힌 Details 공개를 유지
+     * 탐색 DOM 재생성 후에도 같은 해시의 접힌 Details 공개 유지
      */
     const handleHashClick = (event: MouseEvent) => {
         const link = findHashLink(event);
@@ -93,7 +93,7 @@ export const WgShellControls = (props: WgShellControlsProps) => {
     };
 
     /**
-     * hash 변경 시 접힌 대상을 공개하고 네이티브 스크롤, 강조 적용
+     * 해시 변경 시 접힌 대상 공개, 네이티브 스크롤과 강조 적용
      */
     const handleHashChange = () => {
         const target = revealHashTarget(location.hash);
@@ -186,7 +186,7 @@ export const WgShellControls = (props: WgShellControlsProps) => {
     return (
         <Fragment>
             {/**
-             * 별도 DOM 경계로 탐색 갱신이 커서 형제 사이에서 dialog를 재삽입하지 않게 함
+             * 별도 DOM 경계, 탐색 갱신 시 커서 형제 사이의 dialog 재삽입 방지
              */}
             <div className={clsx("wg_shellControls__sidebar")}>
                 <WgSidebar data={props.data} stores={props.stores} />

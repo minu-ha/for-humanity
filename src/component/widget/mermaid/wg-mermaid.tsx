@@ -69,7 +69,7 @@ export const WgMermaid = (props: WgMermaidProps) => {
                 const mode = theme.matches ? "dark" : "light";
 
                 /**
-                 * 해제, 문서 교체, 테마 전환으로 이번 회차의 결과를 쓰지 않을 영역
+                 * 해제, 문서 교체, 테마 전환으로 이번 회차의 결과를 적용하지 않을 영역
                  */
                 const isStale = (element: HTMLElement) => {
                     return lifetime.signal.aborted || !element.isConnected || theme.matches !== (mode === "dark");
@@ -133,7 +133,7 @@ export const WgMermaid = (props: WgMermaidProps) => {
                         // 생성 SVG의 공식 스타일 격리. 본문 p, code, a 선택자의 내부 라벨 개입 제외
                         (result.shadowRoot ?? result.attachShadow({mode: "open"})).replaceChildren(canvas);
 
-                        // Mermaid bindFunctions는 SVG 자식을 가진 Element 요구
+                        // Mermaid bindFunctions는 SVG 자식이 있는 Element 요구
                         rendered.bindFunctions?.(canvas);
                         canvas.addEventListener("mouseover", handleTooltipShow, {signal: lifetime.signal});
                         canvas.addEventListener("mouseout", handleTooltipHide, {signal: lifetime.signal});

@@ -89,7 +89,7 @@ describe("릴리스 산출물", () => {
 
         /**
          * THEN
-         * 현재 버전의 변경 기록과 설치 주소와 워크플로 출력
+         * 현재 버전의 변경 기록, 설치 주소, 워크플로 출력
          */
         expect(result.status, result.stderr).toBe(0);
         expect(notes).toMatch(/Updated documentation/);

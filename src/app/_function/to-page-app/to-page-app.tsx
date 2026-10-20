@@ -31,7 +31,7 @@ export interface PageParams {
 /**
  * 첫 화면 /. 문서 /:slug{.+}/. 하위 폴더 id 지원
  *
- *   - 자원 wildcard와 정규식 매개변수 혼합 시 TrieRouter fallback으로 중첩 경로 불일치
+ *   - 자원 와일드카드와 정규식 매개변수 혼합 시 TrieRouter 폴백으로 중첩 경로 불일치
  *   - 자원 응답은 toHttpApp의 별도 앱 소유
  */
 export const toPageApp = (params: PageParams) => {

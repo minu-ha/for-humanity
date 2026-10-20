@@ -31,7 +31,7 @@ export const WgToc = (props: WgTocProps) => {
         const frame = {id: 0};
         const lifetime = new AbortController();
 
-        // 새로고침, 뒤로가기의 복원 위치에는 hash 제목 고정 미적용
+        // 새로고침, 뒤로가기의 복원 위치에는 해시 제목 고정 미적용
         const lock = {slug: isRestoringNavigation() ? undefined : toHashId(location.hash)};
 
         /**
@@ -50,8 +50,8 @@ export const WgToc = (props: WgTocProps) => {
         /**
          * 연속 스크롤의 프레임당 1회 현재 제목 갱신
          *
-         *   - 접힌 본문 제목은 제외하고 읽는 선을 통과한 마지막 제목 선택
-         *   - 링크, hash로 이동한 제목은 사용자 스크롤 전까지 유지
+         *   - 접힌 본문 제목 제외, 읽는 선을 통과한 마지막 제목 선택
+         *   - 링크, 해시로 이동한 제목은 사용자 스크롤 전까지 유지
          */
         const handleReadingPositionChange = () => {
             if (frame.id !== 0) {
@@ -70,9 +70,9 @@ export const WgToc = (props: WgTocProps) => {
         };
 
         /**
-         * 문서 크기, 화면 높이 변경. 끝 구간 제목의 도착 위치를 목차 전환 위치와 맞춘 뒤 현재 제목 재계산
+         * 문서 크기, 화면 높이 변경. 끝 구간 제목의 도착 위치와 목차 전환 위치 일치 후 현재 제목 재계산
          *
-         *   - 읽는 선에 닿지 못하는 끝 절이 있으면 마지막 한 화면 구간의 도착 위치를 문서 끝까지 비례 압축
+         *   - 마지막 한 화면 구간의 도착 위치를 문서 끝까지 비례 압축, 읽는 선에 닿지 못하는 끝 절이 있을 때만
          *   - 압축한 거리만큼 제목 위 여백 추가, 앵커 이동과 목차 판정이 같은 위치 사용
          */
         const handleLayoutChange = () => {
@@ -101,7 +101,7 @@ export const WgToc = (props: WgTocProps) => {
         };
 
         /**
-         * 같은 문서 hash 링크의 도착 제목 고정. 같은 hash 재클릭 포함
+         * 같은 문서 해시 링크의 도착 제목 고정. 같은 해시 재클릭 포함
          */
         const handleHashLinkClick = (event: MouseEvent) => {
             const link = findHashLink(event);
@@ -115,7 +115,7 @@ export const WgToc = (props: WgTocProps) => {
         };
 
         /**
-         * 뒤로가기, 주소 수정의 hash 변경 도착 제목 고정
+         * 뒤로가기, 주소 수정의 해시 변경 도착 제목 고정
          */
         const handleHashChange = () => {
             lock.slug = toHashId(location.hash);
@@ -190,7 +190,7 @@ export const WgToc = (props: WgTocProps) => {
                                         </a>
 
                                         {/**
-                                         * 하위 제목. 활성 링크는 한 제목만
+                                         * 하위 제목. 활성 링크는 한 제목에 한정
                                          */}
                                         {section.subs.length > 0 && (
                                             <ul className={clsx("wg_toc__sub")}>

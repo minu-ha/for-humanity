@@ -1,5 +1,5 @@
 /*
- * 브라우저 진입. 서버 자료 검증과 저장소 생성 후 공통 셸 컨트롤을 한 번 마운트
+ * 브라우저 진입. 서버 자료 검증과 저장소 생성 후 공통 셸 컨트롤 1회 마운트
  */
 import {createRoot} from "hono/jsx/dom/client";
 import {WgShellControls} from "@/component/widget/shell-controls/wg-shell-controls";

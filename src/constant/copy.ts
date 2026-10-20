@@ -13,7 +13,7 @@ export const copy_site_title_default = "for humanity";
 export const copy_error_prefix = "for-humanity";
 
 /**
- * 공개 사이트 URL의 미지원 경로, 자격 증명, 검색, 앵커 오류
+ * 공개 사이트 URL의 하위 경로, 자격 증명, 쿼리, 해시 오류
  */
 export const copy_error_site_url = "url must be an HTTP(S) site root without credentials, a subpath, a query or a hash";
 
