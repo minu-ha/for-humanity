@@ -10,7 +10,22 @@ import {isRestoringNavigation} from "@/util/dom/is-restoring-navigation";
 import {revealHashTarget} from "@/util/dom/reveal-hash-target";
 import "./wg-shell-controls.css";
 
-export const WgShellControls = (props: WgSidebarProps) => {
+/**
+ * 브라우저 셸 컨트롤 입력. 사이드바, 커서 장식, 다이어그램 연결, 제목 강조는 셸 소유
+ */
+export interface WgShellControlsProps {
+    /**
+     * 서버가 정리한 문서 목록, 현재 페이지 목차, 커서 장식 사용 여부
+     */
+    data: WgSidebarProps["data"];
+
+    /**
+     * 브라우저 진입점만 제공. 없으면 저장소와 전역 DOM 미사용, 커서 장식 미연결
+     */
+    stores?: WgSidebarProps["stores"];
+}
+
+export const WgShellControls = (props: WgShellControlsProps) => {
     const headingRef = useRef<HTMLElement | null>(null);
     const timerRef = useRef(0);
     const arrivalRef = useRef<AbortController | null>(null);

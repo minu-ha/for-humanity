@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import {Fragment} from "hono/jsx";
 import "./wg-article.css";
 
 /**
@@ -29,18 +30,19 @@ export interface WgArticleProps {
 }
 
 export const WgArticle = (props: WgArticleProps) => {
-    if (props.html !== undefined) {
-        return <article className={clsx("wg_article__root")} dangerouslySetInnerHTML={{__html: props.html}} />;
-    }
-
     return (
-        <article className={clsx("wg_article__root")}>
-            {props.head !== undefined && (
-                <header className={clsx("wg_article__head")}>
-                    <h1 className={clsx("wg_article__title")}>{props.head.title}</h1>
-                    {props.head.lead !== undefined && <p className={clsx("wg_article__lead")}>{props.head.lead}</p>}
-                </header>
+        <Fragment>
+            {props.html !== undefined && <article className={clsx("wg_article__root")} dangerouslySetInnerHTML={{__html: props.html}} />}
+            {props.html === undefined && (
+                <article className={clsx("wg_article__root")}>
+                    {props.head !== undefined && (
+                        <header className={clsx("wg_article__head")}>
+                            <h1 className={clsx("wg_article__title")}>{props.head.title}</h1>
+                            {props.head.lead !== undefined && <p className={clsx("wg_article__lead")}>{props.head.lead}</p>}
+                        </header>
+                    )}
+                </article>
             )}
-        </article>
+        </Fragment>
     );
 };

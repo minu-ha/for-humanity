@@ -5,7 +5,9 @@ import {toChangeQueue} from "@/util/async/to-change-queue";
 import "./wg-mermaid.css";
 
 /**
- * 다이어그램 렌더와 문서 배치의 연결 계약
+ * 서버 본문의 Mermaid 영역 렌더 수명. 셸과 본문 DOM 교체 미포함
+ *
+ *   - 렌더 완료 알림으로 문서 배치와 연결
  */
 export interface WgMermaidProps {
     /**
@@ -14,9 +16,6 @@ export interface WgMermaidProps {
     onRendered?: () => void;
 }
 
-/**
- * 서버 본문의 Mermaid 영역 렌더 수명. 셸과 본문 DOM 교체 미포함
- */
 export const WgMermaid = (props: WgMermaidProps) => {
     /**
      * 본문 파싱 후 모듈 수신, 테마 변경과 Details 공개의 직렬 렌더
