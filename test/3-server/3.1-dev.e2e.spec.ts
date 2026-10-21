@@ -21,6 +21,11 @@ test.describe("개발 서버", () => {
 
             await test.step("새 문서를 추가하고 본문 변경을 반영한다", async () => {
                 /**
+                 * GIVEN
+                 * 처음 내용을 표시한 홈
+                 */
+
+                /**
                  * WHEN
                  * 문서 파일 추가와 홈 변경
                  */
@@ -37,43 +42,58 @@ test.describe("개발 서버", () => {
 
             await test.step("문법 오류가 있는 동안 마지막 정상 문서를 유지한다", async () => {
                 /**
+                 * GIVEN
+                 * 추가한 문서를 정상 처리한 개발 서버
+                 */
+
+                /**
                  * WHEN
-                 * 잘못된 머리말 저장
+                 * 잘못된 머리말 저장 후 문서 요청
                  */
                 await writeFile(join(devSite.root, "public/guide.md"), "---\nname: [\n---\n");
                 await expect.poll(() => devSite.errors.length).toBeGreaterThan(0);
+
+                const response = await page.request.get("/guide/");
 
                 /**
                  * THEN
                  * 마지막 정상 응답 유지
                  */
-                const response = await page.request.get("/guide/");
-
                 expect(response.status()).toBe(200);
                 expect(await response.text()).toContain("Added section");
             });
 
             await test.step("같은 파일의 오류를 수정하면 새 내용으로 복구한다", async () => {
                 /**
+                 * GIVEN
+                 * 머리말 오류로 마지막 정상 문서를 유지한 개발 서버
+                 */
+
+                /**
                  * WHEN
-                 * 잘못된 머리말을 정상 문서로 교체
+                 * 잘못된 머리말을 정상 문서로 교체한 뒤 자동 갱신된 탐색 링크 클릭
                  */
                 await writeFile(join(devSite.root, "public/guide.md"), "---\nname: Recovered guide\nlabel: Recovered guide\ngroup: Guide\n---\n\n## Recovered section\n");
+                await page.getByRole("link", {name: "Recovered guide", exact: true}).click();
 
                 /**
                  * THEN
-                 * 자동 갱신된 탐색과 복구한 문서의 새 본문
+                 * 복구한 문서의 새 본문
                  */
-                await page.getByRole("link", {name: "Recovered guide", exact: true}).click();
                 await expect(page.getByRole("heading", {name: "Recovered section", exact: true})).toBeVisible();
             });
 
             await test.step("파일을 삭제하면 탐색과 문서 응답에서 제외한다", async () => {
                 /**
-                 * WHEN
-                 * 홈에서 문서 파일 삭제
+                 * GIVEN
+                 * 갱신 통신을 다시 연결한 홈
                  */
                 await Promise.all([page.waitForEvent("console", (message) => message.text().includes("[vite] connected")), page.goto("/")]);
+
+                /**
+                 * WHEN
+                 * 문서 파일 삭제
+                 */
                 await rm(join(devSite.root, "public/guide.md"));
 
                 /**
@@ -126,6 +146,11 @@ test.describe("개발 서버", () => {
 
             await test.step("빠진 파일의 추가만으로 참조와 다이어그램을 복구한다", async () => {
                 /**
+                 * GIVEN
+                 * 참조 파일이 없어 처음 내용을 유지한 홈
+                 */
+
+                /**
                  * WHEN
                  * 실패했던 참조의 파일 추가
                  */
@@ -141,13 +166,17 @@ test.describe("개발 서버", () => {
                 await expect(page.locator('[data-mermaid-status="rendered"]')).toHaveCount(1);
             });
 
-            const previousImage = await page.getByRole("img", {name: "Illustration"}).getAttribute("src");
-
-            if (previousImage === null) {
-                throw new Error("등록 이미지 URL이 없습니다");
-            }
-
             await test.step("스니펫과 이미지 수정 시 새 내용과 지문을 사용한다", async () => {
+                /**
+                 * GIVEN
+                 * 복구한 스니펫과 내용 지문 주소의 이미지
+                 */
+                const previousImage = await page.getByRole("img", {name: "Illustration"}).getAttribute("src");
+
+                if (previousImage === null) {
+                    throw new Error("등록 이미지 URL이 없습니다");
+                }
+
                 /**
                  * WHEN
                  * 참조 파일만 수정
@@ -165,6 +194,11 @@ test.describe("개발 서버", () => {
             });
 
             await test.step("참조 파일을 삭제하면 마지막 정상 문서를 유지하고 README 삭제는 반영한다", async () => {
+                /**
+                 * GIVEN
+                 * 수정한 스니펫과 새 지문의 이미지를 표시한 홈
+                 */
+
                 /**
                  * WHEN
                  * 참조 파일 삭제 후 README 제거
@@ -225,6 +259,11 @@ test.describe("개발 서버", () => {
 
             await test.step("정상 스냅샷이 없으면 오류 응답을 제공한다", async () => {
                 /**
+                 * GIVEN
+                 * 아직 문서를 요청하지 않은 개발 서버
+                 */
+
+                /**
                  * WHEN
                  * 최초 문서 요청
                  */
@@ -239,7 +278,12 @@ test.describe("개발 서버", () => {
                 expect(devSite.server.httpServer?.listening).toBe(true);
             });
 
-            await test.step("문서를 수정하면 재시작 없이 정상 응답과 탐색을 복구한다", async () => {
+            await test.step("문서를 수정하면 재시작 없이 정상 응답을 복구한다", async () => {
+                /**
+                 * GIVEN
+                 * 준비 오류를 반환하고 계속 실행 중인 개발 서버
+                 */
+
                 /**
                  * WHEN
                  * 실패 원인인 문서 수정
@@ -248,10 +292,27 @@ test.describe("개발 서버", () => {
 
                 /**
                  * THEN
-                 * 같은 서버의 정상 응답과 실제 브라우저 렌더
+                 * 같은 서버의 정상 응답
                  */
                 await expect.poll(async () => (await page.request.get("/guide/")).status()).toBe(200);
+            });
+
+            await test.step("복구한 문서를 브라우저로 열면 본문과 탐색을 표시한다", async () => {
+                /**
+                 * GIVEN
+                 * 정상 응답으로 복구한 개발 서버
+                 */
+
+                /**
+                 * WHEN
+                 * 복구한 문서 조회
+                 */
                 await page.goto("/guide/");
+
+                /**
+                 * THEN
+                 * 실제 브라우저의 본문과 탐색 렌더
+                 */
                 await expect(page.getByRole("heading", {name: "Ready after correction", exact: true})).toBeVisible();
                 await expect(page.getByRole("link", {name: "Recovered guide", exact: true})).toBeVisible();
             });
@@ -264,25 +325,37 @@ test.describe("개발 서버", () => {
         test("[DEV-008] 첫 요청과 새로고침은 JavaScript 없이 최신 CSS를 적용한다", {tag: "@high"}, async ({page, devSite}) => {
             /**
              * GIVEN
-             * 브라우저 모듈을 실행하지 않는 소스 개발 페이지
+             * 스크립트를 끈 브라우저와 소스 개발 서버의 셸 CSS
              */
             const path = join(devSite.kitRoot, "src/component/widget/shell/wg-shell.css");
 
-            /**
-             * WHEN
-             * 최초 페이지 요청
-             */
-            await page.goto("/");
+            await test.step("첫 요청은 JavaScript 없이 전역 CSS와 셸 배치를 적용한다", async () => {
+                /**
+                 * GIVEN
+                 * 아직 열지 않은 개발 페이지
+                 */
 
-            /**
-             * THEN
-             * JavaScript의 스타일 삽입 전에도 전역 CSS와 셸 배치 적용
-             */
-            await expect(page.getByRole("main")).toHaveCSS("box-sizing", "border-box");
-            await expect(page.locator("body")).toHaveCSS("display", "grid");
-            await expect(page.locator("body")).toHaveCSS("margin-top", "0px");
+                /**
+                 * WHEN
+                 * 최초 페이지 요청
+                 */
+                await page.goto("/");
+
+                /**
+                 * THEN
+                 * JavaScript의 스타일 삽입 전에도 전역 CSS와 셸 배치 적용
+                 */
+                await expect(page.getByRole("main")).toHaveCSS("box-sizing", "border-box");
+                await expect(page.locator("body")).toHaveCSS("display", "grid");
+                await expect(page.locator("body")).toHaveCSS("margin-top", "0px");
+            });
 
             await test.step("소스 CSS 수정 뒤 새로고침도 최신 스타일을 사용한다", async () => {
+                /**
+                 * GIVEN
+                 * 최초 CSS를 적용한 페이지
+                 */
+
                 /**
                  * WHEN
                  * 패키지 재빌드 없이 CSS 수정 후 페이지 새로고침
@@ -318,6 +391,11 @@ test.describe("개발 서버", () => {
 
             await test.step("새 CSS 파일은 등록 설정 없이 적용한다", async () => {
                 /**
+                 * GIVEN
+                 * 테두리 스타일이 없는 본문
+                 */
+
+                /**
                  * WHEN
                  * 기존 소유자 폴더에 스타일 파일 추가
                  */
@@ -332,6 +410,11 @@ test.describe("개발 서버", () => {
             });
 
             await test.step("삭제한 CSS 파일은 스타일 목록에서 제외한다", async () => {
+                /**
+                 * GIVEN
+                 * 추가한 스타일 파일의 테두리를 적용한 본문
+                 */
+
                 /**
                  * WHEN
                  * 추가한 스타일 파일 삭제
@@ -364,6 +447,7 @@ test.describe("개발 서버", () => {
             const entry = await page.request.get("/src/entry/browser/browser.tsx");
             const source = await page.request.get(`/@fs/${join(devSite.kitRoot, "src/entry/browser/browser.tsx").replaceAll("\\", "/").replace(/^\//, "")}`);
             const responses = await Promise.all(paths.map((path) => page.request.get(path)));
+            const bodies = await Promise.all(responses.map((response) => response.text()));
 
             /**
              * THEN
@@ -374,9 +458,9 @@ test.describe("개발 서버", () => {
 
             for (const response of responses) {
                 expect([403, 404]).toContain(response.status());
+            }
 
-                const body = await response.text();
-
+            for (const body of bodies) {
                 expect(body).not.toContain("Initial content.");
                 expect(body).not.toContain("private-config-value");
                 expect(body).not.toContain("private-snippet-value");
@@ -407,6 +491,11 @@ test.describe("개발 서버", () => {
 
             await test.step("CSS 갱신은 전체 문서를 다시 열지 않는다", async () => {
                 /**
+                 * GIVEN
+                 * 테두리를 적용하고 문서 표식을 남긴 페이지
+                 */
+
+                /**
                  * WHEN
                  * 최초 스타일시트의 테두리 선언 삭제
                  */
@@ -421,6 +510,11 @@ test.describe("개발 서버", () => {
             });
 
             await test.step("서버 JSX 변경은 새 HTML로 반영한다", async () => {
+                /**
+                 * GIVEN
+                 * CSS만 갱신해 문서 표식을 유지한 페이지
+                 */
+
                 /**
                  * WHEN
                  * 서버 셸의 언어 속성 변경
@@ -440,18 +534,23 @@ test.describe("개발 서버", () => {
 
             await test.step("브라우저 JSX 변경도 상호작용에 반영한다", async () => {
                 /**
+                 * GIVEN
+                 * 서버 HTML을 새로 받은 페이지
+                 */
+
+                /**
                  * WHEN
-                 * 클라이언트가 마운트하는 탐색 버튼 이름 변경
+                 * 클라이언트가 마운트하는 탐색 버튼 이름 변경 후 새 이름의 버튼 클릭
                  */
                 const path = join(devSite.kitRoot, "src/component/widget/sidebar/wg-sidebar.tsx");
 
                 await writeFile(path, (await readFile(path, "utf8")).replace("aria-label={copy_nav_open}", 'aria-label="Updated navigation"'));
+                await page.getByRole("button", {name: "Updated navigation", exact: true}).click();
 
                 /**
                  * THEN
                  * 새 버튼으로 드로어 열기 성공
                  */
-                await page.getByRole("button", {name: "Updated navigation", exact: true}).click();
                 await expect(page.getByRole("dialog", {name: "Navigation", exact: true})).toBeVisible();
                 expect(errors).toStrictEqual([]);
             });

@@ -54,7 +54,7 @@ describe("크롤러 파일", () => {
 
             /**
              * WHEN
-             * 페이지와 크롤러 응답 생성
+             * 페이지와 크롤러 응답 생성, 개발 중 문서 삭제 후 사이트맵 재요청
              */
             const docs = await readDocs({scope, processor: toProcessor({site, scope})});
             const store = {docs};
@@ -63,13 +63,19 @@ describe("크롤러 파일", () => {
             const robots = await app.request("/robots.txt");
             const sitemap = await app.request("/sitemap.xml");
             const xml = await sitemap.text();
+            const guide = await app.request("/guide/");
+            const nestedGuide = await app.request(`/guide/${encodeURIComponent("한국어 & tools")}/`);
+
+            store.docs = [];
+
+            const updated = await (await app.request("/sitemap.xml")).text();
 
             /**
              * THEN
-             * 일반 문서 경로와 한글 인코딩한 사이트맵 주소 유지
+             * 일반 문서 경로와 한글 인코딩한 사이트맵 주소 유지, 문서 삭제 뒤 홈 주소만 남은 사이트맵
              */
-            expect((await app.request("/guide/")).status, "crawler routes must preserve ordinary document routes").toBe(200);
-            expect((await app.request(`/guide/${encodeURIComponent("한국어 & tools")}/`)).status, "crawler routes must preserve nested document routes").toBe(200);
+            expect(guide.status, "crawler routes must preserve ordinary document routes").toBe(200);
+            expect(nestedGuide.status, "crawler routes must preserve nested document routes").toBe(200);
             expect(robots.status).toBe(200);
             expect(String(robots.headers.get("content-type"))).toMatch(/^text\/plain/);
             expect(await robots.text()).toBe("User-agent: *\nAllow: /\n\nSitemap: https://docs.example.org/sitemap.xml\n");
@@ -81,19 +87,6 @@ describe("크롤러 파일", () => {
             expect(xml).toContain(`<loc>https://docs.example.org/guide/${encodeURIComponent("한국어 & tools")}/</loc>`);
             expect([...xml.matchAll(/<loc>/g)].length).toBe(3);
             expect(xml).not.toMatch(/<lastmod>|<changefreq>|<priority>|robots\.txt|sitemap\.xml|_fh|#read/);
-
-            /**
-             * WHEN
-             * 개발 중 문서 삭제 후 사이트맵 재요청
-             */
-            store.docs = [];
-
-            const updated = await (await app.request("/sitemap.xml")).text();
-
-            /**
-             * THEN
-             * 홈 주소만 유지
-             */
             expect([...updated.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1])).toStrictEqual(["https://docs.example.org/"]);
         });
     });

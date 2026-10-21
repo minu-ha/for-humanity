@@ -21,6 +21,11 @@ test.describe("페이지 셸", () => {
 
             test(`[${scenario.caseId}] JavaScript 없이 제목과 설명을 원문으로 표시하고 스타일을 적용한다`, {tag: "@high"}, async ({page, devSite}) => {
                 /**
+                 * GIVEN
+                 * 태그와 엔티티 모양의 제목과 설명을 설정한 사이트, 스크립트를 끈 브라우저
+                 */
+
+                /**
                  * WHEN
                  * 서버가 만든 HTML을 브라우저로 파싱
                  */

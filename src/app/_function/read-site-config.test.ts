@@ -7,8 +7,13 @@ import {readSiteConfig} from "@/app/_function/read-site-config";
 describe("설정 파일 조회", () => {
     test("파일이 없으면 기본 설정을 반환한다", async ({root}) => {
         /**
+         * GIVEN
+         * 설정 파일이 없는 빈 문서 루트
+         */
+
+        /**
          * WHEN
-         * 빈 문서 루트의 설정 조회
+         * 설정 조회
          */
         const result = await readSiteConfig(root);
 

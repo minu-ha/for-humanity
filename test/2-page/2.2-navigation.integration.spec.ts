@@ -64,6 +64,11 @@ test.describe("문서 탐색", () => {
             for (let cycle = 0; cycle < 3; cycle++) {
                 await test.step(`${cycle + 1}번째 마운트에서 생성한 자원을 해제한다`, async () => {
                     /**
+                     * GIVEN
+                     * 셸이 없는 갤러리 페이지
+                     */
+
+                    /**
                      * WHEN
                      * 셸 마운트와 앵커 강조 후 해제
                      */
@@ -96,8 +101,16 @@ test.describe("문서 탐색", () => {
             }
 
             await test.step("첫 프레임 전에 해제하면 늦은 구독을 설치하지 않는다", async () => {
+                /**
+                 * GIVEN
+                 * 지금까지 설치한 구독 수를 기록한 갤러리 페이지
+                 */
                 const start = await page.evaluate(() => window.shellListeners.length);
 
+                /**
+                 * WHEN
+                 * 첫 프레임 전의 마운트와 해제 후 두 프레임 대기
+                 */
                 await page.evaluate(() => {
                     window.shellFixture.mount();
                     window.shellFixture.unmount();
@@ -105,10 +118,13 @@ test.describe("문서 탐색", () => {
 
                 await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
 
+                /**
+                 * THEN
+                 * 늦게 설치한 구독 없음, 모든 단계의 페이지 오류 없음
+                 */
                 expect(await readActiveListeners(start), "an unmount before the first frame must not leave late listeners").toStrictEqual([]);
+                expect(errors).toStrictEqual([]);
             });
-
-            expect(errors).toStrictEqual([]);
         });
     });
 });

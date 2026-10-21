@@ -4,12 +4,16 @@ import {docDataSchema} from "@/type/doc-data";
 describe("문서 메타", () => {
     test("묶음 이름은 공백을 정리하고 문장부호를 보존한다", () => {
         /**
+         * GIVEN
+         * 앞뒤 공백이 있는 단일 이름과 중첩 경로, 문장부호가 있는 이름
+         */
+        const groups = [" Guide ", [" Projects ", "Example project", "Research"], "Research, decisions / notes"];
+
+        /**
          * WHEN
          * 단일 이름과 중첩 경로의 정규화
          */
-        const result = [" Guide ", [" Projects ", "Example project", "Research"], "Research, decisions / notes"].map(
-            (group) => docDataSchema.parse({name: "Guide", label: "Guide", group}).group,
-        );
+        const result = groups.map((group) => docDataSchema.parse({name: "Guide", label: "Guide", group}).group);
 
         /**
          * THEN
@@ -20,8 +24,13 @@ describe("문서 메타", () => {
 
     test.each(["", " ", [], ["Projects", " "], ["Projects", 1], [["Projects"]], null].map((group) => ({group})))("잘못된 묶음 $group 입력은 거부한다", (scenario) => {
         /**
+         * GIVEN
+         * 빈 값이나 문자열이 아닌 값이 섞인 묶음
+         */
+
+        /**
          * WHEN
-         * 잘못된 묶음 입력의 검증
+         * 문서 메타 검증
          */
         const result = docDataSchema.safeParse({name: "Guide", label: "Guide", group: scenario.group});
 
@@ -54,8 +63,13 @@ describe("문서 메타", () => {
 
     test.each(["", " ", null, 1, [], ["guide"]].map((parent) => ({parent})))("잘못된 부모 $parent 입력은 거부한다", (scenario) => {
         /**
+         * GIVEN
+         * 빈 값이나 문자열이 아닌 부모
+         */
+
+        /**
          * WHEN
-         * 잘못된 부모 입력의 검증
+         * 문서 메타 검증
          */
         const result = docDataSchema.safeParse({name: "Child", label: "Child", group: "Guide", parent: scenario.parent});
 

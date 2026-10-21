@@ -56,8 +56,13 @@ describe("다이어그램", () => {
 
         test("자원 폴더가 없어도 빌드 안내가 포함된 오류가 발생한다", ({root}) => {
             /**
+             * GIVEN
+             * 자원 폴더가 없는 빌드 전 패키지
+             */
+
+            /**
              * WHEN
-             * 빌드 전 패키지의 자원 조회
+             * 패키지 자원 조회
              */
             const result = () => {
                 return loadMermaidAssets(root);

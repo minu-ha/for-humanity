@@ -52,65 +52,88 @@ test.describe("문서 탐색", () => {
             test(`[${layout.caseId}] 화면 크기와 표시 환경에 맞는 탐색을 제공한다`, {tag: "@high"}, async ({page}) => {
                 /**
                  * GIVEN
-                 * 화면 크기와 시스템 표시 환경
+                 * 화면 크기와 시스템 표시 환경, 페이지 오류 기록
                  */
                 const errors: string[] = [];
+                const documents = page.locator('[data-sidebar-scroll="documents"]');
+                const hasDrawer = layout.options.viewport.width < 1024 && layout.options.javaScriptEnabled !== false;
 
                 page.on("pageerror", (error) => errors.push(error.message));
 
-                /**
-                 * WHEN
-                 * 문서 조회와 모바일 탐색 공개
-                 */
-                await page.goto("/guide/");
+                await test.step("문서를 열면 화면 크기와 표시 환경에 맞게 탐색을 배치한다", async () => {
+                    /**
+                     * GIVEN
+                     * 문서를 열기 전의 빈 페이지
+                     */
 
-                const hasDrawer = layout.options.viewport.width < 1024 && layout.options.javaScriptEnabled !== false;
-
-                if (hasDrawer) {
-                    await page.getByRole("button", {name: "Open navigation", exact: true}).click();
-                    expect(await page.getByRole("dialog", {name: "Navigation", exact: true}).evaluate((element) => element.matches(":modal"))).toBe(true);
-                }
-
-                /**
-                 * THEN
-                 * 수평 넘침 없는 문서와 화면별 탐색 배치
-                 */
-                expect(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)).toBe(false);
-                await expect(page.getByRole("navigation", {name: "On this page", exact: true})).toBeVisible({visible: layout.options.viewport.width >= 1360});
-
-                const documents = page.locator('[data-sidebar-scroll="documents"]');
-
-                if (layout.options.javaScriptEnabled === false) {
-                    await expect(page.getByRole("link", {name: "Child", exact: true})).toBeVisible();
-                    expect(await documents.evaluate((element) => getComputedStyle(element).scrollbarWidth)).not.toBe("none");
-                } else {
-                    if (layout.options.viewport.width >= 1360) {
-                        const width = await documents.evaluate((element) => element.getBoundingClientRect().width);
-                        const outlineWidth = await page.locator('[data-sidebar-scroll="outline"]').evaluate((element) => element.getBoundingClientRect().width);
-
-                        expect(width).toBe(200);
-                        expect(outlineWidth).toBe(width);
-
-                        // 본문은 1920px 페이지 안에서 양쪽 바깥 여백 28px, 사이드바 200px, 간격 32px을 뺀 나머지 전체
-                        const fill = await page.evaluate(() => Math.min(document.documentElement.getBoundingClientRect().width, 1920) - (28 + 200 + 32) * 2);
-
-                        expect(await page.getByRole("main").evaluate((element) => element.getBoundingClientRect().width)).toBe(fill);
-                    }
-
-                    if (layout.options.forcedColors === "active") {
-                        expect(await documents.evaluate((element) => getComputedStyle(element).scrollbarWidth)).toBe("thin");
-                    }
+                    /**
+                     * WHEN
+                     * 문서 조회와 모바일 탐색 공개
+                     */
+                    await page.goto("/guide/");
 
                     if (hasDrawer) {
-                        await test.step("Escape로 닫으면 탐색 열기 버튼으로 포커스가 복귀한다", async () => {
-                            await page.keyboard.press("Escape");
-                            await expect(page.getByRole("dialog", {name: "Navigation", exact: true})).toBeHidden();
-                            await expect(page.getByRole("button", {name: "Open navigation", exact: true})).toBeFocused();
-                        });
+                        await page.getByRole("button", {name: "Open navigation", exact: true}).click();
                     }
-                }
 
-                expect(errors).toStrictEqual([]);
+                    /**
+                     * THEN
+                     * 수평 넘침 없는 문서와 화면별 탐색 배치
+                     */
+                    if (hasDrawer) {
+                        expect(await page.getByRole("dialog", {name: "Navigation", exact: true}).evaluate((element) => element.matches(":modal"))).toBe(true);
+                    }
+
+                    expect(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)).toBe(false);
+                    await expect(page.getByRole("navigation", {name: "On this page", exact: true})).toBeVisible({visible: layout.options.viewport.width >= 1360});
+
+                    if (layout.options.javaScriptEnabled === false) {
+                        await expect(page.getByRole("link", {name: "Child", exact: true})).toBeVisible();
+                        expect(await documents.evaluate((element) => getComputedStyle(element).scrollbarWidth)).not.toBe("none");
+                    } else {
+                        if (layout.options.viewport.width >= 1360) {
+                            expect(await documents.evaluate((element) => element.getBoundingClientRect().width)).toBe(200);
+
+                            expect(await page.locator('[data-sidebar-scroll="outline"]').evaluate((element) => element.getBoundingClientRect().width)).toBe(
+                                await documents.evaluate((element) => element.getBoundingClientRect().width),
+                            );
+
+                            // 본문은 1920px 페이지 안에서 양쪽 바깥 여백 28px, 사이드바 200px, 간격 32px을 뺀 나머지 전체
+                            expect(await page.getByRole("main").evaluate((element) => element.getBoundingClientRect().width)).toBe(
+                                await page.evaluate(() => Math.min(document.documentElement.getBoundingClientRect().width, 1920) - (28 + 200 + 32) * 2),
+                            );
+                        }
+
+                        if (layout.options.forcedColors === "active") {
+                            expect(await documents.evaluate((element) => getComputedStyle(element).scrollbarWidth)).toBe("thin");
+                        }
+                    }
+
+                    expect(errors).toStrictEqual([]);
+                });
+
+                if (hasDrawer) {
+                    await test.step("Escape로 닫으면 탐색 열기 버튼으로 포커스가 복귀한다", async () => {
+                        /**
+                         * GIVEN
+                         * 모달로 연 탐색 대화상자
+                         */
+
+                        /**
+                         * WHEN
+                         * Escape 입력
+                         */
+                        await page.keyboard.press("Escape");
+
+                        /**
+                         * THEN
+                         * 닫힌 대화상자와 탐색 열기 버튼의 포커스
+                         */
+                        await expect(page.getByRole("dialog", {name: "Navigation", exact: true})).toBeHidden();
+                        await expect(page.getByRole("button", {name: "Open navigation", exact: true})).toBeFocused();
+                        expect(errors).toStrictEqual([]);
+                    });
+                }
             });
         });
     }
@@ -146,6 +169,11 @@ test.describe("문서 탐색", () => {
             const roundingTolerance = 1;
 
             await test.step("새로고침 첫 프레임부터 저장한 두 위치가 복원된다", async () => {
+                /**
+                 * GIVEN
+                 * 처음 연 와이드 배치의 문서
+                 */
+
                 /**
                  * WHEN
                  * 두 탐색 영역 스크롤 후 새로고침
@@ -203,31 +231,68 @@ test.describe("문서 탐색", () => {
                  */
                 await expect(cursor).toHaveCSS("visibility", "visible");
 
-                const frames = await page.evaluate(() => window.navigationFrames);
-
-                for (const frame of frames) {
+                for (const frame of await page.evaluate(() => window.navigationFrames)) {
                     expect(Math.abs(frame.documents - 200)).toBeLessThanOrEqual(roundingTolerance);
                     expect(Math.abs(frame.outline - 250)).toBeLessThanOrEqual(roundingTolerance);
                 }
             });
 
-            await test.step("다른 문서는 목차만 초기화하고 해시의 하위 제목을 선택한다", async () => {
+            await test.step("다른 문서로 이동하면 목차 위치만 초기화한다", async () => {
+                /**
+                 * GIVEN
+                 * 두 탐색 영역의 위치를 복원한 문서
+                 */
+
+                /**
+                 * WHEN
+                 * 다른 문서로 이동
+                 */
                 await page.goto("/page-1/");
+
+                /**
+                 * THEN
+                 * 문서 목록 위치 유지, 목차 위치 초기화
+                 */
                 expect(Math.abs((await documents.evaluate((element) => element.scrollTop)) - 200)).toBeLessThanOrEqual(roundingTolerance);
                 await expect(outline).toHaveJSProperty("scrollTop", 0);
+            });
+
+            await test.step("해시로 문서를 열면 해시의 하위 제목을 선택한다", async () => {
+                /**
+                 * GIVEN
+                 * 목차 위치를 초기화한 다른 문서
+                 */
+
+                /**
+                 * WHEN
+                 * 하위 제목 해시가 있는 주소로 이동
+                 */
                 await page.goto("/guide/#detail-10");
+
+                /**
+                 * THEN
+                 * 해시의 하위 제목 하나만 현재 위치, 상위 절의 현재 위치 표시 없음
+                 */
                 await expect(page.locator('[aria-current="location"]')).toHaveAttribute("href", "#detail-10");
                 await expect(page.locator('[aria-current="location"]')).toHaveCount(1);
                 await expect(page.locator('a[href="#section-10"]')).not.toHaveAttribute("aria-current");
             });
 
             await test.step("배치를 전환해도 독립 스크롤, 포커스, 본문을 유지한다", async () => {
+                /**
+                 * GIVEN
+                 * 접힌 제목으로 이동해 내용을 공개한 와이드 배치의 문서
+                 */
                 await page.getByRole("link", {name: "Hidden detail", exact: true}).click();
                 await expect(details).toHaveJSProperty("open", true);
                 await expect(hiddenHeading).toHaveClass(/wg_article__headingText--highlighted/);
 
                 const body = await page.getByRole("main").elementHandle();
 
+                /**
+                 * WHEN
+                 * 데스크톱과 드로어 배치에서 각각 스크롤하고 포커스한 뒤 데스크톱 배치로 복귀
+                 */
                 await page.setViewportSize({width: 1280, height: 600});
                 await expect(navigation).toHaveAttribute("data-sidebar-layout", "desktop");
 
@@ -255,6 +320,11 @@ test.describe("문서 탐색", () => {
                 await focused.focus();
                 await page.setViewportSize({width: 1280, height: 600});
                 await expect(navigation).toHaveAttribute("data-sidebar-layout", "desktop");
+
+                /**
+                 * THEN
+                 * 데스크톱 배치의 포커스와 스크롤 위치 복원, 닫힌 드로어, 본문 요소 유지
+                 */
                 await expect(focused).toBeFocused();
                 await expect(documents).toHaveJSProperty("scrollTop", desktopPosition);
                 await expect(page.getByRole("dialog", {name: "Navigation", exact: true})).toBeHidden();
@@ -262,18 +332,31 @@ test.describe("문서 탐색", () => {
             });
 
             await test.step("접힌 제목으로 이동하면 내용을 공개하고 강조를 정리한다", async () => {
+                /**
+                 * GIVEN
+                 * 와이드 배치로 돌아와 다시 접은 내용
+                 */
                 await page.setViewportSize({width: 1920, height: 600});
                 await expect(navigation).toHaveAttribute("data-sidebar-layout", "wide");
                 await page.getByText("Folded context", {exact: true}).click();
                 await expect(details).toHaveJSProperty("open", false);
+
+                /**
+                 * WHEN
+                 * 목차 링크로 접힌 제목 이동
+                 */
                 await page.getByRole("link", {name: "Hidden detail", exact: true}).click();
+
+                /**
+                 * THEN
+                 * 내용 공개와 강조 정리, 모든 단계의 외부 스크립트 요청과 페이지 오류 없음
+                 */
                 await expect(details).toHaveJSProperty("open", true);
                 await expect(hiddenHeading).toHaveClass(/wg_article__headingText--highlighted/);
                 await expect(hiddenHeading).not.toHaveClass(/wg_article__headingText--highlighted/);
+                expect(scriptRequests, "one inline entry must provide every browser behavior").toStrictEqual([]);
+                expect(errors).toStrictEqual([]);
             });
-
-            expect(scriptRequests, "one inline entry must provide every browser behavior").toStrictEqual([]);
-            expect(errors).toStrictEqual([]);
         });
     });
 
@@ -282,8 +365,13 @@ test.describe("문서 탐색", () => {
 
         test("[NAV-011] 움직임 줄이기 설정에서는 커서 장식을 숨긴다", {tag: "@mid"}, async ({page}) => {
             /**
+             * GIVEN
+             * 움직임 줄이기를 켠 브라우저
+             */
+
+            /**
              * WHEN
-             * 움직임 줄이기 환경에서 커서 이동
+             * 문서 조회와 커서 이동
              */
             await page.goto("/guide/");
             await page.mouse.move(500, 200);
@@ -429,6 +517,11 @@ test.describe("문서 탐색", () => {
 
             await test.step("마지막 화면을 내려가면 남은 제목을 차례로 표시한다", async () => {
                 /**
+                 * GIVEN
+                 * 맨 위에서 연 문서
+                 */
+
+                /**
                  * WHEN
                  * 마지막 화면을 작은 간격으로 스크롤
                  */
@@ -445,12 +538,12 @@ test.describe("문서 탐색", () => {
                     }
                 }
 
+                const indexes = seen.map((href) => order.indexOf(href));
+
                 /**
                  * THEN
                  * 목차 순서의 연속 변경, 접힌 제목을 제외한 마지막 제목에서 종료
                  */
-                const indexes = seen.map((href) => order.indexOf(href));
-
                 expect(indexes).toStrictEqual(indexes.map((_index, step) => indexes[0] + step));
                 expect(seen.at(-1)).toBe("#detail-23");
             });
@@ -483,7 +576,7 @@ test.describe("문서 탐색", () => {
 
                 /**
                  * WHEN
-                 * 읽는 선에 닿지 못하는 끝 절 제목의 실제 클릭, 도착 후 짧은 스크롤
+                 * 읽는 선에 닿지 못하는 끝 절 제목의 실제 클릭
                  */
                 await page.getByRole("link", {name: "Section 23", exact: true}).hover();
                 await page.mouse.down();
@@ -494,7 +587,7 @@ test.describe("문서 탐색", () => {
 
                 /**
                  * THEN
-                 * 제목이 읽는 선에 도착, 누른 제목으로 한 번만 변경, 스크롤 후에도 도착한 제목 유지
+                 * 제목이 읽는 선에 도착, 누른 제목으로 한 번만 변경
                  */
                 await expect
                     .poll(() => {
@@ -505,8 +598,25 @@ test.describe("문서 탐색", () => {
                     .toBeLessThanOrEqual(1);
 
                 await expect.poll(() => page.evaluate(() => window.tocChanges)).toStrictEqual(["#section-23"]);
+            });
+
+            await test.step("끝 절 제목에 도착한 뒤 짧게 스크롤해도 목차는 그 제목을 유지한다", async () => {
+                /**
+                 * GIVEN
+                 * 끝 절 제목에 도착한 문서
+                 */
+
+                /**
+                 * WHEN
+                 * 본문 위 짧은 휠 스크롤
+                 */
                 await page.mouse.move(800, 300);
                 await page.mouse.wheel(0, 10);
+
+                /**
+                 * THEN
+                 * 도착한 제목 유지
+                 */
                 await expect(current).toHaveAttribute("href", "#section-23");
             });
         });
@@ -552,28 +662,52 @@ test.describe("문서 탐색", () => {
                 requestAnimationFrame(sample);
             });
 
-            /**
-             * WHEN
-             * 같은 주소 새로고침
-             */
-            await page.reload();
-            await page.waitForFunction(() => window.readingFrames.length >= 45);
+            await test.step("같은 주소를 새로고침하면 한 위치를 유지하고 앵커를 강조하지 않는다", async () => {
+                /**
+                 * GIVEN
+                 * 다음 새로고침부터 프레임별 위치를 기록할 문서
+                 */
 
-            /**
-             * THEN
-             * 문서 표시 후 위치 변경 없음, 앵커 도착 강조 없음, 첫 입력 전 즉시 스크롤
-             *
-             *   - 제약: 이전 위치와 앵커 중 복원 대상은 Chromium의 탐색 상태 저장 시점이 결정
-             */
-            const frames = await page.evaluate(() => window.readingFrames);
+                /**
+                 * WHEN
+                 * 같은 주소 새로고침
+                 */
+                await page.reload();
+                await page.waitForFunction(() => window.readingFrames.length >= 45);
 
-            expect(new Set(frames.filter((position) => position !== 0)).size).toBe(1);
+                const frames = await page.evaluate(() => window.readingFrames);
 
-            // 강조 유지 시간 종료 전의 즉시 조회
-            expect(await page.locator(".wg_article__headingText--highlighted").count()).toBe(0);
-            await expect(page.locator("html")).toHaveCSS("scroll-behavior", "auto");
-            await page.mouse.wheel(0, 100);
-            await expect(page.locator("html")).toHaveCSS("scroll-behavior", "smooth");
+                /**
+                 * THEN
+                 * 문서 표시 후 위치 변경 없음, 앵커 도착 강조 없음, 첫 입력 전 즉시 스크롤
+                 *
+                 *   - 제약: 이전 위치와 앵커 중 복원 대상은 Chromium의 탐색 상태 저장 시점이 결정
+                 */
+                expect(new Set(frames.filter((position) => position !== 0)).size).toBe(1);
+
+                // 강조 유지 시간 종료 전의 즉시 조회
+                expect(await page.locator(".wg_article__headingText--highlighted").count()).toBe(0);
+                await expect(page.locator("html")).toHaveCSS("scroll-behavior", "auto");
+            });
+
+            await test.step("새로고침 뒤 휠을 굴리면 부드러운 스크롤로 돌아간다", async () => {
+                /**
+                 * GIVEN
+                 * 즉시 스크롤 상태로 새로고침한 문서
+                 */
+
+                /**
+                 * WHEN
+                 * 본문 휠 입력
+                 */
+                await page.mouse.wheel(0, 100);
+
+                /**
+                 * THEN
+                 * 부드러운 스크롤 복귀
+                 */
+                await expect(page.locator("html")).toHaveCSS("scroll-behavior", "smooth");
+            });
         });
     });
 
@@ -664,8 +798,13 @@ test.describe("문서 탐색", () => {
 
         test("[NAV-019] 스크립트 연결 전 문서 스크롤은 즉시 이동한다", {tag: "@mid"}, async ({page}) => {
             /**
+             * GIVEN
+             * 스크립트를 끈 브라우저
+             */
+
+            /**
              * WHEN
-             * 스크립트 없이 문서 조회
+             * 문서 조회
              */
             await page.goto("/guide/");
 

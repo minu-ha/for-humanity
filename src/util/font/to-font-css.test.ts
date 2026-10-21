@@ -9,8 +9,13 @@ import {toFontCss} from "@/util/font/to-font-css";
 describe("글꼴 자원", () => {
     test.for([font_mono_css, font_body_css, font_brand_css])("내장 글꼴 %s는 늦은 글꼴 교체를 방지한다", (css) => {
         /**
+         * GIVEN
+         * 패키지에 내장한 글꼴 CSS
+         */
+
+        /**
          * WHEN
-         * 내장 글꼴의 공개 CSS 생성
+         * 공개 CSS 생성
          */
         const result = toFontCss({css: join(process.cwd(), css), fontDir: asset_font_dir});
 

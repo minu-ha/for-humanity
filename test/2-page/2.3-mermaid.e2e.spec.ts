@@ -13,6 +13,11 @@ test.describe("다이어그램", () => {
                  * GIVEN
                  * 실제 CLI로 빌드한 다이어그램 문서
                  */
+
+                /**
+                 * WHEN
+                 * 다이어그램 문서 조회
+                 */
                 await page.goto(`/${diagram.id}/`);
 
                 /**
@@ -34,7 +39,12 @@ test.describe("다이어그램", () => {
         test("[MRM-009] 다이어그램이 없는 페이지는 모듈을 요청하지 않는다", {tag: "@high"}, async ({page, runtime}) => {
             /**
              * GIVEN
-             * 일반 문서 홈
+             * 다이어그램이 없는 일반 문서 홈
+             */
+
+            /**
+             * WHEN
+             * 홈 조회와 표시 대기
              */
             await page.goto("/");
             await expect(page.getByRole("heading", {name: "Home", exact: true})).toBeVisible();
@@ -73,7 +83,12 @@ test.describe("다이어그램", () => {
         test("[MRM-011] 다이어그램 렌더 후에도 직접 연 제목의 위치가 유지된다", {tag: "@high"}, async ({page}) => {
             /**
              * GIVEN
-             * 여러 다이어그램 아래 제목으로 진입한 문서
+             * 여러 다이어그램 아래에 제목이 있는 문서
+             */
+
+            /**
+             * WHEN
+             * 제목 해시로 문서 진입과 다이어그램 렌더 대기
              */
             await page.goto("/guide/#diagram-7");
             await expect(page.locator('[data-mermaid-status="rendered"]')).toHaveCount(diagram_cases.length);
@@ -119,9 +134,14 @@ test.describe("다이어그램", () => {
         test("[MRM-012] 모바일 문서에 가로 스크롤이 생기지 않는다", {tag: "@mid"}, async ({page}) => {
             /**
              * GIVEN
-             * 모바일 크기로 연 다이어그램 문서
+             * 모바일 크기의 화면
              */
             await page.setViewportSize({width: 390, height: 844});
+
+            /**
+             * WHEN
+             * 다이어그램 문서 조회와 렌더 대기
+             */
             await page.goto("/guide/");
             await expect(page.locator('[data-mermaid-status="rendered"]')).toHaveCount(diagram_cases.length);
 
@@ -136,6 +156,11 @@ test.describe("다이어그램", () => {
             /**
              * GIVEN
              * 여러 공식 문법을 함께 표시하는 문서
+             */
+
+            /**
+             * WHEN
+             * 문서 조회와 다이어그램 렌더 대기
              */
             await page.goto("/guide/");
             await expect(page.locator('[data-mermaid-status="rendered"]')).toHaveCount(diagram_cases.length);
@@ -154,9 +179,14 @@ test.describe("다이어그램", () => {
         test("[MRM-014] 모듈 수신에 실패하면 안내와 원문을 표시한다", {tag: ["@high", "@negative"]}, async ({page}) => {
             /**
              * GIVEN
-             * 모듈 요청이 실패하는 문서
+             * 다이어그램 모듈 요청이 실패하는 브라우저
              */
             await page.route("**/_fh/mermaid/**", (route) => route.abort());
+
+            /**
+             * WHEN
+             * 다이어그램 문서 조회
+             */
             await page.goto("/flowchart/");
 
             /**
@@ -172,7 +202,12 @@ test.describe("다이어그램", () => {
         test("[MRM-015] 잘못된 문법과 길이 초과는 다른 다이어그램의 표시를 막지 않는다", {tag: ["@high", "@negative"]}, async ({page, runtime}) => {
             /**
              * GIVEN
-             * 잘못된 문법, 정상 다이어그램, 길이 초과 원문
+             * 잘못된 문법, 정상 다이어그램, 길이 초과 원문이 있는 문서
+             */
+
+            /**
+             * WHEN
+             * 문서 조회
              */
             await page.goto("/error/");
 
@@ -198,7 +233,12 @@ test.describe("다이어그램", () => {
         test("[MRM-016] 스크립트를 비활성화해도 원문을 읽을 수 있다", {tag: "@high"}, async ({page}) => {
             /**
              * GIVEN
-             * 스크립트 없이 연 다이어그램 문서
+             * 스크립트를 끈 브라우저
+             */
+
+            /**
+             * WHEN
+             * 다이어그램 문서 조회
              */
             await page.goto("/flowchart/");
 

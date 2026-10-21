@@ -79,6 +79,11 @@ describe("릴리스 산출물", () => {
 
     test("태그의 변경 기록과 설치 안내만 릴리스 노트로 생성한다", async ({root}) => {
         /**
+         * GIVEN
+         * 두 버전의 변경 기록, 현재 버전 설치 안내, npm 패키지 보고서를 둔 임시 루트
+         */
+
+        /**
          * WHEN
          * 현재 패키지 버전의 릴리스 준비
          */
@@ -125,8 +130,13 @@ describe("릴리스 산출물", () => {
         {tag: "v0.1.1-beta.1", error: /stable version tag/},
     ])("공개할 수 없는 태그 $tag 입력은 거부한다", async (scenario, {root}) => {
         /**
+         * GIVEN
+         * 패키지 버전과 다르거나 정식 버전이 아닌 태그
+         */
+
+        /**
          * WHEN
-         * 잘못된 태그의 릴리스 준비
+         * 릴리스 준비
          */
         const result = runRelease({root, tag: scenario.tag});
 

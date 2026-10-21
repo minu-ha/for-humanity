@@ -74,18 +74,63 @@ test.describe("다이어그램", () => {
             await page.evaluate(() => window.diagramFixture.mount());
             await expect(page.locator('[data-mermaid-status="rendered"]')).toHaveCount(diagram_cases.length);
 
-            await test.step("노드를 가리키면 툴팁이 표시되고 벗어나면 숨겨진다", async () => {
+            await test.step("노드를 가리키면 툴팁이 표시된다", async () => {
+                /**
+                 * GIVEN
+                 * 포인터를 올리기 전의 다이어그램 노드
+                 */
+
+                /**
+                 * WHEN
+                 * 첫 다이어그램 노드로 포인터 이동
+                 */
                 await page.locator(".wg_mermaid__result").first().locator(".node").first().hover();
+
+                /**
+                 * THEN
+                 * 노드의 툴팁 표시
+                 */
                 await expect(page.locator(".mermaidTooltip")).toHaveText("Tooltip text");
                 await expect(page.locator(".mermaidTooltip")).not.toHaveCSS("opacity", "0");
+            });
+
+            await test.step("노드에서 벗어나면 툴팁이 숨겨진다", async () => {
+                /**
+                 * GIVEN
+                 * 툴팁을 표시한 다이어그램 노드
+                 */
+
+                /**
+                 * WHEN
+                 * 노드 밖 제목으로 포인터 이동
+                 */
                 await page.getByRole("heading", {name: "Guide", exact: true}).hover();
+
+                /**
+                 * THEN
+                 * 툴팁 미표시
+                 */
                 await expect(page.locator(".mermaidTooltip")).toBeHidden();
             });
 
             await test.step("접힌 다이어그램을 열어도 기존 툴팁이 다시 표시된다", async () => {
+                /**
+                 * GIVEN
+                 * 툴팁이 숨겨진 다이어그램과 닫힌 Details
+                 */
+
+                /**
+                 * WHEN
+                 * 접힌 다이어그램 공개와 렌더 대기 뒤 기존 노드로 포인터 이동
+                 */
                 await page.getByText("Hidden diagram", {exact: true}).click();
                 await expect(page.locator('[data-mermaid-status="rendered"]')).toHaveCount(diagram_cases.length + 1);
                 await page.locator(".wg_mermaid__result").first().locator(".node").first().hover();
+
+                /**
+                 * THEN
+                 * 기존 노드의 툴팁 다시 표시
+                 */
                 await expect(page.locator(".mermaidTooltip")).toHaveText("Tooltip text");
                 await expect(page.locator(".mermaidTooltip")).not.toHaveCSS("opacity", "0");
             });
@@ -133,43 +178,84 @@ test.describe("다이어그램", () => {
             await page.evaluate(() => window.diagramFixture.mount());
             await expect.poll(() => page.evaluate(() => window.diagramRender.waiting)).toBe(true);
 
-            /**
-             * WHEN
-             * 이전 응답 전에 해제하고 다시 마운트한 뒤 지연 응답 완료
-             */
             try {
-                await page.evaluate(() => {
-                    window.diagramFixture.unmount();
-                    window.diagramFixture.mount();
+                await test.step("지연 응답 전에 다시 마운트하면 늦은 결과가 새 SVG를 덮지 않는다", async () => {
+                    /**
+                     * GIVEN
+                     * 첫 렌더 응답을 기다리는 위젯
+                     */
+
+                    /**
+                     * WHEN
+                     * 이전 응답 전에 해제하고 다시 마운트한 뒤 지연 응답 완료
+                     */
+                    await page.evaluate(() => {
+                        window.diagramFixture.unmount();
+                        window.diagramFixture.mount();
+                    });
+
+                    await expect(page.locator('[data-mermaid-status="rendered"]')).toHaveCount(diagram_cases.length);
+
+                    const currentId = await page.locator(".wg_mermaid__result svg").first().getAttribute("id");
+
+                    if (currentId === null) {
+                        throw new Error("새 SVG의 식별자가 없습니다");
+                    }
+
+                    await page.evaluate(() => window.diagramRender.release());
+
+                    await page.evaluate(async () => {
+                        await window.diagramRender.completion;
+                        await new Promise(requestAnimationFrame);
+                    });
+
+                    /**
+                     * THEN
+                     * 새 위젯의 다이어그램 유지, 이전 측정 영역 제거
+                     */
+                    await expect(page.locator(".wg_mermaid__result svg").first()).toHaveAttribute("id", currentId);
+                    await expect(page.locator('[data-mermaid-status="rendered"]')).toHaveCount(diagram_cases.length);
+                    await expect(page.locator(".wg_mermaid__measurement")).toHaveCount(0);
                 });
 
-                await expect(page.locator('[data-mermaid-status="rendered"]')).toHaveCount(diagram_cases.length);
+                await test.step("다시 마운트한 위젯의 노드를 가리키면 툴팁이 표시된다", async () => {
+                    /**
+                     * GIVEN
+                     * 지연 응답 뒤에도 유지한 새 다이어그램
+                     */
 
-                const currentId = await page.locator(".wg_mermaid__result svg").first().getAttribute("id");
+                    /**
+                     * WHEN
+                     * 첫 다이어그램 노드로 포인터 이동
+                     */
+                    await page.locator(".wg_mermaid__result").first().locator(".node").first().hover();
 
-                if (currentId === null) {
-                    throw new Error("새 SVG의 식별자가 없습니다");
-                }
-
-                await page.evaluate(() => window.diagramRender.release());
-
-                await page.evaluate(async () => {
-                    await window.diagramRender.completion;
-                    await new Promise(requestAnimationFrame);
+                    /**
+                     * THEN
+                     * 새 위젯의 툴팁 표시
+                     */
+                    await expect(page.locator(".mermaidTooltip")).toHaveText("Tooltip text");
                 });
 
-                /**
-                 * THEN
-                 * 새 위젯의 다이어그램과 툴팁 유지, 이전 측정 영역 제거
-                 */
-                await expect(page.locator(".wg_mermaid__result svg").first()).toHaveAttribute("id", currentId);
-                await expect(page.locator('[data-mermaid-status="rendered"]')).toHaveCount(diagram_cases.length);
-                await expect(page.locator(".wg_mermaid__measurement")).toHaveCount(0);
-                await page.locator(".wg_mermaid__result").first().locator(".node").first().hover();
-                await expect(page.locator(".mermaidTooltip")).toHaveText("Tooltip text");
-                await page.evaluate(() => window.diagramFixture.unmount());
-                await expect(page.locator(".wg_mermaid__result svg")).toHaveCount(0);
-                await expect(page.locator(".mermaidTooltip")).toHaveCount(0);
+                await test.step("다시 마운트한 위젯을 해제하면 SVG와 툴팁을 정리한다", async () => {
+                    /**
+                     * GIVEN
+                     * 툴팁을 표시한 새 위젯
+                     */
+
+                    /**
+                     * WHEN
+                     * 위젯 해제
+                     */
+                    await page.evaluate(() => window.diagramFixture.unmount());
+
+                    /**
+                     * THEN
+                     * SVG와 툴팁 제거
+                     */
+                    await expect(page.locator(".wg_mermaid__result svg")).toHaveCount(0);
+                    await expect(page.locator(".mermaidTooltip")).toHaveCount(0);
+                });
             } finally {
                 await page.evaluate(() => window.diagramRender.release());
             }

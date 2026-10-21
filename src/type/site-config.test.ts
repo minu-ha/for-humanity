@@ -4,10 +4,16 @@ import {type SiteConfig, siteConfigSchema} from "@/type/site-config";
 describe("사이트 설정", () => {
     test("설정을 생략하면 기본 이름, 포트, 탐색 순서를 적용한다", () => {
         /**
-         * WHEN
-         * 빈 공개 설정의 검증
+         * GIVEN
+         * 빈 공개 설정
          */
-        const result = siteConfigSchema.parse({} satisfies SiteConfig);
+        const input = {} satisfies SiteConfig;
+
+        /**
+         * WHEN
+         * 공개 설정 검증
+         */
+        const result = siteConfigSchema.parse(input);
 
         /**
          * THEN
@@ -30,6 +36,11 @@ describe("사이트 설정", () => {
         {url: "https://docs.example.org/", expected: "https://docs.example.org"},
         {url: "http://localhost:4321", expected: "http://localhost:4321"},
     ])("공개 주소 $url 입력은 루트 주소로 정규화한다", (scenario) => {
+        /**
+         * GIVEN
+         * 끝 슬래시나 포트가 있는 공개 주소
+         */
+
         /**
          * WHEN
          * 공개 주소 검증
@@ -94,8 +105,13 @@ describe("사이트 설정", () => {
         {name: "지원하지 않는 상태", input: {status: [{phrase: "확인", kind: "unknown"}]}},
     ])("$name 입력은 거부한다", (scenario) => {
         /**
+         * GIVEN
+         * 범위를 벗어나거나 형식이 잘못된 외부 설정
+         */
+
+        /**
          * WHEN
-         * 잘못된 외부 설정 검증
+         * 외부 설정 검증
          */
         const result = siteConfigSchema.safeParse(scenario.input);
 
@@ -108,10 +124,16 @@ describe("사이트 설정", () => {
 
     test("문서 경로를 부분 지정하면 나머지는 기본 구조를 유지한다", () => {
         /**
-         * WHEN
-         * 일부 문서 경로만 지정한 설정 검증
+         * GIVEN
+         * 루트와 내부 폴더만 지정한 문서 경로
          */
-        const result = siteConfigSchema.parse({content: {root: "knowledge", private: "internal"}});
+        const input = {content: {root: "knowledge", private: "internal"}};
+
+        /**
+         * WHEN
+         * 문서 경로 설정 검증
+         */
+        const result = siteConfigSchema.parse(input);
 
         /**
          * THEN
@@ -136,6 +158,11 @@ describe("사이트 설정", () => {
         {private: "folder/.git"},
         {public: "guide?draft"},
     ])("문서 범위를 모호하게 만드는 경로 %j는 거부한다", (content) => {
+        /**
+         * GIVEN
+         * 모호하거나 허용 범위를 벗어난 문서 경로
+         */
+
         /**
          * WHEN
          * 문서 경로 설정 검증

@@ -146,7 +146,7 @@ describe("문서", () => {            // 바깥: 영역 이름
 
 ## GIVEN / WHEN / THEN
 
-테스트 하나는 시나리오 하나입니다. 세 구간을 블록 주석으로 나누고 주석 둘째 줄에 그 구간의 내용을 한글 명사구 한 줄로 적습니다.
+테스트 하나는 시나리오 하나입니다. 모든 테스트에 GIVEN, WHEN, THEN 블록 주석을 이 순서로 둡니다. 주석 둘째 줄에는 그 구간의 내용을 한글 명사구 한 줄로 적습니다.
 
 ```ts
 test("[MRM-010] 접힌 다이어그램을 열면 모듈을 요청하고 표시한다", {tag: "@high"}, async ({page}) => {
@@ -170,10 +170,45 @@ test("[MRM-010] 접힌 다이어그램을 열면 모듈을 요청하고 표시�
 });
 ```
 
-- GIVEN은 테스트 안에서 상태나 입력을 만들 때만 씁니다. 그려진 것만 보는 테스트는 WHEN과 THEN, 또는 GIVEN과 THEN만 둡니다.
+- GIVEN에는 시작 상태를 둡니다. 그려진 화면만 확인하는 테스트도 출발점인 fixture나 페이지를 GIVEN에, 그 화면을 여는 동작이나 조회를 WHEN에 둡니다. fixture, `beforeEach`, 반복 시나리오의 자료, 앞 step이 상태를 이미 만들었으면 GIVEN 블록에는 코드 없이 그 상태를 적은 주석만 둡니다.
+- THEN에는 `expect`만 둡니다. 동작은 WHEN에 둡니다. 확인한 뒤에 동작이 더 필요한 시나리오는 그 동작부터 다음 step으로 나눕니다.
+- 상태를 기다리거나 전제를 확인하는 `expect`는 GIVEN이나 WHEN에 둘 수 있습니다.
 - 함수 검사는 WHEN에서 결과를 상수에 담고 THEN에서 `expect`로 비교합니다. 값은 `toBe`, 구조는 `toStrictEqual`로 비교합니다.
-- THEN에는 `expect`만 둡니다.
-- 시나리오가 둘 이상이면 테스트를 나누거나 시나리오마다 `test.step("…")`으로 감쌉니다. step 이름에는 그 시나리오를 한 문장으로 적습니다. step 안에는 행동과 검증만 있으므로 구간 주석을 생략합니다.
+- 시나리오가 둘 이상이면 테스트를 나누거나 시나리오마다 `test.step("…")`으로 감쌉니다. step으로 나눈 테스트는 여러 step이 함께 쓰는 준비만 본문의 GIVEN에 둡니다. 동작과 확인은 step마다 GIVEN, WHEN, THEN으로 나눠 둡니다. step 이름에는 그 시나리오를 한 문장으로 적습니다.
+
+```ts
+test("[DEV-009] CSS 파일 추가와 삭제는 HTML의 스타일 목록에 반영된다", {tag: "@high"}, async ({page, devSite}) => {
+    /**
+     * GIVEN
+     * 소스 스타일 목록을 사용하는 개발 페이지
+     */
+    const path = join(devSite.kitRoot, "src/component/widget/shell/_wg-shell-test.css");
+
+    await page.goto("/");
+
+    await test.step("새 CSS 파일은 등록 설정 없이 적용한다", async () => {
+        /**
+         * GIVEN
+         * 테두리 스타일이 없는 본문
+         */
+
+        /**
+         * WHEN
+         * 기존 소유자 폴더에 스타일 파일 추가
+         */
+        await writeFile(path, ".wg_shell__main { outline: 2px solid rgb(4, 5, 6); }\n");
+
+        /**
+         * THEN
+         * 새 HTML의 스타일 목록과 실제 렌더에 파일 반영
+         */
+        await expect(page.getByRole("main")).toHaveCSS("outline-style", "solid");
+    });
+
+    await test.step("삭제한 CSS 파일은 스타일 목록에서 제외한다", async () => { … });
+});
+```
+
 - 반복 시나리오의 입력과 기대값은 `scenario.input`, `scenario.expected`처럼 원본 객체에서 읽습니다.
 - 주석 앞에는 빈 줄을 둡니다. 블록, 객체, 배열, JSX의 첫 줄과 연속 주석은 예외입니다. 구간 주석 외의 절차 설명은 `//`, 선언 설명은 여러 줄 JSDoc을 씁니다.
 
