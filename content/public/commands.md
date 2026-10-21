@@ -41,7 +41,7 @@ pnpm exec for-humanity --version
 | 상황 | 확인할 내용 |
 | --- | --- |
 | 문서 폴더를 찾을 수 없음 | 설치 버전, 명령의 위치 인자, `content.root` 설정 |
-| frontmatter 오류 | 문서의 `name`, `label`, `group` 존재 여부 |
+| frontmatter 오류 | 오류에 표시된 문서의 YAML 문법과 `name`, `label`, `group` 존재 여부 |
 | 설정 파일 중복 | 같은 위치에 `.ts`와 `.mjs`를 함께 두었는지 |
 | private 참조 오류 | 홈이나 공개 문서가 내부 자료를 링크하는지 |
 | preview에 수정 내용이 없음 | 수정 후 다시 빌드했는지 |

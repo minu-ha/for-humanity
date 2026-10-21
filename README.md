@@ -21,7 +21,7 @@ Write Markdown. Keep the context. Share a static site.
 
 ## Write, organize, publish
 
-Write Markdown with code examples, tables, images and Mermaid diagrams. Organize pages into groups and nested navigation. Use notes for context and collapsible details for longer explanations.
+Write Markdown with code examples, tables and Mermaid diagrams, and add images, video and audio. Organize pages into groups and nested navigation. Use notes for context and collapsible details for longer explanations.
 
 The result is a static site with bundled fonts, light and dark themes, keyboard navigation and a layout that adapts to narrow screens.
 

@@ -6,7 +6,7 @@ parent: writing
 order: 20
 ---
 
-로컬 이미지와 첨부를 문서 파일 위치 기준으로 참조합니다. 같은 파일을 dev와 정적 빌드에서 같은 내용 지문 URL로 제공합니다.
+로컬 이미지, 영상, 소리, 첨부를 문서 파일 위치 기준으로 참조합니다. 같은 파일을 dev와 정적 빌드에서 같은 내용 지문 URL로 제공합니다.
 이미지의 설명과 출처는 일반 Markdown으로 작성합니다. 별도 Figure directive는 아직 없습니다.
 
 ## Relative paths
@@ -38,8 +38,8 @@ content/
 선택 책장을 이름과 강조선으로 구분하는 가상 그림입니다.
 [그림 크게 보기](../asset/sample.svg)
 
-참조식 이미지와 원시 HTML의 `<img src="...">`에도 같은 상대 경로 규칙을 적용합니다. `srcset`의 각 후보와 `<video>`, `<audio>`, `<source>`의 `src`, `<video>`의 `poster`도 같은 규칙을 따릅니다.
-content의 README와 하위 문서를 동일하게 처리합니다. 그림은 content 루트 안에 있어야 합니다. 공용 자료는 `content/asset`, 내부 자료는 `content/private/asset`에 보관합니다. 공개 빌드에서 private 자료를 참조하면 오류가 발생합니다.
+참조식 이미지와 원시 HTML의 `<img src="...">`에도 같은 상대 경로 규칙을 적용합니다. `srcset`의 각 후보와 `<video>`의 `poster`도 같은 규칙을 따릅니다. `<video>`, `<audio>`, `<source>`의 `src`도 마찬가지입니다.
+content의 README와 하위 문서를 동일하게 처리합니다. 참조하는 파일은 content 루트 안에 있어야 합니다. 공용 자료는 `content/asset`, 내부 자료는 `content/private/asset`에 보관합니다. 공개 빌드에서 private 자료를 참조하면 오류가 발생합니다.
 
 ## Build and dev
 
@@ -53,10 +53,12 @@ URL에는 파일 내용 지문을 포함합니다. 내용과 확장자가 같은
 
 ## Supported files
 
-이미지는 SVG, PNG, JPG/JPEG, GIF, WebP, AVIF 형식을 지원합니다. 원시 HTML의 `<video>`, `<audio>`, `<source>`에는 MP4, WebM, MP3를 사용할 수 있습니다.
+이미지는 SVG, PNG, JPG/JPEG, GIF, WebP, AVIF 형식을 지원합니다. Markdown 이미지, `<img>`, `srcset`, `poster`에는 이 형식만 사용할 수 있습니다.
+영상과 소리는 원시 HTML `<video>`, `<audio>`, `<source>`의 `src`에 MP4, WebM, MP3 형식으로 지정합니다.
 첨부 링크에는 위 형식과 PDF, CSV, TXT, ZIP을 사용할 수 있습니다. 실행 파일, 프로젝트 소스, 설정 파일을 자동으로 배포하지 않습니다.
 배포하지 않는 형식의 로컬 파일을 링크하면 빌드를 멈추지 않고 터미널에 파일과 줄 번호를 경고로 표시합니다.
 
-없는 로컬 이미지, 영상, 소리, 첨부는 빌드 오류입니다. 루트 밖 경로, 바깥을 가리키는 symlink, 지원하지 않는 이미지, 영상, 소리 형식도 빌드 오류입니다.
+없는 로컬 이미지, 영상, 소리, 첨부는 빌드 오류입니다. 루트 밖 경로와 바깥을 가리키는 symlink도 마찬가지입니다.
+이미지, 영상, 소리 자리에 지원하지 않는 형식을 넣어도 빌드가 실패합니다. PDF처럼 이미지가 아닌 파일은 첨부 링크로 연결합니다.
 외부 URL, data URL, 사이트 루트 기준 절대 URL은 바꾸거나 내려받지 않습니다. 절대 URL의 파일은 작성자가 별도로 제공합니다.
 Markdown 안의 CSS와 JS, SVG 내부의 외부 파일, CSS `url()` 의존성을 재귀 수집하지 않습니다. SVG는 그 자체로 표시할 수 있는 파일을 사용합니다.

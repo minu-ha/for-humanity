@@ -1,11 +1,11 @@
 ---
 name: Migration
-label: 기존 문서 폴더를 content 구조로 이전
+label: 버전별 이전 방법
 group: Updates
 order: 20
 ---
 
-`0.14.0`부터 설정 위치와 문서 수집 방식이 바뀝니다. `0.13.1` 이하에서 업데이트할 때 이 절차를 따릅니다. 새 프로젝트는 [Installation](installation.md#your-first-site)에서 시작합니다.
+`0.14.0`부터 설정 위치와 문서 수집 방식이 바뀝니다. `0.13.1` 이하에서 업데이트할 때 이 절차를 따릅니다. `0.14.x`에서 `0.15.0`으로 업데이트할 때는 [Update to 0.15.0](#update-to-0150)을 확인합니다. 새 프로젝트는 [Installation](installation.md#your-first-site)에서 시작합니다.
 
 ## Before and after
 
@@ -89,3 +89,21 @@ dev에서 양쪽 문서가 표시되는지 확인합니다. build 후에는 priv
 배포에는 생성된 `dist`만 사용합니다. 기존 호스팅이 예전 출력 경로를 보고 있다면 다음 배포 전에 변경합니다. 호스팅 설정은 [Deployment](deployment.md#hosting-settings)를 참고합니다.
 
 `private`은 배포 제외 규칙입니다. 공개 Git 저장소에 넣은 파일은 Git에서 읽을 수 있습니다. 로그인으로 비공개 문서를 제공하는 기능은 이번 구조에 포함하지 않습니다.
+
+## Update to 0.15.0
+
+`0.15.0`부터는 이전 버전에서 빌드되던 일부 입력이 빌드 오류가 됩니다. 업데이트한 뒤 `build`를 실행하고 오류에 표시된 파일과 줄을 차례로 고칩니다.
+터미널에는 파일과 줄 번호에 이어 `Invalid part syntax`, `Invalid code snippet`, `Invalid asset` 문구가 나옵니다.
+
+| Input | Fix |
+| --- | --- |
+| 제목이 없거나 빈 `::part` | `::part[제목]` 작성 |
+| 제목에 링크, 강조, 인라인 코드를 쓰거나 속성을 붙인 `::part` | 서식과 속성 없이 일반 텍스트 제목 작성 |
+| `##` 절 없이 다음 `::part`나 문서 끝이 오는 `::part` | `::part` 뒤에 `##` 절 작성 |
+| `<<<`로 지정했지만 끝 표시가 없는 region | region 끝에 `#endregion` 같은 끝 표시 추가 |
+| Markdown 이미지, `<img>`, `srcset`, `poster`의 PDF처럼 이미지가 아닌 파일 | 이미지 파일로 교체하거나 첨부 링크로 연결 |
+| `<video>`, `<audio>`, `<source>`의 `src`가 가리키는 없는 로컬 파일 | 파일 추가 또는 경로 수정 |
+| `<video>`, `<audio>`, `<source>`의 `src`가 가리키는 MP4, WebM, MP3 외의 로컬 파일 | 지원 형식으로 변환하거나 직접 제공하는 절대 URL로 지정 |
+
+없는 문서나 배포하지 않는 로컬 파일을 가리키는 링크에는 경고만 표시하고 빌드를 계속합니다.
+작성 규칙은 [Parts](parts.md#errors), [Code snippets](writing.md#code-snippets), [Supported files](images.md#supported-files)를 참고합니다.

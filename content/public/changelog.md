@@ -19,24 +19,27 @@ pnpm add -D --save-exact for-humanity@latest
 
 ## Unreleased
 
-- Save sidebar scroll positions with a short document list signature instead of the whole document tree, so scrolling stays light on large sites. Positions saved before the update start from the top once.
-- Serve the first page in `dev` even when a document changes while the site is still being prepared. The first request used to fail with HTTP 500 until the next change.
-- Report a YAML syntax error in frontmatter as `Invalid frontmatter: <file>: <reason>`, and print YAML warnings with the file and line, instead of messages without the document path.
-- Ignore the words `good`, `bad` and `line-numbers` inside a code block file title such as `[good.ts]`. They used to turn on the colored background or line numbers.
-- Build a README that starts with a code block and puts a snippet inside a Note or Details block. The build used to fail with a code fence error.
-- Show a color swatch only for 3, 4, 6 or 8 digit hex colors such as `#e80030`. Values such as `#12345` now render as plain inline code.
-- Fail the build with `Invalid part syntax: part needs a non-empty title` and the file and line when `::part` has no name, as in `::part` or `::part[]`. It used to render an empty part divider and an empty outline group.
-- End a snippet region at a nameless `// #endregion`, `<!-- #endregion -->` or `/* #endregion */`, which closes the innermost open region. The rest of the file used to leak into the snippet.
-- Warn with `Link to a missing document` and the file and line when a raw HTML link such as `<a href="missing.md">` points to a missing document, as Markdown links already do.
-- Keep Markdown links with a URL scheme such as `web+app:notes.md` as written. They used to be rewritten as document links and reported as missing.
+**Breaking change:** The build now fails, with the file and line, on input that earlier versions accepted: a `::part` without a plain-text title, with attributes or without a `##` section before the next part; a selected snippet region without an end marker; a non-image file such as a PDF in a Markdown image, `<img>`, `srcset` or `poster`; and a raw HTML `<video>`, `<audio>` or `<source>` that points to a missing local file or to a format other than MP4, WebM or MP3. Write each part as `::part[Title]` followed by a `##` section, add the missing end marker, link non-image files instead of embedding them, add missing media files, and convert other media to MP4, WebM or MP3 or serve it from an absolute or external URL. See the [0.15.0 migration steps](https://for-humanity.fyi/migration/#update-to-0150).
+
+**Upgrade:** CLI commands, configuration and Node.js requirements remain unchanged. Run `build` after updating and fix each reported file and line; the new link warnings do not stop the build. Raw HTML `<h2>` and `<h3>` headings now get anchors, so a later Markdown heading with the same text gets a `-1` suffix. Sidebar scroll positions saved by older versions start from the top once.
+
 - Collect local files in raw HTML `srcset`, `<video>` `src` and `poster`, `<audio>` and `<source>` with fingerprinted URLs, and accept MP4, WebM and MP3. A missing file or an unsupported format now fails the build with the file and line instead of shipping a broken relative URL.
-- Fail the build with `unsupported image format` when a Markdown image or `<img>` points to a file that is not an image, such as a PDF.
-- Reject a `::part` title with links, emphasis, code or attributes, as Note and Details already do, and report a `:::part` block as `part must be written as a ::part[...] line` instead of `Unknown part`.
-- Fail the build when a `::part` has no `##` section before the next part or the end of the document. The earlier of two parts used to disappear from the outline.
-- Keep a colon in Note, Details and part titles such as `예:이것`. Note and Details used to reject the title, and the outline cut a part title at the colon.
-- Read `<!-- #region name-->` as the region `name`, and fail with `region not closed` when the selected region has no matching end marker. Snippet regions also accept Python `# region` and C and C++ `#pragma region` markers.
+- Fail the build with `unsupported image format` when a Markdown image or `<img>` points to a file that is not an image, such as a PDF. Such a file used to be copied and shown as a broken image.
+- Fail the build with the file and line when `::part` has no name, as in `::part` or `::part[]`, a title with links, emphasis or code, or attributes, as Note and Details already do. An unnamed part now reports `Invalid part syntax: part needs a non-empty title` instead of rendering an empty part divider and an empty outline group.
+- Fail the build when a `::part` has no `##` section before the next part or the end of the document, and report a `:::part` block as `part must be written as a ::part[...] line` instead of `Unknown part`. The earlier of two parts used to disappear from the outline.
+- End a snippet region at a nameless `// #endregion`, `<!-- #endregion -->` or `/* #endregion */`, which closes the innermost open region, and fail with `region not closed` when the selected region has no matching end marker. The rest of the file used to leak into the snippet.
+- Accept Python `# region` and C and C++ `#pragma region` markers in snippets, and read `<!-- #region name-->` as the region `name`.
+- Give raw HTML `<h2>` and `<h3>` headings anchors and outline entries, and wrap raw HTML tables in the same scroll box as Markdown tables. Automatic anchors skip ids already written in raw HTML.
+- Warn with `Link to a missing document` and the file and line when a raw HTML link such as `<a href="missing.md">` points to a missing document, as Markdown links already do.
 - Warn with `Link to a local file that is not published` and the file and line when a link points to a local file that the build does not copy, such as `[source](code.ts)`.
-- Give raw HTML `<h2>` and `<h3>` headings anchors and outline entries, and wrap raw HTML tables in the same scroll box as Markdown tables.
+- Keep a colon in Note, Details and part titles such as `예:이것`. Note and Details used to reject the title, and the outline cut a part title at the colon.
+- Serve the first page in `dev` even when a document changes while the site is still being prepared. The first request used to fail with HTTP 500 until the next change.
+- Build a home README that starts with a code block and puts a snippet inside a Note or Details block. The build used to fail with a code fence error.
+- Keep Markdown links with a URL scheme such as `web+app:notes.md` as written. They used to be rewritten as document links and reported as missing.
+- Report a YAML syntax error in frontmatter as `Invalid frontmatter: <file>: <reason>` with the line number in the document, and print YAML warnings with the file and line, instead of messages without the document path.
+- Ignore the words `good`, `bad` and `line-numbers` inside a code block file title such as `[good.ts]`. They used to turn on the colored background or line numbers.
+- Show a color swatch only for 3, 4, 6 or 8 digit hex colors such as `#e80030`. Values such as `#12345` now render as plain inline code.
+- Keep sidebar scrolling light on large sites by saving a short signature of the document list with each scroll position instead of the whole document tree.
 
 ## 0.14.2 — 2026-10-20
 

@@ -174,7 +174,7 @@ CSS와 글꼴 선언은 최초 HTML의 `<head>`에 포함합니다. JavaScript�
 - `build`: Markdown을 한 번 처리하고 페이지 앱의 라우트를 정적 HTML로 출력합니다.
 - `dev` 첫 요청: Vite 초기화 이후 전체 문서와 README를 읽어 본문 HTML을 메모리에 준비합니다.
 - 첫 정상 준비에서는 갱신 메시지를 보내지 않습니다. Vite가 연결 전 메시지를 보관하므로 최초 브라우저 연결에 불필요한 새로고침이 발생할 수 있습니다. 파일 변경 이후의 정상 준비에서만 갱신을 알립니다.
-- `dev` 문서, README, 자원, 스니펫 변경: Vite watcher가 문서 루트를 감시합니다. 처리기를 새로 만들고 정상 문서와 자원 목록을 함께 교체한 뒤 Vite WebSocket으로 전체 갱신을 알립니다. 실패하면 직전 정상 목록을 유지하고, 새 변경이 들어오거나 서버가 종료되면 이전 준비 결과를 버립니다.
+- `dev` 문서, README, 자원, 스니펫 변경: Vite watcher가 문서 루트를 감시합니다. 처리기를 새로 만들고 정상 문서와 자원 목록을 함께 교체한 뒤 Vite WebSocket으로 전체 갱신을 알립니다. 실패하면 직전 정상 목록을 유지합니다. 준비 중 새 변경이 들어온 결과는 버리되 정상 목록이 아직 없으면 첫 요청에 쓰도록 적용합니다. 서버가 종료된 뒤의 결과는 버립니다.
 - `dev` 페이지 요청: 준비한 본문을 Hono JSX 셸과 조립합니다. 요청마다 Markdown을 다시 읽거나 변환하지 않습니다.
 - `preview`와 배포 사이트: 이미 생성한 HTML, CSS, 자원을 제공합니다.
 
@@ -240,13 +240,16 @@ vanilla 생성기는 `use-` 접두사를 붙이지 않습니다. 스크롤 스�
 
 | Stage  | Work                                                                 |
 | ------ | -------------------------------------------------------------------- |
-| Read   | 파일 탐색, remark-frontmatter의 YAML 노드, yaml 값 해석, Zod 검증 |
-| remark | GFM, 문장부호, Note와 Details, part, Mermaid 원문, status badge, swatch, 링크, 경고 |
+| Read   | 파일 탐색, remark-frontmatter의 YAML 노드, yaml 문서 해석, Zod 검증 |
+| remark | GFM, 스니펫, 문장부호, Note와 Details, part, Mermaid 원문, status badge, swatch, 링크 |
 | rehype | 코드 강조, raw HTML 해석, 문서 header, 제목 id, 가름 수집, 표 상자 |
-| Output | raw HTML의 링크와 자원 검사, 경고 출력, HTML 문자열                 |
+| Output | raw HTML을 포함한 링크와 자원 검사, 경고 출력, HTML 문자열          |
 
+YAML 문법 오류는 문서 경로와 함께 중단, YAML 경고는 frontmatter 위치의 파일 경고.
+raw HTML은 Shiki 다음에 해석. Mermaid 원문과 raw `pre`는 코드 강조 제외, raw HTML의 h2와 h3도 제목 id와 TOC 대상, raw HTML 표도 표 상자 대상.
 제목 원문에서 id와 TOC 텍스트를 수집하고 가름별로 묶음. 제목 번호는 자동 생성하지 않음.
 중간 계약은 `file.data.fh`. 제목과 section 정보는 문서 순서 유지.
+경고는 각 단계가 파일 메시지로 남기고 마지막 rehype 단계가 `파일:줄` 형식으로 일괄 출력. 빌드는 계속.
 
 Mermaid 펜스는 이스케이프한 원문과 렌더 영역으로 변환합니다. `WgMermaid`가 본문 파싱 후 자체 호스팅 ESM을 불러와 공식 SVG를 생성합니다.
 Mermaid는 별도 ESM 그래프로 번들링하며 유형별 청크는 필요할 때 수신합니다. 프로젝트에 Mermaid 펜스가 있으면 해당 그래프를 정적 출력과 dev 자원 목록에 등록합니다.
@@ -256,6 +259,7 @@ SVG는 Shadow DOM 안에 삽입해 본문의 `p`, `code`, `a` 스타일과 격�
 렌더 완료는 셸에 통지하며, 초기 hash와 사용자 이동 여부를 소유한 셸이 비동기 배치 변경 후 앵커 위치를 보정합니다.
 frontmatter는 정규식으로 잘라내지 않고 AST 노드로 읽음. 본문 노드의 원본 줄과 열은 유지.
 Note와 Details의 검증은 Markdown 부품 변환 전. 제목은 native label, 본문은 기존 처리 흐름.
+part는 문서 최상위의 `::part[...]` 한 줄만 허용. 일반 텍스트 제목과 다음 part나 문서 끝 전의 `##` 절 필수.
 접힌 본문의 `###`도 같은 제목 id와 TOC. 부품의 작성 계약은 [Parts](../public/parts.md).
 
 remark는 Markdown을 AST로 다루는 플러그인 체계. 현재의 부품 변환, 검증과 rehype 연결에 사용.

@@ -129,6 +129,7 @@ CSS 규칙 본문은 타입 검사하는 `util/stylelint.config.ts`에 둡니다
 | `smoke-package.ts` | 패키지를 별도 프로젝트에 설치, 실제 dev와 preview의 브라우저와 종료, 공개 타입의 정상과 오류 입력, TS와 ESM 설정, 페이지, Mermaid, 자원, README, 크롤러 파일, 기본형과 사용자 content 경로와 내부 문서 배포 제외 확인 |
 
 `test/`의 구조와 작성 기준은 [테스트 안내](https://github.com/minu-ha/for-humanity/blob/main/test/README.md)를 따릅니다. 함수 검증은 소스 옆 `*.test.ts`에 두고, 나머지 검사는 사용자 흐름 순서의 영역 폴더(`0-command`, `1-document`, `2-page`, `3-server`)에 층 접미사로 둡니다. 한글 시나리오, GIVEN/WHEN/THEN, 독립 fixture를 사용하며, 모든 케이스에 영역 코드 번호를, 브라우저 케이스에는 우선순위 태그도 붙입니다.
+부품과 part 문법, 스니펫 region, 자원 형식의 빌드 오류와 링크 경고는 `1-document`의 Node 검사가 파일과 줄까지 확인합니다.
 
 ::part[Verification]
 
@@ -186,7 +187,6 @@ pnpm exec playwright show-report .cache/playwright/report
 - 문서 탐색 링크는 방문 여부와 무관하게 링크색 유지, 현재 문서 굵기 강조, 본문 링크는 기존 방문색 유지
 - 문서 탐색과 사이트 이름 hover의 글색과 굵기를 유지한 밑줄, hover 링크색의 레일, 현재 문서의 레일 유지
 - Note와 Details: 기본 접힘, `{open}`, 중첩, Enter와 Space, 숨은 제목의 hash 공개
-- 부품 문법 오류: 제목, 본문, 닫힘, 속성 검사, 파일과 줄 표시
 - 모바일: 첫 화면에서 본문 표시, 스크롤 중 메뉴 버튼 유지, 드로어 열기, 닫기, Escape, 배경 클릭
 - 드로어: Tab 포커스 범위, 닫기 후 버튼 복귀, 내부 스크롤과 배경 잠금, 1024px 전환 시 모달, 포커스, 잠금 정리
 - 드로어: 문서 목록만 표시, 문서 선택, Escape, 배경 클릭으로 닫기, 키보드 포커스 복원
