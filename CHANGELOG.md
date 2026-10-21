@@ -2,10 +2,6 @@
 
 ## Unreleased
 
-- Underline links in document text so they stand out without relying on color. Links used to be underlined only on hover.
-- Let keyboard users focus and scroll wide tables, and mark the site name and menu button as the page header for screen readers.
-- Give local PNG, JPEG, GIF, WebP and AVIF images their original `width` and `height`, so text below an image no longer moves down while it loads. A size written on a raw `<img>` is kept, and SVG images are left without size attributes.
-
 ## 0.16.0 — 2026-10-21
 
 **Upgrade:** CLI commands, configuration, document syntax and Node.js requirements remain compatible. Document pages now use each `label` as their description, so write labels that read well in search results and link previews. Pages are still marked as Korean by default; set `lang`, such as `lang: "en"`, for sites in other languages.
@@ -14,6 +10,9 @@
 - Add a `lang` setting for the page language, such as `en` or `en-US`. Pages were always marked as Korean, and `ko` stays the default. A value that is not a language tag stops with `lang must be a language tag such as ko or en-US`.
 - Add a canonical link and Open Graph and Twitter card tags to every page when `url` is set, with the same addresses as `sitemap.xml`. Shared links now preview with the document `name` and `label`.
 - Add an `image` setting for the link preview image, a PNG, JPEG, GIF or WebP file given relative to the content folder, such as `asset/preview.png`. With `url` set, every page gets an `og:image` tag that points to a fingerprinted copy. A missing file stops with `Invalid asset: <path> (file not found)`.
+- Give local PNG, JPEG, GIF, WebP and AVIF images their original `width` and `height`, so text below an image no longer moves down while it loads. A size written on a raw `<img>` is kept, and SVG images are left without size attributes.
+- Underline links in document text so they stand out without relying on color. Links used to be underlined only on hover.
+- Let keyboard users focus and scroll wide tables, and mark the site name and menu button as the page header for screen readers.
 - Land anchor links near the top of the screen again, 80 pixels down on desktop and below the fixed header on mobile, and switch the outline at that line. On tall screens the outline used to mark a later heading as soon as a page opened.
 
 ## 0.15.0 — 2026-10-21
