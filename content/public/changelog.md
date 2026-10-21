@@ -25,6 +25,7 @@ pnpm add -D --save-exact for-humanity@latest
 
 - Collect local files in raw HTML `srcset`, `<video>` `src` and `poster`, `<audio>` and `<source>` with fingerprinted URLs, and accept MP4, WebM and MP3. A missing file or an unsupported format now fails the build with the file and line instead of shipping a broken relative URL.
 - Collect local WebVTT files in raw HTML `<track>` and PDF or image files in `<embed>` and `<object>` the same way, and warn with `Link to a local file that is not published` about an `<iframe>` that points to a local file, which the build cannot publish.
+- Answer byte range requests for local files in `dev` with `206 Partial Content`, so Safari plays local video and audio there.
 - Fail the build with `unsupported image format` when a Markdown image or `<img>` points to a file that is not an image, such as a PDF. Such a file used to be copied and shown as a broken image.
 - Fail the build with the file and line when `::part` has no name, as in `::part` or `::part[]`, a title with links, emphasis or code, or attributes, as Note and Details already do. An unnamed part now reports `Invalid part syntax: part needs a non-empty title` instead of rendering an empty part divider and an empty outline group.
 - Fail the build when a `::part` has no `##` section before the next part or the end of the document, and report a `:::part` block as `part must be written as a ::part[...] line` instead of `Unknown part`. The earlier of two parts used to disappear from the outline.

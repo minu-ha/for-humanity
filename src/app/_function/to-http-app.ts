@@ -2,6 +2,7 @@ import {readFile} from "node:fs/promises";
 import {extname} from "node:path";
 import {type Handler, Hono} from "hono";
 import {asset_content_type_default, asset_content_types} from "@/app/_constant/asset";
+import {http_status_partial_content, http_status_range_not_satisfiable} from "@/app/_constant/http";
 import {asset_dir, asset_favicon_path} from "@/constant/asset";
 import {font_cache_control} from "@/constant/font";
 
@@ -36,6 +37,9 @@ export const toHttpApp = (params: HttpParams) => {
 
     /**
      * 등록된 URL의 자원 응답. 미등록 시 404
+     *
+     *   - 단일 바이트 범위 요청은 206 부분 응답. Safari의 영상, 소리 재생 조건
+     *   - 여러 범위와 형식이 다른 범위 요청은 전체 응답
      */
     const handleAsset: Handler = async (c) => {
         const file = params.files.get(c.req.path);
@@ -52,7 +56,28 @@ export const toHttpApp = (params: HttpParams) => {
             c.header("Cache-Control", font_cache_control);
         }
 
-        return c.body(await readFile(file));
+        const body = await readFile(file);
+        const range = c.req.header("range")?.match(/^bytes=(\d*)-(\d*)$/);
+
+        c.header("Accept-Ranges", "bytes");
+
+        if (range === undefined || range === null || (range[1] === "" && range[2] === "")) {
+            return c.body(body);
+        }
+
+        // 시작 생략은 끝에서부터의 길이, 끝 생략은 파일 끝까지
+        const start = range[1] === "" ? Math.max(0, body.length - Number(range[2])) : Number(range[1]);
+        const end = range[1] === "" || range[2] === "" ? body.length - 1 : Math.min(Number(range[2]), body.length - 1);
+
+        if (start >= body.length || start > end) {
+            c.header("Content-Range", `bytes */${body.length}`);
+
+            return c.body(null, http_status_range_not_satisfiable);
+        }
+
+        c.header("Content-Range", `bytes ${start}-${end}/${body.length}`);
+
+        return c.body(body.subarray(start, end + 1), http_status_partial_content);
     };
 
     app.get(`/${asset_dir}/*`, handleAsset);
