@@ -19,6 +19,8 @@ pnpm add -D --save-exact for-humanity@latest
 
 ## Unreleased
 
+## 0.15.0 — 2026-10-21
+
 **Breaking change:** The build now fails, with the file and line, on input that earlier versions accepted: a `::part` without a plain-text title, with attributes or without a `##` section before the next part; a selected snippet region without an end marker; a non-image file such as a PDF in a Markdown image, `<img>`, `srcset` or `poster`; a raw HTML `<video>`, `<audio>` or `<source>` that points to a missing local file or to a format other than MP4, WebM or MP3; a raw HTML `<track>`, `<embed>` or `<object>` that points to a missing local file or to a format other than WebVTT, PDF or an image; and a raw HTML `<h1>` or `<h2>` inside a Note or Details block. Write each part as `::part[Title]` followed by a `##` section, add the missing end marker, link non-image files instead of embedding them, add missing media files, convert other media to MP4, WebM or MP3 or serve it from an absolute or external URL, and move raw `<h1>` and `<h2>` headings out of Note and Details blocks. See the [0.15.0 migration steps](https://for-humanity.fyi/migration/#update-to-0150).
 
 **Upgrade:** CLI commands, configuration and Node.js requirements remain unchanged. Run `build` after updating and fix each reported file and line; the new link warnings do not stop the build. Raw HTML `<h2>` and `<h3>` headings now get anchors, so a later Markdown heading with the same text gets a `-1` suffix. Sidebar scroll positions saved by older versions start from the top once.

@@ -13,7 +13,7 @@ Node.js 22.12.0 이상과 pnpm이 필요합니다.
 `package.json`이 있는 프로젝트에서 설치합니다.
 
 ```sh
-pnpm add -D --save-exact for-humanity@0.14.2
+pnpm add -D --save-exact for-humanity@0.15.0
 ```
 
 `0.13.1` 이하에서 업데이트한다면 먼저 [Migration](migration.md)을 따라 문서와 설정 위치를 변경합니다.

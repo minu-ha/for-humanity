@@ -30,7 +30,7 @@ The result is a static site with bundled fonts, light and dark themes, keyboard 
 You need Node.js 22.12.0 or later and pnpm. In a project with a `package.json`, install the package:
 
 ```sh
-pnpm add -D --save-exact for-humanity@0.14.2
+pnpm add -D --save-exact for-humanity@0.15.0
 ```
 
 Copy `for-humanity.config.ts` and the `content` folder from `node_modules/for-humanity/template` into your project. If you already have documentation, follow [Migration](https://github.com/minu-ha/for-humanity/blob/main/content/public/migration.md) before moving files.
