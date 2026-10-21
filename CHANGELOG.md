@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.16.0 — 2026-10-21
+
+**Upgrade:** CLI commands, configuration, document syntax and Node.js requirements remain compatible. Document pages now use each `label` as their description, so write labels that read well in search results and link previews. Pages are still marked as Korean by default; set `lang`, such as `lang: "en"`, for sites in other languages.
+
 - Describe each document page with its own `label` in the description meta tag. Every page used to repeat the site `description`, or had no description when it was not set.
 - Add a `lang` setting for the page language, such as `en` or `en-US`. Pages were always marked as Korean, and `ko` stays the default. A value that is not a language tag stops with `lang must be a language tag such as ko or en-US`.
 - Add a canonical link and Open Graph and Twitter card tags to every page when `url` is set, with the same addresses as `sitemap.xml`. Shared links now preview with the document `name` and `label`.
