@@ -378,7 +378,7 @@ test.describe("다이어그램", () => {
 
             /**
              * WHEN
-             * 같은 위젯 다시 마운트
+             * 같은 위젯 다시 마운트 후 노드로 포인터 이동
              */
             await page.evaluate(() => window.diagramFixture.mount());
             await page.locator(".wg_mermaid__result").first().locator(".node").first().hover();

@@ -62,7 +62,7 @@ test.describe("문서 탐색", () => {
             };
 
             for (let cycle = 0; cycle < 3; cycle++) {
-                await test.step(`${cycle + 1}번째 마운트에서 생성한 자원을 해제한다`, async () => {
+                await test.step(`${cycle + 1}번째 마운트를 해제하면 구독과 타이머를 정리한다`, async () => {
                     /**
                      * GIVEN
                      * 셸이 없는 갤러리 페이지

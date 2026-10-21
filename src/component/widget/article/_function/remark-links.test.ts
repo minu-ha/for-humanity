@@ -11,28 +11,30 @@ vi.mock("node:path", async (importOriginal) => {
 });
 
 describe("Windows 문서 링크", () => {
-    test.each([
-        {source: "../intro.md?lang=ko#start", target: "/guides/intro/?lang=ko#start"},
-        {source: "../../../README.md#start", target: "/#start"},
-        {source: "child.mdx", target: "/guides/advanced/child/"},
-    ])("$source 링크는 사이트 루트 기준 주소가 된다", (scenario) => {
-        /**
-         * GIVEN
-         * Windows 경로의 공개 범위, 중첩 문서와 상대 링크
-         */
-        const tree: Root = {type: "root", children: [{type: "paragraph", children: [{type: "link", url: scenario.source, children: [{type: "text", value: "Guide"}]}]}]};
-        const file = new VFile({path: "C:\\docs\\public\\guides\\advanced\\current.md"});
+    describe("중첩 문서의 상대 링크", () => {
+        test.each([
+            {source: "../intro.md?lang=ko#start", target: "/guides/intro/?lang=ko#start"},
+            {source: "../../../README.md#start", target: "/#start"},
+            {source: "child.mdx", target: "/guides/advanced/child/"},
+        ])("$source 링크는 사이트 루트 기준 주소가 된다", (scenario) => {
+            /**
+             * GIVEN
+             * Windows 경로의 공개 범위, 중첩 문서와 상대 링크
+             */
+            const tree: Root = {type: "root", children: [{type: "paragraph", children: [{type: "link", url: scenario.source, children: [{type: "text", value: "Guide"}]}]}]};
+            const file = new VFile({path: "C:\\docs\\public\\guides\\advanced\\current.md"});
 
-        /**
-         * WHEN
-         * Markdown 상대 링크 변환
-         */
-        remarkLinks({scope: {root: "C:\\docs", publicRoot: "C:\\docs\\public", privateRoot: "C:\\docs\\private", includePrivate: false}})(tree, file);
+            /**
+             * WHEN
+             * Markdown 상대 링크 변환
+             */
+            remarkLinks({scope: {root: "C:\\docs", publicRoot: "C:\\docs\\public", privateRoot: "C:\\docs\\private", includePrivate: false}})(tree, file);
 
-        /**
-         * THEN
-         * 상위 경로, 쿼리, 앵커 유지
-         */
-        expect(tree).toHaveProperty("children.0.children.0.url", scenario.target);
+            /**
+             * THEN
+             * 상위 경로, 쿼리, 앵커 유지
+             */
+            expect(tree).toHaveProperty("children.0.children.0.url", scenario.target);
+        });
     });
 });

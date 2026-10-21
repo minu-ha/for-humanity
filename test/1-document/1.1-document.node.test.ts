@@ -199,7 +199,7 @@ describe("문서", () => {
             await expect(result).rejects.toHaveProperty("line", 7);
         });
 
-        test("[DOC-014] 머리말의 YAML 문법 오류는 문서 경로와 함께 거부한다", async ({scope}) => {
+        test("[DOC-014] 머리말에 YAML 문법 오류가 있으면 문서 경로와 함께 거부한다", async ({scope}) => {
             /**
              * GIVEN
              * 같은 키가 두 번 있는 머리말
@@ -218,7 +218,7 @@ describe("문서", () => {
              * THEN
              * 문서 경로가 붙은 YAML 오류
              */
-            await expect(result).rejects.toThrow(/Invalid frontmatter: public[\\/]guide\.md: Map keys must be unique/);
+            await expect(result).rejects.toThrow(/Invalid frontmatter: public[\\/]guide\.md: Map keys must be unique at line 3/);
         });
     });
 

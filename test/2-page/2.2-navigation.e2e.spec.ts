@@ -168,7 +168,7 @@ test.describe("문서 탐색", () => {
             // 소수 높이와 스크롤 앵커링의 반올림만 허용
             const roundingTolerance = 1;
 
-            await test.step("새로고침 첫 프레임부터 저장한 두 위치가 복원된다", async () => {
+            await test.step("새로고침하면 첫 프레임부터 저장한 두 위치를 복원한다", async () => {
                 /**
                  * GIVEN
                  * 처음 연 와이드 배치의 문서

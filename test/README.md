@@ -29,28 +29,28 @@ test/
   _gallery/     공개 번들 밖에서 위젯을 마운트하고 해제하는 페이지 스크립트(mermaid-lifecycle, navigation-lifecycle)
   _type/        갤러리와 spec이 공유하는 브라우저 전역 계약(browser.d.ts)
   0-command/
-    0.1-command.node.test.ts     ↔ src/entry/cli                                    CMD
-    0.2-config.node.test.ts      ↔ src/app/_function/read-site-config.ts            CFG
-    0.3-content.node.test.ts     ↔ src/app/load-site.ts, src/util/file              CNT
+    0.1-command.node.test.ts     ↔ src/entry/cli                                        CMD
+    0.2-config.node.test.ts      ↔ src/app/_function/read-site-config.ts                CFG
+    0.3-content.node.test.ts     ↔ src/app/load-site.ts, src/util/file                  CNT
   1-document/
-    1.1-document.node.test.ts    ↔ src/app/_function/read-docs.ts                   DOC
-    1.2-home.node.test.ts        ↔ src/app/_function/read-home.ts, src/page/home    HOM
-    1.3-link.node.test.ts        ↔ remark-links, _rehype-content-links              LNK
-    1.4-code.node.test.ts        ↔ shiki-transformers, _remark-snippets             COD
-    1.5-asset.node.test.ts       ↔ _rehype-assets                                   AST
-    1.6-crawling.node.test.ts    ↔ src/app/_function/to-crawling-app.ts             CRW
+    1.1-document.node.test.ts    ↔ src/app/_function/read-docs.ts                       DOC
+    1.2-home.node.test.ts        ↔ src/app/_function/read-home.ts, src/page/home        HOM
+    1.3-link.node.test.ts        ↔ remark-links, remark-parts, _rehype-content-links    LNK
+    1.4-code.node.test.ts        ↔ shiki-transformers, _remark-snippets                 COD
+    1.5-asset.node.test.ts       ↔ _rehype-assets                                       AST
+    1.6-crawling.node.test.ts    ↔ src/app/_function/to-crawling-app.ts                 CRW
   2-page/
-    2.1-shell.node.test.ts       ↔ src/component/widget/shell                       SHL
+    2.1-shell.node.test.ts       ↔ src/component/widget/shell                           SHL
     2.1-shell.e2e.spec.ts
-    2.2-navigation.e2e.spec.ts   ↔ sidebar, shell-controls, cursor-face             NAV
+    2.2-navigation.e2e.spec.ts   ↔ sidebar, shell-controls, cursor-face                 NAV
     2.2-navigation.integration.spec.ts
     2.2-navigation.node.test.ts
-    2.3-mermaid.e2e.spec.ts      ↔ src/component/widget/mermaid                     MRM
+    2.3-mermaid.e2e.spec.ts      ↔ src/component/widget/mermaid                         MRM
     2.3-mermaid.integration.spec.ts
     2.3-mermaid.node.test.ts
   3-server/
-    3.1-dev.e2e.spec.ts          ↔ src/entry/dev                                    DEV
-    3.2-preview.node.test.ts     ↔ src/entry/preview                                PRV
+    3.1-dev.e2e.spec.ts          ↔ src/entry/dev                                        DEV
+    3.2-preview.node.test.ts     ↔ src/entry/preview                                    PRV
 ```
 
 - 영역 하나는 한 폴더 안에서 한 이름으로 묶습니다. 층과 실행기 프로젝트는 접미사(`.node.test.ts`, `.integration.spec.ts`, `.e2e.spec.ts`)로 구분합니다. 프로젝트는 접미사로 파일을 고르므로 접미사가 없는 파일은 어느 프로젝트에도 들어가지 않습니다.
@@ -222,7 +222,7 @@ test("[DEV-009] CSS 파일 추가와 삭제는 HTML의 스타일 목록에 반�
 | GIVEN | 상태를 나타내는 명사구. 서술어를 붙이지 않습니다 | `접힌 다이어그램만 있는 문서` |
 | WHEN | 사용자나 실행기의 동작, 명사형 | `접힌 다이어그램 공개`, `문서 로드` |
 | THEN | 드러나는 결과, 명사형 | `공개한 다이어그램 표시` |
-| step 이름 | '조건이면 결과다' | `Escape로 닫으면 탐색 열기 버튼으로 포커스가 복귀한다` |
+| step 이름 | '조건이면 결과다' 또는 '대상은 속성이다' | `Escape로 닫으면 탐색 열기 버튼으로 포커스가 복귀한다` |
 
 - 파일 이름은 영어, describe와 제목은 한국어입니다. 영어 토큰은 화면이나 터미널에 영어로 나타나는 문구(`On this page`, `Invalid asset`)와 파일 이름, 명령 이름에만 씁니다.
 - 조사는 앞말에 붙여 씁니다. 라틴 문자와 숫자 토큰도 같습니다(`README가`, `404를`).

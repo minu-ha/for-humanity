@@ -163,7 +163,9 @@ describe("문서 탐색", () => {
              */
             const docs = await readDocs({scope, processor: toProcessor({site, scope})});
             const groups = toNavigationData({site, docs}).groups;
+            const reversed = toNavigationData({site, docs: docs.toReversed()}).groups;
             const html = toNavigationHtml({site, docs, current: "authoring"});
+            const unselected = toNavigationHtml({site, docs});
 
             /**
              * THEN
@@ -177,13 +179,13 @@ describe("문서 탐색", () => {
             expect(groups[1].groups[0].groups[0].docs.map((doc) => doc.id)).toStrictEqual(["parts", "authoring"]);
             expect(groups[1].groups[1].groups[0].docs.map((doc) => doc.id)).toStrictEqual(["other"]);
             expect(groups[1].groups[0].groups[0].groups[0].groups[0].name).toBe("Drafts");
-            expect(toNavigationData({site, docs: docs.toReversed()}).groups).toStrictEqual(groups);
+            expect(reversed).toStrictEqual(groups);
             expect(html).toMatch(/href="\/authoring\/"[^>]*aria-current="page"/);
             expect(html).toMatch(/Atlas<\/span><ul\b/);
             expect(html).toMatch(/Research<\/span><ul\b/);
             expect([...html.matchAll(/href="\/authoring\/"/g)].length).toBe(1);
             expect([...html.matchAll(/>Research<\/span>/g)].length).toBe(2);
-            expect(toNavigationHtml({site, docs})).not.toMatch(/aria-current="page"/);
+            expect(unselected).not.toMatch(/aria-current="page"/);
             expect(html.indexOf('href="/parts/"')).toBeLessThan(html.indexOf('href="/authoring/"'));
             expect(html).not.toMatch(/<details\b/);
         });
@@ -216,18 +218,22 @@ describe("문서 탐색", () => {
 
             /**
              * WHEN
-             * 탐색 자료, 마크업, 페이지 앱 생성
+             * 탐색 자료와 마크업 생성, 문서별 페이지 요청
              */
             const docs = await readDocs({scope, processor: toProcessor({site, scope})});
             const groups = toNavigationData({site, docs}).groups;
             const guide = groups[0].groups[0].groups[0];
+            const reversed = toNavigationData({site, docs: docs.toReversed()}).groups;
             const html = toNavigationHtml({site, docs, current: "details"});
+            const unselected = toNavigationHtml({site, docs});
 
             const app = toPageApp({
                 site,
                 store: {docs},
                 assets: {stylePaths: [asset_style_path], browser: {kind: "inline" as const, code: ""}, fontCss: "", preload: []},
             });
+
+            const responses = await Promise.all(docs.map((doc) => app.request(`/${doc.id}/`)));
 
             /**
              * THEN
@@ -237,7 +243,7 @@ describe("문서 탐색", () => {
             expect(guide.docs[0].children.map((doc) => doc.id)).toStrictEqual(["themes", "guide/site"]);
             expect(guide.docs[0].children[1].children.map((doc) => doc.id)).toStrictEqual(["details"]);
             expect(docs.find((doc) => doc.id === "details")?.ancestors).toStrictEqual(["settings", "guide/site"]);
-            expect(toNavigationData({site, docs: docs.toReversed()}).groups).toStrictEqual(groups);
+            expect(reversed).toStrictEqual(groups);
             expect(html).toMatch(/href="\/settings\/"[^>]*>Settings<\/a><ul\b[^>]*aria-label="Settings"/);
             expect(html).toMatch(/href="\/guide\/site\/"[^>]*>Site<\/a><ul\b[^>]*aria-label="Site"/);
             expect(html).toMatch(/href="\/details\/"[^>]*aria-current="page"/);
@@ -249,10 +255,10 @@ describe("문서 탐색", () => {
             }
 
             expect(html.indexOf('href="/themes/"')).toBeLessThan(html.indexOf('href="/guide/site/"'));
-            expect(toNavigationHtml({site, docs})).not.toMatch(/aria-current="page"/);
+            expect(unselected).not.toMatch(/aria-current="page"/);
 
-            for (const doc of docs) {
-                expect((await app.request(`/${doc.id}/`)).status).toBe(200);
+            for (const response of responses) {
+                expect(response.status).toBe(200);
             }
         });
 

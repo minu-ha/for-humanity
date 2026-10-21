@@ -48,7 +48,7 @@ describe("공개와 내부 문서", () => {
              * THEN
              * 공개 출력 전체에서 내부 자료 제외, 로컬 전용 경로 제공
              */
-            expect(html).toContain('href="/guide/"');
+            expect(html).toContain('<a href="/guide/">Guide</a>');
             expect(entries.map((entry) => entry.replaceAll("\\", "/"))).toContain("guide/index.html");
             expect(entries.some((entry) => /private|secret|mermaid|scratch/.test(entry))).toBe(false);
             expect(html).not.toContain("INTERNAL_");
@@ -88,11 +88,11 @@ describe("공개와 내부 문서", () => {
 
                 /**
                  * THEN
-                 * 빌드 종료 코드와 작성 위치
+                 * 빌드 종료 코드, 작성 위치, 내부 참조 오류
                  */
                 expect(result.status).toBe(1);
-                expect(result.stderr).toContain("guide.md");
-                expect(result.stderr).toContain("private");
+                expect(result.stderr).toContain("guide.md:7");
+                expect(result.stderr).toMatch(/Public documents cannot (?:reference private files|link to private URLs)/);
             });
         }
 
@@ -118,7 +118,7 @@ describe("공개와 내부 문서", () => {
              * 실제 파일 경로 기준의 공개 범위 위반 실패
              */
             expect(result.status).toBe(1);
-            expect(result.stderr).toContain("private");
+            expect(result.stderr).toContain("Public documents cannot reference private files");
         });
     });
 
@@ -141,11 +141,11 @@ describe("공개와 내부 문서", () => {
 
             /**
              * THEN
-             * 내부 폴더 없이도 사용자 경로 빌드 성공
+             * 내부 폴더 없이도 빌드 성공, 공개 폴더 이름 없는 문서 링크
              */
             expect(result.status, result.stderr).toBe(0);
-            expect(await readFile(join(root, "knowledge/dist/index.html"), "utf8")).toContain('href="/guide/setup/"');
-            expect(await readFile(join(root, "knowledge/dist/guide/setup/index.html"), "utf8")).toContain('href="/"');
+            expect(await readFile(join(root, "knowledge/dist/index.html"), "utf8")).toContain('<a href="/guide/setup/">Guide</a>');
+            expect(await readFile(join(root, "knowledge/dist/guide/setup/index.html"), "utf8")).toContain('<a href="/">Home</a>');
         });
 
         test("[CNT-010] 공개 폴더가 없으면 루트 전체를 대신 게시하지 않는다", async ({root}) => {
@@ -191,7 +191,7 @@ describe("공개와 내부 문서", () => {
              * 공개 부모의 URL과 내부 페이지 유지
              */
             expect(response.status).toBe(200);
-            expect(await response.text()).toContain('href="/guide/"');
+            expect(await response.text()).toContain('<a href="/guide/">Guide</a>');
         });
     });
 });

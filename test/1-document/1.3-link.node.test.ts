@@ -10,7 +10,7 @@ import {siteConfigSchema} from "@/type/site-config";
 import {logger} from "@/util/logger/logger";
 
 /**
- * 문서 링크와 목차(src/component/widget/article/_function/remark-links.ts, src/app/_function/to-processor/_rehype-content-links.ts) 검증
+ * 문서 링크, 가름, 목차(src/component/widget/article/_function의 remark-links.ts, remark-parts.ts, rehype-heading-ids.ts, rehype-sections와 src/app/_function/to-processor/_rehype-content-links.ts) 검증
  */
 describe("문서 링크와 목차", () => {
     describe("상대 링크", () => {
@@ -109,7 +109,7 @@ describe("문서 링크와 목차", () => {
 
             /**
              * THEN
-             * 사이트 주소로 바꾼 두 링크와 파일, 줄 번호가 붙은 경고
+             * 사이트 주소로 바꾼 두 링크, 파일과 줄 번호가 붙은 경고
              */
             expect(docs[0].html).toContain('href="/gone/"');
             expect(docs[0].html).toContain('href="/missing/#start"');
@@ -223,7 +223,7 @@ describe("문서 링크와 목차", () => {
         ])("[$caseId] 서식, 속성, 블록 형태의 가름 $source 입력은 작성 위치와 함께 거부한다", async (scenario, {scope}) => {
             /**
              * GIVEN
-             * Note, Details 제목 계약에 맞지 않는 가름
+             * 이름에 서식이 있거나 속성을 붙이거나 블록으로 쓴 가름
              */
             const site = siteConfigSchema.parse({});
 
@@ -296,7 +296,7 @@ describe("문서 링크와 목차", () => {
             expect(docs[0].html).toContain('<strong class="wg_article__noteTitle">예:요약</strong>');
         });
 
-        test("[LNK-019] 원시 HTML의 h2, h3은 제목 id와 목차 항목을 갖는다", async ({scope}) => {
+        test("[LNK-019] 원시 HTML의 h2, h3에도 제목 id와 목차 항목을 만든다", async ({scope}) => {
             /**
              * GIVEN
              * 원시 HTML 제목과 Markdown 제목이 섞인 문서
@@ -326,6 +326,29 @@ describe("문서 링크와 목차", () => {
             ]);
 
             expect(docs[0].html).toContain('</header><h2 id="raw-section"><span class="wg_article__headingText">Raw section</span></h2>');
+        });
+
+        test("[LNK-020] 자동 제목 id는 원시 HTML에 작성한 id와 겹치지 않는다", async ({scope}) => {
+            /**
+             * GIVEN
+             * 작성한 id가 있는 원시 HTML 제목과 같은 이름의 Markdown 제목
+             */
+            const site = siteConfigSchema.parse({});
+
+            await writeFile(join(scope.publicRoot, "guide.md"), '---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n<h2 id="usage">Usage notes</h2>\n\n## Usage\n\nText.\n');
+
+            /**
+             * WHEN
+             * 문서 로드
+             */
+            const docs = await readDocs({scope, processor: toProcessor({site, scope})});
+
+            /**
+             * THEN
+             * 작성한 id 유지와 다음 접미사의 자동 id
+             */
+            expect(docs[0].outline.headings.map((heading) => heading.slug)).toStrictEqual(["guide", "usage", "usage-1"]);
+            expect(docs[0].html.match(/id="usage"/g)).toHaveLength(1);
         });
     });
 });

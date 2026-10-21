@@ -34,7 +34,7 @@ describe("홈", () => {
 
             /**
              * WHEN
-             * 홈 렌더
+             * 홈 렌더와 /readme/ 요청
              */
             const [docs, home] = await Promise.all([readDocs({scope, processor}), readHome({scope, processor})]);
 
@@ -46,10 +46,11 @@ describe("홈", () => {
 
             const response = await app.request("/");
             const html = await response.text();
+            const readme = await app.request("/readme/");
 
             /**
              * THEN
-             * README 본문의 홈과 중첩 문서의 홈 링크
+             * README 본문의 홈, 중첩 문서의 홈 링크, /readme/의 404 응답
              */
             expect(response.status).toBe(200);
             expect(docs.map((doc) => doc.id)).toStrictEqual(["guide/setup"]);
@@ -57,14 +58,14 @@ describe("홈", () => {
             expect(html).toMatch(/Welcome home\./);
             expect(html).toMatch(/<div align="center">/);
             expect(html).toMatch(/src="\/favicon\.svg" width="96" height="96"/);
-            expect(html).toMatch(/href="\/guide\/setup\/"/);
+            expect(html).toContain('<a href="/guide/setup/">Guide</a>');
             expect(html).toMatch(/href="#start" data-toc-link/);
             expect(html).toMatch(/class="shiki/);
             expect(html).toMatch(/wg_sidebar__brand" href="\/" aria-current="page"/);
             expect([...html.matchAll(/href="\/"/g)].length).toBe(1);
             expect(docs[0].html).toMatch(/href="\/#start"/);
             expect(html).not.toMatch(/wg_article__eyebrow|pg_home__card/);
-            expect((await app.request("/readme/")).status).toBe(404);
+            expect(readme.status).toBe(404);
         });
 
         test("[HOM-002] README가 없으면 홈페이지 작성 안내를 표시한다", async ({scope}) => {

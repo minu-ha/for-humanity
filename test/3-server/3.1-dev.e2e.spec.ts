@@ -19,7 +19,7 @@ test.describe("개발 서버", () => {
             await Promise.all([page.waitForEvent("console", (message) => message.text().includes("[vite] connected")), page.goto("/")]);
             await expect(page.getByText("Initial content.", {exact: true})).toBeVisible();
 
-            await test.step("새 문서를 추가하고 본문 변경을 반영한다", async () => {
+            await test.step("문서를 추가하고 홈을 고치면 새로고침 없이 반영한다", async () => {
                 /**
                  * GIVEN
                  * 처음 내용을 표시한 홈
@@ -144,7 +144,7 @@ test.describe("개발 서버", () => {
             await expect.poll(() => devSite.errors.length).toBeGreaterThan(0);
             await expect(page.getByText("Initial content.", {exact: true})).toBeVisible();
 
-            await test.step("빠진 파일의 추가만으로 참조와 다이어그램을 복구한다", async () => {
+            await test.step("빠진 파일만 추가해도 참조와 다이어그램을 복구한다", async () => {
                 /**
                  * GIVEN
                  * 참조 파일이 없어 처음 내용을 유지한 홈
