@@ -242,8 +242,8 @@ vanilla 생성기는 `use-` 접두사를 붙이지 않습니다. 스크롤 스�
 | ------ | -------------------------------------------------------------------- |
 | Read   | 파일 탐색, remark-frontmatter의 YAML 노드, yaml 값 해석, Zod 검증 |
 | remark | GFM, 문장부호, Note와 Details, part, Mermaid 원문, status badge, swatch, 링크, 경고 |
-| rehype | 코드 강조, 문서 header, 제목 id, 가름 수집, 표 상자               |
-| Output | raw HTML 해석, raw HTML의 링크와 자원 검사, 경고 출력, HTML 문자열   |
+| rehype | 코드 강조, raw HTML 해석, 문서 header, 제목 id, 가름 수집, 표 상자 |
+| Output | raw HTML의 링크와 자원 검사, 경고 출력, HTML 문자열                 |
 
 제목 원문에서 id와 TOC 텍스트를 수집하고 가름별로 묶음. 제목 번호는 자동 생성하지 않음.
 중간 계약은 `file.data.fh`. 제목과 section 정보는 문서 순서 유지.

@@ -104,9 +104,24 @@ export const copy_error_not_file = "not a regular file";
 export const copy_error_image_format = "unsupported image format";
 
 /**
+ * 자원 오류의 이유. video, audio, source에서 지원하지 않는 형식
+ */
+export const copy_error_media_format = "unsupported video or audio format";
+
+/**
+ * 배포 형식이 아닌 로컬 파일 링크 경고. 빌드 계속
+ */
+export const copy_warn_unpublished_file = "Link to a local file that is not published";
+
+/**
  * 스니펫 오류의 이유. 없는 region
  */
 export const copy_error_region_missing = "region not found";
+
+/**
+ * 스니펫 오류의 이유. 파일 끝까지 닫히지 않은 region
+ */
+export const copy_error_region_open = "region not closed";
 
 /**
  * 패키지 빌드 전 Mermaid 진입 모듈 누락 오류

@@ -245,5 +245,83 @@ describe("코드 블록", () => {
             expect(doc.html).toMatch(/first[\s\S]*second[\s\S]*third/);
             expect(doc.html).not.toMatch(/outside|#region|#endregion/);
         });
+
+        test("[COD-013] HTML 주석의 이름 바로 뒤에 붙은 닫는 기호는 region 이름에서 제외한다", async ({scope}) => {
+            /**
+             * GIVEN
+             * 이름과 닫는 기호 사이에 공백이 없는 HTML region
+             */
+            const site = siteConfigSchema.parse({});
+
+            await writeFile(join(scope.publicRoot, "example.html"), "<p>before</p>\n<!-- #region picked-->\n<p>inside</p>\n<!-- #endregion picked-->\n<p>after</p>\n");
+            await writeFile(join(scope.publicRoot, "guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n<<< ./example.html#picked\n");
+
+            /**
+             * WHEN
+             * Markdown 처리
+             */
+            const [doc] = await readDocs({scope, processor: toProcessor({site, scope})});
+
+            /**
+             * THEN
+             * region 안의 줄만 표시
+             */
+            expect(doc.html).toContain("inside");
+            expect(doc.html).not.toMatch(/before|after|#region|#endregion/);
+        });
+
+        test.for([
+            {caseId: "COD-014", source: "const before = 0;\n// #region picked\nconst inside = 1;\n"},
+            {caseId: "COD-015", source: "// #region picked\nconst inside = 1;\n// #endregion pikced\nconst after = 2;\n"},
+        ])("[$caseId] 파일 끝까지 닫히지 않은 region은 작성 위치와 함께 거부한다", async (scenario, {scope}) => {
+            /**
+             * GIVEN
+             * 끝 표시가 없거나 끝 표시의 이름이 다른 region
+             */
+            const site = siteConfigSchema.parse({});
+
+            await writeFile(join(scope.publicRoot, "example.ts"), scenario.source);
+            await writeFile(join(scope.publicRoot, "guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n<<< ./example.ts#picked\n");
+
+            /**
+             * WHEN
+             * Markdown 처리
+             */
+            const result = readDocs({scope, processor: toProcessor({site, scope})});
+
+            /**
+             * THEN
+             * 닫히지 않은 region 오류와 스니펫 행 번호
+             */
+            await expect(result).rejects.toThrow(/Invalid code snippet: \.\/example\.ts#picked \(region not closed\)/);
+            await expect(result).rejects.toHaveProperty("line", 7);
+        });
+
+        test.for([
+            {caseId: "COD-016", file: "example.py", source: "before = 0\n# region picked\ninside = 1\n# endregion\nafter = 2\n"},
+            {caseId: "COD-017", file: "example.cpp", source: "int before = 0;\n#pragma region picked\nint inside = 1;\n#pragma endregion\nint after = 2;\n"},
+        ])("[$caseId] $file 파일은 언어별 region 표시로 영역을 고른다", async (scenario, {scope}) => {
+            /**
+             * GIVEN
+             * Python의 # region이나 C++의 #pragma region으로 나눈 파일
+             */
+            const site = siteConfigSchema.parse({});
+
+            await writeFile(join(scope.publicRoot, scenario.file), scenario.source);
+            await writeFile(join(scope.publicRoot, "guide.md"), `---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n<<< ./${scenario.file}#picked\n`);
+
+            /**
+             * WHEN
+             * Markdown 처리
+             */
+            const [doc] = await readDocs({scope, processor: toProcessor({site, scope})});
+
+            /**
+             * THEN
+             * region 안의 줄만 표시
+             */
+            expect(doc.html).toContain("inside");
+            expect(doc.html).not.toMatch(/before|after|region/);
+        });
     });
 });

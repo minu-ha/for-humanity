@@ -58,7 +58,8 @@ interface ProcessorParams {
  * Markdown 변환과 문서 메타데이터 수집
  *
  *   - 코드와 문서 머리 생성 후 제목 ID와 가름 수집
- *   - 플러그인 HTML 조각은 rehype-raw에서 해석. 이후 링크, 자원 검사는 원시 HTML 포함
+ *   - 원시 HTML과 플러그인 HTML 조각은 Shiki 다음 rehype-raw에서 해석. Mermaid 원문과 원시 pre의 코드 강조 방지
+ *   - 머리, 제목 ID, 가름, 표, 링크, 자원 처리는 원시 HTML 포함
  *   - 코드 상자의 색상은 article CSS 소유, Shiki 토큰 색상은 --app-code-* 참조
  */
 export const toProcessor = (params: ProcessorParams) => {
@@ -80,11 +81,11 @@ export const toProcessor = (params: ProcessorParams) => {
         .use(remarkUnknownDirectives)
         .use(remarkRehype, {allowDangerousHtml: true})
         .use(rehypeShiki, {theme: createCssVariablesTheme({name: "for-humanity", variablePrefix: "--app-code-"}), transformers: shikiTransformers})
+        .use(rehypeRaw)
         .use(rehypeHead)
         .use(rehypeHeadingIds)
         .use(rehypeSections)
         .use(rehypeTables)
-        .use(rehypeRaw)
         .use(rehypeContentLinks, {scope: params.scope})
         .use(rehypeAssets, {scope: params.scope, files})
         .use(rehypeReport, {root: params.scope.root})

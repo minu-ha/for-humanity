@@ -1,5 +1,4 @@
 import type {Root} from "mdast";
-import {toString as toPlainText} from "mdast-util-to-string";
 import {visit} from "unist-util-visit";
 import type {VFile} from "vfile";
 import {
@@ -12,22 +11,29 @@ import {
     copy_error_part_empty_title,
     copy_error_part_fence,
     copy_error_part_heading,
+    copy_error_part_line,
     copy_error_part_plain_title,
     copy_error_part_top_level,
 } from "@/component/widget/article/_constant/copy";
 import {section_heading_depth} from "@/component/widget/article/_constant/section";
+import {toTitleText} from "@/component/widget/article/_function/_to-title-text";
 import {hasBlockContent} from "@/component/widget/article/_function/remark-blocks/_has-block-content";
 
 /**
  * Note, Details의 제목, 본문, 속성, 닫힘 계약
  *
  *   - label은 첫 자식, summary는 Details의 첫 요소
+ *   - part는 문서 최상위의 ::part[...] 한 줄만 허용
  *   - 원문 위치는 오류 기준
  */
 export const remarkBlocks = () => (tree: Root, file: VFile) => {
     const source = String(file.value);
 
     visit(tree, (node, _index, parent) => {
+        if (node.type === "containerDirective" && node.name === "part") {
+            file.fail(`${copy_error_directive_syntax}: ${node.name} ${copy_error_part_line}`, node);
+        }
+
         if (node.type === "leafDirective" && node.name === "part" && parent?.type !== "root") {
             file.fail(`${copy_error_directive_syntax}: ${node.name} ${copy_error_part_top_level}`, node);
         }
@@ -46,11 +52,15 @@ export const remarkBlocks = () => (tree: Root, file: VFile) => {
 
         const label = node.children.at(0);
 
-        if (label?.type !== "paragraph" || label.data?.directiveLabel !== true || label.children.some((child) => child.type !== "text")) {
+        if (label?.type !== "paragraph" || label.data?.directiveLabel !== true) {
             file.fail(`${copy_error_directive_syntax}: ${node.name} ${copy_error_part_plain_title}`, node);
         }
 
-        const title = toPlainText(label).trim();
+        const title = toTitleText(label.children, source);
+
+        if (title === undefined) {
+            file.fail(`${copy_error_directive_syntax}: ${node.name} ${copy_error_part_plain_title}`, node);
+        }
 
         if (title === "") {
             file.fail(`${copy_error_directive_syntax}: ${node.name} ${copy_error_part_empty_title}`, node);

@@ -3,7 +3,7 @@ import {dirname, extname, resolve} from "node:path";
 import type {Root} from "mdast";
 import {visit} from "unist-util-visit";
 import type {VFile} from "vfile";
-import {copy_error_file_missing, copy_error_not_file, copy_error_region_missing, copy_error_snippet} from "@/app/_constant/copy";
+import {copy_error_file_missing, copy_error_not_file, copy_error_snippet} from "@/app/_constant/copy";
 import {snippet_language_by_extension, snippet_pattern} from "@/app/_constant/snippet";
 import {toSnippetBody} from "@/app/_function/to-processor/_to-snippet-body";
 import type {ContentScope} from "@/type/content-scope";
@@ -24,7 +24,7 @@ interface SnippetOptions {
  * 문서 상대 경로의 코드 스니펫 삽입
  *
  *   - 선택 region과 메타를 코드 펜스에 반영
- *   - 문서 폴더 밖 경로와 없는 파일은 빌드 실패
+ *   - 문서 폴더 밖 경로, 없는 파일, 없거나 닫히지 않은 region은 빌드 실패
  */
 export const remarkSnippets = (options: SnippetOptions) => (tree: Root, file: VFile) => {
     visit(tree, "paragraph", (node, index, parent) => {
@@ -60,19 +60,19 @@ export const remarkSnippets = (options: SnippetOptions) => (tree: Root, file: VF
             file.fail(`${copy_error_snippet}: ${path} (${copy_error_not_file})`, node);
         }
 
-        const body = toSnippetBody(readFileSync(actual, "utf8"), region);
-
-        if (body === undefined) {
-            file.fail(`${copy_error_snippet}: ${path}#${region} (${copy_error_region_missing})`, node);
-        }
-
+        const source = readFileSync(actual, "utf8");
         const extension = extname(actual).toLowerCase();
 
-        parent.children.splice(index, 1, {
-            type: "code",
-            lang: snippet_language_by_extension.get(extension) ?? extension.slice(1),
-            meta,
-            value: body,
-        });
+        // region 오류의 이유에 스니펫 경로와 작성 위치 추가
+        try {
+            parent.children.splice(index, 1, {
+                type: "code",
+                lang: snippet_language_by_extension.get(extension) ?? extension.slice(1),
+                meta,
+                value: toSnippetBody(source, region),
+            });
+        } catch (error) {
+            file.fail(`${copy_error_snippet}: ${path}#${region} (${toErrorMessage(error)})`, node);
+        }
     });
 };

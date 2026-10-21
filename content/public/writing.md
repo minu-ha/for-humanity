@@ -105,7 +105,8 @@ private 문서에는 `/private/`이 붙습니다. `.mdx`도 Markdown으로 읽�
 ```
 
 part는 본문과 목차에서 절의 묶음을 표시합니다. 제목에 자동 번호는 붙지 않습니다. 번호가 필요하면 제목에 직접 적습니다.
-제목을 생략하거나 비워 둔 `::part`는 빌드 오류입니다.
+제목을 생략하거나 비워 둔 `::part`는 빌드 오류입니다. 제목은 서식 없는 일반 텍스트이며 속성을 붙일 수 없습니다.
+`::part` 뒤에는 다음 `::part`나 문서 끝보다 먼저 Markdown `##` 절이 하나 이상 있어야 합니다.
 
 ### Links
 
@@ -120,6 +121,7 @@ part는 본문과 목차에서 절의 묶음을 표시합니다. 제목에 자�
 상대 `.md` 링크는 사이트 URL로 바뀌며 query와 hash를 유지합니다. 위의 `settings.md#navigation`은 `/settings/#navigation`으로 연결됩니다.
 일반 문서의 README 링크는 해당 문서로, `content/README.md` 링크는 홈으로 연결됩니다.
 없는 문서를 가리키는 링크는 빌드 오류가 아닌 경고입니다. 터미널에 해당 파일과 줄 번호를 표시합니다. 원시 HTML의 `<a href="...">`에도 같은 변환과 경고를 적용합니다.
+배포하지 않는 형식의 로컬 파일을 가리키는 링크도 같은 방식으로 경고합니다. 배포하는 형식은 [Images](images.md#supported-files)를 참고합니다.
 
 제목 앵커는 제목으로부터 자동 생성됩니다. 같은 제목이 반복되면 `-1`, `-2`가 붙습니다.
 Details 안의 제목으로 이동하면 접힌 내용이 펼쳐집니다.
@@ -184,7 +186,8 @@ const count = 3;
 
 경로는 현재 Markdown 파일 기준입니다. 파일은 content 루트 안에 있어야 합니다. 공개 문서에서는 private 파일을 불러올 수 없습니다.
 `#contract`를 붙이면 파일의 `// #region contract`와 `// #endregion contract` 사이만 표시합니다. 이름 없는 `// #endregion`은 가장 안쪽의 열린 region을 닫습니다.
-HTML과 CSS 파일에서는 `<!-- #region contract -->`와 `/* #region contract */`처럼 해당 언어의 주석을 사용합니다. region 표시 줄과 공통 들여쓰기는 제거합니다.
+주석 형식은 언어에 맞춥니다. HTML은 `<!-- #region contract -->`, CSS는 `/* #region contract */`, Python은 `# region contract`, C와 C++은 `#pragma region contract`를 사용합니다.
+region 표시 줄과 공통 들여쓰기는 제거합니다. 없는 region이나 파일 끝까지 닫히지 않은 region을 지정하면 빌드 오류입니다.
 언어는 파일 확장자로 정합니다. 경로 뒤에는 코드 블록과 같은 메타를 사용할 수 있습니다. dev에서는 불러온 파일의 변경도 반영합니다.
 
 ## Content features
@@ -193,6 +196,7 @@ HTML과 CSS 파일에서는 `<!-- #region contract -->`와 `/* #region contract 
 그림과 첨부의 경로는 [Images](images.md), 본문 상태 문구의 강조는 [Status badges](settings.md#status-badges)를 참고합니다.
 인라인 색 값 `#e80030`은 색 견본과 함께 표시됩니다.
 원시 HTML도 사용할 수 있지만 다른 사이트의 CSS와 JavaScript를 자동으로 가져오지는 않습니다.
+원시 HTML의 `<h2>`와 `<h3>`도 제목 앵커와 목차에 포함합니다. 원시 HTML 표도 Markdown 표와 같은 가로 스크롤 상자에 넣습니다.
 
 ## Block components
 

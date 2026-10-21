@@ -212,5 +212,120 @@ describe("문서 링크와 목차", () => {
             await expect(result).rejects.toThrow(/Invalid part syntax: part needs a non-empty title/);
             await expect(result).rejects.toHaveProperty("line", 7);
         });
+
+        test.for([
+            {caseId: "LNK-010", source: "::part[**Setup**]", error: /Invalid part syntax: part needs a plain-text title/},
+            {caseId: "LNK-011", source: "::part[[Setup](setup.md)]", error: /Invalid part syntax: part needs a plain-text title/},
+            {caseId: "LNK-012", source: "::part[`Setup`]", error: /Invalid part syntax: part needs a plain-text title/},
+            {caseId: "LNK-013", source: "::part[Setup]{#setup}", error: /Invalid part syntax: part does not support the attribute id/},
+            {caseId: "LNK-014", source: "::part[Setup]{}", error: /Invalid part syntax: part has malformed attributes/},
+            {caseId: "LNK-015", source: ":::part[Setup]\nBody.\n:::", error: /Invalid part syntax: part must be written as a ::part\[\.\.\.\] line/},
+        ])("[$caseId] 서식, 속성, 블록 형태의 가름 $source 입력은 작성 위치와 함께 거부한다", async (scenario, {scope}) => {
+            /**
+             * GIVEN
+             * Note, Details 제목 계약에 맞지 않는 가름
+             */
+            const site = siteConfigSchema.parse({});
+
+            await writeFile(join(scope.publicRoot, "guide.md"), `---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n${scenario.source}\n\n## Overview\n\nText.\n`);
+
+            /**
+             * WHEN
+             * 문서 로드
+             */
+            const result = readDocs({scope, processor: toProcessor({site, scope})});
+
+            /**
+             * THEN
+             * 가름 문법 오류와 원본 행 번호
+             */
+            await expect(result).rejects.toThrow(scenario.error);
+            await expect(result).rejects.toHaveProperty("line", 7);
+        });
+
+        test.for([
+            {caseId: "LNK-016", source: "::part[One]\n\n::part[Two]\n\n## Overview\n", line: 7},
+            {caseId: "LNK-017", source: "## Overview\n\n::part[Tail]\n\nText.\n", line: 9},
+        ])("[$caseId] 다음 가름이나 문서 끝 전에 ## 절이 없는 가름은 작성 위치와 함께 거부한다", async (scenario, {scope}) => {
+            /**
+             * GIVEN
+             * ## 절 없이 다음 가름이나 문서 끝이 오는 가름
+             */
+            const site = siteConfigSchema.parse({});
+
+            await writeFile(join(scope.publicRoot, "guide.md"), `---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n${scenario.source}`);
+
+            /**
+             * WHEN
+             * 문서 로드
+             */
+            const result = readDocs({scope, processor: toProcessor({site, scope})});
+
+            /**
+             * THEN
+             * 절 누락 오류와 그 가름의 행 번호
+             */
+            await expect(result).rejects.toThrow(/Invalid part syntax: part needs a ## section before the next part or the end of the document/);
+            await expect(result).rejects.toHaveProperty("line", scenario.line);
+        });
+
+        test("[LNK-018] 콜론이 든 가름과 Note 제목은 원문 그대로 표시한다", async ({scope}) => {
+            /**
+             * GIVEN
+             * 콜론 뒤에 글자가 붙은 가름과 Note 제목
+             */
+            const site = siteConfigSchema.parse({});
+
+            await writeFile(
+                join(scope.publicRoot, "guide.md"),
+                "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n::part[예:이것]\n\n## Overview\n\n:::note[예:요약]\nBody.\n:::\n",
+            );
+
+            /**
+             * WHEN
+             * 문서 로드
+             */
+            const docs = await readDocs({scope, processor: toProcessor({site, scope})});
+
+            /**
+             * THEN
+             * 본문 가름, 목차 묶음, Note 제목의 같은 원문
+             */
+            expect(docs[0].outline.sections).toStrictEqual([{part: "예:이것"}]);
+            expect(docs[0].html).toContain('<div class="wg_article__part">예:이것</div>');
+            expect(docs[0].html).toContain('<strong class="wg_article__noteTitle">예:요약</strong>');
+        });
+
+        test("[LNK-019] 원시 HTML의 h2, h3은 제목 id와 목차 항목을 갖는다", async ({scope}) => {
+            /**
+             * GIVEN
+             * 원시 HTML 제목과 Markdown 제목이 섞인 문서
+             */
+            const site = siteConfigSchema.parse({});
+
+            await writeFile(
+                join(scope.publicRoot, "guide.md"),
+                '---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\nLead.\n\n<h2>Raw section</h2>\n\n<h3 id="custom">Raw sub</h3>\n\n## Markdown section\n',
+            );
+
+            /**
+             * WHEN
+             * 문서 로드
+             */
+            const docs = await readDocs({scope, processor: toProcessor({site, scope})});
+
+            /**
+             * THEN
+             * 작성 순서의 제목 목록, 원시 h2의 생성 id와 머리 영역 밖 배치
+             */
+            expect(docs[0].outline.headings).toStrictEqual([
+                {depth: 1, slug: "guide", text: "Guide"},
+                {depth: 2, slug: "raw-section", text: "Raw section"},
+                {depth: 3, slug: "custom", text: "Raw sub"},
+                {depth: 2, slug: "markdown-section", text: "Markdown section"},
+            ]);
+
+            expect(docs[0].html).toContain('</header><h2 id="raw-section"><span class="wg_article__headingText">Raw section</span></h2>');
+        });
     });
 });

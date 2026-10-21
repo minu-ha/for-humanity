@@ -3,6 +3,7 @@ import {dirname, resolve} from "node:path";
 import type {Root} from "hast";
 import {visit} from "unist-util-visit";
 import type {VFile} from "vfile";
+import {asset_srcset_candidate_pattern} from "@/app/_constant/asset";
 import {copy_error_private_url} from "@/app/_constant/copy";
 import {content_private_segment} from "@/constant/content";
 import {copy_error_url_encoding, copy_warn_broken_link} from "@/constant/copy";
@@ -36,7 +37,7 @@ export const rehypeContentLinks = (options: ContentLinkOptions) => (tree: Root, 
                 continue;
             }
 
-            for (const url of property === "srcSet" ? value.split(",").map((entry) => entry.trim().split(/\s+/)[0]) : [value]) {
+            for (const url of property === "srcSet" ? [...value.matchAll(asset_srcset_candidate_pattern)].map((candidate) => candidate[2]) : [value]) {
                 if (/^(?:[a-z][a-z\d+.-]*:|\/\/|#)/i.test(url)) {
                     continue;
                 }

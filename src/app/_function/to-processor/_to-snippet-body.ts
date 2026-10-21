@@ -1,4 +1,5 @@
 import {dropRightWhile, dropWhile, minBy} from "es-toolkit/array";
+import {copy_error_region_missing, copy_error_region_open} from "@/app/_constant/copy";
 import {snippet_region_pattern} from "@/app/_constant/snippet";
 
 /**
@@ -7,9 +8,10 @@ import {snippet_region_pattern} from "@/app/_constant/snippet";
  *   - region 경계 줄과 공통 들여쓰기 제거
  *   - 이름 없는 끝 표시는 가장 안쪽 region 종료
  *   - 이름 있는 끝 표시는 같은 이름의 가장 안쪽 region까지 종료
- *   - 빈 region은 빈 문자열, 없는 region은 undefined 반환
+ *   - 빈 region은 빈 문자열
+ *   - 없는 region과 파일 끝까지 닫히지 않은 region은 이유를 담은 오류
  */
-export const toSnippetBody = (source: string, region: string | undefined): string | undefined => {
+export const toSnippetBody = (source: string, region: string | undefined): string => {
     // region 경계를 지날 때마다 바뀌는 줄 순서 의존 판정. 선언형 변환 대신 순차 반복
     const open: (string | undefined)[] = [];
     const kept: string[] = [];
@@ -42,7 +44,11 @@ export const toSnippetBody = (source: string, region: string | undefined): strin
     }
 
     if (!found) {
-        return undefined;
+        throw new Error(copy_error_region_missing);
+    }
+
+    if (region !== undefined && open.includes(region)) {
+        throw new Error(copy_error_region_open);
     }
 
     const content = dropRightWhile(

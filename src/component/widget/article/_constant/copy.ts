@@ -19,6 +19,11 @@ export const copy_error_part_top_level = "must be at the top level of the docume
 export const copy_error_part_container = "must be written as a ::: block";
 
 /**
+ * 부품 문법 오류의 이유. 한 줄 지시문이 아닌 ::: 블록의 part
+ */
+export const copy_error_part_line = "must be written as a ::part[...] line";
+
+/**
  * 부품 문법 오류의 이유. 텍스트가 아닌 제목
  */
 export const copy_error_part_plain_title = "needs a plain-text title";
@@ -52,6 +57,11 @@ export const copy_error_part_fence = "needs a closing fence at least as long as 
  * 부품 문법 오류의 이유. 부품 안의 문서 구획 제목
  */
 export const copy_error_part_heading = "cannot contain # or ## headings";
+
+/**
+ * 부품 문법 오류의 이유. 다음 part나 문서 끝까지 ## 절이 없는 part
+ */
+export const copy_error_part_section = "needs a ## section before the next part or the end of the document";
 
 /**
  * 부품 문법 오류의 이유. 닫히지 않은 코드 fence, 코드 안 :::보다 짧은 바깥 fence

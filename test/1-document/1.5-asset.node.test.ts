@@ -1,11 +1,12 @@
 import {mkdir, symlink, writeFile} from "node:fs/promises";
 import {join} from "node:path";
 import {test} from "@test/_fixture/temp-root";
-import {describe, expect} from "vitest";
+import {describe, expect, vi} from "vitest";
 import {readDocs} from "@/app/_function/read-docs";
 import {readHome} from "@/app/_function/read-home";
 import {toProcessor} from "@/app/_function/to-processor/to-processor";
 import {siteConfigSchema} from "@/type/site-config";
+import {logger} from "@/util/logger/logger";
 
 /**
  * 문서 자원 수집(src/app/_function/to-processor/_rehype-assets.ts) 검증
@@ -79,6 +80,46 @@ describe("문서 자원", () => {
             expect(changed?.html).toContain(after);
             expect(changed?.html).not.toContain(before);
         });
+
+        test("[AST-006] 원시 HTML의 srcset, poster, video, audio, source 자원은 내용 지문 주소로 수집한다", async ({scope}) => {
+            /**
+             * GIVEN
+             * srcset, poster, video, audio, source로 로컬 파일을 참조하는 문서
+             */
+            await Promise.all([
+                writeFile(join(scope.publicRoot, "small.png"), "small"),
+                writeFile(join(scope.publicRoot, "large.png"), "large"),
+                writeFile(join(scope.publicRoot, "poster.png"), "poster"),
+                writeFile(join(scope.publicRoot, "clip.mp4"), "mp4"),
+                writeFile(join(scope.publicRoot, "clip.webm"), "webm"),
+                writeFile(join(scope.publicRoot, "sound.mp3"), "mp3"),
+            ]);
+
+            await writeFile(
+                join(scope.publicRoot, "page.md"),
+                '---\nname: Media\nlabel: Media\ngroup: Guide\n---\n\n<img srcset="small.png 1x, large.png?v=2 2x" src="small.png" alt="">\n\n<picture><source srcset="large.png" type="image/png"><img src="small.png" alt=""></picture>\n\n<video src="clip.mp4" poster="poster.png"><source src="clip.webm" type="video/webm"></video>\n\n<audio src="sound.mp3"></audio>\n\n<img srcset="data:image/png;base64,AAAA 1x, https://example.com/x.png 2x" alt="">\n',
+            );
+
+            const files = new Map<string, string>();
+
+            /**
+             * WHEN
+             * 문서 자원 처리
+             */
+            const docs = await readDocs({scope, processor: toProcessor({site: siteConfigSchema.parse({}), scope, files})});
+
+            /**
+             * THEN
+             * 서술자와 쿼리를 유지한 내용 지문 주소, 외부와 data 주소 유지
+             */
+            expect(files.size).toBe(6);
+            expect(docs[0].html).toMatch(/srcset="\/_fh\/media\/asset\.[a-f0-9]+\.png 1x, \/_fh\/media\/asset\.[a-f0-9]+\.png\?v=2 2x"/);
+            expect(docs[0].html).toMatch(/<source srcset="\/_fh\/media\/asset\.[a-f0-9]+\.png"/);
+            expect(docs[0].html).toMatch(/<video src="\/_fh\/media\/asset\.[a-f0-9]+\.mp4" poster="\/_fh\/media\/asset\.[a-f0-9]+\.png">/);
+            expect(docs[0].html).toMatch(/<source src="\/_fh\/media\/asset\.[a-f0-9]+\.webm"/);
+            expect(docs[0].html).toMatch(/<audio src="\/_fh\/media\/asset\.[a-f0-9]+\.mp3">/);
+            expect(docs[0].html).toContain('srcset="data:image/png;base64,AAAA 1x, https://example.com/x.png 2x"');
+        });
     });
 
     describe("자원 거부", () => {
@@ -128,6 +169,68 @@ describe("문서 자원", () => {
              * 루트 이탈 오류
              */
             await expect(result).rejects.toThrow(/Reference outside the document scope/);
+        });
+
+        test.for([
+            {caseId: "AST-007", source: '<img srcset="present.png 1x, missing.png 2x" alt="">', error: /Invalid asset: missing\.png \(file not found\)/},
+            {caseId: "AST-008", source: '<video src="present.mp4" poster="missing.png"></video>', error: /Invalid asset: missing\.png \(file not found\)/},
+            {caseId: "AST-009", source: '<video><source src="missing.webm"></video>', error: /Invalid asset: missing\.webm \(file not found\)/},
+            {caseId: "AST-010", source: '<video src="present.mov"></video>', error: /Invalid asset: present\.mov \(unsupported video or audio format\)/},
+            {caseId: "AST-011", source: "![Document](present.pdf)", error: /Invalid asset: present\.pdf \(unsupported image format\)/},
+        ])("[$caseId] 잘못된 자원 참조 $source 입력은 작성 위치와 함께 거부한다", async (scenario, {scope}) => {
+            /**
+             * GIVEN
+             * 없는 파일이나 지원하지 않는 형식을 참조하는 문서
+             */
+            await Promise.all(["present.png", "present.mp4", "present.mov", "present.pdf"].map((name) => writeFile(join(scope.publicRoot, name), name)));
+            await writeFile(join(scope.publicRoot, "page.md"), `---\nname: Media\nlabel: Media\ngroup: Guide\n---\n\n${scenario.source}\n`);
+
+            /**
+             * WHEN
+             * 문서 자원 처리
+             */
+            const result = readDocs({scope, processor: toProcessor({site: siteConfigSchema.parse({}), scope})});
+
+            /**
+             * THEN
+             * 자원 오류와 원본 행 번호
+             */
+            await expect(result).rejects.toThrow(scenario.error);
+            await expect(result).rejects.toHaveProperty("line", 7);
+        });
+    });
+
+    describe("배포하지 않는 파일", () => {
+        test("[AST-012] 배포 형식이 아닌 로컬 파일 링크는 작성 위치와 함께 경고한다", async ({scope}) => {
+            /**
+             * GIVEN
+             * 소스 파일, 폴더, 페이지 기준 주소를 가리키는 Markdown과 원시 HTML 링크
+             */
+            const warn = vi.spyOn(logger, "warn").mockImplementation(() => undefined);
+
+            await writeFile(join(scope.publicRoot, "code.ts"), "export {};\n");
+
+            await writeFile(
+                join(scope.publicRoot, "page.md"),
+                '---\nname: Media\nlabel: Media\ngroup: Guide\n---\n\n[Source](code.ts)\n\n<a href="code.ts#L1">Raw</a>\n\n[Folder](./)\n\n[Page](../setup/)\n',
+            );
+
+            /**
+             * WHEN
+             * 문서 자원 처리
+             */
+            const docs = await readDocs({scope, processor: toProcessor({site: siteConfigSchema.parse({}), scope})});
+
+            /**
+             * THEN
+             * 원문 링크 유지와 파일을 가리키는 두 링크의 경고
+             */
+            expect(docs[0].html).toContain('href="code.ts"');
+
+            expect(warn.mock.calls).toStrictEqual([
+                [`${join("public", "page.md")}:7 Link to a local file that is not published: code.ts`],
+                [`${join("public", "page.md")}:9 Link to a local file that is not published: code.ts#L1`],
+            ]);
         });
     });
 });

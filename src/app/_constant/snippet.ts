@@ -6,10 +6,11 @@ export const snippet_pattern = /^<<<\s+(\S+?)(?:#([\w-]+))?(?:\s+(.+?))?\s*$/;
 /**
  * region 경계 구문, 주석 형식 무관
  *
+ *   - Python의 # region, C와 C++의 #pragma region 허용
  *   - 이름 없는 표시 뒤는 공백, 줄 끝, 닫는 주석의 -->와 *만 허용
  *   - HTML 주석의 닫는 -->는 이름에서 제외
  */
-export const snippet_region_pattern = /^\s*\S*\s*#(end)?region(?:\s+(?!-->)([\w-]+)|(?=\s|$|-->|\*))/;
+export const snippet_region_pattern = /^\s*\S*\s*#(?:pragma\s+|\s*)(end)?region(?:\s+((?:\w|-(?!->))+)|(?=\s|$|-->|\*))/;
 
 /**
  * 펜스 언어로 치환할 확장자, 미등록 확장자는 원문 사용

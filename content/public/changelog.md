@@ -29,6 +29,14 @@ pnpm add -D --save-exact for-humanity@latest
 - End a snippet region at a nameless `// #endregion`, `<!-- #endregion -->` or `/* #endregion */`, which closes the innermost open region. The rest of the file used to leak into the snippet.
 - Warn with `Link to a missing document` and the file and line when a raw HTML link such as `<a href="missing.md">` points to a missing document, as Markdown links already do.
 - Keep Markdown links with a URL scheme such as `web+app:notes.md` as written. They used to be rewritten as document links and reported as missing.
+- Collect local files in raw HTML `srcset`, `<video>` `src` and `poster`, `<audio>` and `<source>` with fingerprinted URLs, and accept MP4, WebM and MP3. A missing file or an unsupported format now fails the build with the file and line instead of shipping a broken relative URL.
+- Fail the build with `unsupported image format` when a Markdown image or `<img>` points to a file that is not an image, such as a PDF.
+- Reject a `::part` title with links, emphasis, code or attributes, as Note and Details already do, and report a `:::part` block as `part must be written as a ::part[...] line` instead of `Unknown part`.
+- Fail the build when a `::part` has no `##` section before the next part or the end of the document. The earlier of two parts used to disappear from the outline.
+- Keep a colon in Note, Details and part titles such as `예:이것`. Note and Details used to reject the title, and the outline cut a part title at the colon.
+- Read `<!-- #region name-->` as the region `name`, and fail with `region not closed` when the selected region has no matching end marker. Snippet regions also accept Python `# region` and C and C++ `#pragma region` markers.
+- Warn with `Link to a local file that is not published` and the file and line when a link points to a local file that the build does not copy, such as `[source](code.ts)`.
+- Give raw HTML `<h2>` and `<h3>` headings anchors and outline entries, and wrap raw HTML tables in the same scroll box as Markdown tables.
 
 ## 0.14.2 — 2026-10-20
 
