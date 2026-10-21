@@ -4,7 +4,7 @@ import type {Root} from "mdast";
 import {visit} from "unist-util-visit";
 import type {VFile} from "vfile";
 import {copy_error_file_missing, copy_error_not_file, copy_error_snippet} from "@/app/_constant/copy";
-import {snippet_language_by_extension, snippet_pattern} from "@/app/_constant/snippet";
+import {snippet_language_by_extension, snippet_pattern, snippet_region_pattern, snippet_region_pattern_by_extension} from "@/app/_constant/snippet";
 import {toSnippetBody} from "@/app/_function/to-processor/_to-snippet-body";
 import type {ContentScope} from "@/type/content-scope";
 import {toErrorMessage} from "@/util/error/to-error-message";
@@ -24,6 +24,7 @@ interface SnippetOptions {
  * 문서 상대 경로의 코드 스니펫 삽입
  *
  *   - 선택 region과 메타를 코드 펜스에 반영
+ *   - region 표시는 파일 확장자의 주석 형식만 인정
  *   - 문서 폴더 밖 경로, 없는 파일, 없거나 닫히지 않은 region은 빌드 실패
  */
 export const remarkSnippets = (options: SnippetOptions) => (tree: Root, file: VFile) => {
@@ -69,7 +70,7 @@ export const remarkSnippets = (options: SnippetOptions) => (tree: Root, file: VF
                 type: "code",
                 lang: snippet_language_by_extension.get(extension) ?? extension.slice(1),
                 meta,
-                value: toSnippetBody(source, region),
+                value: toSnippetBody({source, region, pattern: snippet_region_pattern_by_extension.get(extension) ?? snippet_region_pattern}),
             });
         } catch (error) {
             file.fail(`${copy_error_snippet}: ${path}#${region} (${toErrorMessage(error)})`, node);

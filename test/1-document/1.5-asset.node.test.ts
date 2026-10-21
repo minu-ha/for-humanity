@@ -120,6 +120,41 @@ describe("문서 자원", () => {
             expect(docs[0].html).toMatch(/<audio src="\/_fh\/media\/asset\.[a-f0-9]+\.mp3">/);
             expect(docs[0].html).toContain('srcset="data:image/png;base64,AAAA 1x, https://example.com/x.png 2x"');
         });
+
+        test("[AST-013] 원시 HTML의 track, embed, object 자원은 내용 지문 주소로 수집한다", async ({scope}) => {
+            /**
+             * GIVEN
+             * 자막 트랙, 삽입 PDF, 삽입 SVG를 참조하는 문서
+             */
+            await Promise.all([
+                writeFile(join(scope.publicRoot, "clip.mp4"), "mp4"),
+                writeFile(join(scope.publicRoot, "captions.vtt"), "WEBVTT\n"),
+                writeFile(join(scope.publicRoot, "report.pdf"), "pdf"),
+                writeFile(join(scope.publicRoot, "diagram.svg"), '<svg xmlns="http://www.w3.org/2000/svg"/>'),
+            ]);
+
+            await writeFile(
+                join(scope.publicRoot, "page.md"),
+                '---\nname: Media\nlabel: Media\ngroup: Guide\n---\n\n<video src="clip.mp4"><track src="captions.vtt" kind="captions" srclang="ko"></video>\n\n<embed src="report.pdf" type="application/pdf">\n\n<object data="diagram.svg" type="image/svg+xml"></object>\n',
+            );
+
+            const files = new Map<string, string>();
+
+            /**
+             * WHEN
+             * 문서 자원 처리
+             */
+            const docs = await readDocs({scope, processor: toProcessor({site: siteConfigSchema.parse({}), scope, files})});
+
+            /**
+             * THEN
+             * track, embed, object 속성의 내용 지문 주소
+             */
+            expect(files.size).toBe(4);
+            expect(docs[0].html).toMatch(/<track src="\/_fh\/media\/asset\.[a-f0-9]+\.vtt"/);
+            expect(docs[0].html).toMatch(/<embed src="\/_fh\/media\/asset\.[a-f0-9]+\.pdf"/);
+            expect(docs[0].html).toMatch(/<object data="\/_fh\/media\/asset\.[a-f0-9]+\.svg"/);
+        });
     });
 
     describe("자원 거부", () => {
@@ -198,6 +233,32 @@ describe("문서 자원", () => {
             await expect(result).rejects.toThrow(scenario.error);
             await expect(result).rejects.toHaveProperty("line", 7);
         });
+
+        test.for([
+            {caseId: "AST-014", source: '<video><track src="captions.srt"></video>', error: /Invalid asset: captions\.srt \(unsupported text track format\)/},
+            {caseId: "AST-015", source: '<embed src="data.json">', error: /Invalid asset: data\.json \(unsupported embedded file format\)/},
+            {caseId: "AST-016", source: '<object data="missing.pdf"></object>', error: /Invalid asset: missing\.pdf \(file not found\)/},
+        ])("[$caseId] 잘못된 삽입 자원 $source 입력은 작성 위치와 함께 거부한다", async (scenario, {scope}) => {
+            /**
+             * GIVEN
+             * 지원하지 않는 형식이나 없는 파일을 가리키는 track, embed, object
+             */
+            await Promise.all(["captions.srt", "data.json"].map((name) => writeFile(join(scope.publicRoot, name), name)));
+            await writeFile(join(scope.publicRoot, "page.md"), `---\nname: Media\nlabel: Media\ngroup: Guide\n---\n\n${scenario.source}\n`);
+
+            /**
+             * WHEN
+             * 문서 자원 처리
+             */
+            const result = readDocs({scope, processor: toProcessor({site: siteConfigSchema.parse({}), scope})});
+
+            /**
+             * THEN
+             * 자원 오류와 원본 행 번호
+             */
+            await expect(result).rejects.toThrow(scenario.error);
+            await expect(result).rejects.toHaveProperty("line", 7);
+        });
     });
 
     describe("배포하지 않는 파일", () => {
@@ -230,6 +291,38 @@ describe("문서 자원", () => {
             expect(warn.mock.calls).toStrictEqual([
                 [`${join("public", "page.md")}:7 Link to a local file that is not published: code.ts`],
                 [`${join("public", "page.md")}:9 Link to a local file that is not published: code.ts#L1`],
+            ]);
+        });
+
+        test("[AST-017] 로컬 파일을 가리키는 iframe은 작성 위치와 함께 경고한다", async ({scope}) => {
+            /**
+             * GIVEN
+             * 로컬 HTML, 로컬 PDF, 외부 주소, 없는 파일을 가리키는 iframe
+             */
+            const warn = vi.spyOn(logger, "warn").mockImplementation(() => undefined);
+
+            await Promise.all([writeFile(join(scope.publicRoot, "widget.html"), "<p>Widget</p>\n"), writeFile(join(scope.publicRoot, "report.pdf"), "pdf")]);
+
+            await writeFile(
+                join(scope.publicRoot, "page.md"),
+                '---\nname: Media\nlabel: Media\ngroup: Guide\n---\n\n<iframe src="widget.html"></iframe>\n\n<iframe src="report.pdf"></iframe>\n\n<iframe src="https://example.com/"></iframe>\n\n<iframe src="missing.html"></iframe>\n',
+            );
+
+            /**
+             * WHEN
+             * 문서 자원 처리
+             */
+            const docs = await readDocs({scope, processor: toProcessor({site: siteConfigSchema.parse({}), scope})});
+
+            /**
+             * THEN
+             * 원문 주소 유지와 로컬 파일을 가리키는 두 iframe의 경고
+             */
+            expect(docs[0].html).toContain('<iframe src="widget.html"></iframe>');
+
+            expect(warn.mock.calls).toStrictEqual([
+                [`${join("public", "page.md")}:7 Link to a local file that is not published: widget.html`],
+                [`${join("public", "page.md")}:9 Link to a local file that is not published: report.pdf`],
             ]);
         });
     });

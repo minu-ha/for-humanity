@@ -1,6 +1,25 @@
 import {dropRightWhile, dropWhile, minBy} from "es-toolkit/array";
 import {copy_error_region_missing, copy_error_region_open} from "@/app/_constant/copy";
-import {snippet_region_pattern} from "@/app/_constant/snippet";
+
+/**
+ * 스니펫 파일 하나의 본문 추출 입력
+ */
+interface SnippetBodyParams {
+    /**
+     * 불러온 파일의 원문
+     */
+    source: string;
+
+    /**
+     * 선택 region 이름. 생략 시 전체 사용
+     */
+    region?: string;
+
+    /**
+     * 파일 확장자에 맞는 region 경계 구문. 첫째 캡처 그룹은 end, 둘째는 이름
+     */
+    pattern: RegExp;
+}
 
 /**
  * region 지정 시 해당 범위만 추출, 미지정 시 전체 사용
@@ -11,17 +30,17 @@ import {snippet_region_pattern} from "@/app/_constant/snippet";
  *   - 빈 region은 빈 문자열
  *   - 없는 region과 파일 끝까지 닫히지 않은 region은 이유를 담은 오류
  */
-export const toSnippetBody = (source: string, region: string | undefined): string => {
+export const toSnippetBody = (params: SnippetBodyParams): string => {
     // region 경계를 지날 때마다 바뀌는 줄 순서 의존 판정. 선언형 변환 대신 순차 반복
     const open: (string | undefined)[] = [];
     const kept: string[] = [];
-    let found = region === undefined;
+    let found = params.region === undefined;
 
-    for (const line of source.replace(/\r\n/g, "\n").split("\n")) {
-        const marker = snippet_region_pattern.exec(line);
+    for (const line of params.source.replace(/\r\n/g, "\n").split("\n")) {
+        const marker = params.pattern.exec(line);
 
         if (marker === null) {
-            if (region === undefined || open.includes(region)) {
+            if (params.region === undefined || open.includes(params.region)) {
                 kept.push(line);
             }
 
@@ -30,7 +49,7 @@ export const toSnippetBody = (source: string, region: string | undefined): strin
 
         if (marker[1] === undefined) {
             open.push(marker[2]);
-            found ||= marker[2] === region;
+            found ||= marker[2] === params.region;
 
             continue;
         }
@@ -47,7 +66,7 @@ export const toSnippetBody = (source: string, region: string | undefined): strin
         throw new Error(copy_error_region_missing);
     }
 
-    if (region !== undefined && open.includes(region)) {
+    if (params.region !== undefined && open.includes(params.region)) {
         throw new Error(copy_error_region_open);
     }
 

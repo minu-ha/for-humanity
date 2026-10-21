@@ -3,8 +3,9 @@ import {dirname, extname, resolve} from "node:path";
 import type {Root} from "hast";
 import {visit} from "unist-util-visit";
 import type {VFile} from "vfile";
-import {asset_image_extensions, asset_reference_formats, asset_srcset_candidate_pattern} from "@/app/_constant/asset";
-import {copy_error_asset, copy_error_file_missing, copy_error_image_format, copy_error_media_format, copy_error_not_file, copy_warn_unpublished_file} from "@/app/_constant/copy";
+import {asset_references, asset_srcset_candidate_pattern} from "@/app/_constant/asset";
+import {copy_error_asset, copy_error_file_missing, copy_error_not_file, copy_warn_unpublished_file} from "@/app/_constant/copy";
+import type {AssetReference} from "@/app/_type/asset-reference";
 import {asset_media_dir} from "@/constant/asset";
 import {copy_error_url_encoding} from "@/constant/copy";
 import type {ContentScope} from "@/type/content-scope";
@@ -31,14 +32,14 @@ interface AssetOptions {
 /**
  * 문서 상대 경로의 이미지, 영상, 소리, 첨부 수집
  *
- *   - 원시 HTML의 srcset, poster, video, audio, source에도 같은 내용 지문 URL 적용
+ *   - 원시 HTML의 srcset, poster, video, audio, source, track, embed, object에도 같은 내용 지문 URL 적용
  *   - 없는 파일, 폴더 밖 경로와 symlink, 삽입 자원의 미지원 형식은 빌드 실패
- *   - 배포 형식이 아닌 로컬 파일 링크는 파일 경고
+ *   - 배포 형식이 아닌 로컬 파일 링크와 로컬 iframe은 파일 경고
  *   - 절대 URL, 외부 URL은 작성자가 제공하며 수집하지 않음
  */
 export const rehypeAssets = (options: AssetOptions) => (tree: Root, file: VFile) => {
     visit(tree, "element", (node) => {
-        const references = asset_reference_formats.get(node.tagName);
+        const references = asset_references.get(node.tagName);
 
         if (references === undefined) {
             return;
@@ -47,7 +48,7 @@ export const rehypeAssets = (options: AssetOptions) => (tree: Root, file: VFile)
         /**
          * 로컬 참조 하나의 내용 지문 URL. 외부, 절대 URL과 수집하지 않는 링크는 원문 유지
          */
-        const toAssetUrl = (url: string, formats: ReadonlySet<string>) => {
+        const toAssetUrl = (url: string, reference: AssetReference) => {
             const match = /^([^?#]+)([?#].*|)$/.exec(url);
 
             if (match === null || /^(?:[a-z][a-z\d+.-]*:|\/|#)/i.test(url)) {
@@ -63,9 +64,9 @@ export const rehypeAssets = (options: AssetOptions) => (tree: Root, file: VFile)
             const extension = extname(path).toLowerCase();
             const target = resolve(dirname(file.path), path);
 
-            if (!formats.has(extension)) {
-                if (node.tagName !== "a") {
-                    file.fail(`${copy_error_asset}: ${url} (${formats === asset_image_extensions ? copy_error_image_format : copy_error_media_format})`, node);
+            if (!reference.formats.has(extension)) {
+                if (reference.unsupported !== undefined) {
+                    file.fail(`${copy_error_asset}: ${url} (${reference.unsupported})`, node);
                 }
 
                 // 실제 파일만 경고. 폴더와 페이지 기준 상대 URL 제외
@@ -100,7 +101,7 @@ export const rehypeAssets = (options: AssetOptions) => (tree: Root, file: VFile)
             return `${assetUrl}${match[2]}`;
         };
 
-        for (const [property, formats] of Object.entries(references)) {
+        for (const [property, reference] of Object.entries(references)) {
             const value = node.properties[property];
 
             if (typeof value !== "string") {
@@ -112,9 +113,9 @@ export const rehypeAssets = (options: AssetOptions) => (tree: Root, file: VFile)
                 property === "srcSet"
                     ? value.replace(
                           asset_srcset_candidate_pattern,
-                          (candidate: string, lead: string, url: string) => `${lead}${toAssetUrl(url, formats)}${candidate.slice(lead.length + url.length)}`,
+                          (candidate: string, lead: string, url: string) => `${lead}${toAssetUrl(url, reference)}${candidate.slice(lead.length + url.length)}`,
                       )
-                    : toAssetUrl(value, formats);
+                    : toAssetUrl(value, reference);
         }
     });
 };

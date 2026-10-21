@@ -242,7 +242,7 @@ vanilla 생성기는 `use-` 접두사를 붙이지 않습니다. 스크롤 스�
 | ------ | -------------------------------------------------------------------- |
 | Read   | 파일 탐색, remark-frontmatter의 YAML 노드, yaml 문서 해석, Zod 검증 |
 | remark | GFM, 스니펫, 문장부호, Note와 Details, part, Mermaid 원문, status badge, swatch, 링크 |
-| rehype | 코드 강조, raw HTML 해석, 문서 header, 제목 id, 가름 수집, 표 상자 |
+| rehype | 코드 강조, raw HTML 해석, 부품 안 raw 제목 검사, 문서 header, 제목 id, 가름 수집, 표 상자 |
 | Output | raw HTML을 포함한 링크와 자원 검사, 경고 출력, HTML 문자열          |
 
 YAML 문법 오류는 문서 경로와 함께 중단, YAML 경고는 frontmatter 위치의 파일 경고.

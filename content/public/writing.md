@@ -186,7 +186,16 @@ const count = 3;
 
 경로는 현재 Markdown 파일 기준입니다. 파일은 content 루트 안에 있어야 합니다. 공개 문서에서는 private 파일을 불러올 수 없습니다.
 `#contract`를 붙이면 파일의 `// #region contract`와 `// #endregion contract` 사이만 표시합니다. 이름 없는 `// #endregion`은 가장 안쪽의 열린 region을 닫습니다.
-주석 형식은 언어에 맞춥니다. HTML은 `<!-- #region contract -->`, CSS는 `/* #region contract */`, Python은 `# region contract`, C와 C++ 코드는 `#pragma region contract`를 사용합니다.
+region 표시는 `// #region contract`, `/* #region contract */`, `<!-- #region contract -->`처럼 주석 기호 뒤에 `#region`을 붙여 씁니다. 다음 확장자의 파일에서는 그 언어의 표기도 사용할 수 있습니다.
+
+| Extension | Additional marker |
+| --- | --- |
+| `.py`, `.yml`, `.yaml`, `.sh`, `.bash`, `.zsh`, `.coffee`, `.cs`, `.ps1` | `# region contract`, `# #region contract` |
+| `.c`, `.h`, `.cc`, `.cpp`, `.cxx`, `.hh`, `.hpp`, `.hxx` | `#pragma region contract` |
+
+다른 확장자의 파일에서 `# region`, `## region`처럼 띄어 쓴 줄은 표시가 아닌 본문으로 남습니다.
+
+끝 표시는 `region`을 `endregion`으로 바꿔 적습니다.
 region 표시 줄과 공통 들여쓰기는 제거합니다. 없는 region이나 파일 끝까지 닫히지 않은 region을 지정하면 빌드 오류입니다.
 언어는 파일 확장자로 정합니다. 경로 뒤에는 코드 블록과 같은 메타를 사용할 수 있습니다. dev에서는 불러온 파일의 변경도 반영합니다.
 

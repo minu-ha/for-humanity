@@ -1,7 +1,10 @@
+import {copy_error_embed_format, copy_error_image_format, copy_error_media_format, copy_error_track_format} from "@/app/_constant/copy";
+import type {AssetReference} from "@/app/_type/asset-reference";
+
 /**
  * 이미지 자원 형식. img, srcset, poster와 Markdown 이미지
  */
-export const asset_image_extensions: ReadonlySet<string> = new Set([".svg", ".png", ".jpg", ".jpeg", ".gif", ".webp", ".avif"]);
+const asset_image_extensions: ReadonlySet<string> = new Set([".svg", ".png", ".jpg", ".jpeg", ".gif", ".webp", ".avif"]);
 
 /**
  * 영상, 소리 자원 형식. video, audio, source의 src
@@ -9,22 +12,60 @@ export const asset_image_extensions: ReadonlySet<string> = new Set([".svg", ".pn
 const asset_video_audio_extensions: ReadonlySet<string> = new Set([".mp4", ".webm", ".mp3"]);
 
 /**
- * 명시적 로컬 참조로 배포할 수 있는 파일 형식. 실행 파일, 소스, 설정 제외
+ * 자막 트랙 형식. track의 src
  */
-const asset_media_extensions: ReadonlySet<string> = new Set([...asset_image_extensions, ".pdf", ".csv", ".txt", ".zip", ...asset_video_audio_extensions]);
+const asset_track_extensions: ReadonlySet<string> = new Set([".vtt"]);
 
 /**
- * 내용 지문 자원으로 수집하는 요소별 속성과 형식
+ * 삽입 문서 형식. embed의 src와 object의 data
+ */
+const asset_embed_extensions: ReadonlySet<string> = new Set([...asset_image_extensions, ".pdf"]);
+
+/**
+ * 명시적 로컬 참조로 배포할 수 있는 파일 형식. 실행 파일, 소스, 설정 제외
+ */
+const asset_media_extensions: ReadonlySet<string> = new Set([
+    ...asset_image_extensions,
+    ".pdf",
+    ".csv",
+    ".txt",
+    ".zip",
+    ...asset_video_audio_extensions,
+    ...asset_track_extensions,
+]);
+
+/**
+ * 이미지를 삽입하는 속성의 수집 규칙
+ */
+const asset_image_reference: AssetReference = {formats: asset_image_extensions, unsupported: copy_error_image_format};
+
+/**
+ * 영상, 소리를 삽입하는 속성의 수집 규칙
+ */
+const asset_video_audio_reference: AssetReference = {formats: asset_video_audio_extensions, unsupported: copy_error_media_format};
+
+/**
+ * 문서와 이미지를 삽입하는 embed, object의 수집 규칙
+ */
+const asset_embed_reference: AssetReference = {formats: asset_embed_extensions, unsupported: copy_error_embed_format};
+
+/**
+ * 내용 지문 자원으로 수집하는 요소별 속성과 규칙
  *
  *   - a의 href는 지원 형식만 첨부로 수집
+ *   - iframe은 배포할 수 있는 형식 없음. 로컬 파일은 경고
  *   - 그 외 속성은 문서에 삽입하는 자원. 미지원 형식은 빌드 실패
  */
-export const asset_reference_formats: ReadonlyMap<string, Readonly<Record<string, ReadonlySet<string>>>> = new Map<string, Readonly<Record<string, ReadonlySet<string>>>>([
-    ["a", {href: asset_media_extensions}],
-    ["img", {src: asset_image_extensions, srcSet: asset_image_extensions}],
-    ["source", {src: asset_video_audio_extensions, srcSet: asset_image_extensions}],
-    ["video", {src: asset_video_audio_extensions, poster: asset_image_extensions}],
-    ["audio", {src: asset_video_audio_extensions}],
+export const asset_references: ReadonlyMap<string, Readonly<Record<string, AssetReference>>> = new Map<string, Readonly<Record<string, AssetReference>>>([
+    ["a", {href: {formats: asset_media_extensions}}],
+    ["iframe", {src: {formats: new Set()}}],
+    ["img", {src: asset_image_reference, srcSet: asset_image_reference}],
+    ["source", {src: asset_video_audio_reference, srcSet: asset_image_reference}],
+    ["video", {src: asset_video_audio_reference, poster: asset_image_reference}],
+    ["audio", {src: asset_video_audio_reference}],
+    ["track", {src: {formats: asset_track_extensions, unsupported: copy_error_track_format}}],
+    ["embed", {src: asset_embed_reference}],
+    ["object", {data: asset_embed_reference}],
 ]);
 
 /**
@@ -56,6 +97,7 @@ export const asset_content_types: Record<string, string> = {
     ".mp4": "video/mp4",
     ".webm": "video/webm",
     ".mp3": "audio/mpeg",
+    ".vtt": "text/vtt; charset=utf-8",
 };
 
 /**

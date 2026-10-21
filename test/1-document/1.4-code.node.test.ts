@@ -323,5 +323,38 @@ describe("코드 블록", () => {
             expect(doc.html).toContain("inside");
             expect(doc.html).not.toMatch(/before|after|region/);
         });
+
+        test.for([
+            {
+                caseId: "COD-018",
+                file: "notes.md",
+                source: "# region overview\n\n<!-- #region picked -->\n## region details\nText.\n<!-- #endregion picked -->\n",
+                expected: "## region details\nText.",
+            },
+            {caseId: "COD-019", file: "config.yml", source: "# region picked\nkey: 1\n## region note\nother: 2\n# endregion\n", expected: "key: 1\n## region note\nother: 2"},
+        ])("[$caseId] $file 파일은 다른 주석 형식의 region 낱말을 본문으로 유지한다", async (scenario, {scope}) => {
+            /**
+             * GIVEN
+             * 파일 형식의 region 표시와 다른 형식의 region 낱말이 함께 있는 파일
+             */
+            const site = siteConfigSchema.parse({});
+
+            await mkdir(join(scope.root, "snippets"));
+            await writeFile(join(scope.root, "snippets", scenario.file), scenario.source);
+            await writeFile(join(scope.publicRoot, "guide.md"), `---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n<<< ../snippets/${scenario.file}#picked\n`);
+
+            /**
+             * WHEN
+             * Markdown 처리와 코드 텍스트 추출
+             */
+            const [doc] = await readDocs({scope, processor: toProcessor({site, scope})});
+            const code = /<code>([\s\S]*?)<\/code>/.exec(doc.html)?.[1].replace(/<[^>]+>/g, "");
+
+            /**
+             * THEN
+             * 파일 형식의 표시 사이 본문, 다른 형식의 region 줄 유지
+             */
+            expect(code).toBe(scenario.expected);
+        });
     });
 });

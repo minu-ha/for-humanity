@@ -350,5 +350,36 @@ describe("문서 링크와 목차", () => {
             expect(docs[0].outline.headings.map((heading) => heading.slug)).toStrictEqual(["guide", "usage", "usage-1"]);
             expect(docs[0].html.match(/id="usage"/g)).toHaveLength(1);
         });
+
+        test.for([
+            {
+                caseId: "LNK-021",
+                source: ":::note[Scope]\nBody.\n\n<div>\n<h2>Raw section</h2>\n</div>\n:::\n",
+                error: /Invalid part syntax: note cannot contain # or ## headings/,
+                line: 11,
+            },
+            {caseId: "LNK-022", source: ":::details[More]\n<h1>Raw title</h1>\n\nBody.\n:::\n", error: /Invalid part syntax: details cannot contain # or ## headings/, line: 8},
+        ])("[$caseId] Note, Details 안의 원시 HTML h1, h2는 그 제목의 위치와 함께 거부한다", async (scenario, {scope}) => {
+            /**
+             * GIVEN
+             * 원시 HTML의 h1이나 h2를 본문에 둔 Note와 Details
+             */
+            const site = siteConfigSchema.parse({});
+
+            await writeFile(join(scope.publicRoot, "guide.md"), `---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n${scenario.source}`);
+
+            /**
+             * WHEN
+             * 문서 로드
+             */
+            const result = readDocs({scope, processor: toProcessor({site, scope})});
+
+            /**
+             * THEN
+             * 부품 제목 오류와 원시 HTML 제목의 행 번호
+             */
+            await expect(result).rejects.toThrow(scenario.error);
+            await expect(result).rejects.toHaveProperty("line", scenario.line);
+        });
     });
 });

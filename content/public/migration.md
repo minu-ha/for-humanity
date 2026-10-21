@@ -104,6 +104,9 @@ dev에서 양쪽 문서가 표시되는지 확인합니다. build 후에는 priv
 | Markdown 이미지, `<img>`, `srcset`, `poster`의 PDF처럼 이미지가 아닌 파일 | 이미지 파일로 교체하거나 첨부 링크로 연결 |
 | `<video>`, `<audio>`, `<source>`의 `src`가 가리키는 없는 로컬 파일 | 파일 추가 또는 경로 수정 |
 | `<video>`, `<audio>`, `<source>`의 `src`가 가리키는 MP4, WebM, MP3 외의 로컬 파일 | 지원 형식으로 변환하거나 직접 제공하는 절대 URL로 지정 |
+| `<track>`, `<embed>`의 `src`나 `<object>`의 `data`가 가리키는 없는 로컬 파일 | 파일 추가 또는 경로 수정 |
+| `<track>`의 WebVTT 외 형식, `<embed>`와 `<object>`의 PDF, 이미지 외 형식 | 지원 형식으로 변환하거나 직접 제공하는 절대 URL로 지정 |
+| Note, Details 안의 원시 HTML `<h1>`, `<h2>` | 제목을 부품 밖으로 옮기거나 `<h3>` 이하로 작성 |
 
-없는 문서나 배포하지 않는 로컬 파일을 가리키는 링크에는 경고만 표시하고 빌드를 계속합니다.
+없는 문서나 배포하지 않는 로컬 파일을 가리키는 링크와 로컬 파일을 가리키는 `<iframe>`에는 경고만 표시하고 빌드를 계속합니다.
 작성 규칙은 [Parts](parts.md#errors), [Code snippets](writing.md#code-snippets), [Supported files](images.md#supported-files)를 참고합니다.

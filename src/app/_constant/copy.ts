@@ -109,6 +109,16 @@ export const copy_error_image_format = "unsupported image format";
 export const copy_error_media_format = "unsupported video or audio format";
 
 /**
+ * 자원 오류의 이유. track에서 WebVTT가 아닌 형식
+ */
+export const copy_error_track_format = "unsupported text track format";
+
+/**
+ * 자원 오류의 이유. embed, object에서 PDF와 이미지가 아닌 형식
+ */
+export const copy_error_embed_format = "unsupported embedded file format";
+
+/**
  * 배포 형식이 아닌 로컬 파일 링크 경고. 빌드 계속
  */
 export const copy_warn_unpublished_file = "Link to a local file that is not published";
