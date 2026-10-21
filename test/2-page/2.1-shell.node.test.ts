@@ -1,5 +1,9 @@
+import {resolve} from "node:path";
+import {HtmlValidate} from "html-validate";
 import {describe, expect, test} from "vitest";
+import {readProject} from "@/app/_function/read-project";
 import {toPageApp} from "@/app/_function/to-page-app/to-page-app";
+import {loadSite} from "@/app/load-site";
 import {asset_style_path} from "@/constant/asset";
 import {docDataSchema} from "@/type/doc-data";
 import {siteConfigSchema} from "@/type/site-config";
@@ -168,6 +172,40 @@ describe("페이지 셸", () => {
             expect(imagelessPage).toContain('<meta property="og:url"');
             expect(imagelessPage).not.toContain("og:image");
             expect(localPage).not.toMatch(/rel="canonical"|property="og:|name="twitter:/);
+        });
+    });
+
+    describe("HTML 표준", () => {
+        test("[SHL-011] 공식 문서의 모든 공개 페이지 HTML은 표준 검사를 통과한다", {timeout: 60000}, async () => {
+            /**
+             * GIVEN
+             * 저장소 설정과 공개 문서의 사이트, HTML 표준 규칙의 검사기
+             */
+            const project = await readProject(".");
+            const snapshot = await loadSite({root: project.root, kitRoot: resolve("."), site: project.site});
+
+            // README의 GitHub 가운데 정렬은 작성자가 고른 align 속성. 생성 HTML의 표준 위반만 검사
+            const validator = new HtmlValidate({extends: ["html-validate:standard"], rules: {"no-deprecated-attr": "off"}});
+
+            /**
+             * WHEN
+             * 사이트맵의 모든 페이지 응답 검사
+             */
+            const sitemap = await (await snapshot.app.request("/sitemap.xml")).text();
+            const paths = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => new URL(match[1]).pathname);
+            const reports = await Promise.all(paths.map(async (path) => ({path, report: await validator.validateString(await (await snapshot.app.request(path)).text())})));
+
+            /**
+             * THEN
+             * 홈과 문서 페이지, 경로와 줄을 붙인 표준 위반 없음
+             */
+            expect(paths).toContain("/");
+            expect(paths.length).toBeGreaterThan(1);
+            expect(
+                reports.flatMap((entry) =>
+                    entry.report.results.flatMap((result) => result.messages.map((message) => `${entry.path}:${message.line} ${message.ruleId} ${message.message}`)),
+                ),
+            ).toStrictEqual([]);
         });
     });
 

@@ -101,9 +101,10 @@
         font-weight: var(--app-font-weight-strong);
     }
 
+    /* 본문 링크는 색과 밑줄로 구분, 색각 이상과 대비 부족 환경 포함 */
     & a {
         color: var(--app-color-link);
-        text-decoration: none;
+        text-decoration: underline;
         text-underline-offset: 2px;
     }
 
@@ -113,7 +114,6 @@
 
     & a:hover {
         color: var(--app-color-link-hover);
-        text-decoration: underline;
     }
 
     & a:focus-visible {
@@ -420,10 +420,15 @@
     letter-spacing: var(--app-letter-spacing-heading);
 }
 
-/* 넓은 표의 내부 가로 스크롤 */
+/* 넓은 표의 내부 가로 스크롤, 키보드 스크롤용 포커스 */
 .wg_article__table {
     overflow-x: auto;
     margin: var(--app-space-block) 0;
+
+    &:focus-visible {
+        outline: var(--app-outline-focus);
+        outline-offset: var(--app-outline-focus-offset);
+    }
 }
 
 /* 상태 표지, 확인 초록, 미확인 amber */

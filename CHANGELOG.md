@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Underline links in document text so they stand out without relying on color. Links used to be underlined only on hover.
+- Let keyboard users focus and scroll wide tables, and mark the site name and menu button as the page header for screen readers.
 - Give local PNG, JPEG, GIF, WebP and AVIF images their original `width` and `height`, so text below an image no longer moves down while it loads. A size written on a raw `<img>` is kept, and SVG images are left without size attributes.
 
 ## 0.16.0 — 2026-10-21

@@ -30,7 +30,7 @@ order: 20
 Note는 본문과 구분할 보충 설명입니다. 제목과 본문은 필수이며 별도 속성은 없습니다.
 기본 표현은 제목과 왼쪽 선입니다. 여러 항목은 목록으로, 근거는 링크로 적습니다.
 
-#### Source
+### Source
 
 ```markdown
 :::note[Scope]
@@ -41,7 +41,7 @@ Note는 본문과 구분할 보충 설명입니다. 제목과 본문은 필수�
 :::
 ```
 
-#### Result
+### Result
 
 :::note[Scope]
 공개 문서를 빌드하기 전에 다음 내용을 확인합니다.
@@ -56,7 +56,7 @@ Details의 제목은 항상 표시되고 본문은 기본으로 접혀 있습니
 `{open}`을 붙이면 처음부터 펼칩니다. `open=true`, `open=false`는 사용할 수 없습니다.
 값을 붙인 `open=""`와 중복 `open`도 오류입니다. `{open}`은 값 없는 단일 속성입니다.
 
-#### Source
+### Source
 
 ```markdown
 :::details[Implementation]
@@ -69,7 +69,7 @@ Details의 제목은 항상 표시되고 본문은 기본으로 접혀 있습니
 :::
 ```
 
-#### Result
+### Result
 
 :::details[Implementation]
 ### Supported files
@@ -80,7 +80,7 @@ Details의 제목은 항상 표시되고 본문은 기본으로 접혀 있습니
 | `.mdx`        | Markdown으로 처리  |
 :::
 
-#### Default open
+### Default open
 
 ```markdown
 :::details[검토 기준]{open}

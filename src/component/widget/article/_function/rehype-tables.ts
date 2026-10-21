@@ -2,7 +2,7 @@ import type {Root} from "hast";
 import {SKIP, visit} from "unist-util-visit";
 
 /**
- * 넓은 표의 내부 가로 스크롤 래퍼
+ * 넓은 표의 내부 가로 스크롤 래퍼. 포커스 가능한 요소가 없는 표도 키보드로 스크롤
  */
 export const rehypeTables = () => (tree: Root) => {
     visit(tree, "element", (node, index, parent) => {
@@ -13,7 +13,7 @@ export const rehypeTables = () => (tree: Root) => {
         parent.children[index] = {
             type: "element",
             tagName: "div",
-            properties: {className: ["wg_article__table"]},
+            properties: {className: ["wg_article__table"], tabIndex: 0},
             children: [node],
         };
 

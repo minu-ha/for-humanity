@@ -19,13 +19,14 @@ git diff --check
 
 | Command          | Scope                              |
 | ---------------- | ---------------------------------- |
-| `pnpm test`      | Vitest로 문서 조립, 자원 등록, 탐색 상태, 글꼴, 릴리스 검사 |
+| `pnpm test`      | Vitest로 문서 조립, 자원 등록, 탐색 상태, 글꼴, 릴리스, 공식 문서 HTML 표준 검사 |
 | `pnpm test:watch` | 변경한 테스트의 Vitest 반복 실행 |
-| `pnpm test:browser` | Playwright로 실제 브라우저 검사 전체 |
+| `pnpm test:browser` | Playwright로 실제 브라우저 검사 전체, 공식 문서 공개 페이지의 axe 접근성 검사 포함 |
 | `pnpm test:navigation` | 실제 브라우저의 탐색, 저장 복원, 드로어, 포커스 |
 | `pnpm test:mermaid` | 실제 브라우저의 다이어그램, 테마, Details, 실패, 수명 정리 |
 | `pnpm lint`      | Biome과 Stylelint                  |
 | `pnpm typecheck` | TypeScript                         |
+| `pnpm knip`      | 사용하지 않는 파일, export, 의존성. `pnpm check`에 포함 |
 | `pnpm build:kit` | 서버와 브라우저 번들               |
 | `pnpm build`     | 패키지 번들과 프로젝트 문서 사이트 |
 | `pnpm build:pages` | 문서 사이트와 Cloudflare 배포 파일 |
@@ -215,7 +216,7 @@ pnpm pack
 
 | Event | Result |
 | ----- | ------ |
-| PR과 `main` push | CI: 테스트, 린트, 타입 검사, Pages 빌드, 패키지 설치 후 빌드 |
+| PR과 `main` push | CI: 테스트, 린트, 타입 검사, 사용하지 않는 코드 검사, Pages 빌드, publint 패키지 검사, 패키지 설치 후 빌드 |
 | `main` push | Cloudflare Git 연동으로 문서 사이트 배포 |
 | `vX.Y.Z` 태그 push | Release: 검증, npm 배포, 같은 `.tgz`를 첨부한 GitHub Release 생성 |
 

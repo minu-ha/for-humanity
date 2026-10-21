@@ -363,9 +363,9 @@ export const WgSidebar = (props: WgSidebarProps) => {
              */}
             <div className={clsx("wg_sidebar__docsColumn", props.stores !== undefined && "wg_sidebar__docsColumn--ready")}>
                 {/**
-                 * 어느 문서에서도 홈으로 이동. 모달 진입은 브라우저 동작이 연결된 뒤 표시
+                 * 사이트 머리 랜드마크. 어느 문서에서도 홈으로 이동, 모달 진입은 브라우저 동작이 연결된 뒤 표시
                  */}
-                <div className={clsx("wg_sidebar__brandRow")}>
+                <header className={clsx("wg_sidebar__brandRow")}>
                     {/**
                      * 사이트 이름. 홈 문서에서는 현재 페이지로 표시
                      */}
@@ -389,7 +389,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
                             <path d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
                     </button>
-                </div>
+                </header>
 
                 {/**
                  * JavaScript 없이도 전체 문서 링크 표시. 브라우저 모바일에서는 드로어가 같은 목록 소유

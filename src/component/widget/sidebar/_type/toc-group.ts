@@ -4,7 +4,7 @@ import type {DocSection} from "@/type/doc-section";
 /**
  * 목차 소제목 항목
  */
-export interface TocSub {
+interface TocSub {
     /**
      * 제목 id와 텍스트
      */

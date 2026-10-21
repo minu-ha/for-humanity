@@ -52,6 +52,7 @@ jobs:
           release_directory="$RUNNER_TEMP/for-humanity-release"
           mkdir -p "$release_directory"
           npm pack --ignore-scripts --json --pack-destination "$release_directory" > "$release_directory/pack.json"
+          pnpm exec publint --strict "$release_directory"/for-humanity-*.tgz
           pnpm exec tsx util/prepare-release.ts "$GITHUB_REF_NAME" "$release_directory"
           pnpm exec tsx util/smoke-package.ts "$release_directory"
       - name: Check whether npm already has this package

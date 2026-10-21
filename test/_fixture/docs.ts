@@ -1,0 +1,47 @@
+import {execFileSync} from "node:child_process";
+import {cp, mkdtemp, rm} from "node:fs/promises";
+import {tmpdir} from "node:os";
+import {join} from "node:path";
+import {test as base} from "@playwright/test";
+import {preview} from "vite";
+import {toPreviewConfig} from "@/entry/preview/to-preview-config";
+
+/**
+ * 워커별 공식 문서 사이트. 저장소 content의 공개 입력을 임시 폴더에서 실제 CLI로 빌드
+ */
+export const test = base.extend<Record<never, never>, {docsSite: string}>({
+    docsSite: [
+        // biome-ignore lint/correctness/noEmptyPattern: Playwright가 구조분해 매개변수로 fixture 의존성을 조회
+        async ({}, use) => {
+            const root = await mkdtemp(join(tmpdir(), "for-humanity-docs-"));
+
+            try {
+                // 빌드 출력과 내부 문서 제외, 공개 문서와 공용 자료만 복사
+                await cp("content", join(root, "content"), {recursive: true, filter: (source) => !/^content[\\/](?:dist|private)(?:[\\/]|$)/.test(source)});
+                await cp("for-humanity.config.ts", join(root, "for-humanity.config.ts"));
+
+                execFileSync(process.execPath, ["dist/cli.js", "build", root]);
+
+                const server = await preview(toPreviewConfig({root: join(root, "content"), port: 0}));
+
+                try {
+                    const url = server.resolvedUrls?.local[0];
+
+                    if (url === undefined) {
+                        throw new Error("미리보기 서버의 테스트 주소가 없습니다");
+                    }
+
+                    await use(new URL(url).origin);
+                } finally {
+                    await server.close();
+                }
+            } finally {
+                await rm(root, {recursive: true, force: true});
+            }
+        },
+        {scope: "worker"},
+    ],
+    baseURL: async ({docsSite}, use) => {
+        await use(docsSite);
+    },
+});
