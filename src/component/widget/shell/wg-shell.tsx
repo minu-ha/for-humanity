@@ -76,6 +76,9 @@ export const WgShell = (props: WgShellProps) => {
             ...props.assets.preload.map<Link>((href) => ({rel: "preload", href, as: "font", type: "font/woff2", crossorigin: ""})),
             ...props.assets.stylePaths.map<Link>((href) => ({rel: "stylesheet", href})),
         ],
+
+        // 저장소 소스 개발의 모듈 진입점. 탐색 마운트 전 첫 페인트 차단, Chromium의 render-blocking
+        script: props.assets.browser.kind === "module" ? [{type: "module", src: props.assets.browser.path, blocking: "render"}] : [],
     });
 
     return (
@@ -103,7 +106,6 @@ export const WgShell = (props: WgShellProps) => {
                 <script type="application/json" id="fh-navigation-data" dangerouslySetInnerHTML={{__html: toScriptJson(navigationData)}} />
                 {/* biome-ignore lint/security/noDangerouslySetInnerHtml: 패키지에 포함한 브라우저 번들. 문서 입력 미포함 */}
                 {props.assets.browser.kind === "inline" && <script dangerouslySetInnerHTML={{__html: props.assets.browser.code}} />}
-                {props.assets.browser.kind === "module" && <script type="module" src={props.assets.browser.path} />}
                 <main className={clsx("wg_shell__main")}>{props.children}</main>
             </body>
         </html>

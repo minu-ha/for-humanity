@@ -154,5 +154,27 @@ describe("페이지 셸", () => {
             expect(initialization).toBeGreaterThan(html.indexOf("data-cursor-face"));
             expect(initialization).toBeLessThan(html.indexOf('<main class="wg_shell__main">'));
         });
+
+        test("[SHL-008] 소스 개발의 모듈 진입점은 첫 페인트를 막는 head 스크립트로 불러온다", async () => {
+            /**
+             * GIVEN
+             * 모듈 진입점을 쓰는 소스 개발 자원
+             */
+            const site = siteConfigSchema.parse({});
+            const assets = {fontCss: "", preload: [], stylePaths: [asset_style_path], browser: {kind: "module" as const, path: "/src/entry/browser/browser.tsx"}};
+
+            /**
+             * WHEN
+             * 페이지 렌더
+             */
+            const html = await (await toPageApp({site, store: {docs: []}, assets}).request("/")).text();
+
+            /**
+             * THEN
+             * head 안의 render-blocking 모듈 스크립트 하나
+             */
+            expect(html.slice(0, html.indexOf("</head>"))).toContain('<script type="module" src="/src/entry/browser/browser.tsx" blocking="render"></script>');
+            expect(html.match(/browser\.tsx/g)).toHaveLength(1);
+        });
     });
 });

@@ -192,7 +192,7 @@ CSS와 글꼴 선언은 최초 HTML의 `<head>`에 포함합니다. JavaScript�
 
 서버는 `WgShellControls`로 탐색 링크를 출력합니다. 브라우저 진입점은 `hono/jsx/dom/client`의 `createRoot(root).render(...)`로 같은 영역을 브라우저 JSX로 교체합니다. 이후 드로어와 현재 헤딩은 Hooks와 JSX 이벤트로 갱신합니다. 컴포넌트 해제는 같은 root의 `unmount()`가 Effect 정리를 실행합니다. 본문은 마운트 범위 밖의 서버 HTML로 유지합니다.
 
-정적 출력과 설치 패키지는 Hono 브라우저 렌더러로 탐색과 커서 영역을 첫 paint 전에 마운트합니다. 저장소 소스 개발만 Vite module 진입점을 비동기로 로드합니다. 본문은 서버가 만든 HTML을 그대로 표시하고 문서 링크는 전체 페이지를 이동합니다.
+정적 출력과 설치 패키지는 Hono 브라우저 렌더러로 탐색과 커서 영역을 첫 paint 전에 마운트합니다. 저장소 소스 개발만 Vite module 진입점을 불러오며, 이 스크립트를 head에 `blocking="render"`로 두어 Chromium에서는 첫 paint 전에 마운트합니다. 다른 브라우저는 module 실행 전에 서버 HTML을 먼저 표시할 수 있습니다. 본문은 서버가 만든 HTML을 그대로 표시하고 문서 링크는 전체 페이지를 이동합니다.
 
 현재 Hono의 `hydrateRoot`는 내부에서 `createRoot`와 `render`를 호출합니다. React의 hydration처럼 기존 DOM을 재사용하는 의미가 아닙니다. `createRoot`는 갱신하고 해제할 수 있는 root 수명을 제공하며 최초 DOM 교체 방식은 같습니다. [Hono 구현](https://github.com/honojs/hono/blob/main/src/jsx/dom/client.ts)
 
