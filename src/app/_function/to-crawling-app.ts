@@ -3,6 +3,7 @@ import {html} from "hono/html";
 import {crawling_robots_path, crawling_sitemap_path} from "@/app/_constant/crawling";
 import type {PageParams} from "@/app/_function/to-page-app/to-page-app";
 import type {ResolvedSiteConfig} from "@/type/site-config";
+import {toPagePath} from "@/util/url/to-page-path";
 
 /**
  * URL을 명시한 공개 프로젝트의 크롤러 응답 입력
@@ -32,7 +33,7 @@ export const toCrawlingApp = (params: CrawlingParams) => {
             html`<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url><loc>${params.url}/</loc></url>
-${params.store.docs.map((doc) => html`<url><loc>${params.url}/${doc.id.split("/").map(encodeURIComponent).join("/")}/</loc></url>`)}
+${params.store.docs.map((doc) => html`<url><loc>${params.url}${toPagePath(doc.id)}</loc></url>`)}
 </urlset>`.toString(),
             {headers: {"Content-Type": "application/xml; charset=utf-8"}},
         );

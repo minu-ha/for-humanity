@@ -11,6 +11,7 @@ import type {DocOutline} from "@/type/doc-outline";
 import type {SiteAssets} from "@/type/site-assets";
 import type {ResolvedSiteConfig} from "@/type/site-config";
 import {toScriptJson} from "@/util/json/to-script-json";
+import {toPagePath} from "@/util/url/to-page-path";
 import "@/style/base.css";
 import "@/style/token.css";
 import "./wg-shell.css";
@@ -40,6 +41,11 @@ export interface WgShellProps {
     title?: string;
 
     /**
+     * 검색 결과와 링크 미리보기의 문서 설명. 첫 화면은 생략, 사이트 설명 사용
+     */
+    description?: string;
+
+    /**
      * 현재 문서 id. 첫 화면 생략
      */
     current?: string;
@@ -60,6 +66,10 @@ export const WgShell = (props: WgShellProps) => {
 
     // 요청별 head 격리, 언어와 문서 구조는 Hono 셸 소유
     const head = createHead({disableDefaults: true});
+    const description = props.description ?? props.site.description;
+
+    // 공개 주소를 지정한 사이트만 대표 주소와 링크 미리보기 출력. 사이트맵과 같은 주소
+    const pageUrl = props.site.url === undefined ? undefined : `${props.site.url}${toPagePath(props.current)}`;
 
     head.push({
         title: props.title === undefined ? props.site.title : `${props.title} | ${props.site.title}`,
@@ -68,11 +78,23 @@ export const WgShell = (props: WgShellProps) => {
             {name: "viewport", content: "width=device-width, initial-scale=1"},
 
             // Unhead 속성 직렬화는 따옴표만 이스케이프. 입력의 HTML 엔티티도 텍스트로 보존
-            {name: "description", content: props.site.description === undefined ? undefined : escapeHtml(props.site.description)},
+            {name: "description", content: description === undefined ? undefined : escapeHtml(description)},
+
+            ...(pageUrl === undefined
+                ? []
+                : [
+                      {property: "og:type", content: "website"},
+                      {property: "og:site_name", content: escapeHtml(props.site.title)},
+                      {property: "og:title", content: escapeHtml(props.title ?? props.site.title)},
+                      {property: "og:description", content: description === undefined ? undefined : escapeHtml(description)},
+                      {property: "og:url", content: pageUrl},
+                      {name: "twitter:card", content: "summary"},
+                  ]),
         ],
         style: [{textContent: props.assets.fontCss}],
         link: [
             {rel: "icon", href: asset_favicon_path, type: "image/svg+xml"},
+            ...(pageUrl === undefined ? [] : [{rel: "canonical", href: pageUrl} satisfies Link]),
             ...props.assets.preload.map<Link>((href) => ({rel: "preload", href, as: "font", type: "font/woff2", crossorigin: ""})),
             ...props.assets.stylePaths.map<Link>((href) => ({rel: "stylesheet", href})),
         ],
@@ -82,7 +104,7 @@ export const WgShell = (props: WgShellProps) => {
     });
 
     return (
-        <html lang="ko" className={clsx("wg_shell__document")}>
+        <html lang={props.site.lang} className={clsx("wg_shell__document")}>
             {/**
              * Unhead의 서버 직렬화 결과. 글꼴과 CSS는 JavaScript 수신 전에 로드
              */}

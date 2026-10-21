@@ -9,6 +9,16 @@ export const site_config_absent = {};
 export const site_navigation_default: string[][] = [];
 
 /**
+ * 문서 언어의 기본값. html lang 속성
+ */
+export const site_lang_default = "ko";
+
+/**
+ * 언어 태그 구문. ko, en-US처럼 BCP 47의 언어와 하위 태그
+ */
+export const site_lang_pattern = /^[a-z]{2,3}(?:-[a-z0-9]{2,8})*$/i;
+
+/**
  * 커서 장식의 기본값. 설정에서 켠 사이트만 표시
  */
 export const site_cursor_face_default = false;

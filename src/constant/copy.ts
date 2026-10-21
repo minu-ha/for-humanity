@@ -18,6 +18,11 @@ export const copy_error_prefix = "for-humanity";
 export const copy_error_site_url = "url must be an HTTP(S) site root without credentials, a subpath, a query or a hash";
 
 /**
+ * 잘못된 문서 언어 설정 오류
+ */
+export const copy_error_site_lang = "lang must be a language tag such as ko or en-US";
+
+/**
  * 탐색 순서에 같은 묶음을 두 번 지정한 설정 오류
  */
 export const copy_error_navigation_clash = "Duplicate navigation groups";

@@ -6,7 +6,7 @@ parent: settings
 order: 10
 ---
 
-사이트 주소를 `url`로 설정하면 `robots.txt`와 `sitemap.xml`을 생성합니다.
+사이트 주소를 `url`로 설정하면 `robots.txt`와 `sitemap.xml`을 생성합니다. 각 페이지에는 대표 주소와 링크 미리보기 태그도 추가합니다.
 프로젝트 루트의 설정 파일에 배포 주소를 지정합니다.
 
 ## Public site URL
@@ -49,6 +49,8 @@ Sitemap: https://docs.example.com/sitemap.xml
 
 사이트맵에는 홈과 공개 문서의 URL을 포함합니다. 제목 앵커, 이미지, 글꼴은 포함하지 않습니다.
 공개 빌드에서는 private 문서를 제외합니다. 로컬 dev에서는 양쪽 문서가 표시됩니다.
+
+각 페이지의 `<head>`에는 사이트맵과 같은 주소의 `<link rel="canonical">`과 링크 미리보기용 Open Graph, Twitter 카드 태그를 추가합니다. 미리보기의 제목과 설명은 문서의 `name`과 `label`, 홈은 사이트의 `title`과 `description`입니다.
 
 `url`을 사용하면 `robots.txt`와 `sitemap.xml`은 생성 파일 전용 경로입니다. `robots.txt.md`처럼 같은 출력 경로를 만드는 문서 이름은 사용할 수 없습니다.
 

@@ -163,7 +163,7 @@ CSS와 글꼴 선언은 최초 HTML의 `<head>`에 포함합니다. JavaScript�
 
 제목은 Unhead가 텍스트로 escape합니다. 설명 속성은 현재 Unhead 직렬화가 따옴표만 처리하므로 `escapeHtml`로 HTML 엔티티까지 보존합니다. `&copy;` 같은 입력과 태그 모양의 문자열이 브라우저에서도 원문으로 남는지 검증합니다. Hono의 `raw`에는 Unhead가 직렬화한 태그만 전달합니다.
 
-현재 공개 설정은 기존 `title`과 `description`을 유지합니다. 페이지별 canonical, Open Graph, 구조화 데이터 설정은 후속 요구사항에 맞춰 추가합니다.
+문서 페이지의 설명은 문서의 `label`, 홈은 사이트 `description`을 사용합니다. `html lang`은 사이트 설정 `lang`을 따르며 기본값은 `ko`입니다. `url`을 지정한 사이트는 canonical 링크와 Open Graph, Twitter 카드 태그를 출력하고, 주소는 사이트맵과 같은 `toPagePath` 인코딩을 사용합니다. 구조화 데이터는 후속 요구사항에 맞춰 추가합니다.
 
 참조: [Unhead](https://github.com/unjs/unhead).
 

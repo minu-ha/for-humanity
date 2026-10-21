@@ -31,7 +31,15 @@ export interface PgDocProps {
 
 export const PgDoc = (props: PgDocProps) => {
     return (
-        <WgShell site={props.site} docs={props.docs} assets={props.assets} title={props.doc.data.name} current={props.doc.id} outline={props.doc.outline}>
+        <WgShell
+            site={props.site}
+            docs={props.docs}
+            assets={props.assets}
+            title={props.doc.data.name}
+            description={props.doc.data.label}
+            current={props.doc.id}
+            outline={props.doc.outline}
+        >
             <WgArticle html={props.doc.html} />
         </WgShell>
     );

@@ -23,6 +23,7 @@ describe("사이트 설정", () => {
             expect(result).toStrictEqual({
                 content: {root: "content", public: "public", private: "private"},
                 title: "for humanity",
+                lang: "ko",
                 port: 4321,
                 cursorFace: false,
                 navigation: [],
@@ -75,6 +76,7 @@ describe("사이트 설정", () => {
             expect(result).toStrictEqual({
                 content: {root: "content", public: "public", private: "private"},
                 title: "for humanity",
+                lang: "ko",
                 port: 4322,
                 cursorFace: true,
                 navigation: [["Guide"], ["Projects", "Research"]],
@@ -100,6 +102,7 @@ describe("사이트 설정", () => {
                 "https://docs.example.org/?q=guide",
                 "https://docs.example.org/#guide",
             ].map((url) => ({name: `공개 주소 "${url}"`, input: {url}})),
+            {name: "언어 태그가 아닌 lang", input: {lang: "Korean language"}},
             {name: "중복 탐색 경로", input: {navigation: ["Guide", [" Guide "]]}},
             {name: "빈 탐색 경로", input: {navigation: [["Projects", ""]]}},
             {name: "빈 상태 문구", input: {status: [{phrase: " ", kind: "verified"}]}},

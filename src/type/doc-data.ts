@@ -12,7 +12,7 @@ export const docDataSchema = z.object({
     name: z.string().trim().min(1),
 
     /**
-     * 짧은 문서 설명. 사이드바 툴팁
+     * 짧은 문서 설명. 사이드바 툴팁, 문서 페이지의 설명 메타데이터
      */
     label: z.string(),
 

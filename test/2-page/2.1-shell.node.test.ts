@@ -45,10 +45,16 @@ describe("페이지 셸", () => {
         test("[SHL-002] 동시 렌더에서 사이트와 문서의 제목과 설명을 공유하지 않는다", async () => {
             /**
              * GIVEN
-             * 설명이 있는 사이트와 설명이 없는 다른 사이트
+             * 설명이 있는 사이트, 설명이 없는 다른 사이트, 두 사이트가 함께 쓰는 문서
              */
             const assets = {fontCss: "", preload: [], stylePaths: [asset_style_path], browser: {kind: "inline" as const, code: ""}};
-            const doc = {id: "guide", data: docDataSchema.parse({name: "Guide", label: "Guide", group: "Guide"}), html: "", outline: {headings: [], sections: []}, ancestors: []};
+            const doc = {
+                id: "guide",
+                data: docDataSchema.parse({name: "Guide", label: "Guide label", group: "Guide"}),
+                html: "",
+                outline: {headings: [], sections: []},
+                ancestors: [],
+            };
             const first = toPageApp({site: siteConfigSchema.parse({title: "First", description: "First description"}), store: {docs: [doc]}, assets});
             const second = toPageApp({site: siteConfigSchema.parse({title: "Second"}), store: {docs: [doc]}, assets});
 
@@ -61,11 +67,10 @@ describe("페이지 셸", () => {
 
             /**
              * THEN
-             * 요청한 페이지의 제목과 사이트 설명만 포함
+             * 요청한 페이지의 제목, 문서 페이지의 label 설명, 홈의 사이트 설명
              */
             expect(pages.map((page) => page.match(/<title>(.*?)<\/title>/)?.[1])).toStrictEqual(["Guide | First", "Second", "First", "Guide | Second"]);
-            expect(pages.map((page) => page.includes('name="description"'))).toStrictEqual([true, false, true, false]);
-            expect(pages[0]).toContain('content="First description"');
+            expect(pages.map((page) => page.match(/name="description" content="([^"]*)"/)?.[1])).toStrictEqual(["Guide label", undefined, "First description", "Guide label"]);
         });
 
         test("[SHL-003] 제목과 설명의 HTML 문자를 텍스트로 직렬화한다", async () => {
@@ -94,6 +99,71 @@ describe("페이지 셸", () => {
             expect(head).toContain("&amp; end");
             expect(head).toContain("&amp;copy; end");
             expect(head).toMatch(/name="description" content="Text &quot;/);
+        });
+
+        test("[SHL-009] html lang은 설정한 언어 태그를 사용한다", async () => {
+            /**
+             * GIVEN
+             * 영어 언어 태그를 지정한 사이트
+             */
+            const site = siteConfigSchema.parse({lang: "en-US"});
+            const assets = {fontCss: "", preload: [], stylePaths: [asset_style_path], browser: {kind: "inline" as const, code: ""}};
+
+            /**
+             * WHEN
+             * 홈 응답
+             */
+            const html = await (await toPageApp({site, store: {docs: []}, assets}).request("/")).text();
+
+            /**
+             * THEN
+             * 설정한 언어 태그의 html 요소
+             */
+            expect(html).toContain('<html lang="en-US" class="wg_shell__document">');
+        });
+
+        test("[SHL-010] 공개 주소를 지정하면 대표 주소와 링크 미리보기 태그를 출력한다", async () => {
+            /**
+             * GIVEN
+             * 공개 주소가 있는 사이트와 없는 사이트, 한글 경로의 하위 문서
+             */
+            const assets = {fontCss: "", preload: [], stylePaths: [asset_style_path], browser: {kind: "inline" as const, code: ""}};
+            const doc = {
+                id: "가이드/설치",
+                data: docDataSchema.parse({name: "Install", label: "Install the package", group: "Guide"}),
+                html: "",
+                outline: {headings: [], sections: []},
+                ancestors: [],
+            };
+            const published = toPageApp({
+                site: siteConfigSchema.parse({title: "Docs", description: "Site description", url: "https://docs.example.org"}),
+                store: {docs: [doc]},
+                assets,
+            });
+            const local = toPageApp({site: siteConfigSchema.parse({title: "Docs"}), store: {docs: [doc]}, assets});
+
+            /**
+             * WHEN
+             * 두 사이트의 문서와 홈 응답
+             */
+            const [page, home, localPage] = await Promise.all(
+                [published.request("/가이드/설치/"), published.request("/"), local.request("/가이드/설치/")].map(async (response) => (await response).text()),
+            );
+
+            /**
+             * THEN
+             * 사이트맵과 같은 인코딩의 대표 주소, 문서별 미리보기 태그, 공개 주소 없는 사이트의 태그 없음
+             */
+            expect(page).toContain('<link rel="canonical" href="https://docs.example.org/%EA%B0%80%EC%9D%B4%EB%93%9C/%EC%84%A4%EC%B9%98/">');
+            expect(page).toContain('<meta property="og:url" content="https://docs.example.org/%EA%B0%80%EC%9D%B4%EB%93%9C/%EC%84%A4%EC%B9%98/">');
+            expect(page).toContain('<meta property="og:title" content="Install">');
+            expect(page).toContain('<meta property="og:site_name" content="Docs">');
+            expect(page).toContain('<meta property="og:description" content="Install the package">');
+            expect(page).toContain('<meta name="twitter:card" content="summary">');
+            expect(home).toContain('<link rel="canonical" href="https://docs.example.org/">');
+            expect(home).toContain('<meta property="og:title" content="Docs">');
+            expect(home).toContain('<meta property="og:description" content="Site description">');
+            expect(localPage).not.toMatch(/rel="canonical"|property="og:|name="twitter:/);
         });
     });
 

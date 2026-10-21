@@ -1,7 +1,7 @@
 import {z} from "zod";
 import {content_default} from "@/constant/content";
-import {copy_error_navigation_clash, copy_error_site_url, copy_site_title_default} from "@/constant/copy";
-import {site_cursor_face_default, site_navigation_default, site_port_default, site_port_max, site_port_min} from "@/constant/site";
+import {copy_error_navigation_clash, copy_error_site_lang, copy_error_site_url, copy_site_title_default} from "@/constant/copy";
+import {site_cursor_face_default, site_lang_default, site_lang_pattern, site_navigation_default, site_port_default, site_port_max, site_port_min} from "@/constant/site";
 import {status_default_phrases, status_kind} from "@/constant/status";
 import {contentConfigSchema} from "@/type/content-config";
 import {groupPathSchema} from "@/type/group-path";
@@ -21,12 +21,17 @@ export const siteConfigSchema = z.object({
     title: z.string().default(copy_site_title_default),
 
     /**
-     * HTML 설명 메타데이터. 선택
+     * HTML 설명 메타데이터. 선택, 문서 페이지는 label 우선
      */
     description: z.string().optional(),
 
     /**
-     * 공개 사이트 루트 URL. 지정할 때만 robots.txt와 sitemap.xml 생성
+     * 문서 언어. html lang 속성
+     */
+    lang: z.string().regex(site_lang_pattern, copy_error_site_lang).default(site_lang_default),
+
+    /**
+     * 공개 사이트 루트 URL. 지정할 때만 robots.txt, sitemap.xml, 대표 주소, 링크 미리보기 태그 생성
      */
     url: z
         .url({protocol: /^https?$/})
@@ -101,12 +106,17 @@ export interface SiteConfig {
     title?: z.input<typeof siteConfigSchema>["title"];
 
     /**
-     * 검색 결과에 표시할 사이트 설명
+     * 홈 페이지의 검색 결과와 링크 미리보기 설명, 문서 페이지는 각 문서의 label 사용
      */
     description?: z.input<typeof siteConfigSchema>["description"];
 
     /**
-     * 공개 HTTP(S) 루트 주소, 지정 시 robots.txt와 sitemap.xml 생성
+     * 문서 언어 태그, 기본값 ko. 예: en, en-US
+     */
+    lang?: z.input<typeof siteConfigSchema>["lang"];
+
+    /**
+     * 공개 HTTP(S) 루트 주소, 지정 시 robots.txt, sitemap.xml, 대표 주소, 링크 미리보기 태그 생성
      */
     url?: z.input<typeof siteConfigSchema>["url"];
 
