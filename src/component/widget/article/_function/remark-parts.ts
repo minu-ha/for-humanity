@@ -9,7 +9,7 @@ import {
     copy_error_part_section,
 } from "@/component/widget/article/_constant/copy";
 import {section_heading_depth} from "@/component/widget/article/_constant/section";
-import {toTitleText} from "@/component/widget/article/_function/_to-title-text";
+import {toTitleText} from "@/component/widget/article/_function/to-title-text";
 
 /**
  * ::part[이름]의 본문 가름과 다음 h2의 data-part

@@ -1,7 +1,8 @@
 import {readFile} from "node:fs/promises";
 import {extname} from "node:path";
 import {type Handler, Hono} from "hono";
-import {asset_content_type_default, asset_content_types, asset_dir, asset_favicon_path} from "@/constant/asset";
+import {asset_content_type_default, asset_content_types} from "@/app/_constant/asset";
+import {asset_dir, asset_favicon_path} from "@/constant/asset";
 import {font_cache_control} from "@/constant/font";
 
 /**

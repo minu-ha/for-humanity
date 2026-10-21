@@ -11,7 +11,7 @@ export const navigation_mobile_query = "(width < 1024px)";
 export const navigation_wide_query = "(width >= 1360px)";
 
 /**
- * 하위 문서가 없는 문서 가지의 형제 목록
+ * 하위 문서가 없는 문서 가지의 빈 하위 목록
  */
 export const navigation_children_absent: readonly Doc[] = [];
 

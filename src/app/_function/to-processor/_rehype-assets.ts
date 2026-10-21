@@ -48,7 +48,7 @@ export const rehypeAssets = (options: AssetOptions) => (tree: Root, file: VFile)
          * 로컬 참조 하나의 내용 지문 URL. 외부, 절대 URL과 수집하지 않는 링크는 원문 유지
          */
         const toAssetUrl = (url: string, formats: ReadonlySet<string>) => {
-            const match = /^([^?#]+)([?#].*)?$/.exec(url);
+            const match = /^([^?#]+)([?#].*|)$/.exec(url);
 
             if (match === null || /^(?:[a-z][a-z\d+.-]*:|\/|#)/i.test(url)) {
                 return url;
@@ -97,7 +97,7 @@ export const rehypeAssets = (options: AssetOptions) => (tree: Root, file: VFile)
 
             options.files.set(assetUrl, actual);
 
-            return match[2] === undefined ? assetUrl : `${assetUrl}${match[2]}`;
+            return `${assetUrl}${match[2]}`;
         };
 
         for (const [property, formats] of Object.entries(references)) {

@@ -74,6 +74,7 @@ export const WgMermaid = (props: WgMermaidProps) => {
                 const isStale = (element: HTMLElement) => {
                     return lifetime.signal.aborted || !element.isConnected || theme.matches !== (mode === "dark");
                 };
+
                 const pending = elements.filter((element) => element.checkVisibility({visibilityProperty: true}) && element.dataset.mermaidTheme !== mode);
 
                 if (pending.length === 0) {

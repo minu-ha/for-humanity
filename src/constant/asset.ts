@@ -28,34 +28,6 @@ export const asset_mermaid_dir = `/${asset_dir}/mermaid`;
 export const asset_favicon_path = "/favicon.svg";
 
 /**
- * dev 자원 응답의 확장자별 content-type
- */
-export const asset_content_types: Record<string, string> = {
-    ".css": "text/css; charset=utf-8",
-    ".js": "text/javascript; charset=utf-8",
-    ".woff2": "font/woff2",
-    ".svg": "image/svg+xml",
-    ".png": "image/png",
-    ".jpg": "image/jpeg",
-    ".jpeg": "image/jpeg",
-    ".gif": "image/gif",
-    ".webp": "image/webp",
-    ".avif": "image/avif",
-    ".pdf": "application/pdf",
-    ".csv": "text/csv; charset=utf-8",
-    ".txt": "text/plain; charset=utf-8",
-    ".zip": "application/zip",
-    ".mp4": "video/mp4",
-    ".webm": "video/webm",
-    ".mp3": "audio/mpeg",
-};
-
-/**
- * 미등록 확장자의 content-type
- */
-export const asset_content_type_default = "application/octet-stream";
-
-/**
  * 문서에서 참조한 그림, 영상, 소리, 첨부 자원의 예약 경로
  */
 export const asset_media_dir = `/${asset_dir}/media`;

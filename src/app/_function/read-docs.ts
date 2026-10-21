@@ -86,7 +86,8 @@ export const readDocs = async (params: ReadDocsParams): Promise<Doc[]> => {
             const frontmatter = tree.children[0];
 
             // YAML 문법 오류와 경고에 문서 경로 추가. yaml 패키지의 기본 출력은 경로 미포함
-            const yaml = frontmatter?.type === "yaml" ? parseDocument(frontmatter.value) : new Document(doc_data_absent);
+            // 줄 번호의 원문 기준 보정, 여는 --- 줄 자리에 빈 줄 추가
+            const yaml = frontmatter?.type === "yaml" ? parseDocument(`\n${frontmatter.value}`) : new Document(doc_data_absent);
 
             if (yaml.errors.length > 0) {
                 throw new Error(`${copy_error_frontmatter}: ${path}: ${yaml.errors[0].message}`);

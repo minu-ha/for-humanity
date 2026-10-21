@@ -16,8 +16,8 @@ import {
     copy_error_part_top_level,
 } from "@/component/widget/article/_constant/copy";
 import {section_heading_depth} from "@/component/widget/article/_constant/section";
-import {toTitleText} from "@/component/widget/article/_function/_to-title-text";
 import {hasBlockContent} from "@/component/widget/article/_function/remark-blocks/_has-block-content";
+import {toTitleText} from "@/component/widget/article/_function/to-title-text";
 
 /**
  * Note, Details의 제목, 본문, 속성, 닫힘 계약
