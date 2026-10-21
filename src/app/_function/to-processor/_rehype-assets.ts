@@ -120,6 +120,7 @@ export const rehypeAssets = (options: AssetOptions) => (tree: Root, file: VFile)
                     : toAssetUrl(value, reference);
         }
 
+        // 로컬 래스터 img의 원본 크기. 작성자가 적은 크기 유지
         const image =
             node.tagName === "img" && typeof node.properties.src === "string" && node.properties.width === undefined && node.properties.height === undefined
                 ? options.files.get(node.properties.src)

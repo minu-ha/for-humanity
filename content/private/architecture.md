@@ -163,7 +163,7 @@ CSS와 글꼴 선언은 최초 HTML의 `<head>`에 포함합니다. JavaScript�
 
 제목은 Unhead가 텍스트로 escape합니다. 설명 속성은 현재 Unhead 직렬화가 따옴표만 처리하므로 `escapeHtml`로 HTML 엔티티까지 보존합니다. `&copy;` 같은 입력과 태그 모양의 문자열이 브라우저에서도 원문으로 남는지 검증합니다. Hono의 `raw`에는 Unhead가 직렬화한 태그만 전달합니다.
 
-문서 페이지의 설명은 문서의 `label`, 홈은 사이트 `description`을 사용합니다. `html lang`은 사이트 설정 `lang`을 따르며 기본값은 `ko`입니다. `url`을 지정한 사이트는 canonical 링크와 Open Graph, Twitter 카드 태그를 출력하고, 주소는 사이트맵과 같은 `toPagePath` 인코딩을 사용합니다. `image`는 문서 이미지와 같은 공개 범위 검사를 거쳐 내용 지문 URL로 배포하고 `og:image`에 절대 주소로 출력합니다. 구조화 데이터는 후속 요구사항에 맞춰 추가합니다.
+문서 페이지의 설명은 문서의 `label`, 홈은 사이트 `description`을 사용합니다. `html lang`은 사이트 설정 `lang`을 따르며 기본값은 `ko`입니다. `url`을 지정한 사이트는 canonical 링크와 Open Graph, Twitter 카드 태그를 출력합니다. 주소는 사이트맵과 같은 `toPagePath` 인코딩을 사용합니다. `image`는 문서 이미지와 같은 공개 범위 검사를 거쳐 내용 지문 URL로 배포하고 `og:image`에 절대 주소로 출력합니다. 구조화 데이터는 후속 요구사항에 맞춰 추가합니다.
 
 참조: [Unhead](https://github.com/unjs/unhead).
 
@@ -192,7 +192,7 @@ CSS와 글꼴 선언은 최초 HTML의 `<head>`에 포함합니다. JavaScript�
 
 서버는 `WgShellControls`로 탐색 링크를 출력합니다. 브라우저 진입점은 `hono/jsx/dom/client`의 `createRoot(root).render(...)`로 같은 영역을 브라우저 JSX로 교체합니다. 이후 드로어와 현재 헤딩은 Hooks와 JSX 이벤트로 갱신합니다. 컴포넌트 해제는 같은 root의 `unmount()`가 Effect 정리를 실행합니다. 본문은 마운트 범위 밖의 서버 HTML로 유지합니다.
 
-정적 출력과 설치 패키지는 Hono 브라우저 렌더러로 탐색과 커서 영역을 첫 paint 전에 마운트합니다. 저장소 소스 개발만 Vite module 진입점을 불러오며, 이 스크립트를 head에 `blocking="render"`로 두어 Chromium에서는 첫 paint 전에 마운트합니다. 다른 브라우저는 module 실행 전에 서버 HTML을 먼저 표시할 수 있습니다. 본문은 서버가 만든 HTML을 그대로 표시하고 문서 링크는 전체 페이지를 이동합니다.
+정적 출력과 설치 패키지는 Hono 브라우저 렌더러로 탐색과 커서 영역을 첫 paint 전에 마운트합니다. 저장소 소스 개발만 Vite module 진입점을 불러옵니다. 이 스크립트는 head에 `blocking="render"`로 들어가므로 Chromium에서는 첫 paint 전에 마운트합니다. 다른 브라우저는 module 실행 전에 서버 HTML을 먼저 표시할 수 있습니다. 본문은 서버가 만든 HTML을 그대로 표시하고 문서 링크는 전체 페이지를 이동합니다.
 
 현재 Hono의 `hydrateRoot`는 내부에서 `createRoot`와 `render`를 호출합니다. React의 hydration처럼 기존 DOM을 재사용하는 의미가 아닙니다. `createRoot`는 갱신하고 해제할 수 있는 root 수명을 제공하며 최초 DOM 교체 방식은 같습니다. [Hono 구현](https://github.com/honojs/hono/blob/main/src/jsx/dom/client.ts)
 

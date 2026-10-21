@@ -363,7 +363,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
              */}
             <div className={clsx("wg_sidebar__docsColumn", props.stores !== undefined && "wg_sidebar__docsColumn--ready")}>
                 {/**
-                 * 사이트 머리 랜드마크. 어느 문서에서도 홈으로 이동, 모달 진입은 브라우저 동작이 연결된 뒤 표시
+                 * 배너 랜드마크. 어느 문서에서도 홈으로 이동, 모달 진입은 브라우저 동작이 연결된 뒤 표시
                  */}
                 <header className={clsx("wg_sidebar__brandRow")}>
                     {/**

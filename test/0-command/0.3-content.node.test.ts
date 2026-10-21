@@ -226,9 +226,14 @@ describe("공개와 내부 문서", () => {
         });
 
         test.for([
-            {caseId: "CNT-013", image: "asset/missing.png", error: "Invalid asset: asset/missing.png (file not found)"},
-            {caseId: "CNT-014", image: "private/preview.png", error: "Public documents cannot reference private files"},
-        ])("[$caseId] 미리보기 이미지 $image 경로는 공개 빌드에서 거부한다", async (scenario, {root}) => {
+            {caseId: "CNT-013", condition: "없는 파일이면", image: "asset/missing.png", error: /Invalid asset: asset\/missing\.png \(file not found\)/},
+            {
+                caseId: "CNT-014",
+                condition: "내부 폴더의 파일이면",
+                image: "private/preview.png",
+                error: /Public documents cannot reference private files: .*private[\\/]preview\.png/,
+            },
+        ])("[$caseId] 미리보기 이미지가 $condition 경로와 함께 거부한다", async (scenario, {root}) => {
             /**
              * GIVEN
              * 공개 문서 폴더와 내부 폴더의 이미지, 공개 주소와 미리보기 이미지 설정

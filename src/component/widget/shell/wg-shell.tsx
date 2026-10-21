@@ -66,7 +66,10 @@ export const WgShell = (props: WgShellProps) => {
 
     // 요청별 head 격리, 언어와 문서 구조는 Hono 셸 소유
     const head = createHead({disableDefaults: true});
+
+    // 문서 설명 우선, 첫 화면은 사이트 설명. Unhead 속성 직렬화는 따옴표만 이스케이프, 입력의 HTML 엔티티도 텍스트로 보존
     const description = props.description ?? props.site.description;
+    const descriptionContent = description === undefined ? undefined : escapeHtml(description);
 
     // 공개 주소를 지정한 사이트만 대표 주소와 링크 미리보기 출력. 사이트맵과 같은 주소
     const pageUrl = props.site.url === undefined ? undefined : `${props.site.url}${toPagePath(props.current)}`;
@@ -77,8 +80,7 @@ export const WgShell = (props: WgShellProps) => {
             {charset: "utf-8"},
             {name: "viewport", content: "width=device-width, initial-scale=1"},
 
-            // Unhead 속성 직렬화는 따옴표만 이스케이프. 입력의 HTML 엔티티도 텍스트로 보존
-            {name: "description", content: description === undefined ? undefined : escapeHtml(description)},
+            {name: "description", content: descriptionContent},
 
             ...(pageUrl === undefined
                 ? []
@@ -86,7 +88,7 @@ export const WgShell = (props: WgShellProps) => {
                       {property: "og:type", content: "website"},
                       {property: "og:site_name", content: escapeHtml(props.site.title)},
                       {property: "og:title", content: escapeHtml(props.title ?? props.site.title)},
-                      {property: "og:description", content: description === undefined ? undefined : escapeHtml(description)},
+                      {property: "og:description", content: descriptionContent},
                       {property: "og:url", content: pageUrl},
                       {property: "og:image", content: props.assets.image},
                       {name: "twitter:card", content: "summary"},
