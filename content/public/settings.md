@@ -42,10 +42,11 @@ export default {title: "Project notes"};
 | `description` | 홈 페이지의 검색 결과와 링크 미리보기 설명 | 없음 |
 | `lang` | 문서 언어 태그, 예: `en`, `en-US` | `ko` |
 | `url` | 배포한 사이트의 루트 주소 | 없음 |
+| `image` | 링크 미리보기 이미지의 문서 루트 기준 경로 | 없음 |
 | `port` | dev와 preview 포트, 1부터 65535까지 정수 | `4321` |
 | `cursorFace` | 데스크톱에서 마우스를 따라다니는 픽셀 얼굴 | `false` |
 
-사이트 홈의 제목과 본문은 `content/README.md`에 작성합니다. 문서 페이지의 설명에는 각 문서의 `label`을 사용합니다. `url`을 지정하면 검색 엔진용 파일, 대표 주소, 링크 미리보기 태그를 생성합니다. URL 형식과 출력은 [Crawling](crawling.md)을 참고합니다.
+사이트 홈의 제목과 본문은 `content/README.md`에 작성합니다. 문서 페이지의 설명에는 각 문서의 `label`을 사용합니다. `url`을 지정하면 검색 엔진용 파일, 대표 주소, 링크 미리보기 태그를 생성합니다. `image`는 `url`과 함께 사용하며 PNG, JPEG, GIF, WebP 파일을 지정합니다. URL 형식과 출력은 [Crawling](crawling.md)을 참고합니다.
 
 ## Content paths
 

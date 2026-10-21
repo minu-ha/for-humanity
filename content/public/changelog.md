@@ -22,6 +22,7 @@ pnpm add -D --save-exact for-humanity@latest
 - Describe each document page with its own `label` in the description meta tag. Every page used to repeat the site `description`, or had no description when it was not set.
 - Add a `lang` setting for the page language, such as `en` or `en-US`. Pages were always marked as Korean, and `ko` stays the default. A value that is not a language tag stops with `lang must be a language tag such as ko or en-US`.
 - Add a canonical link and Open Graph and Twitter card tags to every page when `url` is set, with the same addresses as `sitemap.xml`. Shared links now preview with the document `name` and `label`.
+- Add an `image` setting for the link preview image, a PNG, JPEG, GIF or WebP file given relative to the content folder, such as `asset/preview.png`. With `url` set, every page gets an `og:image` tag that points to a fingerprinted copy. A missing file stops with `Invalid asset: <path> (file not found)`.
 - Land anchor links near the top of the screen again, 80 pixels down on desktop and below the fixed header on mobile, and switch the outline at that line. On tall screens the outline used to mark a later heading as soon as a page opened.
 
 ## 0.15.0 — 2026-10-21

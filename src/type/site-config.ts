@@ -1,7 +1,16 @@
 import {z} from "zod";
 import {content_default} from "@/constant/content";
-import {copy_error_navigation_clash, copy_error_site_lang, copy_error_site_url, copy_site_title_default} from "@/constant/copy";
-import {site_cursor_face_default, site_lang_default, site_lang_pattern, site_navigation_default, site_port_default, site_port_max, site_port_min} from "@/constant/site";
+import {copy_error_navigation_clash, copy_error_site_image, copy_error_site_lang, copy_error_site_url, copy_site_title_default} from "@/constant/copy";
+import {
+    site_cursor_face_default,
+    site_image_pattern,
+    site_lang_default,
+    site_lang_pattern,
+    site_navigation_default,
+    site_port_default,
+    site_port_max,
+    site_port_min,
+} from "@/constant/site";
 import {status_default_phrases, status_kind} from "@/constant/status";
 import {contentConfigSchema} from "@/type/content-config";
 import {groupPathSchema} from "@/type/group-path";
@@ -39,6 +48,11 @@ export const siteConfigSchema = z.object({
         .refine((value) => value.username === "" && value.password === "" && value.pathname === "/" && value.search === "" && value.hash === "", copy_error_site_url)
         .transform((value) => value.origin)
         .optional(),
+
+    /**
+     * 링크 미리보기 이미지. 문서 루트 기준 경로, url 지정 시에만 배포
+     */
+    image: z.string().regex(site_image_pattern, copy_error_site_image).optional(),
 
     /**
      * dev, preview 서버 포트. 같은 기계에서 문서 프로젝트 둘을 나란히 띄울 때 한쪽에 지정
@@ -119,6 +133,11 @@ export interface SiteConfig {
      * 공개 HTTP(S) 루트 주소, 지정 시 robots.txt, sitemap.xml, 대표 주소, 링크 미리보기 태그 생성
      */
     url?: z.input<typeof siteConfigSchema>["url"];
+
+    /**
+     * 링크 미리보기 이미지의 문서 루트 기준 경로. PNG, JPEG, GIF, WebP, url과 함께 사용
+     */
+    image?: z.input<typeof siteConfigSchema>["image"];
 
     /**
      * dev와 preview 포트, 1부터 65535까지 정수, 기본값 4321

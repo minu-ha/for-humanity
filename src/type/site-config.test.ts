@@ -103,6 +103,7 @@ describe("사이트 설정", () => {
                 "https://docs.example.org/#guide",
             ].map((url) => ({name: `공개 주소 "${url}"`, input: {url}})),
             {name: "언어 태그가 아닌 lang", input: {lang: "Korean language"}},
+            {name: "미리보기 서비스가 표시하지 않는 SVG image", input: {image: "asset/preview.svg"}},
             {name: "중복 탐색 경로", input: {navigation: ["Guide", [" Guide "]]}},
             {name: "빈 탐색 경로", input: {navigation: [["Projects", ""]]}},
             {name: "빈 상태 문구", input: {status: [{phrase: " ", kind: "verified"}]}},

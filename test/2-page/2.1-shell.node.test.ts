@@ -125,7 +125,7 @@ describe("페이지 셸", () => {
         test("[SHL-010] 공개 주소를 지정하면 대표 주소와 링크 미리보기 태그를 출력한다", async () => {
             /**
              * GIVEN
-             * 공개 주소가 있는 사이트와 없는 사이트, 한글 경로의 하위 문서
+             * 미리보기 이미지가 있거나 없는 공개 사이트, 공개 주소 없는 사이트, 한글 경로의 하위 문서
              */
             const assets = {fontCss: "", preload: [], stylePaths: [asset_style_path], browser: {kind: "inline" as const, code: ""}};
             const doc = {
@@ -135,34 +135,38 @@ describe("페이지 셸", () => {
                 outline: {headings: [], sections: []},
                 ancestors: [],
             };
-            const published = toPageApp({
-                site: siteConfigSchema.parse({title: "Docs", description: "Site description", url: "https://docs.example.org"}),
-                store: {docs: [doc]},
-                assets,
-            });
+            const site = siteConfigSchema.parse({title: "Docs", description: "Site description", url: "https://docs.example.org"});
+            const published = toPageApp({site, store: {docs: [doc]}, assets: {...assets, image: "https://docs.example.org/_fh/media/asset.abc123.png"}});
+            const imageless = toPageApp({site, store: {docs: [doc]}, assets});
             const local = toPageApp({site: siteConfigSchema.parse({title: "Docs"}), store: {docs: [doc]}, assets});
 
             /**
              * WHEN
-             * 두 사이트의 문서와 홈 응답
+             * 세 사이트의 문서와 홈 응답
              */
-            const [page, home, localPage] = await Promise.all(
-                [published.request("/가이드/설치/"), published.request("/"), local.request("/가이드/설치/")].map(async (response) => (await response).text()),
+            const [page, home, imagelessPage, localPage] = await Promise.all(
+                [published.request("/가이드/설치/"), published.request("/"), imageless.request("/가이드/설치/"), local.request("/가이드/설치/")].map(async (response) =>
+                    (await response).text(),
+                ),
             );
 
             /**
              * THEN
-             * 사이트맵과 같은 인코딩의 대표 주소, 문서별 미리보기 태그, 공개 주소 없는 사이트의 태그 없음
+             * 사이트맵과 같은 인코딩의 대표 주소, 문서별 미리보기 태그, 이미지 없는 사이트의 og:image 생략, 공개 주소 없는 사이트의 태그 없음
              */
             expect(page).toContain('<link rel="canonical" href="https://docs.example.org/%EA%B0%80%EC%9D%B4%EB%93%9C/%EC%84%A4%EC%B9%98/">');
             expect(page).toContain('<meta property="og:url" content="https://docs.example.org/%EA%B0%80%EC%9D%B4%EB%93%9C/%EC%84%A4%EC%B9%98/">');
             expect(page).toContain('<meta property="og:title" content="Install">');
             expect(page).toContain('<meta property="og:site_name" content="Docs">');
             expect(page).toContain('<meta property="og:description" content="Install the package">');
+            expect(page).toContain('<meta property="og:image" content="https://docs.example.org/_fh/media/asset.abc123.png">');
             expect(page).toContain('<meta name="twitter:card" content="summary">');
             expect(home).toContain('<link rel="canonical" href="https://docs.example.org/">');
             expect(home).toContain('<meta property="og:title" content="Docs">');
             expect(home).toContain('<meta property="og:description" content="Site description">');
+            expect(home).toContain('<meta property="og:image" content="https://docs.example.org/_fh/media/asset.abc123.png">');
+            expect(imagelessPage).toContain('<meta property="og:url"');
+            expect(imagelessPage).not.toContain("og:image");
             expect(localPage).not.toMatch(/rel="canonical"|property="og:|name="twitter:/);
         });
     });

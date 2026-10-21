@@ -31,7 +31,7 @@ export interface WgShellProps {
     docs: Doc[];
 
     /**
-     * 페이지의 글꼴, 스타일, 브라우저 진입점
+     * 페이지의 글꼴, 스타일, 브라우저 진입점, 링크 미리보기 이미지
      */
     assets: SiteAssets;
 
@@ -88,6 +88,7 @@ export const WgShell = (props: WgShellProps) => {
                       {property: "og:title", content: escapeHtml(props.title ?? props.site.title)},
                       {property: "og:description", content: description === undefined ? undefined : escapeHtml(description)},
                       {property: "og:url", content: pageUrl},
+                      {property: "og:image", content: props.assets.image},
                       {name: "twitter:card", content: "summary"},
                   ]),
         ],

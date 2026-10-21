@@ -7,7 +7,7 @@ import {loadSite} from "@/app/load-site";
 import {siteConfigSchema} from "@/type/site-config";
 
 /**
- * 공개, 내부 문서 범위(src/app/load-site.ts, src/util/file/assert-content-path.ts) 검증
+ * 공개, 내부 문서 범위(src/app/load-site.ts, src/app/_function/to-preview-image-path.ts, src/util/file/assert-content-path.ts) 검증
  */
 describe("공개와 내부 문서", () => {
     describe("공개 빌드", () => {
@@ -192,6 +192,64 @@ describe("공개와 내부 문서", () => {
              */
             expect(response.status).toBe(200);
             expect(await response.text()).toContain('<a href="/guide/">Guide</a>');
+        });
+    });
+
+    describe("링크 미리보기 이미지", () => {
+        test("[CNT-012] 미리보기 이미지는 공개 주소와 함께 내용 지문 자원으로 배포한다", async ({root}) => {
+            /**
+             * GIVEN
+             * 공개 주소와 문서 루트 기준 미리보기 이미지를 지정한 사이트
+             */
+            await mkdir(join(root, "public"));
+            await mkdir(join(root, "asset"));
+            await writeFile(join(root, "asset/preview.png"), "PREVIEW_IMAGE");
+
+            const site = siteConfigSchema.parse({url: "https://docs.example.org", image: "asset/preview.png"});
+
+            /**
+             * WHEN
+             * 공개 스냅샷의 홈 응답과 og:image 주소의 자원 요청
+             */
+            const snapshot = await loadSite({root, kitRoot: resolve("."), site});
+            const html = await (await snapshot.app.request("/")).text();
+            const path = html.match(/<meta property="og:image" content="https:\/\/docs\.example\.org(\/_fh\/media\/asset\.[0-9a-f]{64}\.png)">/)?.[1];
+            const image = await snapshot.app.request(String(path));
+
+            /**
+             * THEN
+             * 내용 지문 주소의 og:image, 같은 주소의 이미지 응답
+             */
+            expect(path).toBeDefined();
+            expect(image.status).toBe(200);
+            expect(await image.text()).toBe("PREVIEW_IMAGE");
+        });
+
+        test.for([
+            {caseId: "CNT-013", image: "asset/missing.png", error: "Invalid asset: asset/missing.png (file not found)"},
+            {caseId: "CNT-014", image: "private/preview.png", error: "Public documents cannot reference private files"},
+        ])("[$caseId] 미리보기 이미지 $image 경로는 공개 빌드에서 거부한다", async (scenario, {root}) => {
+            /**
+             * GIVEN
+             * 공개 문서 폴더와 내부 폴더의 이미지, 공개 주소와 미리보기 이미지 설정
+             */
+            await mkdir(join(root, "public"));
+            await mkdir(join(root, "private"));
+            await writeFile(join(root, "private/preview.png"), "INTERNAL_IMAGE");
+
+            const site = siteConfigSchema.parse({url: "https://docs.example.org", image: scenario.image});
+
+            /**
+             * WHEN
+             * 공개 스냅샷 준비
+             */
+            const snapshot = loadSite({root, kitRoot: resolve("."), site});
+
+            /**
+             * THEN
+             * 경로를 알리는 설정 오류
+             */
+            await expect(snapshot).rejects.toThrow(scenario.error);
         });
     });
 });

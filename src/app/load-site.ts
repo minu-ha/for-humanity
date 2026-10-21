@@ -8,6 +8,7 @@ import {readHome} from "@/app/_function/read-home";
 import {toCrawlingApp} from "@/app/_function/to-crawling-app";
 import {toHttpApp} from "@/app/_function/to-http-app";
 import {toPageApp} from "@/app/_function/to-page-app/to-page-app";
+import {toPreviewImagePath} from "@/app/_function/to-preview-image-path";
 import {toProcessor} from "@/app/_function/to-processor/to-processor";
 import {asset_favicon_path, asset_font_dir, asset_style_path} from "@/constant/asset";
 import {font_body_css, font_brand_css, font_mono_css} from "@/constant/font";
@@ -113,6 +114,10 @@ export const loadSite = async (params: SiteParams) => {
             browser: params.browser ?? {kind: "inline", code: readFileSync(join(params.kitRoot, "dist/browser.js"), "utf8")},
             fontCss: [mono.css, body.css, brand.css].join("\n"),
             preload: [...brand.files.keys(), ...mono.files.keys(), ...body.files.keys()],
+
+            // 링크 미리보기 이미지. 공개 주소가 있을 때만 배포
+            image:
+                params.site.url === undefined || params.site.image === undefined ? undefined : `${params.site.url}${toPreviewImagePath({scope, files, path: params.site.image})}`,
         },
     });
 

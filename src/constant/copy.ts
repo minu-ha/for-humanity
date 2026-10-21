@@ -23,6 +23,11 @@ export const copy_error_site_url = "url must be an HTTP(S) site root without cre
 export const copy_error_site_lang = "lang must be a language tag such as ko or en-US";
 
 /**
+ * 링크 미리보기 이미지의 형식 오류
+ */
+export const copy_error_site_image = "image must be a PNG, JPEG, GIF or WebP file";
+
+/**
  * 탐색 순서에 같은 묶음을 두 번 지정한 설정 오류
  */
 export const copy_error_navigation_clash = "Duplicate navigation groups";

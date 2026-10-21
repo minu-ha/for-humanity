@@ -66,7 +66,7 @@ Keep published documents in `content/public` and local notes in `content/private
 
 ## Make it yours
 
-Set the site name and the order of navigation groups:
+Set the site name, page language and the order of navigation groups:
 
 ```ts
 import type {SiteConfig} from "for-humanity";
@@ -74,6 +74,7 @@ import type {SiteConfig} from "for-humanity";
 export default {
     title: "Project notes",
     description: "A guide to using the project.",
+    lang: "en",
     navigation: ["Start", "Guide", "Updates"],
 } satisfies SiteConfig;
 ```
