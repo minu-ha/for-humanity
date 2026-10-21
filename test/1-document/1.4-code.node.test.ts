@@ -189,5 +189,61 @@ describe("코드 블록", () => {
              */
             expect(home?.html).toContain("fromSnippet");
         });
+
+        test.for([
+            {caseId: "COD-009", file: "example.ts", source: "const before = 0;\n// #region picked\nconst inside = 1;\n// #endregion\nconst after = 2;\n"},
+            {caseId: "COD-010", file: "example.html", source: "<p>before</p>\n<!-- #region picked -->\n<p>inside</p>\n<!-- #endregion -->\n<p>after</p>\n"},
+            {caseId: "COD-011", file: "example.css", source: ".before {}\n/* #region picked */\n.inside {}\n/* #endregion */\n.after {}\n"},
+        ])("[$caseId] 이름 없는 끝 표시는 $file 파일의 region을 닫는다", async (scenario, {scope}) => {
+            /**
+             * GIVEN
+             * 이름 없는 끝 표시로 닫은 region
+             */
+            const site = siteConfigSchema.parse({});
+
+            await writeFile(join(scope.publicRoot, scenario.file), scenario.source);
+            await writeFile(join(scope.publicRoot, "guide.md"), `---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n<<< ./${scenario.file}#picked\n`);
+
+            /**
+             * WHEN
+             * Markdown 처리
+             */
+            const [doc] = await readDocs({scope, processor: toProcessor({site, scope})});
+
+            /**
+             * THEN
+             * region 안의 줄만 표시
+             */
+            expect(doc.html).toContain("inside");
+            expect(doc.html).not.toMatch(/before|after|#endregion/);
+        });
+
+        test("[COD-012] 이름 없는 끝 표시는 가장 안쪽의 열린 region만 닫는다", async ({scope}) => {
+            /**
+             * GIVEN
+             * 이름 없는 안쪽 region을 포함한 바깥 region
+             */
+            const site = siteConfigSchema.parse({});
+
+            await writeFile(
+                join(scope.publicRoot, "example.ts"),
+                "// #region outer\nconst first = 1;\n// #region\nconst second = 2;\n// #endregion\nconst third = 3;\n// #endregion\nconst outside = 4;\n",
+            );
+
+            await writeFile(join(scope.publicRoot, "guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n<<< ./example.ts#outer\n");
+
+            /**
+             * WHEN
+             * Markdown 처리
+             */
+            const [doc] = await readDocs({scope, processor: toProcessor({site, scope})});
+
+            /**
+             * THEN
+             * 안쪽 region 뒤의 줄까지 이어지는 바깥 region
+             */
+            expect(doc.html).toMatch(/first[\s\S]*second[\s\S]*third/);
+            expect(doc.html).not.toMatch(/outside|#region|#endregion/);
+        });
     });
 });

@@ -59,11 +59,6 @@ export const copy_error_part_heading = "cannot contain # or ## headings";
 export const copy_error_part_code_fence = "needs closed code fences and an outer fence longer than any ::: in its code";
 
 /**
- * 없는 Markdown 링크 경고. 빌드 계속
- */
-export const copy_warn_broken_link = "Link to a missing document";
-
-/**
  * 미등록 날짜 상태 문구 경고
  */
 export const copy_warn_unknown_status = "Status phrase not in the configuration";

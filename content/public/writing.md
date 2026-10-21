@@ -105,6 +105,7 @@ private 문서에는 `/private/`이 붙습니다. `.mdx`도 Markdown으로 읽�
 ```
 
 part는 본문과 목차에서 절의 묶음을 표시합니다. 제목에 자동 번호는 붙지 않습니다. 번호가 필요하면 제목에 직접 적습니다.
+제목을 생략하거나 비워 둔 `::part`는 빌드 오류입니다.
 
 ### Links
 
@@ -118,6 +119,7 @@ part는 본문과 목차에서 절의 묶음을 표시합니다. 제목에 자�
 
 상대 `.md` 링크는 사이트 URL로 바뀌며 query와 hash를 유지합니다. 위의 `settings.md#navigation`은 `/settings/#navigation`으로 연결됩니다.
 일반 문서의 README 링크는 해당 문서로, `content/README.md` 링크는 홈으로 연결됩니다.
+없는 문서를 가리키는 링크는 빌드 오류가 아닌 경고입니다. 터미널에 해당 파일과 줄 번호를 표시합니다. 원시 HTML의 `<a href="...">`에도 같은 변환과 경고를 적용합니다.
 
 제목 앵커는 제목으로부터 자동 생성됩니다. 같은 제목이 반복되면 `-1`, `-2`가 붙습니다.
 Details 안의 제목으로 이동하면 접힌 내용이 펼쳐집니다.
@@ -181,7 +183,8 @@ const count = 3;
 ```
 
 경로는 현재 Markdown 파일 기준입니다. 파일은 content 루트 안에 있어야 합니다. 공개 문서에서는 private 파일을 불러올 수 없습니다.
-`#contract`를 붙이면 파일의 `// #region contract`와 `// #endregion contract` 사이만 표시합니다. region 표시 줄과 공통 들여쓰기는 제거합니다.
+`#contract`를 붙이면 파일의 `// #region contract`와 `// #endregion contract` 사이만 표시합니다. 이름 없는 `// #endregion`은 가장 안쪽의 열린 region을 닫습니다.
+HTML과 CSS 파일에서는 `<!-- #region contract -->`와 `/* #region contract */`처럼 해당 언어의 주석을 사용합니다. region 표시 줄과 공통 들여쓰기는 제거합니다.
 언어는 파일 확장자로 정합니다. 경로 뒤에는 코드 블록과 같은 메타를 사용할 수 있습니다. dev에서는 불러온 파일의 변경도 반영합니다.
 
 ## Content features

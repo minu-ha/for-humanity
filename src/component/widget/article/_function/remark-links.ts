@@ -3,8 +3,7 @@ import {dirname, resolve} from "node:path";
 import type {Root} from "mdast";
 import {visit} from "unist-util-visit";
 import type {VFile} from "vfile";
-import {copy_warn_broken_link} from "@/component/widget/article/_constant/copy";
-import {copy_error_url_encoding} from "@/constant/copy";
+import {copy_error_url_encoding, copy_warn_broken_link} from "@/constant/copy";
 import type {ContentScope} from "@/type/content-scope";
 import {toErrorMessage} from "@/util/error/to-error-message";
 import {assertContentPath} from "@/util/file/assert-content-path";
@@ -33,7 +32,7 @@ export const remarkLinks = (options: LinkOptions) => (tree: Root, file: VFile) =
         }
 
         // 셋째 캡처 그룹: 쿼리, 해시 접미사. 파일 확인과 경로 정규화에서 제외
-        const match = /^(?![a-z]+:|\/|#)([^#?]+)(\.mdx?)([?#].*|)$/i.exec(node.url);
+        const match = /^(?![a-z][a-z\d+.-]*:|\/|#)([^#?]+)(\.mdx?)([?#].*|)$/i.exec(node.url);
 
         if (match === null) {
             return;

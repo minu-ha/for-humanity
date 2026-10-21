@@ -1,10 +1,11 @@
+import {existsSync} from "node:fs";
 import {dirname, resolve} from "node:path";
 import type {Root} from "hast";
 import {visit} from "unist-util-visit";
 import type {VFile} from "vfile";
 import {copy_error_private_url} from "@/app/_constant/copy";
 import {content_private_segment} from "@/constant/content";
-import {copy_error_url_encoding} from "@/constant/copy";
+import {copy_error_url_encoding, copy_warn_broken_link} from "@/constant/copy";
 import type {ContentScope} from "@/type/content-scope";
 import {toErrorMessage} from "@/util/error/to-error-message";
 import {assertContentPath} from "@/util/file/assert-content-path";
@@ -23,6 +24,8 @@ interface ContentLinkOptions {
 
 /**
  * 원시 HTML의 내부 참조 차단과 Markdown 파일 링크의 사이트 URL 변환
+ *
+ *   - 없는 Markdown 파일 링크는 remark-links와 같은 파일 경고
  */
 export const rehypeContentLinks = (options: ContentLinkOptions) => (tree: Root, file: VFile) => {
     visit(tree, "element", (node) => {
@@ -60,6 +63,10 @@ export const rehypeContentLinks = (options: ContentLinkOptions) => (tree: Root, 
 
                     if (property === "href" && /\.mdx?$/i.test(path)) {
                         const id = toContentId({scope: options.scope, path: target});
+
+                        if (!existsSync(target)) {
+                            file.message(`${copy_warn_broken_link}: ${url}`, node);
+                        }
 
                         node.properties[property] = `${id === "" ? "/" : `/${id}/`}${url.slice(rawPath.length)}`;
                     }

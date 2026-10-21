@@ -11,7 +11,7 @@ import {createCssVariablesTheme} from "shiki";
 import {unified} from "unified";
 import {rehypeAssets} from "@/app/_function/to-processor/_rehype-assets";
 import {rehypeContentLinks} from "@/app/_function/to-processor/_rehype-content-links";
-import {remarkReport} from "@/app/_function/to-processor/_remark-report";
+import {rehypeReport} from "@/app/_function/to-processor/_rehype-report";
 import {remarkSnippets} from "@/app/_function/to-processor/_remark-snippets";
 import {shikiTransformers} from "@/component/widget/article/_constant/shiki-transformers";
 import {rehypeHead} from "@/component/widget/article/_function/rehype-head";
@@ -78,7 +78,6 @@ export const toProcessor = (params: ProcessorParams) => {
         .use(remarkSwatch)
         .use(remarkLinks, {scope: params.scope})
         .use(remarkUnknownDirectives)
-        .use(remarkReport, {root: params.scope.root})
         .use(remarkRehype, {allowDangerousHtml: true})
         .use(rehypeShiki, {theme: createCssVariablesTheme({name: "for-humanity", variablePrefix: "--app-code-"}), transformers: shikiTransformers})
         .use(rehypeHead)
@@ -88,5 +87,6 @@ export const toProcessor = (params: ProcessorParams) => {
         .use(rehypeRaw)
         .use(rehypeContentLinks, {scope: params.scope})
         .use(rehypeAssets, {scope: params.scope, files})
+        .use(rehypeReport, {root: params.scope.root})
         .use(rehypeStringify, {allowDangerousHtml: true});
 };

@@ -1,5 +1,5 @@
 import {relative} from "node:path";
-import type {Root} from "mdast";
+import type {Root} from "hast";
 import type {VFile} from "vfile";
 import {logger} from "@/util/logger/logger";
 
@@ -16,9 +16,9 @@ interface ReportOptions {
 /**
  * 파일 경고의 파일:줄 형식 터미널 출력. 빌드 계속
  *
- *   - 경고 수집 뒤 실행하는 마지막 remark 플러그인
+ *   - 원시 HTML 검사 뒤 실행하는 마지막 rehype 플러그인. remark, rehype 경고 일괄 출력
  */
-export const remarkReport = (options: ReportOptions) => (_tree: Root, file: VFile) => {
+export const rehypeReport = (options: ReportOptions) => (_tree: Root, file: VFile) => {
     const path = relative(options.root, file.path);
 
     for (const message of file.messages) {

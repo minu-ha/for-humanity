@@ -66,3 +66,8 @@ export const copy_error_markdown_outside = "Markdown reference outside the publi
  * 해석할 수 없는 퍼센트 인코딩이 포함된 로컬 참조 오류
  */
 export const copy_error_url_encoding = "Invalid percent-encoding";
+
+/**
+ * 없는 문서를 가리키는 Markdown, 원시 HTML 링크 경고. 빌드 계속
+ */
+export const copy_warn_broken_link = "Link to a missing document";

@@ -1,12 +1,13 @@
 import {mkdir, writeFile} from "node:fs/promises";
 import {join} from "node:path";
 import {test} from "@test/_fixture/temp-root";
-import {describe, expect} from "vitest";
+import {describe, expect, vi} from "vitest";
 import {readDocs} from "@/app/_function/read-docs";
 import {toPageApp} from "@/app/_function/to-page-app/to-page-app";
 import {toProcessor} from "@/app/_function/to-processor/to-processor";
 import {asset_style_path} from "@/constant/asset";
 import {siteConfigSchema} from "@/type/site-config";
+import {logger} from "@/util/logger/logger";
 
 /**
  * 문서 링크와 목차(src/component/widget/article/_function/remark-links.ts, src/app/_function/to-processor/_rehype-content-links.ts) 검증
@@ -89,6 +90,59 @@ describe("문서 링크와 목차", () => {
             await expect(result).rejects.toThrow(/Invalid percent-encoding/);
             await expect(result).rejects.toHaveProperty("line", 7);
         });
+
+        test("[LNK-005] 없는 문서를 가리키는 Markdown 링크와 원시 HTML 링크는 작성 위치와 함께 경고한다", async ({scope}) => {
+            /**
+             * GIVEN
+             * 없는 문서를 가리키는 Markdown 링크와 원시 HTML 링크
+             */
+            const site = siteConfigSchema.parse({});
+            const warn = vi.spyOn(logger, "warn").mockImplementation(() => undefined);
+
+            await writeFile(join(scope.publicRoot, "guide.md"), '---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n[Doc](gone.md)\n\n<a href="missing.md#start">Doc</a>\n');
+
+            /**
+             * WHEN
+             * 문서 로드
+             */
+            const docs = await readDocs({scope, processor: toProcessor({site, scope})});
+
+            /**
+             * THEN
+             * 사이트 주소로 바꾼 두 링크와 파일, 줄 번호가 붙은 경고
+             */
+            expect(docs[0].html).toContain('href="/gone/"');
+            expect(docs[0].html).toContain('href="/missing/#start"');
+
+            expect(warn.mock.calls).toStrictEqual([
+                [`${join("public", "guide.md")}:7 Link to a missing document: gone.md`],
+                [`${join("public", "guide.md")}:9 Link to a missing document: missing.md#start`],
+            ]);
+        });
+
+        test("[LNK-006] 스킴으로 시작하는 Markdown 링크는 작성한 주소를 유지하고 경고하지 않는다", async ({scope}) => {
+            /**
+             * GIVEN
+             * 스킴으로 시작하는 .md 링크
+             */
+            const site = siteConfigSchema.parse({});
+            const warn = vi.spyOn(logger, "warn").mockImplementation(() => undefined);
+
+            await writeFile(join(scope.publicRoot, "guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n[Notes](web+app:notes.md)\n");
+
+            /**
+             * WHEN
+             * 문서 로드
+             */
+            const docs = await readDocs({scope, processor: toProcessor({site, scope})});
+
+            /**
+             * THEN
+             * 작성한 주소의 링크와 경고 없음
+             */
+            expect(docs[0].html).toContain('href="web+app:notes.md"');
+            expect(warn).not.toHaveBeenCalled();
+        });
     });
 
     describe("제목과 목차", () => {
@@ -130,6 +184,33 @@ describe("문서 링크와 목차", () => {
             expect(html).toMatch(/href="#overview-1"[^>]*>Overview<\/a>/);
             expect(html).toMatch(/wg_toc__group">Setup<\/div>/);
             expect(html).not.toMatch(/wg_article__num|wg_toc__mark/);
+        });
+
+        test.for([
+            {caseId: "LNK-007", source: "::part"},
+            {caseId: "LNK-008", source: "::part[]"},
+            {caseId: "LNK-009", source: "::part[ ]"},
+        ])("[$caseId] 이름 없는 가름 $source 입력은 작성 위치와 함께 거부한다", async (scenario, {scope}) => {
+            /**
+             * GIVEN
+             * 이름을 생략하거나 비운 가름
+             */
+            const site = siteConfigSchema.parse({});
+
+            await writeFile(join(scope.publicRoot, "guide.md"), `---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n${scenario.source}\n\n## Overview\n\nText.\n`);
+
+            /**
+             * WHEN
+             * 문서 로드
+             */
+            const result = readDocs({scope, processor: toProcessor({site, scope})});
+
+            /**
+             * THEN
+             * 빈 제목 오류와 원본 행 번호
+             */
+            await expect(result).rejects.toThrow(/Invalid part syntax: part needs a non-empty title/);
+            await expect(result).rejects.toHaveProperty("line", 7);
         });
     });
 });

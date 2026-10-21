@@ -7,6 +7,10 @@
 - Ignore the words `good`, `bad` and `line-numbers` inside a code block file title such as `[good.ts]`. They used to turn on the colored background or line numbers.
 - Build a README that starts with a code block and puts a snippet inside a Note or Details block. The build used to fail with a code fence error.
 - Show a color swatch only for 3, 4, 6 or 8 digit hex colors such as `#e80030`. Values such as `#12345` now render as plain inline code.
+- Fail the build with `Invalid part syntax: part needs a non-empty title` and the file and line when `::part` has no name, as in `::part` or `::part[]`. It used to render an empty part divider and an empty outline group.
+- End a snippet region at a nameless `// #endregion`, `<!-- #endregion -->` or `/* #endregion */`, which closes the innermost open region. The rest of the file used to leak into the snippet.
+- Warn with `Link to a missing document` and the file and line when a raw HTML link such as `<a href="missing.md">` points to a missing document, as Markdown links already do.
+- Keep Markdown links with a URL scheme such as `web+app:notes.md` as written. They used to be rewritten as document links and reported as missing.
 
 ## 0.14.2 — 2026-10-20
 
