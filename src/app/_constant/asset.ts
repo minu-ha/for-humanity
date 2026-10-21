@@ -2,9 +2,19 @@ import {copy_error_embed_format, copy_error_image_format, copy_error_media_forma
 import type {AssetReference} from "@/app/_type/asset-reference";
 
 /**
+ * 원본 크기를 width, height로 넣는 래스터 이미지 형식. viewBox만 있는 SVG는 표시 크기가 달라져 제외
+ */
+export const asset_raster_image_extensions: ReadonlySet<string> = new Set([".png", ".jpg", ".jpeg", ".gif", ".webp", ".avif"]);
+
+/**
+ * 가로세로가 바뀌는 EXIF 방향 값의 하한. 5부터 8까지 90도 회전
+ */
+export const asset_exif_rotated_orientation = 5;
+
+/**
  * 이미지 자원 형식. img, srcset, poster와 Markdown 이미지
  */
-const asset_image_extensions: ReadonlySet<string> = new Set([".svg", ".png", ".jpg", ".jpeg", ".gif", ".webp", ".avif"]);
+const asset_image_extensions: ReadonlySet<string> = new Set([...asset_raster_image_extensions, ".svg"]);
 
 /**
  * 영상, 소리 자원 형식. video, audio, source의 src

@@ -63,6 +63,7 @@
         "github-slugger": "^2.0.0",
         "hast-util-to-string": "3.0.1",
         "hono": "^4.13.12",
+        "image-size": "^2.0.4",
         "jiti": "^2.7.0",
         "mdast-util-find-and-replace": "^3.0.2",
         "rehype-raw": "^7.0.0",

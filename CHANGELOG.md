@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Give local PNG, JPEG, GIF, WebP and AVIF images their original `width` and `height`, so text below an image no longer moves down while it loads. A size written on a raw `<img>` is kept, and SVG images are left without size attributes.
+
 ## 0.16.0 — 2026-10-21
 
 **Upgrade:** CLI commands, configuration, document syntax and Node.js requirements remain compatible. Document pages now use each `label` as their description, so write labels that read well in search results and link previews. Pages are still marked as Korean by default; set `lang`, such as `lang: "en"`, for sites in other languages.

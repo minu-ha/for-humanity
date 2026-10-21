@@ -155,6 +155,41 @@ describe("문서 자원", () => {
             expect(docs[0].html).toMatch(/<embed src="\/_fh\/media\/asset\.[a-f0-9]+\.pdf"/);
             expect(docs[0].html).toMatch(/<object data="\/_fh\/media\/asset\.[a-f0-9]+\.svg"/);
         });
+
+        test("[AST-018] 로컬 래스터 이미지는 원본 크기를 받고 작성자가 적은 크기와 SVG, 읽을 수 없는 파일은 그대로 둔다", async ({scope}) => {
+            /**
+             * GIVEN
+             * 가로 30, 세로 20 PNG, 너비만 적은 원시 img, SVG, PNG 확장자의 텍스트 파일을 참조하는 문서
+             */
+            await Promise.all([
+                writeFile(
+                    join(scope.publicRoot, "shot.png"),
+                    Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAB4AAAAUCAAAAAC/wNIYAAAAE0lEQVR42mP4jxcwjEqPSlNLGgDmOVXHNeROsQAAAABJRU5ErkJggg==", "base64"),
+                ),
+                writeFile(join(scope.publicRoot, "diagram.svg"), '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12"/>'),
+                writeFile(join(scope.publicRoot, "broken.png"), "not an image"),
+            ]);
+
+            await writeFile(
+                join(scope.publicRoot, "page.md"),
+                '---\nname: Media\nlabel: Media\ngroup: Guide\n---\n\n![Shot](shot.png)\n\n<img src="shot.png" alt="Sized" width="15">\n\n![Diagram](diagram.svg)\n\n![Broken](broken.png)\n',
+            );
+
+            /**
+             * WHEN
+             * 문서 자원 처리
+             */
+            const docs = await readDocs({scope, processor: toProcessor({site: siteConfigSchema.parse({}), scope, files: new Map()})});
+
+            /**
+             * THEN
+             * Markdown PNG의 원본 크기, 작성자가 적은 너비 유지, SVG와 읽을 수 없는 파일의 크기 속성 없음
+             */
+            expect(docs[0].html).toMatch(/<img src="\/_fh\/media\/asset\.[a-f0-9]+\.png" alt="Shot" width="30" height="20">/);
+            expect(docs[0].html).toMatch(/<img src="\/_fh\/media\/asset\.[a-f0-9]+\.png" alt="Sized" width="15">/);
+            expect(docs[0].html).toMatch(/<img src="\/_fh\/media\/asset\.[a-f0-9]+\.svg" alt="Diagram">/);
+            expect(docs[0].html).toMatch(/<img src="\/_fh\/media\/asset\.[a-f0-9]+\.png" alt="Broken">/);
+        });
     });
 
     describe("자원 거부", () => {

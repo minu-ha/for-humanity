@@ -1,9 +1,10 @@
-import {existsSync, realpathSync, statSync} from "node:fs";
+import {existsSync, readFileSync, realpathSync, statSync} from "node:fs";
 import {dirname, extname, resolve} from "node:path";
 import type {Root} from "hast";
+import {imageSize} from "image-size";
 import {visit} from "unist-util-visit";
 import type {VFile} from "vfile";
-import {asset_references, asset_srcset_candidate_pattern} from "@/app/_constant/asset";
+import {asset_exif_rotated_orientation, asset_raster_image_extensions, asset_references, asset_srcset_candidate_pattern} from "@/app/_constant/asset";
 import {copy_error_asset, copy_error_file_missing, copy_error_not_file, copy_warn_unpublished_file} from "@/app/_constant/copy";
 import type {AssetReference} from "@/app/_type/asset-reference";
 import {asset_media_dir} from "@/constant/asset";
@@ -36,6 +37,7 @@ interface AssetOptions {
  *   - 없는 파일, 폴더 밖 경로와 symlink, 삽입 자원의 미지원 형식은 빌드 실패
  *   - 배포 형식이 아닌 로컬 파일 링크와 로컬 iframe은 파일 경고
  *   - 절대 URL, 외부 URL은 작성자가 제공하며 수집하지 않음
+ *   - 로컬 래스터 img에 원본 width, height 추가. 로드 전 자리 확보, 작성자가 적은 크기 유지
  */
 export const rehypeAssets = (options: AssetOptions) => (tree: Root, file: VFile) => {
     visit(tree, "element", (node) => {
@@ -116,6 +118,25 @@ export const rehypeAssets = (options: AssetOptions) => (tree: Root, file: VFile)
                           (candidate: string, lead: string, url: string) => `${lead}${toAssetUrl(url, reference)}${candidate.slice(lead.length + url.length)}`,
                       )
                     : toAssetUrl(value, reference);
+        }
+
+        const image =
+            node.tagName === "img" && typeof node.properties.src === "string" && node.properties.width === undefined && node.properties.height === undefined
+                ? options.files.get(node.properties.src)
+                : undefined;
+
+        if (image === undefined || !asset_raster_image_extensions.has(extname(image).toLowerCase())) {
+            return;
+        }
+
+        try {
+            const size = imageSize(readFileSync(image));
+            const isRotated = size.orientation !== undefined && size.orientation >= asset_exif_rotated_orientation;
+
+            node.properties.width = isRotated ? size.height : size.width;
+            node.properties.height = isRotated ? size.width : size.height;
+        } catch {
+            // 크기를 읽을 수 없는 파일은 속성 없이 유지. 형식 검사는 위 수집 규칙 담당
         }
     });
 };
