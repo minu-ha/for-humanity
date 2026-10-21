@@ -6,7 +6,7 @@
 
 **사람이 읽는 문서를 위한 Markdown 문서 도구**
 
-Markdown으로 작성합니다. 맥락을 남깁니다. 정적 사이트로 공유합니다.
+Markdown으로 쓰고 맥락을 남겨 정적 사이트로 공유합니다.
 
 [Documentation](https://for-humanity.fyi) | [npm](https://www.npmjs.com/package/for-humanity) | [Releases](https://github.com/minu-ha/for-humanity/releases)
 
