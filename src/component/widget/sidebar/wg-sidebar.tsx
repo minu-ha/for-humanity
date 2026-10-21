@@ -73,9 +73,6 @@ export const WgSidebar = (props: WgSidebarProps) => {
     const focusRef = useRef<NavigationFocusSnapshot | null>(null);
     const restorePendingRef = useRef(true);
 
-    // 스크롤 이벤트마다 DOM 순회 없이 비교, 페이지별 활성 표시 제외
-    const navigationSignature = JSON.stringify(props.data.groups, (key, value: unknown) => (key === "active" ? undefined : value));
-
     /**
      * 저장된 배치와 현재 CSS 조건 구분. 조건 변경 직후 잘린 좌표는 이전 배치에 미저장
      */
@@ -126,7 +123,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
             positions: {
                 ...props.stores.scroll.getState().positions,
                 [layoutRef.current]: {
-                    navigation: navigationSignature,
+                    navigation: props.data.signature,
                     pathname: location.pathname,
                     documents: documents.scrollTop,
                     outline: outlineRef.current.scrollTop,
@@ -151,7 +148,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
 
         const position = props.stores.scroll.getState().positions[layoutRef.current];
 
-        if (position?.navigation === navigationSignature) {
+        if (position?.navigation === props.data.signature) {
             documents.scrollTop = position.documents;
             outlineRef.current.scrollTop = position.pathname === location.pathname ? position.outline : 0;
         } else {

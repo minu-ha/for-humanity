@@ -19,6 +19,7 @@ pnpm add -D --save-exact for-humanity@latest
 
 ## Unreleased
 
+- Save sidebar scroll positions with a short document list signature instead of the whole document tree, so scrolling stays light on large sites. Positions saved before the update start from the top once.
 - Serve the first page in `dev` even when a document changes while the site is still being prepared. The first request used to fail with HTTP 500 until the next change.
 - Report a YAML syntax error in frontmatter as `Invalid frontmatter: <file>: <reason>`, and print YAML warnings with the file and line, instead of messages without the document path.
 - Ignore the words `good`, `bad` and `line-numbers` inside a code block file title such as `[good.ts]`. They used to turn on the colored background or line numbers.

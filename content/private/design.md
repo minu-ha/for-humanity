@@ -45,7 +45,7 @@ order: 20
 | `letter-spacing` | `body`, `brand`, `heading`, `title`                                                    |
 | `space`          | `inline`, `stack`, `block`, `group`, `subsection`, `section`, 페이지 틀                |
 | `size`           | `sidebar`, `page`, `brand`, `mobile-header`, `menu-button`, `drawer`                                                       |
-| `z-index`        | `sticky` 사이드바 사이트 이름, `popper` 커서 장식                            |
+| `z-index`        | `sticky` 모바일 고정 헤더, `popper` 커서 장식                                |
 | `radius`         | `box`, `inline`, `mark`                                                                |
 | `outline`        | `focus`, `focus-offset`                                                                |
 | `code`           | Shiki의 `foreground`, `background`, `token-*`                                          |
@@ -149,7 +149,7 @@ TOC의 현재 위치도 같은 `anchor` 토큰 사용. 본문 끝은 `section` �
 문서 탐색과 목차의 묶음 사이는 `tree-group` 16px로 공유. 문서 탐색은 묶음 목록의 `gap`, 목차는 이름 있는 가름의 위 여백. 한 소유자에만 필요한 보정은 지역 값. 예: 하위 목록 아래 여백 4px.
 같은 숫자여도 아이콘 크기, 글자 크기, 페이지 폭은 간격과 별도 역할.
 모서리 토큰의 기본값은 `0`. 표와 다이어그램의 바깥 경계는 얇은 선으로 구분.
-겹침 요소 추가 시 `z-index` 역할 토큰 먼저 정의. 사이드바 사이트 이름은 `--app-z-index-sticky`, 커서 장식은 `--app-z-index-popper` 층.
+겹침 요소 추가 시 `z-index` 역할 토큰 먼저 정의. 사이트 이름이 든 모바일 고정 헤더는 `--app-z-index-sticky`, 커서 장식은 `--app-z-index-popper` 층.
 
 ## Responsive layout
 

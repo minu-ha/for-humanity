@@ -73,6 +73,35 @@ describe("문서 탐색", () => {
             expect(rail).toMatch(/Read here/);
             expect([...html.matchAll(/data-sidebar-scroll="outline"/g)].length).toBe(1);
         });
+
+        test("[NAV-027] 문서 목록 식별값은 현재 문서와 무관하고 목록이 바뀌면 달라진다", async ({scope}) => {
+            /**
+             * GIVEN
+             * 같은 묶음의 두 문서
+             */
+            const site = siteConfigSchema.parse({});
+
+            await Promise.all([
+                writeFile(join(scope.publicRoot, "guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Docs\n---\n\nText.\n"),
+                writeFile(join(scope.publicRoot, "setup.md"), "---\nname: Setup\nlabel: Setup\ngroup: Docs\n---\n\nText.\n"),
+            ]);
+
+            /**
+             * WHEN
+             * 현재 문서별 탐색 자료와 문서 하나를 뺀 목록의 탐색 자료 생성
+             */
+            const docs = await readDocs({scope, processor: toProcessor({site, scope})});
+            const guide = toNavigationData({site, docs, current: "guide"});
+            const setup = toNavigationData({site, docs, current: "setup"});
+            const shorter = toNavigationData({site, docs: docs.filter((doc) => doc.id === "guide"), current: "guide"});
+
+            /**
+             * THEN
+             * 현재 문서와 무관한 같은 식별값, 목록 변경 시 다른 식별값
+             */
+            expect(setup.signature).toBe(guide.signature);
+            expect(shorter.signature).not.toBe(guide.signature);
+        });
     });
 
     describe("묶음과 부모 문서", () => {

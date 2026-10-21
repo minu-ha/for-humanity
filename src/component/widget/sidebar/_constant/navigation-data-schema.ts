@@ -91,6 +91,11 @@ export const navigationDataSchema: ZodMiniType<NavigationData> = object({
     groups: array(navigationGroupSchema),
 
     /**
+     * 같은 문서 목록의 저장 위치만 복원하는 목록 식별값
+     */
+    signature: string(),
+
+    /**
      * 현재 페이지의 가름별 목차
      */
     outline: array(

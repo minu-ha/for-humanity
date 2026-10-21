@@ -1,7 +1,8 @@
+import {createHash} from "node:crypto";
 import {takeWhile, uniqBy, zip} from "es-toolkit/array";
 import {section_heading_depth} from "@/component/widget/article/_constant/section";
-import {toDocGroupBranches} from "@/component/widget/sidebar/_function/to-navigation-data/_to-doc-group-branches";
-import {toNavigationGroup} from "@/component/widget/sidebar/_function/to-navigation-data/_to-navigation-group";
+import {navigation_signature_length} from "@/component/widget/sidebar/_constant/navigation";
+import {toNavigationGroups} from "@/component/widget/sidebar/_function/to-navigation-data/_to-navigation-groups";
 import type {NavigationData} from "@/component/widget/sidebar/_type/navigation-data";
 import type {TocSection} from "@/component/widget/sidebar/_type/toc-group";
 import type {Doc} from "@/type/doc";
@@ -37,6 +38,7 @@ interface NavigationDataParams {
  * 현재 문서의 이름, 계층, 목차만 전송. 다른 문서 본문은 브라우저 탐색 입력에서 제외
  *
  *   - 설정 경로 순서의 묶음 배치, 미지정 형제 묶음은 뒤에서 이름순
+ *   - 목록 식별값은 페이지별 활성 표시 제외, 같은 목록에서만 저장 위치 복원
  *   - 목차는 h2별 h3 수집, 가름 시작 절에서 목차 묶음 분리
  *   - 첫 h2 앞의 h3은 목차 제외
  */
@@ -67,24 +69,30 @@ export const toNavigationData = (params: NavigationDataParams): NavigationData =
         ];
     });
 
+    // 3. 메타데이터 경로의 문서 계층. 설정 경로와 조상 경로마다 최초 지정 위치 사용
+    const groups = toNavigationGroups({
+        docs: params.docs,
+        children: Map.groupBy(params.docs, (doc) => doc.data.parent),
+        path: [],
+        positions: new Map(
+            uniqBy(
+                params.site.navigation.flatMap((path, index) => {
+                    return path.map((_name, depth) => [JSON.stringify(path.slice(0, depth + 1)), index] as const);
+                }),
+                (entry) => entry[0],
+            ),
+        ),
+        unlistedPosition: params.site.navigation.length,
+        current: params.current,
+    });
+
     return {
         title: params.site.title,
-
-        // 3. 메타데이터 경로의 문서 계층. 설정 경로와 조상 경로마다 최초 지정 위치 사용
-        groups: toDocGroupBranches({
-            docs: params.docs,
-            children: Map.groupBy(params.docs, (doc) => doc.data.parent),
-            path: [],
-            positions: new Map(
-                uniqBy(
-                    params.site.navigation.flatMap((path, index) => {
-                        return path.map((_name, depth) => [JSON.stringify(path.slice(0, depth + 1)), index] as const);
-                    }),
-                    (entry) => entry[0],
-                ),
-            ),
-            unlistedPosition: params.site.navigation.length,
-        }).map((group) => toNavigationGroup({group, current: params.current})),
+        groups,
+        signature: createHash("sha256")
+            .update(JSON.stringify(groups, (key, value: unknown) => (key === "active" ? undefined : value)))
+            .digest("base64url")
+            .slice(0, navigation_signature_length),
 
         // 4. 가름 시작 절부터 다음 가름 전까지 한 목차 묶음
         outline: sections.flatMap((section, index) => {

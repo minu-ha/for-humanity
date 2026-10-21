@@ -73,6 +73,11 @@ export interface NavigationData {
     groups: NavigationGroup[];
 
     /**
+     * 페이지별 활성 표시를 제외한 문서 목록의 짧은 식별값. 같은 목록에서만 저장 위치 복원
+     */
+    signature: string;
+
+    /**
      * 현재 페이지의 목차
      */
     outline: TocGroup[];

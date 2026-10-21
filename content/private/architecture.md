@@ -205,14 +205,14 @@ JSX와 Hooks로 동작을 소유하면서 정적 본문을 유지하는 현재 �
 문서 링크는 전체 HTML 페이지를 이동합니다.  탐색의 클라이언트 상태는 Zustand vanilla 스토어가 소유합니다.
 문서 목록과 On this page는 각각 독립 스크롤 컨테이너입니다. 1360px 이상에서는 같은 폭의 양쪽 사이드바로 표시하고, 그 아래에서는 목차를 숨깁니다. 모바일 드로어에는 문서 목록만 포함합니다.
 
-`vite.config.ts`의 browser 모드가 Vite로 `src/entry/browser/browser.tsx`를 단일 IIFE로 컴파일합니다. 문서 앱은 생성한 `dist/browser.js`를 코드 문자열로 읽고 탐색 HTML과 탐색 전용 JSON 바로 뒤, 본문 앞에 포함합니다. JSON에는 문서 이름, URL, 계층, 현재 목차만 담고 본문은 포함하지 않습니다. `<`와 줄 구분자는 escape하여 작성한 이름이 script 태그를 닫지 못하게 합니다. 함수의 `.toString()`이나 수동 함수 조립은 사용하지 않습니다.
+`vite.config.ts`의 browser 모드가 Vite로 `src/entry/browser/browser.tsx`를 단일 IIFE로 컴파일합니다. 문서 앱은 생성한 `dist/browser.js`를 코드 문자열로 읽고 탐색 HTML과 탐색 전용 JSON 바로 뒤, 본문 앞에 포함합니다. JSON에는 문서 이름, URL, 계층, 현재 목차와 문서 목록 식별값만 담고 본문은 포함하지 않습니다. `<`와 줄 구분자는 escape하여 작성한 이름이 script 태그를 닫지 못하게 합니다. 함수의 `.toString()`이나 수동 함수 조립은 사용하지 않습니다.
 이 진입점은 첫 paint 전에 저장 상태를 읽고 `hono/jsx/dom` 런타임으로 탐색 컴포넌트를 마운트합니다. 브라우저 빌드만 `jsxImportSource=hono/jsx/dom`을 사용합니다. 외부 JS 다운로드를 기다리지 않아 메뉴 버튼과 스크롤 위치가 뒤늦게 바뀌지 않습니다. 저장소 소스 개발에서는 같은 `src/entry/browser/browser.tsx`를 모듈로 로드하며 JSX 런타임은 서버와 브라우저별로 구분합니다.
 
 CSS는 두 모드 모두 HTML의 `<head>`에 `<link rel="stylesheet">`로 제공해 JavaScript 실행 전에 적용합니다. 정적 출력과 설치 패키지는 내용 지문을 붙인 CSS 번들을 사용하고, 소스 개발은 `src/entry/dev/_constant/style.ts`의 Vite glob으로 컴포넌트와 페이지 CSS 목록을 수집합니다. 기존 CSS 수정은 Vite HMR로 반영하며, CSS 파일 추가와 삭제는 문서 스냅샷과 HTML의 스타일 목록을 갱신합니다. CSS import만으로 초기 스타일을 주입하면 모듈 실행 전 HTML이 먼저 보이므로 stylesheet 링크를 유지해야 합니다.
 
 Hono의 최초 레이아웃 효과는 아직 연결되지 않은 fragment에서 실행됩니다. 스크롤 측정과 복원은 이 경우에만 연결 직후 microtask로 미루며 첫 paint 앞에 완료합니다. 이후 반응형 전환에서는 연결된 요소를 동기 복원합니다.
 
-스크롤은 Zustand `persist`가 같은 탭의 `sessionStorage`에 넓은 화면, 좁은 데스크톱, 드로어 위치를 따로 저장합니다. 컴포넌트는 스토어 좌표를 ref에 적용하며 저장소를 직접 읽지 않습니다. 구형 배치별 저장 키와 마이그레이션은 지원하지 않습니다.
+스크롤은 Zustand `persist`가 같은 탭의 `sessionStorage`에 넓은 화면, 좁은 데스크톱, 드로어 위치를 따로 저장합니다. 각 위치에는 서버가 만든 문서 목록 식별값을 함께 저장하고, 목록이 바뀌면 그 위치를 복원하지 않습니다. 컴포넌트는 스토어 좌표를 ref에 적용하며 저장소를 직접 읽지 않습니다. 구형 배치별 저장 키와 마이그레이션은 지원하지 않습니다.
 문서 링크 순서가 달라지면 이전 위치는 무효입니다. 목차 위치는 같은 페이지에서만 복원하고 다른 문서의 목차는 시작점에서 읽습니다. 저장소가 차단되거나 값이 손상돼도 메모리 상태와 기본 탐색은 유지합니다.
 `ResizeObserver`와 스크롤 이벤트는 실제 위아래 넘침이 있는 끝만 흐리게 합니다. 강제 색상과 JavaScript 미사용 환경은 네이티브 손잡이를 사용합니다.
 
@@ -285,7 +285,7 @@ gray-matter는 frontmatter를 분리하고 해석하는 다른 선택지. 여기
 | 색, 폰트, 간격                | `src/style/token.css`        |
 | 폰트 변환과 공용 순수 함수   | `src/util`                   |
 
-문서 렌더 결과의 공통 계약(`DocContent`, `DocOutline`, `DocSection`)은 `src/type`에 둡니다. CLI와 본문, 탐색 위젯이 같은 계약을 소비하며 루트 타입이 위젯 내부 타입에 의존하지 않습니다. 문서 트리 표현 계약(`DocGroup`, `DocBranch`)은 탐색 위젯의 `_type`에 둡니다.
+문서 렌더 결과의 공통 계약(`DocContent`, `DocOutline`, `DocSection`)은 `src/type`에 둡니다. CLI와 본문, 탐색 위젯이 같은 계약을 소비하며 루트 타입이 위젯 내부 타입에 의존하지 않습니다. 탐색 트리 계약(`NavigationGroup`, `NavigationDoc`)은 탐색 위젯의 `_type`에 두고, 서버가 문서 목록에서 이 트리를 바로 만듭니다.
 
 ## Package output
 

@@ -15,7 +15,7 @@ export type NavigationLayout = z.infer<typeof navigationLayoutSchema>;
  */
 const navigationPositionSchema = z.object({
     /**
-     * 페이지별 활성 표시를 제외한 공통 문서 목록
+     * 저장할 때의 문서 목록 식별값. 목록이 바뀌면 위치 미복원
      */
     navigation: z.string(),
 

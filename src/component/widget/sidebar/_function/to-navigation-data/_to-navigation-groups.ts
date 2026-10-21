@@ -1,12 +1,12 @@
 import {locale_doc_group} from "@/component/widget/sidebar/_constant/locale";
-import {toDocBranches} from "@/component/widget/sidebar/_function/to-navigation-data/_to-doc-branches";
-import type {DocGroup} from "@/component/widget/sidebar/_type/doc-group";
+import {toNavigationDocs} from "@/component/widget/sidebar/_function/to-navigation-data/_to-navigation-docs";
+import type {NavigationGroup} from "@/component/widget/sidebar/_type/navigation-data";
 import type {Doc} from "@/type/doc";
 
 /**
  * 같은 부모의 문서를 다음 경로 단계로 묶는 재귀 입력
  */
-interface DocGroupBranchesParams {
+interface NavigationGroupsParams {
     /**
      * 부모 경로에 속한 문서
      */
@@ -20,7 +20,7 @@ interface DocGroupBranchesParams {
     /**
      * 부모까지의 경로. 최상위는 빈 배열
      */
-    path: DocGroup["path"];
+    path: NavigationGroup["path"];
 
     /**
      * 전체 경로의 JSON 키와 navigation 위치
@@ -31,12 +31,17 @@ interface DocGroupBranchesParams {
      * 미지정 경로를 지정한 묶음 뒤에 배치하는 위치
      */
     unlistedPosition: number;
+
+    /**
+     * 현재 문서 식별자, 홈이면 생략
+     */
+    current?: string;
 }
 
 /**
  * 각 단계의 직접 문서와 하위 묶음 분리. 고정된 깊이 제한 없이 구성
  */
-export const toDocGroupBranches = (params: DocGroupBranchesParams): DocGroup[] => {
+export const toNavigationGroups = (params: NavigationGroupsParams): NavigationGroup[] => {
     return [
         ...Map.groupBy(
             params.docs.filter((doc) => doc.data.group.length > params.path.length),
@@ -58,17 +63,12 @@ export const toDocGroupBranches = (params: DocGroupBranchesParams): DocGroup[] =
             return {
                 name: group.name,
                 path: group.path,
-                docs: toDocBranches({
+                docs: toNavigationDocs({
                     docs: group.docs.filter((doc) => doc.data.group.length === group.path.length && doc.data.parent === undefined),
                     children: params.children,
+                    current: params.current,
                 }),
-                groups: toDocGroupBranches({
-                    docs: group.docs,
-                    children: params.children,
-                    path: group.path,
-                    positions: params.positions,
-                    unlistedPosition: params.unlistedPosition,
-                }),
+                groups: toNavigationGroups({...params, docs: group.docs, path: group.path}),
             };
         });
 };
