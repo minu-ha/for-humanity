@@ -709,6 +709,26 @@ test.describe("문서 탐색", () => {
                 await expect(page.locator("html")).toHaveCSS("scroll-behavior", "smooth");
             });
         });
+
+        test("[NAV-028] 높은 화면에서 문서를 처음 열면 목차는 첫 절을 표시한다", {tag: "@high"}, async ({page}) => {
+            /**
+             * GIVEN
+             * 첫 화면에 여러 제목이 들어오는 높은 와이드 화면
+             */
+            await page.setViewportSize({width: 1920, height: 1400});
+
+            /**
+             * WHEN
+             * 문서의 처음 위치 열기
+             */
+            await page.goto("/guide/");
+
+            /**
+             * THEN
+             * 첫 절 제목의 현재 위치 표시
+             */
+            await expect(page.getByRole("navigation", {name: "On this page", exact: true}).locator('[aria-current="location"]')).toHaveText("Section 0");
+        });
     });
 
     test.describe("스크롤 입력", () => {
