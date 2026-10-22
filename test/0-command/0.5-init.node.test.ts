@@ -32,7 +32,7 @@ describe("프로젝트 초기화", () => {
         const result = spawnSync(process.execPath, [resolve("dist/cli.js"), "init", "--yes", "--manager", "npm"], {cwd: root, encoding: "utf8", env: cliEnv});
         expect(result.status, result.stderr).toBe(0);
         expect(await readFile(join(root, "for-humanity.config.ts"), "utf8")).toContain("satisfies SiteConfig");
-        expect(await readdir(join(root, "content"))).toEqual(["README.md", "asset", "private", "public"]);
+        expect((await readdir(join(root, "content"))).toSorted()).toEqual(["README.md", "asset", "private", "public"]);
         const manifest = z
             .object({private: z.boolean(), scripts: z.record(z.string(), z.string()), devDependencies: z.record(z.string(), z.string())})
             .parse(JSON.parse(await readFile(join(root, "package.json"), "utf8")));

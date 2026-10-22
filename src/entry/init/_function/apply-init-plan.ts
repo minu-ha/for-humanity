@@ -1,10 +1,9 @@
 import {promises as fileSystem} from "node:fs";
-import {dirname, join, relative} from "node:path";
+import {dirname, join} from "node:path";
 import {readInitFile} from "@/entry/init/_function/read-init-file";
 import {readInitPath} from "@/entry/init/_function/read-init-path";
 import {writeInitChange} from "@/entry/init/_function/write-init-change";
 import type {InitChange, InitPlan} from "@/entry/init/_type/init";
-import {isOutsideRoot} from "@/util/file/is-outside-root";
 import {logger} from "@/util/logger/logger";
 
 /**
@@ -33,17 +32,12 @@ export const applyInitPlan = async (plan: InitPlan) => {
 
     try {
         for (const path of [...plan.directories.map((directory) => join(plan.root, directory)), ...plan.files.map((file) => dirname(join(plan.root, file.path)))]) {
-            const first = await fileSystem.mkdir(path, {recursive: true});
-
-            if (first !== undefined) {
-                for (let created = path; !isOutsideRoot(relative(first, created)); created = dirname(created)) {
-                    directories.push(created);
-
-                    if (created === first) {
-                        break;
-                    }
-                }
+            // 생성 전 없는 폴더 기록, Windows의 mkdir 반환값은 \\?\ 접두사 경로라 비교에 사용하지 않음
+            for (let missing = path; (await fileSystem.stat(missing).catch(() => undefined)) === undefined; missing = dirname(missing)) {
+                directories.push(missing);
             }
+
+            await fileSystem.mkdir(path, {recursive: true});
         }
 
         for (const file of plan.files) {
