@@ -13,7 +13,7 @@ for-humanity <init|dev|build|preview> [project-dir]
 
 | Command | Result |
 | --- | --- |
-| `init` (Unreleased) | 사이트 정보와 배포 방식 선택, 첫 문서와 실행 스크립트 생성 |
+| `init` | 사이트 정보와 배포 방식 선택, 첫 문서와 실행 스크립트 생성 |
 | `dev` | 공개 문서와 내부 문서를 함께 확인, 변경 시 새로고침, 명령을 생략하면 실행 |
 | `build` | 홈과 공개 문서를 `content/dist`에 생성 |
 | `preview` | 마지막 빌드 결과 확인 |
@@ -21,9 +21,9 @@ for-humanity <init|dev|build|preview> [project-dir]
 | `--version` 또는 `-v` | 설치 버전 |
 
 `project-dir`는 설정 파일이 있는 프로젝트 루트이며 생략하면 현재 폴더입니다. 다른 폴더에서 실행하려면 `for-humanity dev ../my-project`처럼 **프로젝트 경로**를 지정합니다.
-`content.root`를 바꿨다면 출력은 그 폴더 아래의 `dist`입니다. `init`은 개발 버전에 추가되었으며 npm `0.17.0`에는 포함되지 않습니다.
+`content.root`를 바꿨다면 출력은 그 폴더 아래의 `dist`입니다. `init`은 `0.18.0`부터 지원합니다.
 
-## Initialize a project (Unreleased)
+## Initialize a project
 
 ```sh
 pnpm exec for-humanity init

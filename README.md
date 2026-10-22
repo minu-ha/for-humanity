@@ -30,7 +30,7 @@ The result is a static site with bundled fonts, light and dark themes, keyboard 
 You need Node.js 22.12.0 or later and pnpm. In a project with a `package.json`, install the package:
 
 ```sh
-pnpm add -D --save-exact for-humanity@0.17.0
+pnpm add -D --save-exact for-humanity@0.18.0
 ```
 
 Copy `for-humanity.config.ts` and the `content` folder from `node_modules/for-humanity/template` into your project. If you already have documentation, follow [Migration](https://github.com/minu-ha/for-humanity/blob/main/content/public/migration.md) before moving files.
@@ -62,13 +62,13 @@ Deploy the generated `content/dist` directory and add it to `.gitignore`. See [D
 
 Keep published documents in `content/public` and local notes in `content/private`. The local server shows both; builds include only public documents and the home page. Folder names are configurable.
 
-## Interactive setup (Unreleased)
+## Interactive setup
 
-Development builds include `pnpm exec for-humanity init` (`npx for-humanity init` with npm). This command is not included in npm `0.17.0`; use the quick start above for that version.
+Instead of copying the template, run `pnpm exec for-humanity init` (`npx for-humanity init` with npm).
 
 The setup asks for a site title, documentation folder, language and hosting target: GitHub Pages, Cloudflare Pages or later. It prepares the configuration, first document and `docs:dev`, `docs:build` and `docs:preview` scripts. Hosting setup creates deployment files and shows the remaining service settings.
 
-Existing application scripts and dependencies are kept. Review the file list before creation. See [Commands](https://github.com/minu-ha/for-humanity/blob/main/content/public/commands.md#initialize-a-project-unreleased) for options and automation.
+Existing application scripts and dependencies are kept. Review the file list before creation. See [Commands](https://github.com/minu-ha/for-humanity/blob/main/content/public/commands.md#initialize-a-project) for options and automation.
 
 ## Make it yours
 

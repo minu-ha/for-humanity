@@ -117,5 +117,5 @@ HTML 원문 보존과 내용 지문이 붙은 자원의 장기 캐시가 필요�
 `url`은 도메인, `basePath`는 사이트 경로로 지정. 생성된 출력 폴더 전체를 업로드하며 출력 안에 저장소 이름의 폴더를 추가하지 않음.
 GitHub Actions 템플릿과 수동 설정은 [Deployment](../public/deployment.md#github-pages).
 
-Unreleased의 `init`은 호스팅별 파일과 완료 안내를 준비. GitHub Pages는 저장소별 워크플로, Cloudflare Pages는 404와 준비 스크립트, 나중에 설정은 공통 문서 파일만 생성.
+`0.18.0`의 `init`은 호스팅별 파일과 완료 안내를 준비. GitHub Pages는 저장소별 워크플로, Cloudflare Pages는 404와 준비 스크립트, 나중에 설정은 공통 문서 파일만 생성.
 공식 사이트의 `build:pages`와 사용자 프로젝트에 생성한 `docs:build`는 각각의 배포 파일을 처리.

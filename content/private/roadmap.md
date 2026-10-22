@@ -16,7 +16,7 @@ order: 40
 | 1     | [Foundation](#foundation)                 | Done    | 기존 샘플의 표현과 사용성             |
 | 2     | [Parts and syntax](#parts-and-syntax)     | Done    | 필요한 부품과 Markdown 작성 계약      |
 | 3     | [Visualization modules](#visualization-modules) | Next | 읽기 목적에 맞는 그림, 비교, 참조와 테마 |
-| 4     | [Init](#init)                             | Ready (Unreleased) | 새 문서 프로젝트의 대화형 시작 명령 |
+| 4     | [Init](#init)                             | Done | 새 문서 프로젝트의 대화형 시작 명령 |
 | 5     | [Release](#release)                       | Done    | npm 패키지 공개와 설치 검증 완료       |
 | 6     | [Search](#search)                         | Planned | 문서와 section 탐색                   |
 | 7     | [Writing skill](#writing-skill)           | Planned | 검토 가능한 문서를 쓰는 에이전트 스킬 |
@@ -115,7 +115,7 @@ Node 22.12.0과 24.3.0에서 설치 패키지의 공개 타입, build, dev, prev
 
 ## Init
 
-문서 폴더, 설정, 시작 문서를 준비하는 `for-humanity init [project-dir]`을 Unreleased에 구현. npm `0.17.0`은 기존 `dev`, `build`, `preview`와 템플릿 복사 방식 사용.
+문서 폴더, 설정, 시작 문서를 준비하는 `for-humanity init [project-dir]`을 `0.18.0`에서 공개. 템플릿 복사 방식도 계속 지원.
 
 명령과 도움말은 Citty, 시작·완료 박스와 색상·질문은 Consola 사용. 기본 문서 폴더는 content, 언어는 ko, 배포는 나중에 설정. npm/pnpm 감지와 GitHub Pages·Cloudflare Pages 파일 생성 지원.
 설계와 검증 범위는 [Init design](init-design.md), 작업 기록은 [Init implementation plan](init-plan.md).

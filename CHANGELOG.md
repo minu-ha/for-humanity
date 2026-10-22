@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.18.0 — 2026-10-22
+
+**Upgrade:** Existing projects remain compatible. The `dev`, `build` and `preview` commands, configuration, document syntax and Node.js requirements are unchanged. New projects can start with `for-humanity init` instead of copying the template.
+
 - Add `for-humanity init [project-dir]` with interactive site, folder, language and hosting setup. Choose suggested values or type a custom answer directly in the same question. Clack provides wider, responsive boxes for questions, answers, the three setup stages, file review and next commands; `--yes` and explicit options support automation.
 - Generate GitHub Pages workflows for npm or pnpm and derive the site URL and repository path. Cloudflare Pages setup includes a 404 page and a build helper for the selected content folder. Existing application scripts and dependencies are preserved; conflicts stop before writing, and failed writes restore this run's changes.
 

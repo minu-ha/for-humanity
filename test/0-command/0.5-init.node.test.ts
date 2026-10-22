@@ -38,7 +38,7 @@ describe("프로젝트 초기화", () => {
             .parse(JSON.parse(await readFile(join(root, "package.json"), "utf8")));
         expect(manifest.scripts).toEqual({"docs:dev": "for-humanity dev", "docs:build": "for-humanity build", "docs:preview": "for-humanity preview"});
         expect(manifest.private).toBe(true);
-        expect(manifest.devDependencies["for-humanity"]).toBe("0.17.0");
+        expect(manifest.devDependencies["for-humanity"]).toBe(z.object({version: z.string()}).parse(JSON.parse(await readFile("package.json", "utf8"))).version);
         expect(await readFile(join(root, ".gitignore"), "utf8")).toContain("/content/dist/");
         expect(result.stdout).toContain("npm run docs:dev");
         expect(result.stdout).toContain("npm install");

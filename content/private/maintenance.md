@@ -208,7 +208,7 @@ pnpm pack
 
 패키지 설치 후 별도 폴더에서 `dev`, `build`, `preview` 확인.
 정적 사이트는 `<content.root>/dist` 전체 배포. 기본 경로는 `content/dist`. dev는 내부 문서를 포함하므로 배포 결과 확인은 build 후 preview로 수행. 하위 경로는 `basePath`로 지정([Deployment](../public/deployment.md)).
-현재 npm `0.17.0`의 명령은 `dev`, `build`, `preview`. 초기화는 Unreleased에 추가되어 다음 패키지 공개 전 별도 설치 검사 대상.
+공개 명령은 `init`, `dev`, `build`, `preview`. `init`은 `0.18.0`부터 포함.
 
 초기화 변경 시 tarball 설치에서 `init --yes --deploy none|github-pages|cloudflare-pages`와 npm/pnpm 스크립트를 확인합니다. 실제 터미널의 질문, 잘못된 입력 재질문, Ctrl+C와 마지막 확인 취소, 좁은 화면, 색상 없는 출력도 확인합니다.
 명령과 표시 문구는 Citty, Consola와 consola/utils 사용. Consola가 포함한 Clack 프롬프트를 사용하며 직접 프롬프트 의존성은 추가하지 않음.

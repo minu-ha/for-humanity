@@ -24,7 +24,7 @@ pnpm exec for-humanity preview
 
 ## Hosting settings
 
-개발 버전의 `for-humanity init`은 GitHub Pages, Cloudflare Pages, 나중에 설정을 선택할 수 있습니다. npm `0.17.0` 사용자는 아래 수동 설정을 따릅니다.
+`for-humanity init`은 GitHub Pages, Cloudflare Pages, 나중에 설정을 선택할 수 있습니다. 직접 설정하려면 아래 값을 사용합니다.
 초기화를 사용했다면 생성된 `docs:build` 스크립트와 완료 메시지의 출력 경로를 사용합니다. 선택만으로 원격 서비스에 배포되지는 않습니다.
 
 호스팅 서비스에 문서 프로젝트를 연결하고 다음 값을 지정합니다.
@@ -64,11 +64,11 @@ export default {
 
 ## GitHub Pages
 
-Unreleased의 `init --deploy github-pages`는 저장소와 브랜치를 확인해 설정과 `.github/workflows/docs.yml`을 만듭니다.
+`init --deploy github-pages`는 저장소와 브랜치를 확인해 설정과 `.github/workflows/docs.yml`을 만듭니다.
 초기화 후 안내한 설치 명령으로 lockfile을 만들고, 문서·설정·package.json·lockfile·워크플로를 커밋합니다. `Settings → Pages`에서 `GitHub Actions`를 선택하고 배포 브랜치에 push합니다.
 별도 도메인을 입력했다면 저장소의 Pages 설정에서도 해당 도메인을 연결합니다.
 
-`0.17.0`에서 직접 설정하는 방법:
+직접 설정하는 방법:
 
 프로젝트 사이트는 저장소마다 하나씩 만들 수 있습니다. `username/project` 저장소는 기본 주소가 `https://username.github.io/project/`이므로 `basePath: "/project/"`를 지정합니다.
 사용자 사이트 `username.github.io`나 사이트 루트에 연결한 별도 도메인은 `basePath: "/"`를 사용합니다.
@@ -87,7 +87,7 @@ Unreleased의 `init --deploy github-pages`는 저장소와 브랜치를 확인�
 
 ## Cloudflare Pages
 
-Unreleased의 `init --deploy cloudflare-pages`는 `.cloudflare/404.html`과 `.cloudflare/prepare.mjs`를 만들고 `docs:build`에 빌드 후 복사를 연결합니다.
+`init --deploy cloudflare-pages`는 `.cloudflare/404.html`과 `.cloudflare/prepare.mjs`를 만들고 `docs:build`에 빌드 후 복사를 연결합니다.
 Git 연동의 빌드 명령은 `pnpm docs:build` 또는 `npm run docs:build`, 출력은 선택한 문서 폴더 아래의 `dist`입니다. 생성 후 안내한 Node.js와 패키지 매니저 설정을 적용합니다.
 공개 주소를 아직 모르면 생략하고, 배포 후 `url`을 설정합니다.
 
