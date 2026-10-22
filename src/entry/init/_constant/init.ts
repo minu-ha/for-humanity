@@ -21,12 +21,13 @@ export const init_defaults = {
     pnpm: "pnpm@10.33.2",
     indent: "  ",
     configIndent: 4,
+    emptyText: "",
 } as const;
 
 /**
- * 짧은 명령 안내 박스의 표시 기준 폭
+ * 박스 양쪽 여백 네 칸과 테두리 두 칸
  */
-export const init_panel_width = 60;
+export const init_panel_inset = 6;
 
 /**
  * 초기화 안내 박스의 공통 테두리
@@ -46,6 +47,32 @@ export const init_deploy_choices = [
     {value: "github-pages", label: "GitHub Pages", hint: "Deploy with GitHub Actions"},
     {value: "cloudflare-pages", label: "Cloudflare Pages", hint: "Connect a Git repository"},
 ];
+
+/**
+ * 문서 루트의 빠른 선택값
+ */
+export const init_content_choices = [
+    {value: init_defaults.content, label: init_defaults.content, hint: "Recommended"},
+    {value: "docs", label: "docs"},
+];
+
+/**
+ * 문서 언어의 빠른 선택값
+ */
+export const init_lang_choices = [
+    {value: init_defaults.lang, label: "한국어 (ko)", hint: "Recommended"},
+    {value: "en", label: "English (en)"},
+];
+
+/**
+ * 배포 브랜치의 기본 후보
+ */
+export const init_branch_choices = ["main", "master"];
+
+/**
+ * 추천값의 실제 내용과 분리한 직접 입력 식별자
+ */
+export const init_custom_choice = "custom";
 
 /**
  * 미지정 package.json 스크립트와 의존성
@@ -68,21 +95,40 @@ export const init_cancel_code = 130;
 export const init_copy = {
     description: "Create documentation and choose a deployment target",
     welcome: "Create your documentation site",
+    tagline: "Documents, for humans.",
+    siteStep: "1 / 3  Site settings",
+    siteHint: "Choose a suggestion or your own.",
+    deployStep: "2 / 3  Deployment",
+    deployHint: "Publish now or set it up later.",
+    reviewStep: "3 / 3  Review",
+    reviewHint: "Check your choices before writing.",
+    custom: "Custom...",
+    customHint: "Type your own value",
+    recommended: "Recommended",
+    ready: "Setup complete",
+    buildPreview: "Build and preview",
     title: "Site title",
+    titleExample: "Team handbook",
     content: "Documentation folder",
+    contentExample: "handbook",
     lang: "Document language",
+    langExample: "en-US",
     deploy: "Where will you publish your site?",
     repository: "GitHub repository (owner/name)",
+    repositoryExample: "owner/repository",
     branch: "Deployment branch",
+    branchExample: "release/docs",
     url: "Public site origin (optional)",
     emptyUrl: "Leave blank to skip",
+    defaultUrl: "Use the GitHub Pages address",
+    laterUrl: "Set up later",
     confirm: "Create these files?",
     done: "Your documentation is ready",
     cancelled: "Setup cancelled. No files changed.",
     interactive: "Run init in a terminal, or use init --yes to accept the defaults.",
     conflict: "Existing documentation or configuration. Choose an empty folder or follow the migration guide",
     next: "Next steps",
-    github: "GitHub Pages: select GitHub Actions in Settings → Pages, commit your lockfile, then push the deployment branch.",
+    github: "Settings > Pages > GitHub Actions\nCommit your files and lockfile.\nPush the deployment branch.",
     cloudflare: "Cloudflare Pages: connect your Git repository and use these build settings.",
     none: "Publish later: https://for-humanity.fyi/deployment/",
 } as const;

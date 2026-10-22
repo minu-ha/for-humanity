@@ -6,6 +6,7 @@ import {env_ci} from "@/config/env";
 import {type init_args, init_cancel_code, init_cancelled, init_copy} from "@/entry/init/_constant/init";
 import {applyInitPlan} from "@/entry/init/_function/apply-init-plan";
 import {printInitPanel} from "@/entry/init/_function/print-init-panel";
+import {printInitPlan} from "@/entry/init/_function/print-init-plan";
 import {printInitResult} from "@/entry/init/_function/print-init-result";
 import {readInitProject} from "@/entry/init/_function/read-init-project";
 import {toInitOptions} from "@/entry/init/_function/to-init-options";
@@ -27,13 +28,11 @@ export const runInit = async (input: ParsedArgs<typeof init_args>) => {
         }
 
         const project = await readInitProject({root: resolve(args.dir), manager: args.manager});
-        printInitPanel({title: `for-humanity v${project.version}`, message: init_copy.welcome});
+        printInitPanel({title: `for-humanity v${project.version}`, message: `${init_copy.welcome}\n${colors.dim(init_copy.tagline)}`});
         const options = await toInitOptions({args, project, interactive});
         const plan = await toInitPlan({project, options});
 
-        logger.info(
-            `Project: ${project.root}\n${plan.files.map((file) => `${file.previous === undefined ? colors.green("create") : colors.yellow("update")}  ${file.path}`).join("\n")}`,
-        );
+        printInitPlan(plan);
 
         if (interactive) {
             const confirm = await logger.prompt(init_copy.confirm, {type: "confirm", initial: true, cancel: "symbol"});

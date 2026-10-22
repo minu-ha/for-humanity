@@ -1,19 +1,15 @@
 import type {z} from "zod";
-import {init_cancelled} from "@/entry/init/_constant/init";
+import {init_cancelled, init_defaults} from "@/entry/init/_constant/init";
 import {logger} from "@/util/logger/logger";
 
 /**
- * 초기화 질문과 필드별 검증 계약
+ * 텍스트 질문과 선택 메뉴의 직접 입력에 공유하는 검증 계약
  */
-interface InitTextParams<T> {
+export interface InitTextParams<T> {
     /**
      * 사용자에게 표시할 질문
      */
     message: string;
-    /**
-     * Enter로 선택할 제안값
-     */
-    initial?: string;
     /**
      * 기본값이 없을 때의 입력 안내
      */
@@ -29,7 +25,7 @@ interface InitTextParams<T> {
  */
 export const promptInitText = async <T>(params: InitTextParams<T>): Promise<T> => {
     while (true) {
-        const answer = await logger.prompt(params.message, {type: "text", default: params.initial, placeholder: params.initial ?? params.placeholder, cancel: "symbol"});
+        const answer = await logger.prompt(params.message, {type: "text", default: init_defaults.emptyText, placeholder: params.placeholder, cancel: "symbol"});
 
         if (typeof answer === "symbol") {
             throw init_cancelled;

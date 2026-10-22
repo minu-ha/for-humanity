@@ -10,7 +10,7 @@ import {logger} from "@/util/logger/logger";
  * 생성 결과와 설치·실행·배포의 다음 단계
  */
 export const printInitResult = (plan: InitPlan) => {
-    logger.success(init_copy.done);
+    printInitPanel({title: init_copy.ready, message: colors.green(init_copy.done), success: true});
 
     const location = relative(process.cwd(), plan.root);
 
@@ -20,13 +20,20 @@ export const printInitResult = (plan: InitPlan) => {
     }
 
     const prefix = plan.options.manager === "npm" ? "npm run" : "pnpm";
-    const commands = [...(plan.install ? [`${plan.options.manager} install`] : []), `${prefix} docs:dev`, `${prefix} docs:build`, `${prefix} docs:preview`];
+    const commands = [
+        ...(plan.install ? [colors.cyan(`${plan.options.manager} install`)] : []),
+        colors.bold(colors.cyan(`${prefix} docs:dev`)),
+        "",
+        colors.dim(init_copy.buildPreview),
+        `${prefix} docs:build`,
+        `${prefix} docs:preview`,
+    ];
 
-    printInitPanel({title: init_copy.next, message: commands.map((command) => colors.cyan(command)).join("\n")});
+    printInitPanel({title: init_copy.next, message: commands.join("\n")});
 
     if (plan.options.deploy === "github-pages") {
         const site = toInitSite(plan.options);
-        logger.info(init_copy.github);
+        printInitPanel({title: "GitHub Pages", message: init_copy.github});
         logger.info(`Deployment branch: ${plan.options.branch}\nExpected URL: ${site.url}${site.basePath}`);
     } else if (plan.options.deploy === "cloudflare-pages") {
         logger.info(init_copy.cloudflare);
