@@ -9,11 +9,11 @@ order: 61
 
 > For agentic workers: execute the coupled generator and CLI in sequence. Use independent spec and code review before integration. Steps use checkbox syntax.
 
-**Goal:** 설치한 패키지에서 안전한 init과 Consola 기반의 대화형 시작 화면 제공.
+**Goal:** 설치한 패키지에서 안전한 init과 Clack 기반의 대화형 시작 화면 제공.
 
 **Architecture:** 입력 경계에서 옵션·프로젝트 정보를 검증하고, 초기화 설정을 파일 생성 계획으로 변환한 뒤 충돌 검사와 적용. 기존 dev/build/preview는 유지하고 init만 별도 진입점으로 분리.
 
-**Tech Stack:** TypeScript, Citty, Consola와 consola/utils, Zod, Node fs, Vitest, installed-package smoke.
+**Tech Stack:** TypeScript, Citty, Consola와 consola/utils, @clack/prompts, @clack/core, Zod, Node fs, Vitest, installed-package smoke.
 
 ## Task 1: 기존 동작과 초기화 계약
 
@@ -50,7 +50,7 @@ Files: `src/entry/init/_function/read-init-project.ts`, `to-init-plan.ts`, `appl
 Files: `src/entry/cli/cli.ts`, `_constant/command.ts`, `_constant/copy.ts`, `src/entry/init/run-init.ts`, `_function/to-init-options.ts`, `_function/print-init-result.ts`.
 
 - [x] init 도움말과 옵션을 별도 등록. 루트·기존 명령의 알 수 없는 옵션 거부 유지.
-- [x] Consola의 박스·색상·Clack 프롬프트로 시작 화면, 이름·폴더·언어·배포 질문과 생성 전 확인 연결.
+- [x] Clack의 박스·입력과 Consola 색상으로 시작 화면, 이름·폴더·언어·배포 질문과 생성 전 확인 연결.
 - [x] `cancel: "symbol"`을 사용하고 취소값을 명시적으로 처리. 취소 시 파일 생성 전 종료.
 - [x] 비대화형 환경은 --yes 또는 필요한 명시 옵션으로 실행. 누락 시 명령 예시와 함께 실패.
 - [x] 생성 결과, dev/build/preview 실행 명령, 배포별 남은 설정 출력.
@@ -94,3 +94,14 @@ Windows와 Linux에서의 새 init 실행은 저장소 CI에서 추가 확인 �
 16개 선택 입력 검사에서 추천값, Custom, 잘못된 입력 재시도, 취소, 비대화형 실행과 기존 이름 검증 확인.
 실제 44열 PTY에서 기본값 생성과 빌드, 한글 제목·사용자 지정 언어·GitHub 정보 입력, Ctrl+C와 마지막 No의 쓰기 없음 확인.
 독립 검토에서 발견한 잘못된 프로젝트 이름의 추천값 실패는 재현 검사 후 수정하고 다시 검토.
+
+## 박스와 인라인 입력 보완
+
+@clack/prompts의 box를 안내·질문·확정 답변·완료 화면에 공유. 기본 폭은 64열이며 좁은 터미널에서 자동 축소.
+@clack/core의 TextPrompt에서 추천값과 직접 입력을 함께 수집. 추천값에서 타이핑하거나 Custom 행에서 바로 입력하고 Enter 한 번으로 확정.
+위아래 방향키로 후보를 고르고 좌우 방향키·삭제로 입력 편집. 추천값을 거쳐 돌아와도 작성한 값 유지. 입력 오류는 같은 박스에서 수정.
+호스팅과 최종 확인은 고정 선택. Custom 뒤 생략 부호와 완료 체크 줄을 없애고 답변도 박스에 보존.
+
+검증 완료: 전체 350개 검사, lint·타입·미사용 코드 검사, 사이트 빌드, 패키지 publint와 별도 설치 검증.
+실제 PTY에서 한글 입력·문자 편집·GitHub/Cloudflare 생성·44열·색상 끄기·마지막 No와 Ctrl+C의 파일 변경 없음 확인.
+독립 검토에서 발견한 이모지 커서와 복합 이모지 줄바꿈 문제는 재현 검사 후 수정하고 재검토. macOS·Node.js 24.3.0에서 확인.

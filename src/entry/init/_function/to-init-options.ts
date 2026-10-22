@@ -1,21 +1,11 @@
 import {z} from "zod";
-import {
-    init_branch_choices,
-    init_cancelled,
-    init_content_choices,
-    init_copy,
-    init_defaults,
-    init_deploy_choices,
-    init_deployments,
-    init_lang_choices,
-} from "@/entry/init/_constant/init";
+import {init_branch_choices, init_content_choices, init_copy, init_defaults, init_deploy_choices, init_deployments, init_lang_choices} from "@/entry/init/_constant/init";
 import {printInitPanel} from "@/entry/init/_function/print-init-panel";
 import {promptInitChoice} from "@/entry/init/_function/prompt-init-choice";
 import type {InitProject} from "@/entry/init/_function/read-init-project";
 import type {InitOptions} from "@/entry/init/_type/init";
 import {type InitInput, initBranchSchema, initContentSchema, initRepositorySchema, initTitleSchema, initUrlSchema} from "@/entry/init/_type/init-input";
 import {siteConfigSchema} from "@/type/site-config";
-import {logger} from "@/util/logger/logger";
 
 /**
  * 명시적 인자와 로컬 후보를 대화형 입력으로 보완하는 경계
@@ -73,13 +63,7 @@ export const toInitOptions = async (params: InitOptionsParams): Promise<InitOpti
     let deploy = params.args.deploy ?? init_defaults.deploy;
 
     if (params.args.deploy === undefined && params.interactive) {
-        const choice = await logger.prompt(init_copy.deploy, {type: "select", initial: init_defaults.deploy, options: init_deploy_choices, cancel: "symbol"});
-
-        if (typeof choice === "symbol") {
-            throw init_cancelled;
-        }
-
-        deploy = z.enum(init_deployments).parse(choice);
+        deploy = await promptInitChoice({message: init_copy.deploy, presets: init_deploy_choices, custom: false, schema: z.enum(init_deployments)});
     }
 
     let repository = params.args.repository ?? params.project.repository;

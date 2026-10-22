@@ -8,6 +8,7 @@ import {applyInitPlan} from "@/entry/init/_function/apply-init-plan";
 import {printInitPanel} from "@/entry/init/_function/print-init-panel";
 import {printInitPlan} from "@/entry/init/_function/print-init-plan";
 import {printInitResult} from "@/entry/init/_function/print-init-result";
+import {promptInitChoice} from "@/entry/init/_function/prompt-init-choice";
 import {readInitProject} from "@/entry/init/_function/read-init-project";
 import {toInitOptions} from "@/entry/init/_function/to-init-options";
 import {toInitPlan} from "@/entry/init/_function/to-init-plan";
@@ -35,7 +36,15 @@ export const runInit = async (input: ParsedArgs<typeof init_args>) => {
         printInitPlan(plan);
 
         if (interactive) {
-            const confirm = await logger.prompt(init_copy.confirm, {type: "confirm", initial: true, cancel: "symbol"});
+            const confirm = await promptInitChoice({
+                message: init_copy.confirm,
+                presets: [
+                    {value: true, label: "Yes"},
+                    {value: false, label: "No"},
+                ],
+                custom: false,
+                schema: z.boolean(),
+            });
 
             if (confirm !== true) {
                 throw init_cancelled;
@@ -46,7 +55,7 @@ export const runInit = async (input: ParsedArgs<typeof init_args>) => {
         printInitResult(plan);
     } catch (error) {
         if (error === init_cancelled) {
-            logger.info(init_copy.cancelled);
+            printInitPanel({title: init_copy.cancelledTitle, message: init_copy.cancelled, color: "gray"});
             process.exitCode = init_cancel_code;
 
             return;

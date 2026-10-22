@@ -30,7 +30,7 @@ pnpm exec for-humanity init
 npx for-humanity init
 ```
 
-사이트 이름, 문서 폴더, 언어와 배포 방식을 선택합니다. 추천값을 고르거나 `Custom...`에서 직접 입력합니다. 기본 문서 폴더는 `content`, 언어는 `ko`, 배포는 나중에 설정입니다.
+사이트 이름, 문서 폴더, 언어와 배포 방식을 선택합니다. 추천값을 고르거나 같은 질문에서 바로 타이핑합니다. `Custom` 행으로 이동한 뒤 입력해도 됩니다. 기본 문서 폴더는 `content`, 언어는 `ko`, 배포는 나중에 설정입니다.
 GitHub Pages를 선택하면 저장소와 배포 브랜치를 확인합니다. Cloudflare Pages는 Git 연동에 필요한 파일과 빌드 설정을 준비합니다.
 
 생성할 파일을 확인하면 설정, 첫 문서와 `docs:*` 스크립트를 만듭니다. 초기화 후 `pnpm docs:dev` 또는 `npm run docs:dev`를 실행합니다.

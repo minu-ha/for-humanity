@@ -25,14 +25,24 @@ export const init_defaults = {
 } as const;
 
 /**
- * 박스 양쪽 여백 네 칸과 테두리 두 칸
+ * 안내와 입력 박스의 공통 표시 폭
  */
-export const init_panel_inset = 6;
+export const init_panel_layout = {width: 64, minimum: 12, titleInset: 5, contentInset: 6, even: 2} as const;
+
+/**
+ * 커서 강조 중 결합 문자와 이모지를 보존하는 단위
+ */
+export const init_input_segments = new Intl.Segmenter("en", {granularity: "grapheme"});
 
 /**
  * 초기화 안내 박스의 공통 테두리
  */
-export const init_panel_style = {borderColor: "cyan", borderStyle: "rounded", padding: 1, marginLeft: 0, marginTop: 1, marginBottom: 1} as const;
+export const init_panel_color = "cyan";
+
+/**
+ * 추천값과 함께 직접 입력을 허용하는 기본 질문
+ */
+export const init_prompt_defaults = {custom: true} as const;
 
 /**
  * 문서 폴더로 만들 수 없는 프로젝트 설정 파일 이름
@@ -46,7 +56,7 @@ export const init_deploy_choices = [
     {value: "none", label: "Set up later", hint: "Start writing locally"},
     {value: "github-pages", label: "GitHub Pages", hint: "Deploy with GitHub Actions"},
     {value: "cloudflare-pages", label: "Cloudflare Pages", hint: "Connect a Git repository"},
-];
+] as const;
 
 /**
  * 문서 루트의 빠른 선택값
@@ -68,11 +78,6 @@ export const init_lang_choices = [
  * 배포 브랜치의 기본 후보
  */
 export const init_branch_choices = ["main", "master"];
-
-/**
- * 추천값의 실제 내용과 분리한 직접 입력 식별자
- */
-export const init_custom_choice = "custom";
 
 /**
  * 미지정 package.json 스크립트와 의존성
@@ -102,8 +107,15 @@ export const init_copy = {
     deployHint: "Publish now or set it up later.",
     reviewStep: "3 / 3  Review",
     reviewHint: "Check your choices before writing.",
-    custom: "Custom...",
+    custom: "Custom",
     customHint: "Type your own value",
+    inputKeys: "↑↓ choose · type your own · Enter continue",
+    selectKeys: "↑↓ choose · Enter continue",
+    textKeys: "Type your answer · Enter continue",
+    cancelKey: "Ctrl+C cancel",
+    notSet: "Not set",
+    cancelledTitle: "Setup cancelled",
+    cancelledPrompt: "Cancelled",
     recommended: "Recommended",
     ready: "Setup complete",
     buildPreview: "Build and preview",

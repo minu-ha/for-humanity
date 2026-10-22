@@ -1,67 +1,102 @@
-import {init_cancelled, init_copy, init_custom_choice} from "@/entry/init/_constant/init";
-import {type InitTextParams, promptInitText} from "@/entry/init/_function/prompt-init-text";
-import {logger} from "@/util/logger/logger";
+import {getColumns, TextPrompt} from "@clack/core";
+import {colors} from "consola/utils";
+import {init_cancelled, init_copy, init_defaults, init_prompt_defaults} from "@/entry/init/_constant/init";
+import {toInitInput} from "@/entry/init/_function/to-init-input";
+import {toInitPanel} from "@/entry/init/_function/to-init-panel";
+import type {InitPromptParams, InitPromptSelection} from "@/entry/init/_type/init-prompt";
 
 /**
- * 실제 설정값과 화면 표시를 구분한 초기화 추천값
+ * 추천값 선택과 직접 입력을 같은 박스 안에서 수집하는 경계
  */
-interface InitPreset<T> {
-    /**
-     * 선택 시 사용할 설정값
-     */
-    value: T;
-    /**
-     * 선택 메뉴에 표시할 이름
-     */
-    label: string;
-    /**
-     * 기본 선택이나 후보 출처의 안내
-     */
-    hint?: string;
-}
+export const promptInitChoice = async <T>(params: InitPromptParams<T>): Promise<T> => {
+    const custom = params.custom ?? init_prompt_defaults.custom;
+    const count = params.presets.length + Number(custom);
+    const output = params.output ?? process.stdout;
+    const selection: InitPromptSelection = {index: 0, input: init_defaults.emptyText};
 
-/**
- * 추천값 선택과 직접 입력이 공유하는 질문
- */
-interface InitChoiceParams<T> extends InitTextParams<T> {
-    /**
-     * 첫 항목을 기본 선택으로 사용하는 추천값
-     */
-    presets: InitPreset<T>[];
-}
-
-/**
- * 추천값이 없으면 직접 입력, 있으면 선택 후 필요한 경우만 직접 입력
- */
-export const promptInitChoice = async <T>(params: InitChoiceParams<T>): Promise<T> => {
-    if (params.presets.length === 0) {
-        return promptInitText(params);
+    if (count === 0) {
+        throw new Error("A selection question needs at least one option.");
     }
 
-    const choices = params.presets.map((preset, index) => ({id: `preset-${index}`, preset}));
-    const answer = await logger.prompt(params.message, {
-        type: "select",
-        initial: choices[0].id,
-        options: [
-            ...choices.map((choice) => ({value: choice.id, label: choice.preset.label, hint: choice.preset.hint})),
-            {value: init_custom_choice, label: init_copy.custom, hint: init_copy.customHint},
-        ],
-        cancel: "symbol",
+    const prompt: TextPrompt = new TextPrompt({
+        input: params.input,
+        output,
+        signal: params.signal,
+        defaultValue: init_defaults.emptyText,
+        validate: (input) => {
+            const value = selection.index === params.presets.length ? input : params.presets[selection.index].value;
+            const checked = params.schema.safeParse(value);
+
+            return checked.success ? undefined : checked.error.issues.map((issue) => issue.message).join("\n");
+        },
+        render: () => {
+            const panel = {title: params.message, columns: getColumns(output)};
+
+            if (prompt.state === "cancel") {
+                return toInitPanel({...panel, message: init_copy.cancelledPrompt, color: "gray"});
+            }
+
+            if (prompt.state === "submit") {
+                const value = selection.index === params.presets.length ? prompt.userInput.trim() : params.presets[selection.index].label;
+
+                return toInitPanel({...panel, message: colors.bold(value || init_copy.notSet), color: "green"});
+            }
+
+            const rows = params.presets.map((preset, index) => {
+                if (index !== selection.index) {
+                    return colors.dim(`○ ${preset.label}`);
+                }
+
+                const hint = preset.hint === undefined ? init_defaults.emptyText : colors.dim(`  ${preset.hint}`);
+
+                return `${colors.cyan("●")} ${colors.bold(preset.label)}${hint}`;
+            });
+
+            if (custom) {
+                const active = selection.index === params.presets.length;
+                const placeholder = params.placeholder ?? init_copy.customHint;
+                const input = prompt.userInput === "" ? colors.dim(placeholder) : toInitInput(prompt);
+                const label = params.presets.length === 0 ? init_defaults.emptyText : `${init_copy.custom}  `;
+                rows.push(active ? `${colors.cyan("●")} ${label}${input}` : colors.dim(`○ ${label}${prompt.userInput}`));
+            }
+
+            const keys = custom ? init_copy.inputKeys : init_copy.selectKeys;
+            const hint = params.presets.length === 0 ? init_copy.textKeys : keys;
+            const error = prompt.state === "error" ? [colors.yellow(prompt.error), ""] : [];
+
+            return toInitPanel({
+                ...panel,
+                message: [...rows, "", ...error, colors.dim(hint), colors.dim(init_copy.cancelKey)].join("\n"),
+                color: prompt.state === "error" ? "yellow" : undefined,
+            });
+        },
     });
+
+    prompt.on("userInput", (input) => {
+        if (custom && input !== selection.input) {
+            selection.index = params.presets.length;
+        }
+
+        selection.input = input;
+    });
+    prompt.on("cursor", (key) => {
+        if (key === "up") {
+            selection.index = (selection.index + count - 1) % count;
+        } else if (key === "down") {
+            selection.index = (selection.index + 1) % count;
+        }
+    });
+    prompt.on("key", (key) => {
+        if (custom && key === "\t") {
+            selection.index = params.presets.length;
+        }
+    });
+
+    const answer = await prompt.prompt();
 
     if (typeof answer === "symbol") {
         throw init_cancelled;
     }
 
-    if (answer === init_custom_choice) {
-        return promptInitText(params);
-    }
-
-    const selected = choices.find((choice) => choice.id === answer);
-
-    if (selected === undefined) {
-        throw new Error(`Unknown selection for ${params.message}. Run init again.`);
-    }
-
-    return params.schema.parse(selected.preset.value);
+    return params.schema.parse(selection.index === params.presets.length ? answer : params.presets[selection.index].value);
 };
