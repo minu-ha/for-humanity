@@ -64,6 +64,14 @@ Deploy the generated `content/dist` directory and add it to `.gitignore`. See [D
 
 Keep published documents in `content/public` and local notes in `content/private`. The local server shows both; builds include only public documents and the home page. Folder names are configurable.
 
+## Interactive setup (Unreleased)
+
+Development builds include `pnpm exec for-humanity init` (`npx for-humanity init` with npm). This command is not included in npm `0.17.0`; use the quick start above for that version.
+
+The setup asks for a site title, documentation folder, language and hosting target: GitHub Pages, Cloudflare Pages or later. It prepares the configuration, first document and `docs:dev`, `docs:build` and `docs:preview` scripts. Hosting setup creates deployment files and shows the remaining service settings.
+
+Existing application scripts and dependencies are kept. Review the file list before creation. See [Commands](public/commands.md#initialize-a-project-unreleased) for options and automation.
+
 ## Make it yours
 
 Set the site name, page language and the order of navigation groups:

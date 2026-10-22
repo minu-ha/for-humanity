@@ -5,6 +5,7 @@ import {defineCommand, runMain} from "citty";
 import {z} from "zod/mini";
 import {command_args, command_default} from "@/entry/cli/_constant/command";
 import {copy_build_description, copy_dev_description, copy_error_option, copy_hint_help, copy_preview_description, copy_tool_description} from "@/entry/cli/_constant/copy";
+import {init_args, init_copy} from "@/entry/init/_constant/init";
 import {logger} from "@/util/logger/logger";
 
 const main = defineCommand({
@@ -22,6 +23,10 @@ const main = defineCommand({
      * Citty의 미지정 옵션 허용을 제한하는 CLI 입력 경계
      */
     setup: (context) => {
+        if (context.rawArgs[0] === "init") {
+            return;
+        }
+
         const option = Object.keys(context.args).find((key) => key !== "_");
 
         if (option !== undefined) {
@@ -29,30 +34,45 @@ const main = defineCommand({
             process.exit(1);
         }
     },
-    subCommands: Object.fromEntries(
-        (
-            [
-                ["dev", copy_dev_description],
-                ["build", copy_build_description],
-                ["preview", copy_preview_description],
-            ] as const
-        ).map(([name, description]) => [
-            name,
-            defineCommand({
-                meta: {name, description},
-                args: command_args,
+    subCommands: {
+        init: defineCommand({
+            meta: {name: "init", description: init_copy.description},
+            args: init_args,
 
-                /**
-                 * 도움말 조회와 분리한 사이트 실행
-                 */
-                run: async (context) => {
-                    const command = await import("@/entry/cli/_function/run-site-command");
+            /**
+             * 도움말 조회와 분리한 초기화 실행
+             */
+            run: async (context) => {
+                const command = await import("@/entry/init/run-init");
 
-                    await command.runSiteCommand({command: name, args: context.args});
-                },
-            }),
-        ]),
-    ),
+                await command.runInit(context.args);
+            },
+        }),
+        ...Object.fromEntries(
+            (
+                [
+                    ["dev", copy_dev_description],
+                    ["build", copy_build_description],
+                    ["preview", copy_preview_description],
+                ] as const
+            ).map(([name, description]) => [
+                name,
+                defineCommand({
+                    meta: {name, description},
+                    args: command_args,
+
+                    /**
+                     * 도움말 조회와 분리한 사이트 실행
+                     */
+                    run: async (context) => {
+                        const command = await import("@/entry/cli/_function/run-site-command");
+
+                        await command.runSiteCommand({command: name, args: context.args});
+                    },
+                }),
+            ]),
+        ),
+    },
 });
 
 await runMain(main);

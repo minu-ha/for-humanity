@@ -6,17 +6,38 @@ order: 10
 ---
 
 for humanity는 Markdown 파일로 문서 사이트를 만듭니다. 작성 중에는 `dev`, 배포할 때는 `build`, 배포 결과를 확인할 때는 `preview`를 사용합니다.
-Node.js 22.12.0 이상과 pnpm이 필요합니다.
+Node.js 22.12.0 이상이 필요합니다. 아래 예시는 pnpm을 사용하며 npm으로도 설치할 수 있습니다.
 
 ## Install the package
 
 `package.json`이 있는 프로젝트에서 설치합니다.
 
 ```sh
-pnpm add -D --save-exact for-humanity@0.16.0
+pnpm add -D --save-exact for-humanity@0.17.0
 ```
 
 `0.13.1` 이하에서 업데이트한다면 먼저 [Migration](migration.md)을 따라 문서와 설정 위치를 변경합니다.
+
+## Initialize a site (Unreleased)
+
+개발 버전에는 초기화 명령이 추가되어 있습니다. npm `0.17.0`은 아래 [Your first site](#your-first-site) 또는 템플릿 복사로 시작합니다.
+
+초기화를 지원하는 버전을 설치한 뒤 프로젝트 루트에서 실행합니다.
+
+```sh
+pnpm exec for-humanity init
+# npm
+npx for-humanity init
+```
+
+사이트 이름, 문서 폴더, 언어와 배포 방식을 선택합니다. 기본 문서 폴더는 `content`, 언어는 `ko`, 배포는 나중에 설정입니다.
+GitHub Pages를 선택하면 저장소와 배포 브랜치를 확인합니다. Cloudflare Pages는 Git 연동에 필요한 파일과 빌드 설정을 준비합니다.
+
+생성할 파일을 확인하면 설정, 첫 문서와 `docs:*` 스크립트를 만듭니다. 초기화 후 `pnpm docs:dev` 또는 `npm run docs:dev`를 실행합니다.
+필요한 의존성이 없으면 설치 명령부터 안내합니다. init은 패키지를 자동 설치하거나 호스팅 계정을 연결하지 않습니다.
+
+새 폴더는 `for-humanity init my-docs`로 지정합니다. 기존 문서나 설정, 다른 내용의 `docs:*` 스크립트와 충돌하면 파일 생성 전에 중단합니다.
+자세한 옵션은 [Commands](commands.md#initialize-a-project-unreleased), 배포 단계는 [Deployment](deployment.md)를 참고합니다.
 
 ## Your first site
 

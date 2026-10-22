@@ -113,7 +113,9 @@ HTML 원문 보존과 내용 지문이 붙은 자원의 장기 캐시가 필요�
 
 ## Other hosts
 
-정적 호스팅이면 같은 결과 폴더 사용 가능. 현재 모든 문서와 자원의 URL은 사이트 루트 `/` 기준.
-GitHub Pages의 프로젝트 사이트는 보통 `/<repository>/` 경로를 사용하므로 현재 출력 그대로는 링크와 자원이 맞지 않음.
-계정 사이트처럼 루트에서 제공하는 방법이나 base path 지원이 필요([GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages)).
-하위 경로 지원 계획은 [Roadmap](roadmap.md#subpath-deployment).
+정적 호스팅이면 같은 결과 폴더 사용 가능. `0.17.0`부터 `basePath`로 GitHub Pages 프로젝트 사이트의 `/<repository>/` 경로를 지원.
+`url`은 도메인, `basePath`는 사이트 경로로 지정. 생성된 출력 폴더 전체를 업로드하며 출력 안에 저장소 이름의 폴더를 추가하지 않음.
+GitHub Actions 템플릿과 수동 설정은 [Deployment](../public/deployment.md#github-pages).
+
+Unreleased의 `init`은 호스팅별 파일과 완료 안내를 준비. GitHub Pages는 저장소별 워크플로, Cloudflare Pages는 404와 준비 스크립트, 나중에 설정은 공통 문서 파일만 생성.
+공식 사이트의 `build:pages`와 사용자 프로젝트에 생성한 `docs:build`는 각각의 배포 파일을 처리.

@@ -19,6 +19,9 @@ pnpm add -D --save-exact for-humanity@latest
 
 ## Unreleased
 
+- Add `for-humanity init [project-dir]` with interactive site, folder, language and hosting setup. Consola provides the welcome panel, selection prompts, file summary and next commands; `--yes` and explicit options support automation.
+- Generate GitHub Pages workflows for npm or pnpm and derive the site URL and repository path. Cloudflare Pages setup includes a 404 page and a build helper for the selected content folder. Existing application scripts and dependencies are preserved; conflicts stop before writing, and failed writes restore this run's changes.
+
 ## 0.17.0 — 2026-10-22
 
 **Upgrade:** Existing root deployments remain compatible. For a GitHub project site, set `basePath: "/repository/"` and keep `url` as the origin, such as `https://username.github.io`. Rebuild and deploy the contents of `content/dist`.

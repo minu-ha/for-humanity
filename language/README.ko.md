@@ -62,6 +62,14 @@ pnpm exec for-humanity preview
 
 배포할 문서는 `content/public`, 로컬에서만 읽을 문서는 `content/private`에 둡니다. 로컬 서버는 양쪽을 보여 주고 빌드는 공개 문서와 홈만 포함합니다. 폴더 이름은 설정으로 바꿀 수 있습니다.
 
+## Interactive setup (Unreleased)
+
+개발 버전은 `pnpm exec for-humanity init`을 제공합니다. npm에서는 `npx for-humanity init`을 사용합니다. npm `0.17.0`에는 아직 포함되지 않으므로 해당 버전은 위 Quick start를 따릅니다.
+
+사이트 이름, 문서 폴더, 언어와 배포 방식(GitHub Pages / Cloudflare Pages / 나중에 설정)을 선택합니다. 설정과 첫 문서, `docs:dev`, `docs:build`, `docs:preview` 스크립트를 만들고, 호스팅 파일과 서비스에서 설정할 값을 안내합니다.
+
+기존 앱의 스크립트와 의존성을 유지합니다. 생성할 파일 목록을 확인한 뒤 진행합니다. 옵션과 자동 실행은 [Commands](../content/public/commands.md#initialize-a-project-unreleased)를 참고합니다.
+
 ## Make it yours
 
 사이트 이름과 탐색 그룹 순서를 지정합니다.

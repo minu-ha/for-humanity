@@ -410,8 +410,44 @@ try {
     assert.match(await readFile(join(starter, "knowledge/dist/sitemap.xml"), "utf8"), /https:\/\/example.github.io\/package-docs\/getting-started\//);
     assert.ok(!(await readdir(join(starter, "knowledge/dist"))).some((file) => file === "private" || file === "internal"));
 
+    // 설치 번들의 init 진입점과 패키지 상대 템플릿, 생성 결과의 실제 빌드
+    for (const setup of [
+        {deploy: "none", manager: "npm", content: "content"},
+        {deploy: "github-pages", manager: "pnpm", content: "handbook"},
+        {deploy: "cloudflare-pages", manager: "npm", content: "team notes"},
+    ]) {
+        const initialized = join(consumer, `init-${setup.deploy}`);
+        const cli = join(packageRoot, "dist/cli.js");
+
+        execFileSync(
+            process.execPath,
+            [cli, "init", initialized, "--yes", "--manager", setup.manager, "--deploy", setup.deploy, "--content", setup.content, "--repository", "example/package-docs"],
+            {cwd: consumer, stdio: "inherit"},
+        );
+
+        assert.ok((await readFile(join(initialized, "package.json"), "utf8")).includes(JSON.stringify(pack.version)));
+        assert.match(await readFile(join(initialized, "for-humanity.config.ts"), "utf8"), /satisfies SiteConfig/);
+        await writeFile(join(initialized, setup.content, "private/internal.md"), "---\nname: Init private\nlabel: Init private\ngroup: Internal\n---\n\nINIT_PRIVATE_SENTINEL\n");
+        execFileSync(process.execPath, [cli, "build"], {cwd: initialized, stdio: "inherit"});
+
+        const initializedOutput = join(initialized, setup.content, "dist");
+        const initializedHome = await readFile(join(initializedOutput, "index.html"), "utf8");
+
+        assert.match(initializedHome, /Project notes/);
+        assert.doesNotMatch(initializedHome, /INIT_PRIVATE_SENTINEL/);
+        assert.ok(!(await readdir(initializedOutput)).includes("private"));
+
+        if (setup.deploy === "github-pages") {
+            assert.match(initializedHome, /href="\/package-docs\/getting-started\/"/);
+            assert.match(await readFile(join(initialized, ".github/workflows/docs.yml"), "utf8"), /pnpm install --frozen-lockfile/);
+        } else if (setup.deploy === "cloudflare-pages") {
+            execFileSync(process.execPath, [join(initialized, ".cloudflare/prepare.mjs")], {cwd: consumer, stdio: "inherit"});
+            assert.match(await readFile(join(initializedOutput, "404.html"), "utf8"), /Page not found/);
+        }
+    }
+
     console.log(
-        `Installed ${pack.name}@${pack.version} on ${process.version}: dev/preview browsers, config types, TS/ESM settings, assets, navigation, images, Mermaid, README, crawler files and default/custom content starters passed`,
+        `Installed ${pack.name}@${pack.version} on ${process.version}: dev/preview browsers, config types, TS/ESM settings, assets, navigation, images, Mermaid, README, crawler files, content starters and all init hosting targets passed`,
     );
 } finally {
     await rm(consumer, {recursive: true, force: true});

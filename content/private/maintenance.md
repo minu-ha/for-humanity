@@ -111,7 +111,7 @@ Vite의 Mermaid library 빌드는 ESM 형식과 동적 import 경계를 유지�
 
 CI는 Ubuntu의 Node 22.12.0과 24, Windows의 Node 22.12.0에서 같은 단위, 브라우저, 설치 검사를 실행하도록 구성합니다. Windows의 npm 실행은 Node 배포본의 `npm-cli.js`를 사용하고, 재귀 파일 목록은 URL 경로와 비교하기 전에 구분자를 정규화합니다.
 
-`smoke-package.ts`는 설치한 CLI를 `dev .`와 `preview .`로 실행하고 Chromium에서 갱신 연결, 문서 수정, Mermaid, 이미지를 확인합니다. 실행 전에 `pnpm exec playwright install chromium`으로 브라우저를 준비합니다.
+`smoke-package.ts`는 설치한 CLI를 `dev .`와 `preview .`로 실행하고 Chromium에서 갱신 연결, 문서 수정, Mermaid, 이미지를 확인합니다. 설치 번들의 `init`도 세 배포 방식으로 실행해 GitHub 하위 경로와 Cloudflare 404, 사용자 문서 경로의 실제 출력을 확인합니다. 실행 전에 `pnpm exec playwright install chromium`으로 브라우저를 준비합니다.
 
 설치 CLI의 도움말과 버전도 소비 프로젝트에서 검증합니다. head 검사는 제목과 설명의 텍스트 보존, 요청 간 격리, 자원 중복 제거와 CSS 순서를 포함합니다. 브라우저에서는 소스와 설치 번들의 JavaScript 비활성 상태에서도 메타데이터와 첫 화면 스타일을 확인합니다.
 
@@ -208,7 +208,10 @@ pnpm pack
 
 패키지 설치 후 별도 폴더에서 `dev`, `build`, `preview` 확인.
 정적 사이트는 `<content.root>/dist` 전체 배포. 기본 경로는 `content/dist`. dev는 내부 문서를 포함하므로 배포 결과 확인은 build 후 preview로 수행. 하위 경로는 `basePath`로 지정([Deployment](../public/deployment.md)).
-첫 공개 버전 `0.1.0`의 지원 범위는 `dev`, `build`, `preview`. `init`은 별도 예정 작업.
+현재 npm `0.17.0`의 명령은 `dev`, `build`, `preview`. 초기화는 Unreleased에 추가되어 다음 패키지 공개 전 별도 설치 검사 대상.
+
+초기화 변경 시 tarball 설치에서 `init --yes --deploy none|github-pages|cloudflare-pages`와 npm/pnpm 스크립트를 확인합니다. 실제 터미널의 질문, 잘못된 입력 재질문, Ctrl+C와 마지막 확인 취소, 좁은 화면, 색상 없는 출력도 확인합니다.
+명령과 표시 문구는 Citty, Consola와 consola/utils 사용. Consola가 포함한 Clack 프롬프트를 사용하며 직접 프롬프트 의존성은 추가하지 않음.
 
 공개 전 위 검증 명령을 모두 통과하고, 패키지에 CLI, CSS, 클라이언트 스크립트, 폰트, favicon, 라이선스가 포함되는지 확인.
 

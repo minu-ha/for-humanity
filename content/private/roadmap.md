@@ -16,11 +16,11 @@ order: 40
 | 1     | [Foundation](#foundation)                 | Done    | 기존 샘플의 표현과 사용성             |
 | 2     | [Parts and syntax](#parts-and-syntax)     | Done    | 필요한 부품과 Markdown 작성 계약      |
 | 3     | [Visualization modules](#visualization-modules) | Next | 읽기 목적에 맞는 그림, 비교, 참조와 테마 |
-| 4     | [Init](#init)                             | Planned | 새 문서 프로젝트의 시작 명령          |
+| 4     | [Init](#init)                             | Ready (Unreleased) | 새 문서 프로젝트의 대화형 시작 명령 |
 | 5     | [Release](#release)                       | Done    | npm 패키지 공개와 설치 검증 완료       |
 | 6     | [Search](#search)                         | Planned | 문서와 section 탐색                   |
 | 7     | [Writing skill](#writing-skill)           | Planned | 검토 가능한 문서를 쓰는 에이전트 스킬 |
-| 8     | [Subpath deployment](#subpath-deployment) | Planned | 하위 URL 경로의 정적 배포             |
+| 8     | [Subpath deployment](#subpath-deployment) | Done | 하위 URL 경로의 정적 배포             |
 | 9     | [Vite integration](#vite-integration) | Done | 패키지 빌드, 사용자 dev와 preview 통합 |
 | 10    | [Server features](#server-features) | Planned | API, 인증, 사용자 저장소 연결 |
 
@@ -115,17 +115,17 @@ Node 22.12.0과 24.3.0에서 설치 패키지의 공개 타입, build, dev, prev
 
 ## Init
 
-새 프로젝트에 문서 폴더, 설정, 시작 문서를 준비하는 `for-humanity init` 명령. 다음 릴리스용 `template/` 기본형은 준비되어 있으며, 명령 자체는 아직 미구현.
-현재 명령은 `dev`, `build`, `preview`. `init`은 아직 미구현.
+문서 폴더, 설정, 시작 문서를 준비하는 `for-humanity init [project-dir]`을 Unreleased에 구현. npm `0.17.0`은 기존 `dev`, `build`, `preview`와 템플릿 복사 방식 사용.
 
-명령 등록과 도움말은 Citty, 로그와 향후 대화형 입력은 Consola를 사용합니다. `0.13.0`에 기존 세 명령의 Citty 전환과 공통 로그를 반영했습니다.
+명령과 도움말은 Citty, 시작·완료 박스와 색상·질문은 Consola 사용. 기본 문서 폴더는 content, 언어는 ko, 배포는 나중에 설정. npm/pnpm 감지와 GitHub Pages·Cloudflare Pages 파일 생성 지원.
+설계와 검증 범위는 [Init design](init-design.md), 작업 기록은 [Init implementation plan](init-plan.md).
 
-- [ ] 대상 폴더 지정과 생성할 파일 목록 확정
-- [ ] 사이트 이름 입력, 미지정 시 `for humanity`와 기본 favicon
-- [ ] 설정, 일반 문서, 목적별 최소 견본 준비
-- [ ] 기존 파일과 충돌할 때의 처리 기준 구현
-- [ ] 생성 직후 `dev`, `build`, `preview` 실행 확인
-- [ ] [Commands](../public/commands.md)에 명령, 결과, 오류 예시 반영
+- [x] 대상 폴더, 생성 계획과 마지막 확인
+- [x] 사이트 이름·문서 폴더·언어·배포 선택과 자동 실행 옵션
+- [x] 설정·시작 문서·docs 스크립트·gitignore·선택한 호스팅 파일 생성
+- [x] 기존 파일·스크립트 충돌, 링크 경유 거부와 실패 시 복원
+- [x] 실제 npm/pnpm 설치의 init → dev/build/preview와 공개·내부 문서 분리 확인
+- [x] [Commands](../public/commands.md)에 명령, 결과, 오류 예시 반영
 
 산출물: `init` 명령, 시작 템플릿, 사용법.
 완료 기준: 별도 프로젝트의 빈 폴더에서 시작해 첫 문서를 작성하고 정적 사이트를 만들 수 있음.
@@ -196,13 +196,12 @@ prototype의 첫 버전 `0.1.0`은 `dev`, `build`, `preview`를 지원. `init`�
 
 ## Subpath deployment
 
-현재 정적 사이트는 루트 URL 기준.
-`/docs/` 같은 하위 경로의 배포가 필요할 때 base path 설정 추가.
+`0.17.0`에서 `/docs/` 같은 하위 경로 배포를 지원. 루트 URL의 기본 동작 유지.
 
-- [ ] base path의 설정 형식, 기본값, 정규화 기준 정의
-- [ ] 문서 링크, 자원, 폰트, favicon의 URL을 같은 기준으로 생성
-- [ ] 루트와 하위 경로에서 직접 접속, 새로고침, hash 이동 확인
-- [ ] [Settings](../public/settings.md)와 [Commands](../public/commands.md)에 배포 예시 반영
+- [x] base path의 설정 형식, 기본값, 정규화 기준 정의
+- [x] 문서 링크, 자원, 폰트, favicon의 URL을 같은 기준으로 생성
+- [x] 루트와 하위 경로에서 직접 접속, 새로고침, hash 이동 확인
+- [x] [Settings](../public/settings.md)와 [Commands](../public/commands.md)에 배포 예시 반영
 
 완료 기준: 동일한 문서가 루트와 하위 경로의 정적 서버에서 모든 자원을 포함해 동작.
 
