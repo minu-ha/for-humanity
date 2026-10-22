@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Hold the first paint of a built page until the inline browser script has run. On a slow device the sidebar and outline could appear at the top for one frame before their saved positions were restored. Chromium honors the new `<link rel="expect" blocking="render">` in the page head; other browsers ignore it and behave as before.
+
 ## 0.18.0 — 2026-10-22
 
 **Upgrade:** Existing projects remain compatible. The `dev`, `build` and `preview` commands, configuration, document syntax and Node.js requirements are unchanged. New projects can start with `for-humanity init` instead of copying the template.

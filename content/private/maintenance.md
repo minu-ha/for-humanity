@@ -146,6 +146,14 @@ Hono 브라우저 셸, 탐색, 커서를 변경하면 자동 브라우저 검사
 
 이제 조건 변화에는 장식만 숨기고 좌표는 유지합니다. 복원 여부는 다음 문서가 자기 표시 조건으로 판정합니다. `[NAV-020]`은 같은 조건 변화를 `emulateMedia`로 모든 운영체제에서 재현합니다. [수정 확인 실행](https://github.com/minu-ha/for-humanity/actions/runs/39239457865)에서 Windows의 `[NAV-010]`과 `[NAV-020]`을 각각 30회 반복해 모두 통과했습니다.
 
+### Known first-paint check issue
+
+`0.18.0`의 [CI 실행](https://github.com/minu-ha/for-humanity/actions/runs/39748936267)에서 Ubuntu Node 22.12.0의 `[NAV-010]`이 새로고침 첫 프레임의 문서 목록 위치를 `200` 대신 `0`으로 확인하며 실패했습니다. 같은 커밋의 Windows와 Node 24는 통과했습니다.
+
+원인은 배포 HTML의 인라인 번들 위치에 있었습니다. 번들은 사이드바 마크업 뒤, 본문 앞의 `<body>` 안에서 실행되는데 `<body>` 안의 스크립트는 첫 페인트를 막지 못합니다. 느린 러너에서는 Chromium 파서가 사이드바를 파싱한 뒤 71KB 번들을 실행하기 전에 양보하고, 그 사이에 저장 위치를 적용하지 않은 프레임을 그렸습니다. 로컬 macOS에서는 재현되지 않았고, CDP `Emulation.setCPUThrottlingRate`로 CPU를 20배 느리게 하면 3회 중 2회에서 첫 프레임이 `readyState: loading`, 번들 실행 전 상태로 기록됐습니다.
+
+이제 인라인 번들을 쓰는 페이지는 head의 `<link rel="expect" href="#fh-browser-ready" blocking="render">`로 번들 바로 뒤의 마커까지 첫 페인트를 보류합니다. Chromium은 마커를 파싱할 때까지, 즉 번들이 좌표를 복원할 때까지 렌더를 미루고, 다른 브라우저는 속성을 무시해 이전과 같이 동작합니다. 같은 스로틀링에서 6회 반복해 모두 첫 프레임부터 복원됐고, `[SHL-012]`가 링크와 마커의 위치를 확인합니다.
+
 ```sh
 pnpm exec playwright install chromium
 pnpm test:navigation

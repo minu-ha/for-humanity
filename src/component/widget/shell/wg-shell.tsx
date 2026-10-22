@@ -97,6 +97,8 @@ export const WgShell = (props: WgShellProps) => {
         ],
         style: [{textContent: props.assets.fontCss}],
         link: [
+            // 인라인 번들 실행 전 첫 페인트 보류. body의 스크립트는 렌더를 막지 못하므로 Chromium의 expect 링크가 번들 뒤 마커까지 대기
+            ...(props.assets.browser.kind === "inline" ? [{rel: "expect", href: "#fh-browser-ready", blocking: "render"} satisfies Link] : []),
             {rel: "icon", href: toSitePath({basePath: props.site.basePath, path: asset_favicon_path}), type: "image/svg+xml"},
             ...(pageUrl === undefined ? [] : [{rel: "canonical", href: pageUrl} satisfies Link]),
             ...props.assets.preload.map<Link>((href) => ({
@@ -139,6 +141,10 @@ export const WgShell = (props: WgShellProps) => {
                 <script type="application/json" id="fh-navigation-data" dangerouslySetInnerHTML={{__html: toScriptJson(navigationData)}} />
                 {/* biome-ignore lint/security/noDangerouslySetInnerHtml: 패키지에 포함한 브라우저 번들. 문서 입력 미포함 */}
                 {props.assets.browser.kind === "inline" && <script dangerouslySetInnerHTML={{__html: props.assets.browser.code}} />}
+                {/**
+                 * 인라인 번들 실행 완료 지점. head의 expect 링크가 이 요소까지 첫 페인트 보류
+                 */}
+                {props.assets.browser.kind === "inline" && <div id="fh-browser-ready" hidden />}
                 <main className={clsx("wg_shell__main")}>{props.children}</main>
             </body>
         </html>

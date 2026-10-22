@@ -287,6 +287,34 @@ describe("페이지 셸", () => {
              */
             expect(html.slice(0, html.indexOf("</head>"))).toContain('<script type="module" src="/src/entry/browser/browser.tsx" blocking="render"></script>');
             expect(html.match(/browser\.tsx/g)).toHaveLength(1);
+            expect(html).not.toContain('rel="expect"');
+        });
+
+        test("[SHL-012] 인라인 번들은 실행 완료 마커까지 첫 페인트를 막는 expect 링크를 head에 둔다", async () => {
+            /**
+             * GIVEN
+             * 인라인 번들을 쓰는 배포 자원
+             */
+            const site = siteConfigSchema.parse({});
+            const browserScript = "window.navigationFixture = true;";
+            const assets = {fontCss: "", preload: [], stylePaths: [asset_style_path], browser: {kind: "inline" as const, code: browserScript}};
+
+            /**
+             * WHEN
+             * 페이지 렌더
+             */
+            const html = await (await toPageApp({site, store: {docs: []}, assets}).request("/")).text();
+            const initialization = html.indexOf(`<script>${browserScript}</script>`);
+            const marker = html.indexOf('<div id="fh-browser-ready" hidden="">');
+
+            /**
+             * THEN
+             * head의 expect 링크 하나와 번들 바로 뒤, 본문 앞의 마커
+             */
+            expect(html.slice(0, html.indexOf("</head>"))).toContain('<link rel="expect" href="#fh-browser-ready" blocking="render">');
+            expect(html.match(/rel="expect"/g)).toHaveLength(1);
+            expect(html.slice(initialization, marker)).toBe(`<script>${browserScript}</script>`);
+            expect(marker).toBeLessThan(html.indexOf('<main class="wg_shell__main">'));
         });
     });
 });
