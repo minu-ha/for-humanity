@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import {copy_nav_aria_label} from "@/component/widget/sidebar/_constant/copy";
-import type {NavigationGroup} from "@/component/widget/sidebar/_type/navigation-data";
+import type {NavigationData, NavigationGroup} from "@/component/widget/sidebar/_type/navigation-data";
 import {WgDocList} from "@/component/widget/sidebar/_wg-doc-list";
 import "./_wg-doc-tree.css";
 
@@ -12,6 +12,11 @@ export interface WgDocTreeProps {
      * 본문을 제외한 읽는 순서의 문서 묶음
      */
     groups: NavigationGroup[];
+
+    /**
+     * 트리 전체에 적용할 배포 경로
+     */
+    basePath: NavigationData["basePath"];
 }
 
 export const WgDocTree = (props: WgDocTreeProps) => {
@@ -24,7 +29,7 @@ export const WgDocTree = (props: WgDocTreeProps) => {
                 return (
                     <section className={clsx("wg_docTree__docGroup")} key={JSON.stringify(group.path)} aria-label={group.name}>
                         <div className={clsx("wg_docTree__group")}>{group.name}</div>
-                        <WgDocList group={group} />
+                        <WgDocList group={group} basePath={props.basePath} />
                     </section>
                 );
             })}

@@ -18,7 +18,7 @@ describe("글꼴 자원", () => {
              * WHEN
              * 공개 CSS 생성
              */
-            const result = toFontCss({css: join(process.cwd(), css), fontDir: asset_font_dir});
+            const result = toFontCss({css: join(process.cwd(), css), fontDir: asset_font_dir, basePath: "/"});
 
             /**
              * THEN
@@ -43,12 +43,12 @@ describe("글꼴 자원", () => {
              * WHEN
              * 같은 내용의 반복 처리와 변경된 글꼴 처리
              */
-            const first = toFontCss({css, fontDir: asset_font_dir});
-            const repeated = toFontCss({css, fontDir: asset_font_dir});
+            const first = toFontCss({css, fontDir: asset_font_dir, basePath: "/"});
+            const repeated = toFontCss({css, fontDir: asset_font_dir, basePath: "/"});
 
             await writeFile(file, "changed font bytes");
 
-            const changed = toFontCss({css, fontDir: asset_font_dir});
+            const changed = toFontCss({css, fontDir: asset_font_dir, basePath: "/"});
 
             /**
              * THEN

@@ -1,18 +1,19 @@
 import {execFileSync} from "node:child_process";
-import {cp, mkdtemp, rm} from "node:fs/promises";
+import {cp, mkdtemp, rm, writeFile} from "node:fs/promises";
 import {tmpdir} from "node:os";
 import {join} from "node:path";
 import {test as base} from "@playwright/test";
 import {preview} from "vite";
 import {toPreviewConfig} from "@/entry/preview/to-preview-config";
+import type {ResolvedSiteConfig} from "@/type/site-config";
 
 /**
  * 워커별 공식 문서 사이트. 저장소 content의 공개 입력을 임시 폴더에서 실제 CLI로 빌드
  */
-export const test = base.extend<Record<never, never>, {docsSite: string}>({
+export const test = base.extend<Record<never, never>, {docsSite: string; basePath: ResolvedSiteConfig["basePath"]}>({
+    basePath: ["/", {option: true, scope: "worker"}],
     docsSite: [
-        // biome-ignore lint/correctness/noEmptyPattern: Playwright가 구조분해 매개변수로 fixture 의존성을 조회
-        async ({}, use) => {
+        async ({basePath}, use) => {
             const root = await mkdtemp(join(tmpdir(), "for-humanity-docs-"));
 
             try {
@@ -20,9 +21,13 @@ export const test = base.extend<Record<never, never>, {docsSite: string}>({
                 await cp("content", join(root, "content"), {recursive: true, filter: (source) => !/^content[\\/](?:dist|private)(?:[\\/]|$)/.test(source)});
                 await cp("for-humanity.config.ts", join(root, "for-humanity.config.ts"));
 
+                if (basePath !== "/") {
+                    await writeFile(join(root, "for-humanity.config.ts"), `export default {title: "Project docs", basePath: ${JSON.stringify(basePath)}, cursorFace: true};\n`);
+                }
+
                 execFileSync(process.execPath, ["dist/cli.js", "build", root]);
 
-                const server = await preview(toPreviewConfig({root: join(root, "content"), port: 0}));
+                const server = await preview(toPreviewConfig({root: join(root, "content"), port: 0, basePath}));
 
                 try {
                     const url = server.resolvedUrls?.local[0];

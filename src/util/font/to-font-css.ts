@@ -2,6 +2,8 @@ import {createHash} from "node:crypto";
 import {readFileSync} from "node:fs";
 import {basename, dirname, extname, join} from "node:path";
 import {font_display_strategy, font_hash_length} from "@/constant/font";
+import type {ResolvedSiteConfig} from "@/type/site-config";
+import {toSitePath} from "@/util/url/to-site-path";
 
 /**
  * 글꼴 스타일 변환 입력
@@ -16,6 +18,11 @@ interface FontCssParams {
      * 생성할 글꼴 URL의 디렉터리
      */
     fontDir: string;
+
+    /**
+     * CSS 참조의 배포 경로, 수집한 파일 키는 사이트 루트 기준 유지
+     */
+    basePath: ResolvedSiteConfig["basePath"];
 }
 
 /**
@@ -36,7 +43,7 @@ export const toFontCss = (params: FontCssParams) => {
 
                 files.set(url, file);
 
-                return `url(${url})`;
+                return `url(${toSitePath({basePath: params.basePath, path: url})})`;
             });
         })
         .join("\n");

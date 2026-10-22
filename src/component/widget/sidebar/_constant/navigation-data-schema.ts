@@ -1,4 +1,4 @@
-import {array, boolean, lazy, minLength, number, object, optional, string, type ZodMiniType} from "zod/mini";
+import {array, boolean, custom, lazy, minLength, number, object, optional, string, type ZodMiniType} from "zod/mini";
 import type {NavigationData, NavigationDoc, NavigationGroup} from "@/component/widget/sidebar/_type/navigation-data";
 
 /**
@@ -80,6 +80,11 @@ const headingSchema = object({
  * HTML에 포함된 JSON을 읽는 브라우저 경계. 손상된 자료에는 서버 HTML 유지
  */
 export const navigationDataSchema: ZodMiniType<NavigationData> = object({
+    /**
+     * 서버에서 검증한 탐색 URL의 배포 경로
+     */
+    basePath: custom<NavigationData["basePath"]>((value) => typeof value === "string" && value.startsWith("/") && !value.startsWith("//") && value.endsWith("/")),
+
     /**
      * 홈 링크의 브랜드 이름
      */

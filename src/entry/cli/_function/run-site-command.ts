@@ -42,7 +42,7 @@ export const runSiteCommand = async (params: CliCommandParams) => {
 
         if (params.command === "preview") {
             const vite = await import("vite");
-            const server = await vite.preview(toPreviewConfig({root: project.root, port: project.site.port}));
+            const server = await vite.preview(toPreviewConfig({root: project.root, port: project.site.port, basePath: project.site.basePath}));
 
             server.printUrls();
 

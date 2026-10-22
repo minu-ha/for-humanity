@@ -207,7 +207,7 @@ pnpm pack
 ```
 
 패키지 설치 후 별도 폴더에서 `dev`, `build`, `preview` 확인.
-정적 사이트는 `<content.root>/dist` 전체 배포. 기본 경로는 `content/dist`. dev는 내부 문서를 포함하므로 배포 결과 확인은 build 후 preview로 수행. 사이트 루트 경로 기준([Deployment](../public/deployment.md)).
+정적 사이트는 `<content.root>/dist` 전체 배포. 기본 경로는 `content/dist`. dev는 내부 문서를 포함하므로 배포 결과 확인은 build 후 preview로 수행. 하위 경로는 `basePath`로 지정([Deployment](../public/deployment.md)).
 첫 공개 버전 `0.1.0`의 지원 범위는 `dev`, `build`, `preview`. `init`은 별도 예정 작업.
 
 공개 전 위 검증 명령을 모두 통과하고, 패키지에 CLI, CSS, 클라이언트 스크립트, 폰트, favicon, 라이선스가 포함되는지 확인.

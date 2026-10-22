@@ -20,6 +20,11 @@ interface PreviewParams {
      * 사용할 HTTP 포트, 0은 운영체제 배정
      */
     port: ResolvedSiteConfig["port"];
+
+    /**
+     * 미리보기 URL의 배포 경로
+     */
+    basePath: ResolvedSiteConfig["basePath"];
 }
 
 /**
@@ -35,6 +40,7 @@ export const toPreviewConfig = (params: PreviewParams): InlineConfig => {
     return {
         configFile: false,
         envDir: false,
+        base: params.basePath,
         root: params.root,
         publicDir: false,
         appType: "mpa",
@@ -45,7 +51,7 @@ export const toPreviewConfig = (params: PreviewParams): InlineConfig => {
                 name: "for-humanity:preview",
                 configurePreviewServer: (server) => {
                     server.middlewares.use((request, response, next) => {
-                        if (request.url?.startsWith(`${asset_font_dir}/`)) {
+                        if (request.url?.startsWith(`${params.basePath}${asset_font_dir.slice(1)}/`)) {
                             response.setHeader("Cache-Control", font_cache_control);
                         }
 
@@ -58,7 +64,7 @@ export const toPreviewConfig = (params: PreviewParams): InlineConfig => {
                             response.removeHeader("Cache-Control");
 
                             // Vite의 HTML 경로 변환 이후 남은 폴더 주소, 끝 슬래시 없이도 index.html 조회
-                            if (request.url !== undefined && request.url.split("?")[0] === request.originalUrl?.split("?")[0]) {
+                            if (request.url !== undefined && request.url.split("?")[0] === request.originalUrl?.slice(params.basePath.length - 1).split("?")[0]) {
                                 request.url = request.url.replace(/\/?(?=\?|$)/, "/index.html");
                             }
 

@@ -369,7 +369,12 @@ export const WgSidebar = (props: WgSidebarProps) => {
                     {/**
                      * 사이트 이름. 홈 문서에서는 현재 페이지로 표시
                      */}
-                    <a ref={props.stores === undefined ? undefined : brandRef} className={clsx("wg_sidebar__brand")} href="/" aria-current={props.data.home ? "page" : undefined}>
+                    <a
+                        ref={props.stores === undefined ? undefined : brandRef}
+                        className={clsx("wg_sidebar__brand")}
+                        href={props.data.basePath}
+                        aria-current={props.data.home ? "page" : undefined}
+                    >
                         {props.data.title}
                     </a>
 
@@ -397,7 +402,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
                 {layout !== "drawer" && (
                     <div className={clsx("wg_sidebar__docsPanel")} data-sidebar-docs="" data-sidebar-layout={layout}>
                         <WgSidebarScroll portRef={documentsRef} kind="documents" ready={props.stores !== undefined} onScroll={handleScrollSave} onClick={handleNavigationClick}>
-                            <WgDocTree groups={props.data.groups} />
+                            <WgDocTree groups={props.data.groups} basePath={props.data.basePath} />
                         </WgSidebarScroll>
                     </div>
                 )}
@@ -462,7 +467,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
                                 onScroll={handleScrollSave}
                                 onClick={handleNavigationClick}
                             >
-                                <WgDocTree groups={props.data.groups} />
+                                <WgDocTree groups={props.data.groups} basePath={props.data.basePath} />
                             </WgSidebarScroll>
                         </div>
                     )}

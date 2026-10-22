@@ -24,6 +24,7 @@ describe("사이트 설정", () => {
                 content: {root: "content", public: "public", private: "private"},
                 title: "for humanity",
                 lang: "ko",
+                basePath: "/",
                 port: 4321,
                 cursorFace: false,
                 navigation: [],
@@ -77,6 +78,7 @@ describe("사이트 설정", () => {
                 content: {root: "content", public: "public", private: "private"},
                 title: "for humanity",
                 lang: "ko",
+                basePath: "/",
                 port: 4322,
                 cursorFace: true,
                 navigation: [["Guide"], ["Projects", "Research"]],
@@ -85,6 +87,22 @@ describe("사이트 설정", () => {
 
             expectTypeOf<NonNullable<SiteConfig["navigation"]>[number]>().toEqualTypeOf<string | string[]>();
         });
+
+        test.each([
+            {input: "/", expected: "/"},
+            {input: "/agent-conventions", expected: "/agent-conventions/"},
+            {input: "/uoo/", expected: "/uoo/"},
+            {input: "/projects/docs.v2/", expected: "/projects/docs.v2/"},
+        ])("배포 경로 $input 입력은 끝 슬래시를 포함한다", (scenario) => {
+            expect(siteConfigSchema.parse({basePath: scenario.input}).basePath).toBe(scenario.expected);
+        });
+
+        test.each(["", "docs", "//example.org/", "/docs//guide/", "/./", "/docs/../", "/docs?x=1", "/docs#top", "/docs\\guide", "/%2e%2e/", "/docs path/"])(
+            "잘못된 배포 경로 %s는 거부한다",
+            (basePath) => {
+                expect(siteConfigSchema.safeParse({basePath}).success).toBe(false);
+            },
+        );
 
         test.each([
             {name: "0 포트", input: {port: 0}},

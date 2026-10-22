@@ -41,6 +41,7 @@ export default {title: "Project notes"};
 | `title` | 사이드바와 브라우저 탭의 사이트 이름 | `for humanity` |
 | `description` | 홈 페이지의 검색 결과와 링크 미리보기 설명 | 없음 |
 | `lang` | 문서 언어 태그, 예: `en`, `en-US` | `ko` |
+| `basePath` | 배포할 URL 경로, 예: `/project/`. `0.17.0`부터 지원 | `/` |
 | `url` | 배포한 사이트의 루트 주소 | 없음 |
 | `image` | 링크 미리보기 이미지의 문서 루트 기준 경로 | 없음 |
 | `port` | dev와 preview 포트, 1부터 65535까지 정수 | `4321` |

@@ -10,6 +10,7 @@ import remarkSmartypants from "remark-smartypants";
 import {createCssVariablesTheme} from "shiki";
 import {unified} from "unified";
 import {rehypeAssets} from "@/app/_function/to-processor/_rehype-assets";
+import {rehypeBasePath} from "@/app/_function/to-processor/_rehype-base-path";
 import {rehypeContentLinks} from "@/app/_function/to-processor/_rehype-content-links";
 import {rehypeReport} from "@/app/_function/to-processor/_rehype-report";
 import {remarkSnippets} from "@/app/_function/to-processor/_remark-snippets";
@@ -90,6 +91,7 @@ export const toProcessor = (params: ProcessorParams) => {
         .use(rehypeTables)
         .use(rehypeContentLinks, {scope: params.scope})
         .use(rehypeAssets, {scope: params.scope, files})
+        .use(rehypeBasePath, {basePath: params.site.basePath})
         .use(rehypeReport, {root: params.scope.root})
         .use(rehypeStringify, {allowDangerousHtml: true});
 };

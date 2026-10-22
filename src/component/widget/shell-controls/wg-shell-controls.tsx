@@ -184,7 +184,7 @@ export const WgShellControls = (props: WgShellControlsProps) => {
             <div className={clsx("wg_shellControls__sidebar")}>
                 <WgSidebar data={props.data} stores={props.stores} />
             </div>
-            {props.data.cursorFace && <WgCursorFace ready={props.stores !== undefined} />}
+            {props.data.cursorFace && <WgCursorFace ready={props.stores !== undefined} basePath={props.data.basePath} />}
             <WgMermaid onRendered={handlePageLoad} />
         </Fragment>
     );

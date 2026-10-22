@@ -14,6 +14,16 @@ export const site_navigation_default: string[][] = [];
 export const site_lang_default = "ko";
 
 /**
+ * 루트 배포의 기본 경로
+ */
+export const site_base_path_default = "/";
+
+/**
+ * 배포 경로의 URL 비예약 문자, 중첩 경로와 끝 슬래시 허용
+ */
+export const site_base_path_pattern = /^\/(?:[A-Za-z0-9._~-]+\/)*[A-Za-z0-9._~-]*$/;
+
+/**
  * 언어 태그 구문. ko, en-US처럼 BCP 47의 언어와 하위 태그
  */
 export const site_lang_pattern = /^[a-z]{2,3}(?:-[a-z0-9]{2,8})*$/i;

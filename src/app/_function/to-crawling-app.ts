@@ -4,6 +4,7 @@ import {crawling_robots_path, crawling_sitemap_path} from "@/app/_constant/crawl
 import type {PageParams} from "@/app/_function/to-page-app/to-page-app";
 import type {ResolvedSiteConfig} from "@/type/site-config";
 import {toPagePath} from "@/util/url/to-page-path";
+import {toSitePath} from "@/util/url/to-site-path";
 
 /**
  * URL을 명시한 공개 프로젝트의 크롤러 응답 입력
@@ -13,6 +14,11 @@ interface CrawlingParams {
      * 설정 검증에서 루트 origin으로 정규화한 공개 HTTP(S) URL
      */
     url: NonNullable<ResolvedSiteConfig["url"]>;
+
+    /**
+     * 크롤러 파일과 페이지의 배포 경로
+     */
+    basePath: ResolvedSiteConfig["basePath"];
 
     /**
      * dev 파일 변경 시 교체되는 현재 문서 목록. 본문은 사이트맵에 포함하지 않음
@@ -26,14 +32,16 @@ interface CrawlingParams {
 export const toCrawlingApp = (params: CrawlingParams) => {
     const app = new Hono();
 
-    app.get(crawling_robots_path, (c) => c.text(`User-agent: *\nAllow: /\n\nSitemap: ${params.url}${crawling_sitemap_path}\n`));
+    app.get(crawling_robots_path, (c) =>
+        c.text(`User-agent: *\nAllow: ${params.basePath}\n\nSitemap: ${params.url}${toSitePath({basePath: params.basePath, path: crawling_sitemap_path})}\n`),
+    );
 
     app.get(crawling_sitemap_path, (_c) => {
         return new Response(
             html`<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-<url><loc>${params.url}/</loc></url>
-${params.store.docs.map((doc) => html`<url><loc>${params.url}${toPagePath(doc.id)}</loc></url>`)}
+<url><loc>${params.url}${params.basePath}</loc></url>
+${params.store.docs.map((doc) => html`<url><loc>${params.url}${toSitePath({basePath: params.basePath, path: toPagePath(doc.id)})}</loc></url>`)}
 </urlset>`.toString(),
             {headers: {"Content-Type": "application/xml; charset=utf-8"}},
         );

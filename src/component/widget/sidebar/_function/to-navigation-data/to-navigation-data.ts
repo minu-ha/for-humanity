@@ -87,9 +87,11 @@ export const toNavigationData = (params: NavigationDataParams): NavigationData =
     });
 
     return {
+        basePath: params.site.basePath,
         title: params.site.title,
         groups,
         signature: createHash("sha256")
+            .update(params.site.basePath)
             .update(JSON.stringify(groups, (key, value: unknown) => (key === "active" ? undefined : value)))
             .digest("base64url")
             .slice(0, navigation_signature_length),

@@ -18,6 +18,7 @@ import type {ResolvedSiteConfig} from "@/type/site-config";
 import {isOutsideRoot} from "@/util/file/is-outside-root";
 import {toAssetPath} from "@/util/file/to-asset-path";
 import {toFontCss} from "@/util/font/to-font-css";
+import {toSitePath} from "@/util/url/to-site-path";
 
 /**
  * 개발과 정적 출력이 공유하는 문서 준비 입력
@@ -61,9 +62,9 @@ export interface SiteParams {
  *   - 파일 조회와 Markdown 변환은 준비 시에만 실행, 페이지 요청에서는 재사용
  */
 export const loadSite = async (params: SiteParams) => {
-    const mono = toFontCss({css: join(params.kitRoot, font_mono_css), fontDir: asset_font_dir});
-    const body = toFontCss({css: join(params.kitRoot, font_body_css), fontDir: asset_font_dir});
-    const brand = toFontCss({css: join(params.kitRoot, font_brand_css), fontDir: asset_font_dir});
+    const mono = toFontCss({css: join(params.kitRoot, font_mono_css), fontDir: asset_font_dir, basePath: params.site.basePath});
+    const body = toFontCss({css: join(params.kitRoot, font_body_css), fontDir: asset_font_dir, basePath: params.site.basePath});
+    const brand = toFontCss({css: join(params.kitRoot, font_brand_css), fontDir: asset_font_dir, basePath: params.site.basePath});
     const stylePaths = params.stylePaths ?? [toAssetPath({path: asset_style_path, file: join(params.kitRoot, "dist/cli.css")})];
     const files = new Map([[asset_favicon_path, join(params.kitRoot, "src/asset/favicon.svg")], ...mono.files, ...body.files, ...brand.files]);
 
@@ -117,11 +118,13 @@ export const loadSite = async (params: SiteParams) => {
 
             // 링크 미리보기 이미지. 공개 주소가 있을 때만 배포
             image:
-                params.site.url === undefined || params.site.image === undefined ? undefined : `${params.site.url}${toPreviewImagePath({scope, files, path: params.site.image})}`,
+                params.site.url === undefined || params.site.image === undefined
+                    ? undefined
+                    : `${params.site.url}${toSitePath({basePath: params.site.basePath, path: toPreviewImagePath({scope, files, path: params.site.image})})}`,
         },
     });
 
-    const crawling = params.site.url === undefined ? undefined : toCrawlingApp({url: params.site.url, store});
+    const crawling = params.site.url === undefined ? undefined : toCrawlingApp({url: params.site.url, basePath: params.site.basePath, store});
 
     return {pages, crawling, files, app: toHttpApp({pages, crawling, files})};
 };

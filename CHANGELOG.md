@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 0.17.0 — 2026-10-22
+
+**Upgrade:** Existing root deployments remain compatible. For a GitHub project site, set `basePath: "/repository/"` and keep `url` as the origin, such as `https://username.github.io`. Rebuild and deploy the contents of `content/dist`.
+
+- Add `basePath` for project sites such as `https://username.github.io/project/`. Navigation, document links, images, fonts, Mermaid and crawler URLs use the same path in `dev`, `build` and `preview`; `/` remains the default and the output directory stays `content/dist`.
+- Include a GitHub Pages Actions workflow in `template/github-pages.yml` and document separate project-site deployments.
+
 ## 0.16.0 — 2026-10-21
 
 **Upgrade:** CLI commands, configuration, document syntax and Node.js requirements remain compatible. Document pages now use each `label` as their description, so write labels that read well in search results and link previews. Pages are still marked as Korean by default; set `lang`, such as `lang: "en"`, for sites in other languages.

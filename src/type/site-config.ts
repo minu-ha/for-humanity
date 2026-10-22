@@ -1,7 +1,9 @@
 import {z} from "zod";
 import {content_default} from "@/constant/content";
-import {copy_error_navigation_clash, copy_error_site_image, copy_error_site_lang, copy_error_site_url, copy_site_title_default} from "@/constant/copy";
+import {copy_error_navigation_clash, copy_error_site_base_path, copy_error_site_image, copy_error_site_lang, copy_error_site_url, copy_site_title_default} from "@/constant/copy";
 import {
+    site_base_path_default,
+    site_base_path_pattern,
     site_cursor_face_default,
     site_image_pattern,
     site_lang_default,
@@ -38,6 +40,16 @@ export const siteConfigSchema = z.object({
      * 문서 언어. html lang 속성
      */
     lang: z.string().regex(site_lang_pattern, copy_error_site_lang).default(site_lang_default),
+
+    /**
+     * 사이트의 배포 경로, 검증 후 끝 슬래시 포함
+     */
+    basePath: z
+        .string()
+        .regex(site_base_path_pattern, copy_error_site_base_path)
+        .refine((value) => !value.split("/").some((segment) => segment === "." || segment === ".."), copy_error_site_base_path)
+        .transform((value): `/${string}` => `/${value.slice(1)}${value.endsWith("/") ? "" : "/"}`)
+        .default(site_base_path_default),
 
     /**
      * 공개 사이트 루트 URL. 지정할 때만 robots.txt, sitemap.xml, 대표 주소, 링크 미리보기 태그 생성
@@ -128,6 +140,11 @@ export interface SiteConfig {
      * 문서 언어 태그, 기본값 ko. 예: en, en-US
      */
     lang?: z.input<typeof siteConfigSchema>["lang"];
+
+    /**
+     * 배포할 하위 경로, 기본값 /. 예: /project/
+     */
+    basePath?: z.input<typeof siteConfigSchema>["basePath"];
 
     /**
      * 공개 HTTP(S) 루트 주소, 지정 시 robots.txt, sitemap.xml, 대표 주소, 링크 미리보기 태그 생성

@@ -95,7 +95,14 @@ try {
 
     execFileSync(process.execPath, [compiler, "--project", "tsconfig.json"], {cwd: consumer, stdio: "inherit"});
 
-    for (const invalid of [{port: "4321"}, {navigation: [false]}, {status: [{phrase: "Reviewed", kind: "unknown"}]}, {titel: "Typo"}, {content: {root: false}}]) {
+    for (const invalid of [
+        {port: "4321"},
+        {basePath: false},
+        {navigation: [false]},
+        {status: [{phrase: "Reviewed", kind: "unknown"}]},
+        {titel: "Typo"},
+        {content: {root: false}},
+    ]) {
         await writeFile(configPath, `import type {SiteConfig} from "for-humanity";\nexport default ${JSON.stringify(invalid)} satisfies SiteConfig;\n`);
 
         const checked = spawnSync(process.execPath, [compiler, "--project", "tsconfig.json"], {cwd: consumer, encoding: "utf8"});
@@ -370,6 +377,7 @@ try {
     for (const file of ["template/content/private/.gitkeep", "template/content/asset/.gitkeep"]) {
         assert.equal(await readFile(join(packageRoot, file), "utf8"), "");
     }
+    assert.match(await readFile(join(packageRoot, "template/github-pages.yml"), "utf8"), /path: content\/dist/);
 
     const starter = join(consumer, "starter");
 
@@ -385,7 +393,7 @@ try {
 
     await writeFile(
         join(starter, "for-humanity.config.ts"),
-        'import type {SiteConfig} from "for-humanity";\nexport default {content: {root: "knowledge", public: "published", private: "internal"}} satisfies SiteConfig;\n',
+        'import type {SiteConfig} from "for-humanity";\nexport default {basePath: "/package-docs/", url: "https://example.github.io", content: {root: "knowledge", public: "published", private: "internal"}} satisfies SiteConfig;\n',
     );
 
     await writeFile(
@@ -397,6 +405,9 @@ try {
     execFileSync(process.execPath, [join(packageRoot, "dist/cli.js"), "build", starter], {cwd: consumer, stdio: "inherit"});
     assert.match(await readFile(join(starter, "knowledge/dist/index.html"), "utf8"), /Custom starter/);
     assert.match(await readFile(join(starter, "knowledge/dist/getting-started/index.html"), "utf8"), /Getting started/);
+    assert.match(await readFile(join(starter, "knowledge/dist/index.html"), "utf8"), /href="\/package-docs\/getting-started\/"/);
+    assert.match(await readFile(join(starter, "knowledge/dist/index.html"), "utf8"), /url\(\/package-docs\/_fh\/fonts\//);
+    assert.match(await readFile(join(starter, "knowledge/dist/sitemap.xml"), "utf8"), /https:\/\/example.github.io\/package-docs\/getting-started\//);
     assert.ok(!(await readdir(join(starter, "knowledge/dist"))).some((file) => file === "private" || file === "internal"));
 
     console.log(

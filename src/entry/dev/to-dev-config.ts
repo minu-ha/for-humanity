@@ -177,7 +177,8 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                 },
             },
             devServer({
-                exclude: params.source
+                base: params.site.basePath,
+                exclude: (params.source
                     ? [
                           ...viteClientPaths,
                           /^\/@id\//,
@@ -186,7 +187,8 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
                           /^\/src\/(component|page|style|store|constant|type|util)\//,
                           /^\/src\/entry\/browser\//,
                       ]
-                    : viteClientPaths,
+                    : viteClientPaths
+                ).map((pattern) => new RegExp(`^${escapeRegExp(params.site.basePath.slice(0, -1))}${pattern.source.slice(1)}`, pattern.flags)),
                 ignoreWatching: watch_ignored_dirs.map((dir) => `**/${dir}/**`),
                 handleHotUpdate: (context) => {
                     return context.file.endsWith(".css") ? undefined : [];

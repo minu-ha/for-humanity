@@ -55,7 +55,7 @@ export const test = base.extend<Record<never, never>, {navigationSite: string}>(
                 await mkdir(join(root, "dist/lifecycle"));
                 await writeFile(join(root, "dist/lifecycle/index.html"), html);
 
-                const server = await preview(toPreviewConfig({root, port: 0}));
+                const server = await preview(toPreviewConfig({root, port: 0, basePath: "/"}));
 
                 try {
                     const url = server.resolvedUrls?.local[0];

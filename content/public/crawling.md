@@ -25,6 +25,9 @@ export default {
 `url`에는 HTTP(S) 도메인의 루트 주소를 사용합니다. 하위 경로, 사용자 이름, 비밀번호, query, hash는 넣지 않습니다.
 예를 들어 `https://docs.example.com`은 가능하고 `https://example.com/docs/`는 사용할 수 없습니다.
 
+하위 경로 배포는 `url: "https://example.com"`, `basePath: "/docs/"`로 지정합니다. `basePath`는 `0.17.0`부터 지원합니다.
+대표 주소, 링크 미리보기 이미지와 사이트맵에 배포 경로가 함께 적용됩니다.
+
 ## Build the files
 
 ```sh
@@ -33,6 +36,10 @@ pnpm exec for-humanity preview
 ```
 
 기본 출력은 `content/dist/robots.txt`와 `content/dist/sitemap.xml`입니다. 두 파일을 나머지 빌드 결과와 함께 배포합니다.
+
+`basePath: "/docs/"`라면 두 파일의 배포 주소는 `/docs/robots.txt`와 `/docs/sitemap.xml`입니다.
+검색 엔진은 도메인 루트의 `/robots.txt`를 조회하므로 하위 경로의 robots 파일만으로 도메인 정책을 제어할 수는 없습니다.
+GitHub 프로젝트 사이트에서는 생성한 사이트맵 URL을 검색 엔진에 직접 등록할 수 있습니다.
 
 `url`을 생략하면 두 파일을 생성하지 않습니다. 설정을 바꾼 뒤에는 다시 빌드합니다.
 

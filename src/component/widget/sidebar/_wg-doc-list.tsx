@@ -1,5 +1,7 @@
 import clsx from "clsx";
-import type {NavigationGroup} from "@/component/widget/sidebar/_type/navigation-data";
+import type {NavigationData, NavigationGroup} from "@/component/widget/sidebar/_type/navigation-data";
+import {toPagePath} from "@/util/url/to-page-path";
+import {toSitePath} from "@/util/url/to-site-path";
 import "./_wg-doc-list.css";
 
 /**
@@ -10,6 +12,11 @@ export interface WgDocListProps {
      * 현재 단계의 문서와 하위 묶음
      */
     group: NavigationGroup;
+
+    /**
+     * 재귀 목록 전체에 적용할 배포 경로
+     */
+    basePath: NavigationData["basePath"];
 }
 
 export const WgDocList = (props: WgDocListProps) => {
@@ -23,7 +30,7 @@ export const WgDocList = (props: WgDocListProps) => {
                     <li className={clsx("wg_docList__item")} key={`doc:${doc.id}`}>
                         <a
                             className={clsx("wg_docList__link", doc.active && "wg_docList__link--active")}
-                            href={`/${doc.id}/`}
+                            href={toSitePath({basePath: props.basePath, path: toPagePath(doc.id)})}
                             title={doc.label}
                             aria-current={doc.active ? "page" : undefined}
                         >
@@ -33,7 +40,7 @@ export const WgDocList = (props: WgDocListProps) => {
                         {/**
                          * 하위 문서. 부모 아래에서도 기존 목록의 들여쓰기와 키보드 이동 유지
                          */}
-                        {doc.children.length > 0 && <WgDocList group={{name: doc.name, path: props.group.path, docs: doc.children, groups: []}} />}
+                        {doc.children.length > 0 && <WgDocList group={{name: doc.name, path: props.group.path, docs: doc.children, groups: []}} basePath={props.basePath} />}
                     </li>
                 );
             })}
@@ -45,7 +52,7 @@ export const WgDocList = (props: WgDocListProps) => {
                 return (
                     <li className={clsx("wg_docList__item")} key={`group:${JSON.stringify(group.path)}`}>
                         <span className={clsx("wg_docList__branch")}>{group.name}</span>
-                        <WgDocList group={group} />
+                        <WgDocList group={group} basePath={props.basePath} />
                     </li>
                 );
             })}

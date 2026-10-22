@@ -3,6 +3,8 @@ import {useLayoutEffect, useRef} from "hono/jsx";
 import {image_size_px} from "@/component/widget/cursor-face/_constant/image";
 import {position_offset_px, position_storage_key} from "@/component/widget/cursor-face/_constant/position";
 import {asset_favicon_path} from "@/constant/asset";
+import type {ResolvedSiteConfig} from "@/type/site-config";
+import {toSitePath} from "@/util/url/to-site-path";
 import "./wg-cursor-face.css";
 
 /**
@@ -13,6 +15,11 @@ export interface WgCursorFaceProps {
      * 브라우저 진입점에서만 참. ref와 전역 이벤트 연결 조건
      */
     ready: boolean;
+
+    /**
+     * 커서 이미지의 배포 경로
+     */
+    basePath: ResolvedSiteConfig["basePath"];
 }
 
 export const WgCursorFace = (props: WgCursorFaceProps) => {
@@ -174,7 +181,7 @@ export const WgCursorFace = (props: WgCursorFaceProps) => {
         <img
             ref={props.ready ? faceRef : undefined}
             className={clsx("wg_cursorFace__root")}
-            src={asset_favicon_path}
+            src={toSitePath({basePath: props.basePath, path: asset_favicon_path})}
             width={image_size_px}
             height={image_size_px}
             alt=""

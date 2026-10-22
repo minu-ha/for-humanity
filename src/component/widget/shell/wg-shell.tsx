@@ -12,6 +12,7 @@ import type {SiteAssets} from "@/type/site-assets";
 import type {ResolvedSiteConfig} from "@/type/site-config";
 import {toScriptJson} from "@/util/json/to-script-json";
 import {toPagePath} from "@/util/url/to-page-path";
+import {toSitePath} from "@/util/url/to-site-path";
 import "@/style/base.css";
 import "@/style/token.css";
 import "./wg-shell.css";
@@ -72,7 +73,7 @@ export const WgShell = (props: WgShellProps) => {
     const descriptionContent = description === undefined ? undefined : escapeHtml(description);
 
     // 공개 주소를 지정한 사이트만 대표 주소와 링크 미리보기 출력. 사이트맵과 같은 주소
-    const pageUrl = props.site.url === undefined ? undefined : `${props.site.url}${toPagePath(props.current)}`;
+    const pageUrl = props.site.url === undefined ? undefined : `${props.site.url}${toSitePath({basePath: props.site.basePath, path: toPagePath(props.current)})}`;
 
     head.push({
         title: props.title === undefined ? props.site.title : `${props.title} | ${props.site.title}`,
@@ -96,14 +97,21 @@ export const WgShell = (props: WgShellProps) => {
         ],
         style: [{textContent: props.assets.fontCss}],
         link: [
-            {rel: "icon", href: asset_favicon_path, type: "image/svg+xml"},
+            {rel: "icon", href: toSitePath({basePath: props.site.basePath, path: asset_favicon_path}), type: "image/svg+xml"},
             ...(pageUrl === undefined ? [] : [{rel: "canonical", href: pageUrl} satisfies Link]),
-            ...props.assets.preload.map<Link>((href) => ({rel: "preload", href, as: "font", type: "font/woff2", crossorigin: ""})),
-            ...props.assets.stylePaths.map<Link>((href) => ({rel: "stylesheet", href})),
+            ...props.assets.preload.map<Link>((href) => ({
+                rel: "preload",
+                href: toSitePath({basePath: props.site.basePath, path: href}),
+                as: "font",
+                type: "font/woff2",
+                crossorigin: "",
+            })),
+            ...props.assets.stylePaths.map<Link>((href) => ({rel: "stylesheet", href: toSitePath({basePath: props.site.basePath, path: href})})),
         ],
 
         // 저장소 소스 개발의 모듈 진입점. 탐색 마운트 전 첫 페인트 차단, Chromium의 render-blocking
-        script: props.assets.browser.kind === "module" ? [{type: "module", src: props.assets.browser.path, blocking: "render"}] : [],
+        script:
+            props.assets.browser.kind === "module" ? [{type: "module", src: toSitePath({basePath: props.site.basePath, path: props.assets.browser.path}), blocking: "render"}] : [],
     });
 
     return (

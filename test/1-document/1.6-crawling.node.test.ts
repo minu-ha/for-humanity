@@ -59,7 +59,7 @@ describe("크롤러 파일", () => {
             const docs = await readDocs({scope, processor: toProcessor({site, scope})});
             const store = {docs};
             const assets = {fontCss: "", preload: [], browser: {kind: "inline" as const, code: ""}, stylePaths: [asset_style_path]};
-            const app = toHttpApp({pages: toPageApp({site, store, assets}), crawling: toCrawlingApp({url, store}), files: new Map()});
+            const app = toHttpApp({pages: toPageApp({site, store, assets}), crawling: toCrawlingApp({url, basePath: "/", store}), files: new Map()});
             const robots = await app.request("/robots.txt");
             const sitemap = await app.request("/sitemap.xml");
             const xml = await sitemap.text();
@@ -112,7 +112,7 @@ describe("크롤러 파일", () => {
             const assets = {fontCss: "", preload: [], browser: {kind: "inline" as const, code: ""}, stylePaths: [asset_style_path]};
             const app = toPageApp({site, store: {docs}, assets});
             const result = await toSSG(app, {writeFile, mkdir}, {dir: scope.root});
-            const crawlerResult = await toSSG(toCrawlingApp({url, store: {docs}}), {writeFile, mkdir}, {dir: scope.root});
+            const crawlerResult = await toSSG(toCrawlingApp({url, basePath: "/", store: {docs}}), {writeFile, mkdir}, {dir: scope.root});
 
             /**
              * THEN

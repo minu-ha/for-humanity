@@ -63,6 +63,11 @@ export interface NavigationGroup {
  */
 export interface NavigationData {
     /**
+     * 서버와 브라우저 탐색이 공유하는 배포 경로
+     */
+    basePath: ResolvedSiteConfig["basePath"];
+
+    /**
      * 브랜드 이름
      */
     title: ResolvedSiteConfig["title"];
