@@ -64,7 +64,7 @@ for-humanity 의존성이 없으면 실행 중인 CLI 버전을 devDependencies�
 - `0.19.0`부터 지원, 기존 Pages 옵션 유지.
 - Worker 이름은 프로젝트 이름이나 폴더에서 유효한 후보를 제안. `--worker-name`으로 지정 가능.
 - `wrangler.jsonc`에 선택한 문서 루트의 `dist`, 끝 슬래시 정규화와 `404-page` 설정. 서버 진입점과 도메인 연결 미포함.
-- `.cloudflare/404.html`, `_headers`, 준비 스크립트 생성. 빌드가 두 파일을 `dist`에 복사.
+- `.cloudflare/404.html`, `_headers`, 준비 스크립트 생성. 헤더는 `dist`에 복사하고, 공통 빌드의 404가 없을 때만 오류 템플릿 복사.
 - `docs:build`와 `docs:deploy`, 기존 의존성이 없을 때 Wrangler 개발 의존성 추가.
 - Workers Builds에서는 빌드와 배포를 분리하고, 로컬에서는 `docs:deploy` 실행.
 - 기존 Wrangler 설정과 스크립트 충돌은 쓰기 전에 중단. 기존 Wrangler 의존성 위치와 버전 보존.
@@ -73,7 +73,7 @@ for-humanity 의존성이 없으면 실행 중인 CLI 버전을 devDependencies�
 ### Cloudflare Pages
 
 - 기본 basePath는 /.
-- 404.html과 빌드 후 출력으로 복사할 최소 준비 파일 생성. CLI의 공통 빌드 동작은 유지.
+- 404.html과 빌드 후 출력으로 복사할 최소 준비 파일 생성. 공통 빌드가 만든 404는 유지하고 없는 경우에만 템플릿 복사.
 - docs:build에 Cloudflare 출력 준비 단계를 연결.
 - Git 연동에 입력할 빌드 명령, 출력 경로, Node 버전과 선택한 패키지 매니저 설정 안내.
 - 공개 주소가 확인되지 않았으면 url을 추측해 저장하지 않음.

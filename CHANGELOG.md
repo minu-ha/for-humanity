@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Reduce the default desktop page width from 1920px to 1600px.
+- Add a centered, theme-aware 404 page with a sad variant of the pixel face and a home link. Generate `404.html` for every hosting target, use the same screen in `dev` and `preview`, and keep generated screens when Cloudflare helpers prepare deployment files. Set `statusImage` to a local image to replace the artwork; existing favicon and cursor artwork remain unchanged. The `404.html` document path is now reserved for the generated error page.
 
 ## 0.19.0 — 2026-10-23
 

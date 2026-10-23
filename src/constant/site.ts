@@ -34,6 +34,11 @@ export const site_lang_pattern = /^[a-z]{2,3}(?:-[a-z0-9]{2,8})*$/i;
 export const site_image_pattern = /\.(?:png|jpe?g|gif|webp)$/i;
 
 /**
+ * 상태 화면의 로컬 이미지 형식, SVG와 AVIF 포함
+ */
+export const site_status_image_pattern = /\.(?:svg|png|jpe?g|gif|webp|avif)$/i;
+
+/**
  * 커서 장식의 기본값. 설정에서 켠 사이트만 표시
  */
 export const site_cursor_face_default = false;

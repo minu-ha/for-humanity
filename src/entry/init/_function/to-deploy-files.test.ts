@@ -240,4 +240,36 @@ describe("초기화 배포 파일", () => {
             await expect(stat(join(root, "content", "dist"))).rejects.toMatchObject({code: "ENOENT"});
         });
     });
+
+    describe("생성된 상태 화면", () => {
+        test.for(["cloudflare-pages", "cloudflare-workers"] as const)("%s 준비 스크립트는 빌드가 생성한 사용자 404 화면을 보존한다", async (deploy, {root}) => {
+            /**
+             * GIVEN
+             * 호스팅 보조 파일과 빌드가 생성한 상태 화면
+             */
+            const files = await toDeployFiles({title: "Guide", content: "team notes", lang: "en", deploy, workerName: "team-docs", branch: "main", manager: "npm"});
+
+            for (const file of files) {
+                await mkdir(dirname(join(root, file.path)), {recursive: true});
+                await writeFile(join(root, file.path), file.content);
+            }
+
+            await mkdir(join(root, "team notes/dist"), {recursive: true});
+            await writeFile(join(root, "team notes/dist/404.html"), "CUSTOM_BUILT_STATUS_PAGE");
+
+            /**
+             * WHEN
+             * 배포 보조 스크립트 실행
+             */
+            const result = spawnSync(process.execPath, [join(root, ".cloudflare/prepare.mjs")], {cwd: root, encoding: "utf8"});
+            const html = await readFile(join(root, "team notes/dist/404.html"), "utf8");
+
+            /**
+             * THEN
+             * 기본 템플릿 복사로 사용자 화면 변경 없음
+             */
+            expect(result.status, result.stderr).toBe(0);
+            expect(html).toBe("CUSTOM_BUILT_STATUS_PAGE");
+        });
+    });
 });

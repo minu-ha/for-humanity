@@ -1,6 +1,6 @@
 import {Hono} from "hono";
 import {ssgParams} from "hono/ssg";
-import {toHtml} from "@/app/_function/to-page-app/_to-html";
+import {toHtml} from "@/app/_function/to-html";
 import {PgDoc} from "@/page/doc/pg-doc";
 import {PgHome} from "@/page/home/pg-home";
 import type {Doc} from "@/type/doc";

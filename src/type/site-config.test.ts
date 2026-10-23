@@ -3,6 +3,28 @@ import {type SiteConfig, siteConfigSchema} from "@/type/site-config";
 
 describe("사이트 설정", () => {
     describe("기본값과 공개 입력", () => {
+        test("상태 이미지는 공개 설정에서 SVG 경로를 받고 영상 형식은 거부한다", () => {
+            /**
+             * GIVEN
+             * 교체할 상태 이미지의 문서 루트 기준 경로
+             */
+            const input = {statusImage: "asset/face.svg"} satisfies SiteConfig;
+
+            /**
+             * WHEN
+             * 공개 설정과 지원하지 않는 이미지 형식 검증
+             */
+            const result = siteConfigSchema.parse(input);
+            const invalid = siteConfigSchema.safeParse({statusImage: "asset/face.mov"});
+
+            /**
+             * THEN
+             * 이미지 경로 보존과 형식 오류
+             */
+            expect(result.statusImage).toBe("asset/face.svg");
+            expect(invalid.success).toBe(false);
+        });
+
         test("설정을 생략하면 기본 이름, 포트, 탐색 순서를 적용한다", () => {
             /**
              * GIVEN

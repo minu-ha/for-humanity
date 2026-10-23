@@ -109,6 +109,21 @@ export const copy_error_image_format = "unsupported image format";
 export const copy_error_media_format = "unsupported video or audio format";
 
 /**
+ * 없는 문서의 상태 제목
+ */
+export const copy_not_found_title = "Page not found";
+
+/**
+ * 없는 문서의 원인과 복귀 안내
+ */
+export const copy_not_found_description = "This page may have moved or no longer exists. Find your way back from the home page.";
+
+/**
+ * 상태 화면의 홈 복귀 링크
+ */
+export const copy_status_home = "Back to home";
+
+/**
  * 자원 오류의 이유. track에서 WebVTT가 아닌 형식
  */
 export const copy_error_track_format = "unsupported text track format";

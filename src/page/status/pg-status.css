@@ -1,0 +1,21 @@
+.pg_status__document {
+    scrollbar-gutter: auto;
+}
+
+.pg_status__root {
+    margin: 0;
+    background: var(--app-color-ground);
+    color: var(--app-color-text);
+    font-family: var(--app-font-body);
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+    text-wrap: pretty;
+    -webkit-font-smoothing: antialiased;
+}
+
+.pg_status__main {
+    display: grid;
+    min-height: 100svh;
+    padding: 48px 24px;
+    place-items: center;
+}

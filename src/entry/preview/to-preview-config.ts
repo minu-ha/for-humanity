@@ -1,11 +1,14 @@
 import {existsSync} from "node:fs";
-import {join, resolve} from "node:path";
+import {readFile} from "node:fs/promises";
+import {join, relative, resolve} from "node:path";
 import type {InlineConfig} from "vite";
+import {http_status_not_found} from "@/app/_constant/http";
 import type {SiteParams} from "@/app/load-site";
-import {asset_font_dir} from "@/constant/asset";
+import {asset_font_dir, asset_not_found_path} from "@/constant/asset";
 import {font_cache_control} from "@/constant/font";
 import {copy_error_missing_build} from "@/entry/preview/_constant/copy";
 import type {ResolvedSiteConfig} from "@/type/site-config";
+import {isOutsideRoot} from "@/util/file/is-outside-root";
 
 /**
  * 정적 미리보기 실행 입력
@@ -69,6 +72,34 @@ export const toPreviewConfig = (params: PreviewParams): InlineConfig => {
                             }
 
                             next();
+                        });
+
+                        server.middlewares.use(async (request, response, next) => {
+                            if (request.url === undefined || (request.method !== "GET" && request.method !== "HEAD") || !existsSync(join(outDir, asset_not_found_path))) {
+                                next();
+
+                                return;
+                            }
+
+                            try {
+                                const url = request.url.split(/[?#]/)[0];
+                                const path = join(outDir, decodeURIComponent(url));
+
+                                // Vite의 후속 HTML 응답 대상, 생성된 문서의 정상 응답 유지
+                                if (url.endsWith(".html") && !isOutsideRoot(relative(outDir, path)) && existsSync(path)) {
+                                    next();
+
+                                    return;
+                                }
+
+                                const html = await readFile(join(outDir, asset_not_found_path));
+
+                                response.statusCode = http_status_not_found;
+                                response.setHeader("Content-Type", "text/html; charset=utf-8");
+                                response.end(request.method === "HEAD" ? undefined : html);
+                            } catch (error) {
+                                next(error);
+                            }
                         });
                     };
                 },

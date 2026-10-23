@@ -98,9 +98,9 @@ test.describe("문서 탐색", () => {
                                 await documents.evaluate((element) => element.getBoundingClientRect().width),
                             );
 
-                            // 본문은 1920px 페이지 안에서 양쪽 바깥 여백 28px, 사이드바 200px, 간격 32px을 뺀 나머지 전체
+                            // 본문은 최대 1600px 페이지 안에서 양쪽 바깥 여백 28px, 사이드바 200px, 간격 32px을 뺀 나머지 전체
                             expect(await page.getByRole("main").evaluate((element) => element.getBoundingClientRect().width)).toBe(
-                                await page.evaluate(() => Math.min(document.documentElement.getBoundingClientRect().width, 1920) - (28 + 200 + 32) * 2),
+                                await page.evaluate(() => Math.min(document.documentElement.getBoundingClientRect().width, 1600) - (28 + 200 + 32) * 2),
                             );
                         }
 
@@ -797,7 +797,9 @@ test.describe("문서 탐색", () => {
                  * WHEN
                  * 목록 위에서 휠 이동
                  */
-                await page.mouse.move(100, 300);
+                const center = await documents.evaluate((element) => element.getBoundingClientRect().left + element.getBoundingClientRect().width / 2);
+
+                await page.mouse.move(center, 300);
                 await page.mouse.wheel(0, 300);
 
                 // 휠 스크롤이 반영되는 화면 갱신 대기

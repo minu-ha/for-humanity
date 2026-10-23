@@ -44,10 +44,33 @@ export default {title: "Project notes"};
 | `basePath` | 배포할 URL 경로, 예: `/project/`. `0.17.0`부터 지원 | `/` |
 | `url` | 배포한 사이트의 루트 주소 | 없음 |
 | `image` | 링크 미리보기 이미지의 문서 루트 기준 경로 | 없음 |
+| `statusImage` | 404 화면 이미지의 문서 루트 기준 경로. Unreleased 기능 | 기본 픽셀 얼굴의 슬픈 표정 |
 | `port` | dev와 preview 포트, 1부터 65535까지 정수 | `4321` |
 | `cursorFace` | 데스크톱에서 마우스를 따라다니는 픽셀 얼굴 | `false` |
 
 사이트 홈의 제목과 본문은 `content/README.md`에 작성합니다. 문서 페이지의 설명에는 각 문서의 `label`을 사용합니다. `url`을 지정하면 검색 엔진용 파일, 대표 주소, 링크 미리보기 태그를 생성합니다. `image`는 `url`과 함께 사용하며 PNG, JPEG, GIF, WebP 파일을 지정합니다. URL 형식과 출력은 [Crawling](crawling.md)을 참고합니다.
+
+## Status screen
+
+공통 404 화면과 `statusImage`는 Unreleased 기능으로 다음 패키지 릴리스에 포함됩니다.
+
+없는 문서는 중앙의 픽셀 얼굴과 404 번호, 안내, 홈 복귀 링크로 표시합니다. 밝은 테마와 어두운 테마를 따르며 JavaScript 없이도 읽고 이동할 수 있습니다.
+`build`는 같은 화면을 `<content.root>/dist/404.html`에 생성하고, `dev`와 `preview`는 없는 문서에 이 화면과 HTTP 404를 반환합니다. 오류 화면은 검색 색인에서 제외합니다.
+`404.html`은 생성되는 오류 파일의 예약 경로입니다. `404.html.md`처럼 같은 경로를 만드는 문서 이름은 사용할 수 없습니다.
+
+이미지를 교체하려면 파일을 `content/asset/status.svg`처럼 문서 루트 안에 두고 설정합니다.
+
+```ts
+import type {SiteConfig} from "for-humanity";
+
+export default {
+    statusImage: "asset/status.svg",
+} satisfies SiteConfig;
+```
+
+경로는 `content.root` 기준입니다. SVG, PNG, JPEG, GIF, WebP, AVIF를 지원하며 `url` 없이도 사용할 수 있습니다.
+공개 빌드에서는 private 폴더나 문서 루트 밖의 파일을 사용할 수 없습니다. 파일을 바꿨다면 다시 빌드합니다.
+이 설정은 404의 그림만 바꾸며 favicon과 커서 얼굴은 유지합니다. 생략하면 기본 슬픈 픽셀 얼굴을 사용합니다.
 
 ## Content paths
 

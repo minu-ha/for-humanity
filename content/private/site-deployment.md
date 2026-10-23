@@ -20,7 +20,7 @@ pnpm exec wrangler login
 pnpm deploy:site
 ```
 
-`build:site`는 패키지와 공개 문서를 빌드한 뒤 `.cloudflare/_headers`와 `.cloudflare/404.html`을 `content/dist`에 복사합니다.
+`build:site`는 패키지와 공개 문서, 공통 `404.html`을 빌드한 뒤 `.cloudflare/_headers`를 `content/dist`에 복사합니다.
 `deploy:site`는 같은 빌드 후 `wrangler deploy`를 실행합니다. 원본 `content` 전체를 업로드하지 않습니다.
 문서 루트와 공개 범위는 [Content layout](content-layout.md), 패키지 공개 절차는 [Maintenance](maintenance.md#packaging-and-release)를 참고합니다.
 
@@ -62,13 +62,14 @@ Workers의 Builds에 저장소를 연결하고 다음 값을 지정합니다.
 | File | Purpose |
 | --- | --- |
 | `.cloudflare/_headers` | HTML 재검증과 원문 보존, 내용 지문이 붙은 자원의 장기 캐시 |
-| `.cloudflare/404.html` | 없는 문서에 표시할 페이지 |
-| `util/prepare-site.ts` | 빌드 후 두 파일을 출력 폴더에 복사 |
+| `content/dist/404.html` | 패키지 빌드가 생성한 상태 화면, 별도 원본 복사 없음 |
+| `util/prepare-site.ts` | 빌드 후 헤더를 출력 폴더에 복사 |
 
 HTML에는 `public, max-age=0, must-revalidate, no-transform`, `/_fh/*`에는 `public, max-age=31536000, immutable`을 적용합니다.
 내용 지문이 붙은 자원은 내용 변경 시 URL도 바뀝니다. `_headers`는 Workers 정적 자산에서 직접 해석합니다.
 헤더 계약은 [Headers](https://developers.cloudflare.com/workers/static-assets/headers/)를 참고합니다.
-로컬 `preview`는 일반 정적 파일 미리보기이므로, 플랫폼의 경로와 헤더는 `wrangler dev` 또는 배포 주소에서 확인합니다.
+로컬 `preview`도 없는 문서에 생성된 화면과 HTTP 404를 반환합니다. 플랫폼의 경로 정규화와 헤더는 `wrangler dev` 또는 배포 주소에서 확인합니다.
+상태 화면 이미지는 `statusImage`로 교체합니다. 기본 이미지는 favicon의 얼굴과 같은 색, 윤곽, 눈을 유지한 슬픈 표정이며 favicon과 커서 이미지는 유지합니다.
 
 ## Pages migration
 

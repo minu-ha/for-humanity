@@ -33,6 +33,11 @@ export const copy_error_site_lang = "lang must be a language tag such as ko or e
 export const copy_error_site_image = "image must be a PNG, JPEG, GIF or WebP file";
 
 /**
+ * 상태 화면 이미지의 형식 오류
+ */
+export const copy_error_status_image = "statusImage must be an SVG, PNG, JPEG, GIF, WebP or AVIF file";
+
+/**
  * 탐색 순서에 같은 묶음을 두 번 지정한 설정 오류
  */
 export const copy_error_navigation_clash = "Duplicate navigation groups";

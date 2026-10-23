@@ -49,6 +49,8 @@ test/
     2.3-mermaid.integration.spec.ts
     2.3-mermaid.node.test.ts
     2.4-accessibility.e2e.spec.ts ↔ content/public, src/component                       ACC
+    2.5-status.node.test.ts      ↔ src/page/status, src/component/ui/status, load-site   STA
+    2.5-status.e2e.spec.ts
   3-server/
     3.1-dev.e2e.spec.ts          ↔ src/entry/dev                                        DEV
     3.2-preview.node.test.ts     ↔ src/entry/preview                                    PRV
@@ -106,7 +108,7 @@ test("[MRM-014] 모듈 수신에 실패하면 안내와 원문을 표시한다",
 
 **번호(제목 접두)**
 
-- 형식은 `[<영역 코드>-<3자리>]`입니다. 영역 코드는 CMD(CLI 명령), CFG(설정), CNT(공개와 내부 문서), DOC(문서 수집), HOM(홈), LNK(링크와 목차), COD(코드 블록), AST(자원), CRW(크롤러 파일), SHL(페이지 셸), NAV(문서 탐색), MRM(다이어그램), DEV(개발 서버), PRV(정적 미리보기), ACC(접근성)입니다. 새 영역은 세 글자 코드를 하나 더합니다.
+- 형식은 `[<영역 코드>-<3자리>]`입니다. 영역 코드는 CMD(CLI 명령), CFG(설정), CNT(공개와 내부 문서), DOC(문서 수집), HOM(홈), LNK(링크와 목차), COD(코드 블록), AST(자원), CRW(크롤러 파일), SHL(페이지 셸), NAV(문서 탐색), MRM(다이어그램), DEV(개발 서버), PRV(정적 미리보기), ACC(접근성), STA(상태 화면)입니다. 새 영역은 세 글자 코드를 하나 더합니다.
 - 코드마다 1부터 선언 순서대로 붙입니다. 지운 번호는 재사용하지 않습니다. 새 케이스는 해당 묶음 끝에 그 코드의 다음 번호로 붙입니다. 같은 코드가 여러 층에 있으면 층과 무관하게 이어 붙입니다.
 - 반복 시나리오는 자료에 `caseId`를 두고 제목에 `[$caseId]`나 `` `[${scenario.caseId}]` ``로 넣습니다. 변형마다 번호가 하나씩 붙습니다.
 - `--grep DOC-002`(Playwright)나 `-t DOC-002`(Vitest)로 한 건만 실행합니다.

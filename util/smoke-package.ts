@@ -56,7 +56,7 @@ try {
     );
 
     const configPath = join(consumer, "for-humanity.config.ts");
-    const site = {url: "https://docs.example.org", navigation: [nestedGroup, "Guide"]};
+    const site = {url: "https://docs.example.org", navigation: [nestedGroup, "Guide"], statusImage: "asset/local image.svg"};
     const config = `import type {SiteConfig} from "for-humanity";\nexport default ${JSON.stringify(site)} satisfies SiteConfig;\n`;
 
     await writeFile(configPath, config);
@@ -182,6 +182,11 @@ try {
     assert.ok(imagePath);
     assert.equal(await readFile(join(output, imagePath), "utf8"), await readFile(join(consumer, "content/asset", "local image.svg"), "utf8"));
     assert.ok(child.includes(`href="${imagePath}"`));
+    const notFound = await readFile(join(output, "404.html"), "utf8");
+
+    assert.match(notFound, /404 Page not found/);
+    assert.match(notFound, /name="robots" content="noindex/);
+    assert.ok(notFound.includes(`src="${imagePath}"`));
     assert.equal([...child.matchAll(/href="\/guide\/options\/"/g)].length, 1);
     assert.equal([...child.matchAll(/aria-current="page"/g)].length, 1);
     assert.equal([...childNavigation.matchAll(/wg_docList__link--active/g)].length, 1);
@@ -320,6 +325,15 @@ try {
                     await expect(page.getByRole("heading", {name: "Package home", exact: true})).toBeVisible();
                 }
 
+                const missing = await page.goto(`${url}/missing/nested/`);
+
+                assert.equal(missing?.status(), 404);
+                await expect(page.getByRole("heading", {name: "404 Page not found"})).toBeVisible();
+                await expect(page.locator("main img")).toHaveAttribute("src", imagePath);
+                await expect.poll(() => page.locator("main img").evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
+                await page.getByRole("link", {name: "Back to home"}).click();
+                await expect(page.getByRole("heading", {name: command === "dev" ? "Installed development" : "Package home", exact: true})).toBeVisible();
+
                 await page.goto(`${url}/guide/`);
                 await expect(page.locator('[data-mermaid-status="rendered"]')).toHaveCount(1);
                 await page.goto(`${url}/guide/options/`);
@@ -434,8 +448,10 @@ try {
 
         const initializedOutput = join(initialized, setup.content, "dist");
         const initializedHome = await readFile(join(initializedOutput, "index.html"), "utf8");
+        const initializedStatus = await readFile(join(initializedOutput, "404.html"), "utf8");
 
         assert.match(initializedHome, /Project notes/);
+        assert.match(initializedStatus, /404 Page not found/);
         assert.doesNotMatch(initializedHome, /INIT_PRIVATE_SENTINEL/);
         assert.ok(!(await readdir(initializedOutput)).includes("private"));
 
@@ -444,7 +460,7 @@ try {
             assert.match(await readFile(join(initialized, ".github/workflows/docs.yml"), "utf8"), /pnpm install --frozen-lockfile/);
         } else if (setup.deploy === "cloudflare-pages" || setup.deploy === "cloudflare-workers") {
             execFileSync(process.execPath, [join(initialized, ".cloudflare/prepare.mjs")], {cwd: consumer, stdio: "inherit"});
-            assert.match(await readFile(join(initializedOutput, "404.html"), "utf8"), /Page not found/);
+            assert.equal(await readFile(join(initializedOutput, "404.html"), "utf8"), initializedStatus);
 
             if (setup.deploy === "cloudflare-workers") {
                 const config = await readFile(join(initialized, "wrangler.jsonc"), "utf8");

@@ -25,6 +25,8 @@ flowchart LR
 | `src/entry/dev/to-dev-config.ts` | Vite 서버, Hono 연결, 문서 갱신 | Node.js, dev |
 | `src/entry/preview/to-preview-config.ts` | Vite 정적 미리보기, 출력 경로, 404, 폰트 캐시 | Node.js, preview |
 | `src/app/_function/to-page-app/to-page-app.tsx` | 첫 화면과 문서 라우트, Hono JSX → HTML | Node.js |
+| `src/page/status/pg-status.tsx` | 스크립트 없는 상태 문서, 글꼴과 사이트 테마 | Node.js |
+| `src/component/ui/status/ui-status.tsx` | 교체 가능한 이미지, 상태 번호와 안내, 복귀 링크 | 공통 JSX |
 | `src/app/_function/to-http-app.ts` | 등록 자원, 페이지와 크롤러 앱 위임 | Node.js, dev |
 | `src/app/_function/to-crawling-app.ts` | 공개 URL을 설정한 사이트의 robots.txt와 사이트맵 응답 | Node.js |
 | `src/entry/browser/browser.tsx` | 입력 검증, 저장소 생성, 브라우저 셸 마운트 | Browser, 동기 |
@@ -72,7 +74,9 @@ flowchart LR
 | 정적 운영 | 호스팅 서비스가 빌드 파일 제공 | 현재 공개 문서 배포 |
 | 향후 동적 운영 | 배포 환경이 Hono 앱 실행, 인증, DB 조회, API 응답 | 서버 기능 제공 |
 
-preview는 Vite의 `preview()`로 사이트 출력 폴더만 제공합니다. 패키지 코드가 들어 있는 저장소 루트 `dist`와 사이트 출력 폴더를 혼동하지 않도록 출력 경로를 명시합니다. 소비 프로젝트의 Vite 설정과 환경 파일은 자동으로 실행하지 않습니다. `appType: "mpa"`로 없는 문서에 홈 화면 대신 404를 반환하며, 끝 슬래시 없는 문서 주소는 폴더의 `index.html`로 연결합니다. 폰트는 기존 장기 캐시 헤더를 유지하고 없는 파일에는 적용하지 않습니다. 빌드 결과가 없으면 서버 시작 전에 실패합니다.
+preview는 Vite의 `preview()`로 사이트 출력 폴더만 제공합니다. 패키지 코드가 들어 있는 저장소 루트 `dist`와 사이트 출력 폴더를 혼동하지 않도록 출력 경로를 명시합니다. 소비 프로젝트의 Vite 설정과 환경 파일은 자동으로 실행하지 않습니다. `appType: "mpa"`로 없는 문서에 홈 화면 대신 404를 반환하며, 끝 슬래시 없는 문서 주소는 폴더의 `index.html`로 연결합니다. 생성된 HTML은 Vite의 HTML 응답으로 넘기고, 없는 문서는 빌드된 `404.html`과 HTTP 404로 응답합니다. 폰트는 기존 장기 캐시 헤더를 유지하고 없는 파일에는 적용하지 않습니다. 빌드 결과가 없으면 서버 시작 전에 실패합니다.
+
+`loadSite`는 `PgStatus`와 `UiStatus`로 404 문서를 한 번 렌더하고 primitive HTML 문자열로 보관합니다. 개발 응답과 정적 `404.html`은 같은 결과를 사용합니다. `statusImage`의 로컬 파일은 링크 미리보기 이미지와 같은 경로 검사와 내용 지문 등록을 사용하며, 공개 주소 설정 없이도 배포합니다. 다른 상태는 `UiStatus`의 번호, 문구, 이미지와 링크를 교체해 표현합니다. 실제 HTTP 상태와 라우트는 해당 기능의 실행 계층이 소유합니다.
 
 dev와 preview는 `localhost`의 사이트 설정 포트를 사용하며, 포트 충돌 시 다른 번호로 자동 변경하지 않습니다. preview에는 Hono 앱, 개발 클라이언트, 파일 감시를 연결하지 않습니다. CLI와 브라우저 fixture는 같은 `toPreviewConfig`를 사용합니다. `@hono/node-server` 직접 의존성은 제거했지만 `@hono/vite-dev-server`의 전이 의존성은 남습니다.
 

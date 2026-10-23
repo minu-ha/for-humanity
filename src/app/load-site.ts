@@ -1,17 +1,29 @@
 import {existsSync, readFileSync, realpathSync, statSync} from "node:fs";
 import {join, relative} from "node:path";
-import {copy_error_content_folder, copy_error_content_root_missing, copy_error_public_missing, copy_hint_content_layout} from "@/app/_constant/copy";
+import {jsx} from "hono/jsx/jsx-runtime";
+import {
+    copy_error_content_folder,
+    copy_error_content_root_missing,
+    copy_error_public_missing,
+    copy_hint_content_layout,
+    copy_not_found_description,
+    copy_not_found_title,
+    copy_status_home,
+} from "@/app/_constant/copy";
 import {crawling_reserved_roots} from "@/app/_constant/crawling";
+import {http_status_not_found} from "@/app/_constant/http";
 import {loadMermaidAssets} from "@/app/_function/load-mermaid-assets";
 import {readDocs} from "@/app/_function/read-docs";
 import {readHome} from "@/app/_function/read-home";
 import {toCrawlingApp} from "@/app/_function/to-crawling-app";
+import {toHtml} from "@/app/_function/to-html";
 import {toHttpApp} from "@/app/_function/to-http-app";
 import {toPageApp} from "@/app/_function/to-page-app/to-page-app";
-import {toPreviewImagePath} from "@/app/_function/to-preview-image-path";
 import {toProcessor} from "@/app/_function/to-processor/to-processor";
-import {asset_favicon_path, asset_font_dir, asset_style_path} from "@/constant/asset";
+import {toSiteImagePath} from "@/app/_function/to-site-image-path";
+import {asset_favicon_path, asset_font_dir, asset_status_image_path, asset_style_path} from "@/constant/asset";
 import {font_body_css, font_brand_css, font_mono_css} from "@/constant/font";
+import {PgStatus} from "@/page/status/pg-status";
 import type {ContentScope} from "@/type/content-scope";
 import type {SiteAssets} from "@/type/site-assets";
 import type {ResolvedSiteConfig} from "@/type/site-config";
@@ -66,7 +78,14 @@ export const loadSite = async (params: SiteParams) => {
     const body = toFontCss({css: join(params.kitRoot, font_body_css), fontDir: asset_font_dir, basePath: params.site.basePath});
     const brand = toFontCss({css: join(params.kitRoot, font_brand_css), fontDir: asset_font_dir, basePath: params.site.basePath});
     const stylePaths = params.stylePaths ?? [toAssetPath({path: asset_style_path, file: join(params.kitRoot, "dist/cli.css")})];
-    const files = new Map([[asset_favicon_path, join(params.kitRoot, "src/asset/favicon.svg")], ...mono.files, ...body.files, ...brand.files]);
+    const statusImagePath = toAssetPath({path: asset_status_image_path, file: join(params.kitRoot, "src/asset/face-sad.svg")});
+    const files = new Map([
+        [asset_favicon_path, join(params.kitRoot, "src/asset/favicon.svg")],
+        [statusImagePath, join(params.kitRoot, "src/asset/face-sad.svg")],
+        ...mono.files,
+        ...body.files,
+        ...brand.files,
+    ]);
 
     if (params.stylePaths === undefined) {
         files.set(stylePaths[0], join(params.kitRoot, "dist/cli.css"));
@@ -107,24 +126,47 @@ export const loadSite = async (params: SiteParams) => {
 
     const store = {docs, home};
 
+    const assets: SiteAssets = {
+        stylePaths,
+        browser: params.browser ?? {kind: "inline", code: readFileSync(join(params.kitRoot, "dist/browser.js"), "utf8")},
+        fontCss: [mono.css, body.css, brand.css].join("\n"),
+        preload: [...brand.files.keys(), ...mono.files.keys(), ...body.files.keys()],
+
+        // 링크 미리보기 이미지. 공개 주소가 있을 때만 배포
+        image:
+            params.site.url === undefined || params.site.image === undefined
+                ? undefined
+                : `${params.site.url}${toSitePath({basePath: params.site.basePath, path: toSiteImagePath({scope, files, path: params.site.image})})}`,
+    };
+
+    const notFound = String(
+        await toHtml(
+            jsx(PgStatus, {
+                site: params.site,
+                assets,
+                status: {
+                    code: "404",
+                    title: copy_not_found_title,
+                    description: copy_not_found_description,
+                    image: toSitePath({
+                        basePath: params.site.basePath,
+                        path: params.site.statusImage === undefined ? statusImagePath : toSiteImagePath({scope, files, path: params.site.statusImage}),
+                    }),
+                    action: {href: params.site.basePath, label: copy_status_home},
+                },
+            }),
+        ),
+    );
+
     const pages = toPageApp({
         site: params.site,
         store,
-        assets: {
-            stylePaths,
-            browser: params.browser ?? {kind: "inline", code: readFileSync(join(params.kitRoot, "dist/browser.js"), "utf8")},
-            fontCss: [mono.css, body.css, brand.css].join("\n"),
-            preload: [...brand.files.keys(), ...mono.files.keys(), ...body.files.keys()],
-
-            // 링크 미리보기 이미지. 공개 주소가 있을 때만 배포
-            image:
-                params.site.url === undefined || params.site.image === undefined
-                    ? undefined
-                    : `${params.site.url}${toSitePath({basePath: params.site.basePath, path: toPreviewImagePath({scope, files, path: params.site.image})})}`,
-        },
+        assets,
     });
+
+    pages.notFound((c) => c.html(notFound, http_status_not_found));
 
     const crawling = params.site.url === undefined ? undefined : toCrawlingApp({url: params.site.url, basePath: params.site.basePath, store});
 
-    return {pages, crawling, files, app: toHttpApp({pages, crawling, files})};
+    return {pages, crawling, files, notFound, app: toHttpApp({pages, crawling, files})};
 };

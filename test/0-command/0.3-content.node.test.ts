@@ -7,7 +7,7 @@ import {loadSite} from "@/app/load-site";
 import {siteConfigSchema} from "@/type/site-config";
 
 /**
- * 공개, 내부 문서 범위(src/app/load-site.ts, src/app/_function/to-preview-image-path.ts, src/util/file/assert-content-path.ts) 검증
+ * 공개, 내부 문서 범위(src/app/load-site.ts, src/app/_function/to-site-image-path.ts, src/util/file/assert-content-path.ts) 검증
  */
 describe("공개와 내부 문서", () => {
     describe("공개 빌드", () => {

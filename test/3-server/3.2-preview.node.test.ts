@@ -30,6 +30,7 @@ const test = base.extend<PreviewFixture>({
         await mkdir(join(root, "dist/guide/file.html"));
         await mkdir(join(root, "dist/_fh/fonts"), {recursive: true});
         await writeFile(join(root, "dist/index.html"), "<!doctype html><h1>Built home</h1>");
+        await writeFile(join(root, "dist/404.html"), "<!doctype html><h1>Built not found</h1>");
         await writeFile(join(root, "dist/guide/nested/index.html"), "<!doctype html><h1>Nested document</h1>");
         await writeFile(join(root, "dist/guide/file.html/index.html"), "<!doctype html><h1>Nested document</h1>");
         await writeFile(join(root, "dist/_fh/fonts/sample.1234.woff2"), "font bytes");
@@ -227,6 +228,36 @@ describe("정적 미리보기", () => {
              * 원본 재처리 없이 빌드 결과 유지
              */
             expect(await response.text()).toBe("<!doctype html><h1>Built home</h1>");
+        });
+    });
+
+    describe("상태 화면", () => {
+        test("[PRV-008] 없는 경로는 빌드한 404 화면을 사용하고 HEAD 응답은 본문을 포함하지 않는다", async ({previewUrl, root}) => {
+            /**
+             * GIVEN
+             * 사용자 상태 화면을 포함한 빌드 결과
+             */
+            const notFound = "<!doctype html><h1>Custom 404 screen</h1>";
+            await writeFile(join(root, "dist/404.html"), notFound);
+
+            /**
+             * WHEN
+             * 없는 문서의 본문과 헤더 요청
+             */
+            const response = await fetch(`${previewUrl}missing/nested/`);
+            const html = await response.text();
+            const head = await fetch(`${previewUrl}missing/nested/`, {method: "HEAD"});
+            const headBody = await head.text();
+
+            /**
+             * THEN
+             * HTML 오류 화면과 실제 404 상태, HEAD 본문 제외
+             */
+            expect(response.status).toBe(404);
+            expect(response.headers.get("content-type")).toEqual(expect.stringContaining("text/html"));
+            expect(html).toBe(notFound);
+            expect(head.status).toBe(404);
+            expect(headBody).toBe("");
         });
     });
 });

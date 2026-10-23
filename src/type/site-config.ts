@@ -1,6 +1,14 @@
 import {z} from "zod";
 import {content_default} from "@/constant/content";
-import {copy_error_navigation_clash, copy_error_site_base_path, copy_error_site_image, copy_error_site_lang, copy_error_site_url, copy_site_title_default} from "@/constant/copy";
+import {
+    copy_error_navigation_clash,
+    copy_error_site_base_path,
+    copy_error_site_image,
+    copy_error_site_lang,
+    copy_error_site_url,
+    copy_error_status_image,
+    copy_site_title_default,
+} from "@/constant/copy";
 import {
     site_base_path_default,
     site_base_path_pattern,
@@ -12,6 +20,7 @@ import {
     site_port_default,
     site_port_max,
     site_port_min,
+    site_status_image_pattern,
 } from "@/constant/site";
 import {status_default_phrases, status_kind} from "@/constant/status";
 import {contentConfigSchema} from "@/type/content-config";
@@ -65,6 +74,11 @@ export const siteConfigSchema = z.object({
      * 링크 미리보기 이미지. 문서 루트 기준 경로, url 지정 시에만 배포
      */
     image: z.string().regex(site_image_pattern, copy_error_site_image).optional(),
+
+    /**
+     * 상태 화면 이미지의 문서 루트 기준 경로, 생략 시 기본 픽셀 얼굴
+     */
+    statusImage: z.string().regex(site_status_image_pattern, copy_error_status_image).optional(),
 
     /**
      * dev, preview 서버 포트. 같은 기계에서 문서 프로젝트 둘을 나란히 띄울 때 한쪽에 지정
@@ -155,6 +169,11 @@ export interface SiteConfig {
      * 링크 미리보기 이미지의 문서 루트 기준 경로. PNG, JPEG, GIF, WebP, url과 함께 사용
      */
     image?: z.input<typeof siteConfigSchema>["image"];
+
+    /**
+     * 상태 화면 이미지의 문서 루트 기준 경로, SVG, PNG, JPEG, GIF, WebP, AVIF
+     */
+    statusImage?: z.input<typeof siteConfigSchema>["statusImage"];
 
     /**
      * dev와 preview 포트, 1부터 65535까지 정수, 기본값 4321

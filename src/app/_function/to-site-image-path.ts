@@ -7,9 +7,9 @@ import {assertContentPath} from "@/util/file/assert-content-path";
 import {toAssetPath} from "@/util/file/to-asset-path";
 
 /**
- * 링크 미리보기 이미지의 배포 입력
+ * 설정 이미지의 배포 입력
  */
-interface PreviewImageParams {
+interface SiteImageParams {
     /**
      * 경로 해석과 공개 범위 검사의 문서 범위
      */
@@ -27,12 +27,12 @@ interface PreviewImageParams {
 }
 
 /**
- * 링크 미리보기 이미지의 내용 지문 URL. 배포 목록에 등록
+ * 설정 이미지의 내용 지문 URL과 배포 목록 등록
  *
  *   - 문서 이미지와 같은 공개 범위 검사, 같은 내용은 같은 URL
  *   - 없는 파일과 폴더는 빌드 실패
  */
-export const toPreviewImagePath = (params: PreviewImageParams) => {
+export const toSiteImagePath = (params: SiteImageParams) => {
     const file = resolve(params.scope.root, params.path);
 
     assertContentPath({scope: params.scope, path: file});

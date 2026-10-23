@@ -13,7 +13,7 @@ import {
     copy_error_frontmatter,
 } from "@/app/_constant/copy";
 import type {Processor} from "@/app/_type/processor";
-import {asset_dir, asset_favicon_path} from "@/constant/asset";
+import {asset_dir, asset_favicon_path, asset_not_found_path} from "@/constant/asset";
 import {doc_data_absent} from "@/constant/doc";
 import type {ContentScope} from "@/type/content-scope";
 import type {Doc} from "@/type/doc";
@@ -73,7 +73,8 @@ export const readDocs = async (params: ReadDocsParams): Promise<Doc[]> => {
                 /[\p{Cc}]/u.test(id) ||
                 params.reserved?.includes(segments[0]) === true ||
                 segments[0] === asset_dir ||
-                segments[0] === asset_favicon_path.slice(1)
+                segments[0] === asset_favicon_path.slice(1) ||
+                segments[0] === asset_not_found_path.slice(1)
             ) {
                 throw new Error(`${copy_error_doc_id}: ${path}`);
             }
