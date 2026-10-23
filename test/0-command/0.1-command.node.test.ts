@@ -189,12 +189,14 @@ describe("CLI 명령", () => {
                             }
 
                             try {
-                                return (await fetch(url, {signal: AbortSignal.timeout(500)})).status;
+                                return (await fetch(url, {signal: AbortSignal.timeout(2000)})).status;
                             } catch {
                                 return 0;
                             }
                         },
-                        {timeout: 10000},
+
+                        // Windows CI의 dev 서버 첫 시작과 첫 렌더링 시간 포함
+                        {timeout: 20000},
                     )
                     .toBe(200);
 
