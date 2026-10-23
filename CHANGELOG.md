@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.21.0 — 2026-10-23
+
+**Upgrade:** Existing projects remain compatible. `dev` and `preview` still listen on `localhost` unless `--host` or `host` is set. The `build` output, document syntax and Node.js requirements are unchanged.
+
 - Add opt-in LAN access to `dev` and `preview` with `--host`, `--host <address>` or the `host` configuration. CLI options take precedence over configuration; the default remains `localhost`. The default `dev` command also accepts `for-humanity --host`.
 
 ## 0.20.0 — 2026-10-23

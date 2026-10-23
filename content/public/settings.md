@@ -46,14 +46,14 @@ export default {title: "Project notes"};
 | `image` | 링크 미리보기 이미지의 문서 루트 기준 경로 | 없음 |
 | `statusImage` | 404 화면 이미지의 문서 루트 기준 경로. `0.20.0`부터 지원 | 기본 픽셀 얼굴의 슬픈 표정 |
 | `port` | dev와 preview 포트, 1부터 65535까지 정수 | `4321` |
-| `host` | dev와 preview 수신 주소. 다음 릴리스에 포함 예정 | `localhost` |
+| `host` | dev와 preview 수신 주소. `0.21.0`부터 지원 | `localhost` |
 | `cursorFace` | 데스크톱에서 마우스를 따라다니는 픽셀 얼굴 | `false` |
 
 사이트 홈의 제목과 본문은 `content/README.md`에 작성합니다. 문서 페이지의 설명에는 각 문서의 `label`을 사용합니다. `url`을 지정하면 검색 엔진용 파일, 대표 주소, 링크 미리보기 태그를 생성합니다. `image`는 `url`과 함께 사용하며 PNG, JPEG, GIF, WebP 파일을 지정합니다. URL 형식과 출력은 [Crawling](crawling.md)을 참고합니다.
 
 ## Local server
 
-`host`는 다음 릴리스에 포함될 기능이며 npm `0.20.0`에서는 사용할 수 없습니다.
+`host`는 `0.21.0`부터 지원합니다.
 
 같은 네트워크의 다른 기기에서도 접속하려면 다음과 같이 설정합니다.
 

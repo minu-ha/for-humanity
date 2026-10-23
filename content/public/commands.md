@@ -75,7 +75,7 @@ npx for-humanity init --yes --deploy cloudflare-workers --worker-name team-docs 
 
 ## Connect over a local network
 
-`--host`와 설정의 `host`는 다음 릴리스에 포함될 기능입니다. npm `0.20.0`에는 포함되지 않습니다.
+`--host`와 설정의 `host`는 `0.21.0`부터 지원합니다.
 
 같은 네트워크의 다른 기기에서 접속하려면 `--host`를 붙입니다. 값을 생략하면 모든 IPv4 인터페이스에서 연결을 받습니다.
 
