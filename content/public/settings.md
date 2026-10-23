@@ -46,9 +46,35 @@ export default {title: "Project notes"};
 | `image` | 링크 미리보기 이미지의 문서 루트 기준 경로 | 없음 |
 | `statusImage` | 404 화면 이미지의 문서 루트 기준 경로. `0.20.0`부터 지원 | 기본 픽셀 얼굴의 슬픈 표정 |
 | `port` | dev와 preview 포트, 1부터 65535까지 정수 | `4321` |
+| `host` | dev와 preview 수신 주소. 다음 릴리스에 포함 예정 | `localhost` |
 | `cursorFace` | 데스크톱에서 마우스를 따라다니는 픽셀 얼굴 | `false` |
 
 사이트 홈의 제목과 본문은 `content/README.md`에 작성합니다. 문서 페이지의 설명에는 각 문서의 `label`을 사용합니다. `url`을 지정하면 검색 엔진용 파일, 대표 주소, 링크 미리보기 태그를 생성합니다. `image`는 `url`과 함께 사용하며 PNG, JPEG, GIF, WebP 파일을 지정합니다. URL 형식과 출력은 [Crawling](crawling.md)을 참고합니다.
+
+## Local server
+
+`host`는 다음 릴리스에 포함될 기능이며 npm `0.20.0`에서는 사용할 수 없습니다.
+
+같은 네트워크의 다른 기기에서도 접속하려면 다음과 같이 설정합니다.
+
+```ts
+import type {SiteConfig} from "for-humanity";
+
+export default {
+    host: true,
+    port: 9999,
+} satisfies SiteConfig;
+```
+
+| Value | Binding |
+| --- | --- |
+| 생략 또는 `false` | `localhost`에서만 수신 |
+| `true` | 모든 네트워크 인터페이스에서 수신 |
+| `"0.0.0.0"` | 모든 IPv4 인터페이스에서 수신 |
+| IP 또는 hostname 문자열 | 지정한 주소에서 수신, 예: `"192.168.1.144"`, `"::1"`, `"localhost"` |
+
+주소에는 `http://` 같은 프로토콜이나 `:9999` 같은 포트를 붙이지 않습니다. 포트는 `port`에 따로 지정합니다. 변경 후에는 서버를 다시 시작합니다.
+이 설정은 `dev`와 `preview`에 적용됩니다. 한 번만 바꾸려면 CLI의 `--host`를 사용하며 CLI 옵션이 설정보다 우선합니다. 브라우저 접속 주소와 공개 문서만 공유하는 방법은 [Commands](commands.md#connect-over-a-local-network)를 참고합니다.
 
 ## Status screen
 

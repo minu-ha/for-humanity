@@ -3,7 +3,7 @@
 import {readFile} from "node:fs/promises";
 import {defineCommand, runMain} from "citty";
 import {z} from "zod/mini";
-import {command_args, command_default} from "@/entry/cli/_constant/command";
+import {command_args, command_default, command_server_args} from "@/entry/cli/_constant/command";
 import {copy_build_description, copy_dev_description, copy_error_option, copy_hint_help, copy_preview_description, copy_tool_description} from "@/entry/cli/_constant/copy";
 import {init_args, init_copy} from "@/entry/init/_constant/init";
 import {logger} from "@/util/logger/logger";
@@ -27,7 +27,8 @@ const main = defineCommand({
             return;
         }
 
-        const option = Object.keys(context.args).find((key) => key !== "_");
+        const acceptsHost = context.rawArgs[0] === "dev" || context.rawArgs[0] === "preview";
+        const option = Object.entries<unknown>(context.args).find(([key, value]) => key !== "_" && (key !== "host" || value === false || !acceptsHost))?.[0];
 
         if (option !== undefined) {
             logger.error(`${copy_error_option}: ${option}. ${copy_hint_help}`);
@@ -59,7 +60,7 @@ const main = defineCommand({
                 name,
                 defineCommand({
                     meta: {name, description},
-                    args: command_args,
+                    args: name === "build" ? command_args : command_server_args,
 
                     /**
                      * 도움말 조회와 분리한 사이트 실행
@@ -75,4 +76,7 @@ const main = defineCommand({
     },
 });
 
-await runMain(main);
+// 수신 옵션으로 시작한 기본 dev 명령을 Citty의 하위 명령 선택 전에 정규화
+const rawArgs = process.argv.slice(2);
+
+await runMain(main, {rawArgs: rawArgs[0] === "--host" || rawArgs[0]?.startsWith("--host=") ? [command_default, ...rawArgs] : rawArgs});

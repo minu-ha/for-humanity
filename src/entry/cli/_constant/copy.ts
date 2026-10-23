@@ -24,6 +24,11 @@ export const copy_preview_description = "Preview the built static site locally";
 export const copy_dir_description = "Project folder";
 
 /**
+ * 서버 수신 주소 CLI 옵션 설명
+ */
+export const copy_host_description = "Listen on this address; omit the value to allow LAN connections";
+
+/**
  * 미지원 CLI 옵션 오류. 옵션 이름 추가
  */
 export const copy_error_option = "Unknown option";

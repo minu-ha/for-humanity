@@ -78,7 +78,7 @@ preview는 Vite의 `preview()`로 사이트 출력 폴더만 제공합니다. �
 
 `loadSite`는 `PgStatus`와 `UiStatus`로 404 문서를 한 번 렌더하고 primitive HTML 문자열로 보관합니다. 개발 응답과 정적 `404.html`은 같은 결과를 사용합니다. `statusImage`의 로컬 파일은 링크 미리보기 이미지와 같은 경로 검사와 내용 지문 등록을 사용하며, 공개 주소 설정 없이도 배포합니다. 다른 상태는 `UiStatus`의 번호, 문구, 이미지와 링크를 교체해 표현합니다. 실제 HTTP 상태와 라우트는 해당 기능의 실행 계층이 소유합니다.
 
-dev와 preview는 `localhost`의 사이트 설정 포트를 사용하며, 포트 충돌 시 다른 번호로 자동 변경하지 않습니다. preview에는 Hono 앱, 개발 클라이언트, 파일 감시를 연결하지 않습니다. CLI와 브라우저 fixture는 같은 `toPreviewConfig`를 사용합니다. `@hono/node-server` 직접 의존성은 제거했지만 `@hono/vite-dev-server`의 전이 의존성은 남습니다.
+dev와 preview는 기본적으로 `localhost`의 사이트 설정 포트를 사용하며, `host` 설정이나 CLI의 `--host [address]`로 수신 주소를 바꿀 수 있습니다. CLI 옵션이 설정보다 우선하며 포트 충돌 시 다른 번호로 자동 변경하지 않습니다. Vite의 기본 hostname 허용 목록은 유지합니다. preview에는 Hono 앱, 개발 클라이언트, 파일 감시를 연결하지 않습니다. CLI와 브라우저 fixture는 같은 `toPreviewConfig`를 사용합니다. `@hono/node-server` 직접 의존성은 제거했지만 `@hono/vite-dev-server`의 전이 의존성은 남습니다.
 
 API를 추가해도 개발 명령 하나와 같은 HTTP 포트를 유지하는 방향입니다. Vite가 API를 생성하거나 DB를 실행하는 것은 아닙니다. Hono 라우트와 인증, 저장소 코드를 구현하고 개발 플러그인에 연결해야 합니다. 현재는 문서 앱만 연결되어 있으며 API와 DB 확장 설정은 제공하지 않습니다.
 

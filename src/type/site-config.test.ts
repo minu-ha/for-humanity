@@ -48,6 +48,7 @@ describe("사이트 설정", () => {
                 lang: "ko",
                 basePath: "/",
                 port: 4321,
+                host: "localhost",
                 cursorFace: false,
                 navigation: [],
                 status: [
@@ -102,6 +103,7 @@ describe("사이트 설정", () => {
                 lang: "ko",
                 basePath: "/",
                 port: 4322,
+                host: "localhost",
                 cursorFace: true,
                 navigation: [["Guide"], ["Projects", "Research"]],
                 status: [],
@@ -219,6 +221,48 @@ describe("사이트 설정", () => {
             /**
              * THEN
              * 외부 경로, 예약 경로, 중첩된 수집 범위 거부
+             */
+            expect(result.success).toBe(false);
+        });
+    });
+
+    describe("서버 수신 주소", () => {
+        test.each([true, false, "0.0.0.0", "127.0.0.1", "::1", "localhost", "dev.example.test"])("host %s 입력은 수신 설정으로 보존한다", (host) => {
+            /**
+             * GIVEN
+             * LAN 전체, 루프백과 특정 주소 입력
+             */
+            const input = {host} satisfies SiteConfig;
+
+            /**
+             * WHEN
+             * 공개 사이트 설정 검증
+             */
+            const result = siteConfigSchema.parse(input);
+
+            /**
+             * THEN
+             * 지정한 수신 주소 보존
+             */
+            expect(result.host).toBe(host);
+        });
+
+        test.each(["", "   ", "http://localhost", "localhost:9999", "/tmp/server.sock", 9999])("host %s 입력은 잘못된 주소로 거부한다", (host) => {
+            /**
+             * GIVEN
+             * 주소 이외의 형식과 포트를 섞은 수신 설정
+             */
+            const input = {host};
+
+            /**
+             * WHEN
+             * 외부 설정 입력 검증
+             */
+            const result = siteConfigSchema.safeParse(input);
+
+            /**
+             * THEN
+             * 서버 시작 전 입력 거부
              */
             expect(result.success).toBe(false);
         });

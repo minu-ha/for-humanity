@@ -80,7 +80,7 @@ describe("하위 경로 배포", () => {
         expect(sitemap).not.toContain("hidden");
         expect(await readdir(join(root, "content/dist"))).not.toContain(basePath.split("/")[1]);
 
-        const server = await preview(toPreviewConfig({root: join(root, "content"), port: 0, basePath}));
+        const server = await preview(toPreviewConfig({root: join(root, "content"), port: 0, host: "localhost", basePath}));
 
         try {
             const origin = server.resolvedUrls?.local[0];

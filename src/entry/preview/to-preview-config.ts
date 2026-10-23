@@ -25,6 +25,11 @@ interface PreviewParams {
     port: ResolvedSiteConfig["port"];
 
     /**
+     * 루프백, LAN 전체 또는 특정 인터페이스의 수신 주소
+     */
+    host: ResolvedSiteConfig["host"];
+
+    /**
      * 미리보기 URL의 배포 경로
      */
     basePath: ResolvedSiteConfig["basePath"];
@@ -48,7 +53,7 @@ export const toPreviewConfig = (params: PreviewParams): InlineConfig => {
         publicDir: false,
         appType: "mpa",
         build: {outDir},
-        preview: {port: params.port, strictPort: true, host: "localhost"},
+        preview: {port: params.port, strictPort: true, host: params.host},
         plugins: [
             {
                 name: "for-humanity:preview",

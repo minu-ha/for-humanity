@@ -38,6 +38,11 @@ export const copy_error_site_image = "image must be a PNG, JPEG, GIF or WebP fil
 export const copy_error_status_image = "statusImage must be an SVG, PNG, JPEG, GIF, WebP or AVIF file";
 
 /**
+ * 서버 수신 주소의 잘못된 형식
+ */
+export const copy_error_site_host = "host must be true, false, an IP address or a hostname without a protocol or port";
+
+/**
  * 탐색 순서에 같은 묶음을 두 번 지정한 설정 오류
  */
 export const copy_error_navigation_clash = "Duplicate navigation groups";

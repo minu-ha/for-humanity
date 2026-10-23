@@ -49,6 +49,16 @@ export const site_cursor_face_default = false;
 export const site_port_default = 4321;
 
 /**
+ * dev, preview의 기본 루프백 수신 주소
+ */
+export const site_host_default = "localhost";
+
+/**
+ * 값 없는 --host 옵션의 모든 IPv4 인터페이스 수신
+ */
+export const site_host_network = "0.0.0.0";
+
+/**
  * 포트 번호 하한. TCP
  */
 export const site_port_min = 1;

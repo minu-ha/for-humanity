@@ -6,9 +6,11 @@ import {toSSG} from "hono/ssg";
 import {readProject} from "@/app/_function/read-project";
 import {loadSite} from "@/app/load-site";
 import {asset_not_found_path} from "@/constant/asset";
-import type {command_args} from "@/entry/cli/_constant/command";
+import {site_host_network} from "@/constant/site";
+import type {command_args, command_server_args} from "@/entry/cli/_constant/command";
 import {copy_error_project_args} from "@/entry/cli/_constant/copy";
 import {toPreviewConfig} from "@/entry/preview/to-preview-config";
+import {siteConfigSchema} from "@/type/site-config";
 import {toErrorMessage} from "@/util/error/to-error-message";
 import {logger} from "@/util/logger/logger";
 
@@ -24,7 +26,12 @@ interface CliCommandParams {
     /**
      * 기본 문서 경로를 적용한 Citty 인자
      */
-    args: ParsedArgs<typeof command_args>;
+    args: ParsedArgs<typeof command_args> & {
+        /**
+         * dev와 preview의 일회성 수신 주소, 생략 시 설정 파일 사용
+         */
+        host?: ParsedArgs<typeof command_server_args>["host"];
+    };
 }
 
 /**
@@ -36,14 +43,18 @@ export const runSiteCommand = async (params: CliCommandParams) => {
             throw new Error(copy_error_project_args);
         }
 
+        // CLI 입력 검증과 설정 파일보다 우선하는 수신 주소
+        const host = params.args.host === undefined ? undefined : siteConfigSchema.shape.host.parse(params.args.host === "" ? site_host_network : params.args.host);
+
         // dist의 실행 청크 기준 패키지 루트
         const kitRoot = fileURLToPath(new URL("../", import.meta.url));
         const project = await readProject(params.args.dir);
+        const site = {...project.site, host: host ?? project.site.host};
         const outDir = join(project.root, "dist");
 
         if (params.command === "preview") {
             const vite = await import("vite");
-            const server = await vite.preview(toPreviewConfig({root: project.root, port: project.site.port, basePath: project.site.basePath}));
+            const server = await vite.preview(toPreviewConfig({root: project.root, port: site.port, host: site.host, basePath: site.basePath}));
 
             server.printUrls();
 
@@ -53,7 +64,7 @@ export const runSiteCommand = async (params: CliCommandParams) => {
         if (params.command === "dev") {
             const dev = await import("@/entry/dev/start-dev-server");
 
-            await dev.startDevServer({root: project.root, kitRoot, site: project.site, source: false, includePrivate: true});
+            await dev.startDevServer({root: project.root, kitRoot, site, source: false, includePrivate: true});
 
             return;
         }

@@ -27,7 +27,7 @@ export const test = base.extend<Record<never, never>, {docsSite: string; basePat
 
                 execFileSync(process.execPath, ["dist/cli.js", "build", root]);
 
-                const server = await preview(toPreviewConfig({root: join(root, "content"), port: 0, basePath}));
+                const server = await preview(toPreviewConfig({root: join(root, "content"), port: 0, host: "localhost", basePath}));
 
                 try {
                     const url = server.resolvedUrls?.local[0];

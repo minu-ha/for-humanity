@@ -19,6 +19,8 @@ pnpm add -D --save-exact for-humanity@latest
 
 ## Unreleased
 
+- Add opt-in LAN access to `dev` and `preview` with `--host`, `--host <address>` or the `host` configuration. CLI options take precedence over configuration; the default remains `localhost`. The default `dev` command also accepts `for-humanity --host`.
+
 ## 0.20.0 — 2026-10-23
 
 **Upgrade:** Rebuild and redeploy for the narrower layout and new 404 screen. `statusImage` is optional. If an older `.cloudflare/prepare.mjs` copies `404.html` unconditionally, remove that copy or copy only when the output is absent; keep `_headers` preparation. Rename any document that would generate `/404.html/`, such as `public/404.html.md`, because `404.html` is now reserved. Node.js requirements and the other existing CLI and configuration options are unchanged.

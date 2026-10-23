@@ -60,7 +60,7 @@ export const toDevConfig = (params: DevParams): InlineConfig => {
         server: {
             port: params.site.port,
             strictPort: true,
-            host: "localhost",
+            host: params.site.host,
             fs: {
                 allow: [kitRoot],
 

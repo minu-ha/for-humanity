@@ -87,7 +87,7 @@ export const test = base.extend<{runtime: BrowserRuntime}, {mermaidSite: string}
                 await mkdir(join(root, "dist/lifecycle"));
                 await writeFile(join(root, "dist/lifecycle/index.html"), html);
 
-                const server = await preview(toPreviewConfig({root, port: 0, basePath: "/"}));
+                const server = await preview(toPreviewConfig({root, port: 0, host: "localhost", basePath: "/"}));
 
                 try {
                     const url = server.resolvedUrls?.local[0];

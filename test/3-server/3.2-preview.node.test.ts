@@ -39,7 +39,7 @@ const test = base.extend<PreviewFixture>({
         await writeFile(join(root, "vite.config.ts"), 'throw new Error("Consumer Vite config must not run");\n');
         await writeFile(join(root, ".env.production"), "VITE_PREVIEW_PRIVATE=private-value\n");
 
-        const server = await preview(toPreviewConfig({root, port: 0, basePath: "/"}));
+        const server = await preview(toPreviewConfig({root, port: 0, host: "localhost", basePath: "/"}));
 
         try {
             await use(server);

@@ -3,6 +3,7 @@ import {content_default} from "@/constant/content";
 import {
     copy_error_navigation_clash,
     copy_error_site_base_path,
+    copy_error_site_host,
     copy_error_site_image,
     copy_error_site_lang,
     copy_error_site_url,
@@ -13,6 +14,7 @@ import {
     site_base_path_default,
     site_base_path_pattern,
     site_cursor_face_default,
+    site_host_default,
     site_image_pattern,
     site_lang_default,
     site_lang_pattern,
@@ -84,6 +86,11 @@ export const siteConfigSchema = z.object({
      * dev, preview 서버 포트. 같은 기계에서 문서 프로젝트 둘을 나란히 띄울 때 한쪽에 지정
      */
     port: z.int().min(site_port_min).max(site_port_max).default(site_port_default),
+
+    /**
+     * dev와 preview 수신 주소, true는 LAN 전체, false와 생략은 localhost
+     */
+    host: z.union([z.boolean(), z.ipv4(), z.ipv6(), z.hostname()], {error: copy_error_site_host}).default(site_host_default),
 
     /**
      * 데스크톱 커서 옆 픽셀 얼굴, 기본 꺼짐. favicon은 설정과 무관
@@ -179,6 +186,11 @@ export interface SiteConfig {
      * dev와 preview 포트, 1부터 65535까지 정수, 기본값 4321
      */
     port?: z.input<typeof siteConfigSchema>["port"];
+
+    /**
+     * dev와 preview 수신 주소, true는 LAN 전체, false와 생략은 localhost
+     */
+    host?: z.input<typeof siteConfigSchema>["host"];
 
     /**
      * 데스크톱 커서 얼굴 표시, 기본값 false

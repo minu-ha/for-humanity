@@ -56,7 +56,7 @@ try {
     );
 
     const configPath = join(consumer, "for-humanity.config.ts");
-    const site = {url: "https://docs.example.org", navigation: [nestedGroup, "Guide"], statusImage: "asset/local image.svg"};
+    const site = {url: "https://docs.example.org", navigation: [nestedGroup, "Guide"], statusImage: "asset/local image.svg", host: true};
     const config = `import type {SiteConfig} from "for-humanity";\nexport default ${JSON.stringify(site)} satisfies SiteConfig;\n`;
 
     await writeFile(configPath, config);
@@ -97,6 +97,7 @@ try {
 
     for (const invalid of [
         {port: "4321"},
+        {host: 9999},
         {basePath: false},
         {navigation: [false]},
         {status: [{phrase: "Reviewed", kind: "unknown"}]},
@@ -208,7 +209,7 @@ try {
     for (const command of ["dev", "preview"] as const) {
         const reservation = createServer();
 
-        reservation.listen(0, "localhost");
+        reservation.listen(0, "127.0.0.1");
         await once(reservation, "listening");
 
         const address = reservation.address();
@@ -222,7 +223,7 @@ try {
 
         await writeFile(configPath, `import type {SiteConfig} from "for-humanity";\nexport default ${JSON.stringify({...site, port: address.port})} satisfies SiteConfig;\n`);
 
-        const server = spawn(process.execPath, [join(packageRoot, "dist/cli.js"), command, "."], {
+        const server = spawn(process.execPath, [join(packageRoot, "dist/cli.js"), command, ".", "--host", "127.0.0.1"], {
             cwd: consumer,
 
             // biome-ignore lint/style/useNamingConvention: Vite의 디버그 환경 변수 계약
@@ -241,7 +242,7 @@ try {
         });
 
         try {
-            const url = `http://localhost:${address.port}`;
+            const url = `http://127.0.0.1:${address.port}`;
 
             await expect
                 .poll(

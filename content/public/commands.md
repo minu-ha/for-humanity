@@ -73,6 +73,32 @@ npx for-humanity init --yes --deploy cloudflare-workers --worker-name team-docs 
 `preview`는 마지막 빌드 결과를 보여 줍니다. 문서를 수정했다면 다시 `build`해야 합니다.
 두 서버는 기본적으로 localhost와 포트 `4321`을 사용합니다. 포트가 사용 중이면 기존 서버를 종료하거나 설정의 `port`로 다른 포트를 지정합니다.
 
+## Connect over a local network
+
+`--host`와 설정의 `host`는 다음 릴리스에 포함될 기능입니다. npm `0.20.0`에는 포함되지 않습니다.
+
+같은 네트워크의 다른 기기에서 접속하려면 `--host`를 붙입니다. 값을 생략하면 모든 IPv4 인터페이스에서 연결을 받습니다.
+
+```sh
+pnpm exec for-humanity dev --host
+# 명령을 생략해도 dev 실행
+pnpm exec for-humanity --host
+# 특정 인터페이스만 사용
+pnpm exec for-humanity dev --host 192.168.1.144
+```
+
+설정의 `port`가 `9999`라면 다른 기기에서 `http://192.168.1.144:9999`로 접속합니다. 예시 IP는 서버를 실행하는 컴퓨터의 실제 IP로 바꿉니다. `0.0.0.0`은 수신 설정이며 브라우저에 입력할 주소는 아닙니다.
+터미널에 표시되는 Network 주소를 사용할 수 있습니다. 연결되지 않으면 같은 네트워크인지, 방화벽이 해당 포트를 허용하는지 확인합니다.
+
+매번 적용하려면 [Settings](settings.md#local-server)의 `host`를 설정합니다. CLI의 `--host`가 설정 파일보다 우선하며 `build`에는 적용되지 않습니다. 주소에는 프로토콜이나 포트를 넣지 않고 포트는 설정의 `port`로 지정합니다.
+
+`dev`는 private 문서도 함께 보여 줍니다. 공개 문서만 공유하려면 빌드한 뒤 `preview`를 실행합니다.
+
+```sh
+pnpm exec for-humanity build
+pnpm exec for-humanity preview --host
+```
+
 ## Help and troubleshooting
 
 ```sh

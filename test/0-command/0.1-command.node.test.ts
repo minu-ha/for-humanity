@@ -1,5 +1,7 @@
-import {spawnSync} from "node:child_process";
+import {spawn, spawnSync} from "node:child_process";
+import {once} from "node:events";
 import {mkdir, readFile, writeFile} from "node:fs/promises";
+import {createServer} from "node:net";
 import {join, resolve} from "node:path";
 import {test} from "@test/_fixture/temp-root";
 import {describe, expect} from "vitest";
@@ -39,6 +41,12 @@ describe("CLI 명령", () => {
                 expect(help.result.stdout).toContain("USAGE");
                 expect(help.result.stdout).toContain(help.args.length === 1 ? "COMMANDS" : "[DIR]");
                 expect(help.result.stderr).toBe("");
+
+                if (help.args[0] === "dev" || help.args[0] === "preview") {
+                    expect(help.result.stdout).toContain("--host");
+                } else if (help.args[0] === "build") {
+                    expect(help.result.stdout).not.toContain("--host");
+                }
             }
 
             for (const version of versions) {
@@ -60,7 +68,15 @@ describe("CLI 명령", () => {
              * WHEN
              * 잘못된 명령, 옵션, 초과 인자의 CLI 실행
              */
-            const runs = [["unknown"], ["build", "--unknown"], ["--unknown", "build"], ["build", ".", "extra"]].map((args) => {
+            const runs = [
+                ["unknown"],
+                ["build", "--unknown"],
+                ["--unknown", "build"],
+                ["build", ".", "extra"],
+                ["build", "--host"],
+                ["dev", "--no-host"],
+                ["preview", "--host", "http://localhost"],
+            ].map((args) => {
                 return {args, result: spawnSync(process.execPath, [cli, ...args], {cwd: root, encoding: "utf8", timeout: 5000})};
             });
 
@@ -112,6 +128,95 @@ describe("CLI 명령", () => {
             expect(result.stderr).toContain("README.md:3");
             expect(result.stderr).toContain("missing.md");
             expect(await readFile(join(root, "content/dist/index.html"), "utf8")).toContain("Local home");
+        });
+    });
+
+    describe("서버 수신 주소", () => {
+        test.for([
+            {caseId: "CMD-004", name: "dev의 명시적 CLI 주소", command: "dev", args: ["--host", "127.0.0.1"], host: "192.0.2.1"},
+            {caseId: "CMD-005", name: "preview의 값 없는 CLI 옵션", command: "preview", args: ["--host"], host: "192.0.2.1"},
+            {caseId: "CMD-006", name: "preview의 설정 파일 주소", command: "preview", args: [], host: "127.0.0.1"},
+            {caseId: "CMD-007", name: "기본 dev 명령의 LAN 설정", command: undefined, args: [], host: true},
+            {caseId: "CMD-008", name: "기본 dev 명령의 값 없는 CLI 옵션", command: undefined, args: ["--host"], host: "192.0.2.1"},
+            {caseId: "CMD-009", name: "기본 dev 명령의 CLI 주소", command: undefined, args: ["--host", "127.0.0.1"], host: "192.0.2.1"},
+            {caseId: "CMD-010", name: "기본 dev 명령의 등호 CLI 주소", command: undefined, args: ["--host=127.0.0.1"], host: "192.0.2.1"},
+        ])("[$caseId] $name 입력을 적용해 HTTP 요청을 받는다", async (scenario, {root}) => {
+            /**
+             * GIVEN
+             * 빈 포트와 수신 주소를 지정한 최소 문서 프로젝트
+             */
+            const reservation = createServer();
+            reservation.listen(0, "127.0.0.1");
+            await once(reservation, "listening");
+            const address = reservation.address();
+
+            if (address === null || typeof address === "string") {
+                throw new Error("테스트 서버의 빈 포트가 없습니다");
+            }
+
+            await new Promise<void>((resolve, reject) => reservation.close((error) => (error === undefined ? resolve() : reject(error))));
+            await mkdir(join(root, "content/public"), {recursive: true});
+            await mkdir(join(root, "content/dist"));
+            await writeFile(join(root, "content/README.md"), "# Network home\n");
+            await writeFile(join(root, "content/dist/index.html"), "<!doctype html><h1>Network home</h1>");
+            await writeFile(join(root, "for-humanity.config.mjs"), `export default ${JSON.stringify({port: address.port, host: scenario.host})};\n`);
+
+            /**
+             * WHEN
+             * 실제 설치 진입점의 서버 명령 실행
+             */
+            const server = spawn(process.execPath, [resolve("dist/cli.js"), ...(scenario.command === undefined ? [] : [scenario.command]), ...scenario.args], {
+                cwd: root,
+                stdio: ["ignore", "pipe", "pipe"],
+            });
+            let log = "";
+
+            server.stdout.on("data", (chunk) => {
+                log += String(chunk);
+            });
+            server.stderr.on("data", (chunk) => {
+                log += String(chunk);
+            });
+
+            try {
+                const url = `http://127.0.0.1:${address.port}/`;
+
+                await expect
+                    .poll(
+                        async () => {
+                            if (server.exitCode !== null) {
+                                throw new Error(log);
+                            }
+
+                            try {
+                                return (await fetch(url, {signal: AbortSignal.timeout(500)})).status;
+                            } catch {
+                                return 0;
+                            }
+                        },
+                        {timeout: 10000},
+                    )
+                    .toBe(200);
+
+                /**
+                 * THEN
+                 * 지정한 주소로의 실제 HTTP 연결과 문서 응답
+                 */
+                expect(await (await fetch(url)).text()).toContain("Network home");
+            } finally {
+                if (server.exitCode === null && server.signalCode === null) {
+                    const stopped = once(server, "exit", {signal: AbortSignal.timeout(5000)});
+                    server.kill("SIGTERM");
+
+                    try {
+                        await stopped;
+                    } finally {
+                        if (server.exitCode === null && server.signalCode === null) {
+                            server.kill("SIGKILL");
+                        }
+                    }
+                }
+            }
         });
     });
 });
