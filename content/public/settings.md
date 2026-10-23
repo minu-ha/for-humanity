@@ -44,7 +44,7 @@ export default {title: "Project notes"};
 | `basePath` | 배포할 URL 경로, 예: `/project/`. `0.17.0`부터 지원 | `/` |
 | `url` | 배포한 사이트의 루트 주소 | 없음 |
 | `image` | 링크 미리보기 이미지의 문서 루트 기준 경로 | 없음 |
-| `statusImage` | 404 화면 이미지의 문서 루트 기준 경로. Unreleased 기능 | 기본 픽셀 얼굴의 슬픈 표정 |
+| `statusImage` | 404 화면 이미지의 문서 루트 기준 경로. `0.20.0`부터 지원 | 기본 픽셀 얼굴의 슬픈 표정 |
 | `port` | dev와 preview 포트, 1부터 65535까지 정수 | `4321` |
 | `cursorFace` | 데스크톱에서 마우스를 따라다니는 픽셀 얼굴 | `false` |
 
@@ -52,7 +52,7 @@ export default {title: "Project notes"};
 
 ## Status screen
 
-공통 404 화면과 `statusImage`는 Unreleased 기능으로 다음 패키지 릴리스에 포함됩니다.
+공통 404 화면과 `statusImage`는 `0.20.0`부터 지원합니다.
 
 없는 문서는 중앙의 픽셀 얼굴과 404 번호, 안내, 홈 복귀 링크로 표시합니다. 밝은 테마와 어두운 테마를 따르며 JavaScript 없이도 읽고 이동할 수 있습니다.
 `build`는 같은 화면을 `<content.root>/dist/404.html`에 생성하고, `dev`와 `preview`는 없는 문서에 이 화면과 HTTP 404를 반환합니다. 오류 화면은 검색 색인에서 제외합니다.

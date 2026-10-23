@@ -19,6 +19,10 @@ pnpm add -D --save-exact for-humanity@latest
 
 ## Unreleased
 
+## 0.20.0 — 2026-10-23
+
+**Upgrade:** Rebuild and redeploy for the narrower layout and new 404 screen. `statusImage` is optional. If an older `.cloudflare/prepare.mjs` copies `404.html` unconditionally, remove that copy or copy only when the output is absent; keep `_headers` preparation. Rename any document that would generate `/404.html/`, such as `public/404.html.md`, because `404.html` is now reserved. Node.js requirements and the other existing CLI and configuration options are unchanged.
+
 - Reduce the default desktop page width from 1920px to 1600px.
 - Add a centered, theme-aware 404 page with a sad variant of the pixel face and a home link. Generate `404.html` for every hosting target, use the same screen in `dev` and `preview`, and keep generated screens when Cloudflare helpers prepare deployment files. Set `statusImage` to a local image to replace the artwork; existing favicon and cursor artwork remain unchanged. The `404.html` document path is now reserved for the generated error page.
 

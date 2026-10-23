@@ -27,7 +27,7 @@ pnpm exec for-humanity preview
 `for-humanity init`은 GitHub Pages, Cloudflare Workers, Cloudflare Pages, 나중에 설정을 지원합니다. Workers 초기화는 `0.19.0`부터 지원합니다. 직접 설정하려면 아래 값을 사용합니다.
 초기화를 사용했다면 생성된 `docs:build` 스크립트와 완료 메시지의 출력 경로를 사용합니다. 선택만으로 원격 서비스에 배포되지는 않습니다.
 
-Unreleased에서는 `build`가 모든 호스팅에 사용할 공통 `404.html`을 생성합니다. 이미지 교체는 [Status screen](settings.md#status-screen)을 참고합니다. 현재 공개 버전은 아래 호스팅별 404 준비 단계를 사용합니다.
+`0.20.0`부터 `build`가 모든 호스팅에 사용할 공통 `404.html`을 생성합니다. 이미지 교체는 [Status screen](settings.md#status-screen)을 참고합니다. 이전 버전은 아래 호스팅별 404 준비 단계를 사용합니다.
 
 호스팅 서비스에 문서 프로젝트를 연결하고 다음 값을 지정합니다.
 
@@ -118,7 +118,7 @@ Worker 이름은 계정 안에서 고유해야 합니다. 63자 이내의 소문
 | `wrangler` 개발 의존성 | 기존 의존성이 없을 때 검증한 버전 추가 |
 
 초기화 후 안내한 의존성 설치 명령을 실행하고 문서, 설정, 배포 파일과 lockfile을 커밋합니다.
-Unreleased의 보조 스크립트는 빌드가 생성한 404를 유지하고, 없는 경우에만 기본 템플릿을 복사합니다. 이전에 생성한 스크립트가 404를 덮어쓴다면 `.cloudflare/prepare.mjs`의 404 복사 단계를 제거합니다. `_headers` 복사는 유지합니다.
+`0.20.0`의 보조 스크립트는 빌드가 생성한 404를 유지하고, 없는 경우에만 기본 템플릿을 복사합니다. 이전에 생성한 스크립트가 404를 덮어쓴다면 `.cloudflare/prepare.mjs`의 404 복사 단계를 제거합니다. `_headers` 복사는 유지합니다.
 기존 `wrangler.jsonc`, `wrangler.json` 또는 `wrangler.toml`이 있으면 덮어쓰지 않고 초기화를 중단합니다. 기존 프로젝트는 아래 수동 설정으로 자산을 연결합니다.
 
 ### Workers Builds
@@ -168,7 +168,7 @@ pnpm exec wrangler login
 pnpm exec wrangler deploy
 ```
 
-현재 공개 버전에서는 사용자 지정 `404.html`과 `_headers`를 `dist` 밖에 보관한 뒤 빌드 후 복사합니다. Unreleased에서는 공통 빌드가 만든 404를 유지하고 `_headers`만 복사합니다. 그림은 `statusImage`로 교체합니다.
+`0.20.0`부터 공통 빌드가 만든 404를 유지하고 `_headers`만 빌드 후 출력 폴더에 복사합니다. 그림은 `statusImage`로 교체합니다. 이전 버전에서는 사용자 지정 `404.html`과 `_headers`를 `dist` 밖에 보관한 뒤 빌드 후 복사합니다.
 초기화가 생성한 프로젝트는 다음 명령이 빌드와 복사를 함께 처리합니다.
 
 ```sh
@@ -199,7 +199,7 @@ Pages에서 문서 프로젝트의 Git 저장소를 연결하고 Framework prese
 자세한 연결 절차는 [Cloudflare Git integration](https://developers.cloudflare.com/pages/get-started/git-integration/)을 참고합니다.
 
 없는 문서가 홈으로 표시되지 않도록 출력 루트에 `404.html`을 포함합니다.
-현재 공개 버전에서는 별도로 관리한 파일을 빌드 후 `content/dist`에 복사합니다. Unreleased의 공통 빌드가 만든 404는 그대로 사용합니다. [Cloudflare의 정적 페이지 제공 규칙](https://developers.cloudflare.com/pages/configuration/serving-pages/)을 참고합니다.
+`0.20.0`부터 공통 빌드가 만든 404를 그대로 사용합니다. 이전 버전에서는 별도로 관리한 파일을 빌드 후 `content/dist`에 복사합니다. [Cloudflare의 정적 페이지 제공 규칙](https://developers.cloudflare.com/pages/configuration/serving-pages/)을 참고합니다.
 
 ## Verify the deployment
 
