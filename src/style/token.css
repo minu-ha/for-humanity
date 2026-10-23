@@ -118,7 +118,7 @@
     --app-size-sidebar: 200px;
 
     /* 페이지 최대 폭, 본문은 사이드바와 간격을 뺀 나머지 전체 */
-    --app-size-page: 1920px;
+    --app-size-page: 1600px;
     --app-size-brand: calc(var(--app-font-size-title) * var(--app-line-height-title) + var(--app-space-page-top) + var(--app-space-group));
     --app-size-mobile-header: 56px;
     --app-size-menu-button: 44px;

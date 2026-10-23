@@ -19,6 +19,8 @@ pnpm add -D --save-exact for-humanity@latest
 
 ## Unreleased
 
+- Reduce the default desktop page width from 1920px to 1600px.
+
 ## 0.19.0 — 2026-10-23
 
 **Upgrade:** Existing projects remain compatible. The `dev`, `build` and `preview` commands, configuration, document syntax and Node.js requirements are unchanged. New sites can select Cloudflare Workers during `init`; existing Cloudflare Pages and GitHub Pages setups remain supported. Rebuild and redeploy to include the first-paint fix.
