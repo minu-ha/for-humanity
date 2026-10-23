@@ -25,7 +25,7 @@ for-humanity <init|dev|build|preview> [project-dir]
 
 ## Initialize a project
 
-`cloudflare-workers`와 `--worker-name`은 Unreleased 기능으로 다음 패키지 릴리스에 포함됩니다. 현재 공개 버전의 수동 배포는 [Cloudflare Workers](deployment.md#cloudflare-workers)를 참고합니다.
+`cloudflare-workers`와 `--worker-name`은 `0.19.0`부터 지원합니다. 배포 단계와 수동 설정은 [Cloudflare Workers](deployment.md#cloudflare-workers)를 참고합니다.
 
 ```sh
 pnpm exec for-humanity init

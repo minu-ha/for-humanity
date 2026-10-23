@@ -30,7 +30,7 @@ Markdown에 코드 예제, 표, Mermaid 다이어그램을 작성하고 이미�
 Node.js 22.12.0 이상과 pnpm이 필요합니다. `package.json`이 있는 프로젝트에서 패키지를 설치합니다.
 
 ```sh
-pnpm add -D --save-exact for-humanity@0.18.0
+pnpm add -D --save-exact for-humanity@0.19.0
 ```
 
 `node_modules/for-humanity/template`의 `for-humanity.config.ts`와 `content` 폴더를 프로젝트로 복사합니다. 기존 문서가 있다면 파일을 옮기기 전에 [Migration](../content/public/migration.md)을 확인합니다.
@@ -66,7 +66,7 @@ pnpm exec for-humanity preview
 
 템플릿을 복사하는 대신 `pnpm exec for-humanity init`을 실행할 수 있습니다. npm에서는 `npx for-humanity init`을 사용합니다.
 
-사이트 이름, 문서 폴더, 언어와 배포 방식(GitHub Pages / Cloudflare Pages / 나중에 설정)을 선택합니다. 설정과 첫 문서, `docs:dev`, `docs:build`, `docs:preview` 스크립트를 만들고, 호스팅 파일과 서비스에서 설정할 값을 안내합니다. Cloudflare Workers 초기화는 Unreleased 기능으로 다음 패키지 릴리스에 포함되며 Wrangler 설정과 `docs:deploy`도 생성합니다.
+사이트 이름, 문서 폴더, 언어와 배포 방식(GitHub Pages / Cloudflare Workers / Cloudflare Pages / 나중에 설정)을 선택합니다. 설정과 첫 문서, `docs:dev`, `docs:build`, `docs:preview` 스크립트를 만들고, 호스팅 파일과 서비스에서 설정할 값을 안내합니다. Cloudflare Workers를 선택하면 Wrangler 설정과 `docs:deploy`도 생성합니다.
 
 기존 앱의 스크립트와 의존성을 유지합니다. 생성할 파일 목록을 확인한 뒤 진행합니다. 옵션과 자동 실행은 [Commands](../content/public/commands.md#initialize-a-project)를 참고합니다.
 

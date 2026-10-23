@@ -2,8 +2,11 @@
 
 ## Unreleased
 
-- Add `init --deploy cloudflare-workers` with a Worker name prompt and `--worker-name` for automation. Generate `wrangler.jsonc`, a 404 page, cache headers, a build helper and `docs:deploy` for npm or pnpm. Preserve existing Wrangler dependencies and stop before writing when a Wrangler configuration already exists.
+## 0.19.0 — 2026-10-23
 
+**Upgrade:** Existing projects remain compatible. The `dev`, `build` and `preview` commands, configuration, document syntax and Node.js requirements are unchanged. New sites can select Cloudflare Workers during `init`; existing Cloudflare Pages and GitHub Pages setups remain supported. Rebuild and redeploy to include the first-paint fix.
+
+- Add `init --deploy cloudflare-workers` with a Worker name prompt and `--worker-name` for automation. Generate `wrangler.jsonc`, a 404 page, cache headers, a build helper and `docs:deploy` for npm or pnpm. Preserve existing Wrangler dependencies and stop before writing when a Wrangler configuration already exists.
 - Hold the first paint of a built page until the inline browser script has run. On a slow device the sidebar and outline could appear at the top for one frame before their saved positions were restored. Chromium honors the new `<link rel="expect" blocking="render">` in the page head; other browsers ignore it and behave as before.
 
 ## 0.18.0 — 2026-10-22

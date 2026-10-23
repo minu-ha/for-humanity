@@ -24,7 +24,7 @@ pnpm exec for-humanity preview
 
 ## Hosting settings
 
-`for-humanity init`은 GitHub Pages, Cloudflare Workers, Cloudflare Pages, 나중에 설정을 지원합니다. Workers 초기화는 Unreleased 기능으로 다음 패키지 릴리스에 포함됩니다. 직접 설정하려면 아래 값을 사용합니다.
+`for-humanity init`은 GitHub Pages, Cloudflare Workers, Cloudflare Pages, 나중에 설정을 지원합니다. Workers 초기화는 `0.19.0`부터 지원합니다. 직접 설정하려면 아래 값을 사용합니다.
 초기화를 사용했다면 생성된 `docs:build` 스크립트와 완료 메시지의 출력 경로를 사용합니다. 선택만으로 원격 서비스에 배포되지는 않습니다.
 
 호스팅 서비스에 문서 프로젝트를 연결하고 다음 값을 지정합니다.
@@ -92,7 +92,7 @@ Cloudflare는 새 정적 사이트에 [Workers Static Assets](https://developers
 
 ### Initialize for Workers
 
-다음 패키지 릴리스에 포함될 초기화 명령입니다. 현재 공개된 `0.18.0`은 아래 수동 설정을 사용합니다.
+`0.19.0` 이상에서 실행합니다. 이전 버전은 아래 수동 설정을 사용합니다.
 
 ```sh
 pnpm exec for-humanity init --deploy cloudflare-workers

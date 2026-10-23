@@ -61,7 +61,7 @@ for-humanity 의존성이 없으면 실행 중인 CLI 버전을 devDependencies�
 
 ### Cloudflare Workers
 
-- Unreleased 기능, 기존 Pages 옵션 유지.
+- `0.19.0`부터 지원, 기존 Pages 옵션 유지.
 - Worker 이름은 프로젝트 이름이나 폴더에서 유효한 후보를 제안. `--worker-name`으로 지정 가능.
 - `wrangler.jsonc`에 선택한 문서 루트의 `dist`, 끝 슬래시 정규화와 `404-page` 설정. 서버 진입점과 도메인 연결 미포함.
 - `.cloudflare/404.html`, `_headers`, 준비 스크립트 생성. 빌드가 두 파일을 `dist`에 복사.

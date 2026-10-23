@@ -117,7 +117,7 @@ Node 22.12.0과 24.3.0에서 설치 패키지의 공개 타입, build, dev, prev
 
 문서 폴더, 설정, 시작 문서를 준비하는 `for-humanity init [project-dir]`을 `0.18.0`에서 공개. 템플릿 복사 방식도 계속 지원.
 
-명령과 도움말은 Citty, 시작·완료 박스와 색상·질문은 Consola 사용. 기본 문서 폴더는 content, 언어는 ko, 배포는 나중에 설정. npm/pnpm 감지와 GitHub Pages·Cloudflare Pages 파일 생성 지원. Unreleased에서 Workers 설정과 배포 명령 생성 추가.
+명령과 도움말은 Citty, 시작·완료 박스와 색상·질문은 Consola 사용. 기본 문서 폴더는 content, 언어는 ko, 배포는 나중에 설정. npm/pnpm 감지와 GitHub Pages·Cloudflare Pages 파일 생성 지원. `0.19.0`에서 Workers 설정과 배포 명령 생성 추가.
 설계와 검증 범위는 [Init design](init-design.md), 작업 기록은 [Init implementation plan](init-plan.md).
 
 - [x] 대상 폴더, 생성 계획과 마지막 확인

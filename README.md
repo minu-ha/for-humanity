@@ -30,7 +30,7 @@ The result is a static site with bundled fonts, light and dark themes, keyboard 
 You need Node.js 22.12.0 or later and pnpm. In a project with a `package.json`, install the package:
 
 ```sh
-pnpm add -D --save-exact for-humanity@0.18.0
+pnpm add -D --save-exact for-humanity@0.19.0
 ```
 
 Copy `for-humanity.config.ts` and the `content` folder from `node_modules/for-humanity/template` into your project. If you already have documentation, follow [Migration](https://github.com/minu-ha/for-humanity/blob/main/content/public/migration.md) before moving files.
@@ -66,7 +66,7 @@ Keep published documents in `content/public` and local notes in `content/private
 
 Instead of copying the template, run `pnpm exec for-humanity init` (`npx for-humanity init` with npm).
 
-The setup asks for a site title, documentation folder, language and hosting target: GitHub Pages, Cloudflare Pages or later. Cloudflare Workers setup is available in Unreleased and will be included in the next package release. It prepares the configuration, first document and `docs:dev`, `docs:build` and `docs:preview` scripts. Hosting setup creates deployment files and shows the remaining service settings. Workers setup also prepares Wrangler and a `docs:deploy` script.
+The setup asks for a site title, documentation folder, language and hosting target: GitHub Pages, Cloudflare Workers, Cloudflare Pages or later. It prepares the configuration, first document and `docs:dev`, `docs:build` and `docs:preview` scripts. Hosting setup creates deployment files and shows the remaining service settings. Workers setup also prepares Wrangler and a `docs:deploy` script.
 
 Existing application scripts and dependencies are kept. Review the file list before creation. See [Commands](https://github.com/minu-ha/for-humanity/blob/main/content/public/commands.md#initialize-a-project) for options and automation.
 

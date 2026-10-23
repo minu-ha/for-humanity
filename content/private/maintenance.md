@@ -259,10 +259,10 @@ GitHub-hosted runner, Node.js 24와 npm 12.2.0으로 배포. `0.13.0`부터 패�
 
 1. 작은 변경을 구현하고 필요한 검증 실행.
 2. 사용자에게 영향을 주는 변경은 `CHANGELOG.md`의 `Unreleased`에 기록. 아직 npm에 없는 기능의 문서에는 미공개 상태 표시.
-3. 위 검증 명령을 통과한 뒤 변경 파일만 커밋하고 `main`에 push. CI와 Pages 결과 확인.
+3. 위 검증 명령을 통과한 뒤 변경 파일만 커밋하고 `main`에 push. CI와 Workers Builds 결과 확인.
 
 평소 `package.json`과 README의 설치 버전 유지. `main` push는 사이트 갱신이며 npm 공개를 실행하지 않음.
-CI가 실패하면 다른 작업보다 실패 원인 수정 우선. 현재 Pages Git 배포와 CI는 별도로 실행되므로 로컬 검증과 두 결과 모두 확인.
+CI가 실패하면 다른 작업보다 실패 원인 수정 우선. Workers Builds와 CI는 별도로 실행되므로 로컬 검증과 두 결과 모두 확인.
 
 ### Release steps
 
@@ -272,7 +272,7 @@ CI가 실패하면 다른 작업보다 실패 원인 수정 우선. 현재 Pages
 2. `package.json` 버전을 올리고 `CHANGELOG.md`의 `Unreleased`를 해당 버전과 공개 날짜 항목으로 옮김. 이번 공개에 포함될 미공개 기록이 남지 않았는지 확인.
 3. 최상위 `README.md`와 `language/README.ko.md`의 설치 버전과 지원 버전 갱신. 공개하는 기능 문서의 미공개 표시 제거.
 4. 검증 명령 실행. `pnpm build`가 `content/README.md`와 `content/public/changelog.md`도 동기화.
-5. 릴리스 준비 변경만 커밋하고 `main`에 push. 해당 커밋의 CI와 Pages 결과 확인.
+5. 릴리스 준비 변경만 커밋하고 `main`에 push. 해당 커밋의 CI와 Workers Builds 결과 확인.
 6. 검증한 릴리스 준비 커밋에 같은 버전의 태그를 만들고 push. 태그를 만들기 전후에 다른 커밋으로 대상을 바꾸지 않음.
 
 다음 공개 버전이 `0.2.2`인 경우:
