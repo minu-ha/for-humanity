@@ -39,7 +39,8 @@
         "sync:docs": "pnpm sync:readme && tsx util/sync-changelog.ts",
         "dev": "pnpm sync:docs && pnpm build:kit && tsx src/entry/dev/dev.ts",
         "build": "pnpm sync:docs && pnpm build:kit && node dist/cli.js build .",
-        "build:pages": "pnpm build && tsx util/prepare-pages.ts",
+        "build:site": "pnpm build && tsx util/prepare-site.ts",
+        "deploy:site": "pnpm build:site && wrangler deploy",
         "preview": "node dist/cli.js preview .",
         "test": "pnpm build:kit && vitest run",
         "test:watch": "pnpm build:kit && vitest",
@@ -105,7 +106,8 @@
         "stylelint-config-standard": "^40.0.0",
         "tsx": "^4.23.15",
         "typescript": "^7.0.2",
-        "vitest": "^5.0.4"
+        "vitest": "^5.0.4",
+        "wrangler": "4.152.0"
     },
     "packageManager": "pnpm@12.9.1+sha512.06b055fff5cd20dc12781de173ced3310ce0951bf2ec620211a16045d5444d5c93a663210764ef29a653a610459ba0368f0e74f84d80c54723cf95aae7bc0d6d",
     "types": "./dist/type/site-config.d.ts",

@@ -29,7 +29,7 @@ git diff --check
 | `pnpm knip`      | 사용하지 않는 파일, export, 의존성. `pnpm check`에 포함 |
 | `pnpm build:kit` | 서버와 브라우저 번들               |
 | `pnpm build`     | 패키지 번들과 프로젝트 문서 사이트 |
-| `pnpm build:pages` | 문서 사이트와 Cloudflare 배포 파일 |
+| `pnpm build:site` | 문서 사이트와 Cloudflare 배포 파일 |
 | `pnpm sync:docs` | README 홈과 Changelog 문서 동기화 |
 | `pnpm lint:fix`  | 자동 린트와 포맷 수정              |
 
@@ -124,7 +124,7 @@ CSS 규칙 본문은 타입 검사하는 `util/stylelint.config.ts`에 둡니다
 | ------ | ------- |
 | `sync-readme.ts` | 최상위 README를 문서 홈으로 변환, 사이트용 링크 조정 |
 | `sync-changelog.ts` | 최상위 CHANGELOG를 공식 변경 기록 문서로 생성 |
-| `prepare-pages.ts` | Pages용 캐시 헤더와 404 페이지를 배포 폴더에 복사 |
+| `prepare-site.ts` | 공식 사이트의 캐시 헤더와 404 페이지를 배포 폴더에 복사 |
 | `prepare-release.ts` | 태그, 버전, README, 변경 기록, 배포 파일 확인, Release 본문 생성 |
 | `prepare-release.test.ts` | 버전 불일치, 변경 기록 누락, 이전 설치 버전, 필수 파일 누락 검사 |
 | `smoke-package.ts` | 패키지를 별도 프로젝트에 설치, 실제 dev와 preview의 브라우저와 종료, 공개 타입의 정상과 오류 입력, TS와 ESM 설정, 페이지, Mermaid, 자원, README, 크롤러 파일, 기본형과 사용자 content 경로와 내부 문서 배포 제외 확인 |
@@ -228,7 +228,7 @@ pnpm pack
 | Event | Result |
 | ----- | ------ |
 | PR과 `main` push | CI: 테스트, 린트, 타입 검사, 사용하지 않는 코드 검사, Pages 빌드, publint 패키지 검사, 패키지 설치 후 빌드 |
-| `main` push | Cloudflare Git 연동으로 문서 사이트 배포 |
+| `main` push | Cloudflare Workers Builds로 문서 사이트 배포 |
 | `vX.Y.Z` 태그 push | Release: 검증, npm 배포, 같은 `.tgz`를 첨부한 GitHub Release 생성 |
 
 워크플로는 `.github/workflows/ci.yml`, `.github/workflows/release.yml`.

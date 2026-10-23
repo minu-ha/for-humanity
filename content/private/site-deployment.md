@@ -1,121 +1,87 @@
 ---
 name: Site deployment
-label: 공식 문서 사이트의 Cloudflare Pages 운영
+label: 공식 문서 사이트의 Cloudflare Workers 운영
 group: Development
 order: 20
 ---
 
-for humanity의 라이브러리 문서도, 이 도구로 만든 자신의 문서도 정적 사이트로 배포 가능.
-Cloudflare Pages는 구매한 도메인 없이 `<project>.pages.dev` 주소를 제공.
-이 안내는 [공식 Git integration 문서](https://developers.cloudflare.com/pages/get-started/git-integration/) 기준.
+공식 문서 사이트는 Cloudflare Workers Static Assets로 `content/dist`를 배포합니다.
+공개 주소는 [for-humanity.fyi](https://for-humanity.fyi)이며, 실행 중인 Node.js 서버나 Worker 스크립트는 필요하지 않습니다.
+설정은 저장소 루트의 `wrangler.jsonc`, 빌드와 배포 명령은 `package.json`에서 관리합니다.
 
-이 저장소의 문서 주소는 [for-humanity.fyi](https://for-humanity.fyi).
-Pages 프로젝트는 `for-humanity`, 기본 주소는 [for-humanity-1i2.pages.dev](https://for-humanity-1i2.pages.dev).
-
-경로와 공개 범위 전환은 `0.14.0`부터 적용합니다. 기존 npm 사용자는 [Migration](../public/migration.md)을 먼저 확인합니다.
-
-## Overview
-
-공개 사이트의 `robots.txt`와 `sitemap.xml`을 생성하려면 문서 설정에 배포할 루트 `url`을 지정합니다. npm `0.6.0`부터 지원하며, 설정과 Cloudflare 진단 항목은 [Crawling](../public/crawling.md).
-
-| Target             | Build                     | Output                   |
-| ------------------ | ------------------------- | ------------------------ |
-| 이 저장소의 문서   | `pnpm build:pages`        | `content/dist` |
-| 자신의 문서        | `pnpm exec for-humanity build` | `content/dist`     |
-
-로컬 서버를 인터넷에 계속 켜 두는 방식이 아니라, 빌드한 HTML, CSS, 스크립트, 폰트를 정적 호스팅에 업로드.
-for humanity의 CLI는 빌드할 때만 Node.js에서 실행. 배포 후에는 별도 Node.js 서버 불필요.
-
-::part[Cloudflare Pages]
-
-## Repository setup
-
-이 저장소를 Cloudflare Pages에 연결할 때 사용할 값.
-
-| Setting                | Value                       |
-| ---------------------- | --------------------------- |
-| Repository             | `minu-ha/for-humanity`       |
-| Production branch      | `main`                      |
-| Framework preset       | `None`                      |
-| Root directory         | 저장소 루트                 |
-| Build command          | `pnpm build:pages`          |
-| Build output directory | `content/dist`   |
-| `NODE_VERSION`          | `22`                        |
-| `PNPM_VERSION`          | `12.9.1`                    |
-
-기존 Pages 프로젝트는 다음 배포 전에 대시보드의 출력 경로를 `templates/document/dist`에서 `content/dist`로 변경합니다. 저장소 파일을 이동하는 것만으로 대시보드 설정이 바뀌지 않습니다.
-
-빌드 이미지에서 Node.js와 pnpm 버전은 환경 변수로 지정 가능.
-위 pnpm 버전은 `package.json`의 `packageManager`와 같은 값([Build image](https://developers.cloudflare.com/pages/configuration/build-image/)).
-
-### Connect and deploy
-
-1. Cloudflare의 `Workers & Pages`에서 `Create application → Pages → Connect to Git` 선택
-2. GitHub 계정 연결 후 이 저장소 선택
-3. 위 빌드 설정 입력
-4. `Save and Deploy`로 첫 배포 실행
-5. 생성된 `<project>.pages.dev` 주소에서 README 홈과 각 문서 직접 접속 확인
-
-프로젝트 이름으로 기본 주소 생성. 사용할 수 있는 이름은 생성 시 결정.
-연결 후 `main`에 push하면 문서를 다시 빌드해 배포([Git integration](https://developers.cloudflare.com/pages/get-started/git-integration/)).
-나중에 별도 도메인을 연결할 수도 있음.
-
-### Custom domain
-
-이 문서 사이트는 `for-humanity.fyi`를 사이트 루트에 연결.
-Pages 프로젝트의 `Custom domains → Set up a domain`에서 도메인을 추가하고 DNS 레코드를 확인.
-최상위 도메인을 쓰려면 Pages와 같은 Cloudflare 계정에 해당 도메인의 zone이 있어야 하며, 네임서버도 Cloudflare를 사용.
-도메인 활성화 후 HTTPS, 문서 직접 접속, 없는 경로의 404 응답을 확인([Custom domains](https://developers.cloudflare.com/pages/configuration/custom-domains/)).
-
-## Pages output
+## Build and deploy
 
 ```sh
-pnpm build:pages
+pnpm build:site
 pnpm preview
+
+# 최초 로컬 배포 전 계정 연결
+pnpm exec wrangler login
+pnpm deploy:site
 ```
 
-`build:pages`는 사이트 빌드 후 이 저장소의 `.cloudflare` 파일을 결과 폴더에 복사.
+`build:site`는 패키지와 공개 문서를 빌드한 뒤 `.cloudflare/_headers`와 `.cloudflare/404.html`을 `content/dist`에 복사합니다.
+`deploy:site`는 같은 빌드 후 `wrangler deploy`를 실행합니다. 원본 `content` 전체를 업로드하지 않습니다.
+문서 루트와 공개 범위는 [Content layout](content-layout.md), 패키지 공개 절차는 [Maintenance](maintenance.md#packaging-and-release)를 참고합니다.
 
-| File        | Purpose                                             |
-| ----------- | --------------------------------------------------- |
-| `_headers`  | HTML 원문 보존, 내용 지문이 붙은 `/_fh/*` 자원의 장기 브라우저 캐시 |
-| `404.html`  | 없는 문서에 표시할 페이지                            |
+| Configuration | Value |
+| --- | --- |
+| Worker name | `for-humanity` |
+| Static assets | `content/dist` |
+| HTML paths | `force-trailing-slash` |
+| Missing paths | `404-page` |
+| Node.js | `.node-version` |
+| pnpm | `package.json`의 `packageManager` |
 
-HTML은 매번 재검증. CSS, 브라우저 스크립트, 폰트는 파일명에 내용 지문을 붙여 장기 캐시.
-CSS와 스크립트의 내용이 바뀌면 URL도 바뀌므로 새 HTML이 이전 배포의 자원을 재사용하지 않음. 내용이 같으면 URL도 유지.
-홈과 문서 경로의 `Cache-Control: no-transform`은 Cloudflare가 설치 명령의 패키지 이름과 버전을 이메일 주소로 바꾸지 않도록 원문을 보존([Email Address Obfuscation](https://developers.cloudflare.com/waf/tools/scrape-shield/email-address-obfuscation/)).
-헤더 규칙은 [Headers](https://developers.cloudflare.com/pages/configuration/headers/), 없는 경로의 처리는 [Serving Pages](https://developers.cloudflare.com/pages/configuration/serving-pages/) 기준.
-로컬 `preview`는 정적 파일 미리보기. Cloudflare의 `_headers` 해석과 없는 경로 처리는 배포 후 확인.
+`assets.html_handling`은 `/guide/` 형태의 문서 주소로 정규화합니다.
+`assets.not_found_handling`과 출력의 `404.html`은 없는 문서와 내부 문서 경로에 404 응답을 반환합니다.
+Worker 진입점, Node.js 호환 플래그, SPA fallback은 사용하지 않습니다.
+설정 기준은 [Workers Static Assets](https://developers.cloudflare.com/workers/static-assets/)와 [HTML handling](https://developers.cloudflare.com/workers/static-assets/routing/advanced/html-handling/)입니다.
 
-::part[Your documents]
+## Workers Builds
 
-## Another project
+Workers의 Builds에 저장소를 연결하고 다음 값을 지정합니다.
 
-자신의 문서 프로젝트에서 CLI로 빌드한 `content/dist` 전체를 배포. `content.root`를 변경했다면 그 폴더 아래의 `dist`를 지정. 원본 `content` 전체를 업로드하지 않음.
-그 프로젝트의 Cloudflare 설정은 build command `pnpm exec for-humanity build`, output `content/dist`.
-CLI 설치는 [Installation](../public/installation.md#install-the-package).
+| Setting | Value |
+| --- | --- |
+| Repository | `minu-ha/for-humanity` |
+| Production branch | `main` |
+| Root directory | 저장소 루트 |
+| Build command | `pnpm build:site` |
+| Deploy command | `pnpm exec wrangler deploy` |
+| `PNPM_VERSION` | `12.9.1` |
 
-HTML 원문 보존과 내용 지문이 붙은 자원의 장기 캐시가 필요하면 빌드 후 `content/dist/_headers`에 다음 내용을 추가.
+`main` push로 공식 사이트를 갱신합니다. GitHub Actions의 CI도 `build:site`를 실행하며, npm과 GitHub Release는 버전 태그가 있어야 공개합니다.
+빌드 명령과 배포 명령을 분리해 Workers Builds에서 중복 빌드를 피합니다.
+연결 절차는 [Workers Builds](https://developers.cloudflare.com/workers/ci-cd/builds/), 빌드 환경은 [Build image](https://developers.cloudflare.com/workers/ci-cd/builds/build-image/)를 참고합니다.
 
-```text
-/
-  Cache-Control: public, max-age=0, must-revalidate, no-transform
+## Headers
 
-/*/
-  Cache-Control: public, max-age=0, must-revalidate, no-transform
+| File | Purpose |
+| --- | --- |
+| `.cloudflare/_headers` | HTML 재검증과 원문 보존, 내용 지문이 붙은 자원의 장기 캐시 |
+| `.cloudflare/404.html` | 없는 문서에 표시할 페이지 |
+| `util/prepare-site.ts` | 빌드 후 두 파일을 출력 폴더에 복사 |
 
-/_fh/*
-  Cache-Control: public, max-age=31536000, immutable
-```
+HTML에는 `public, max-age=0, must-revalidate, no-transform`, `/_fh/*`에는 `public, max-age=31536000, immutable`을 적용합니다.
+내용 지문이 붙은 자원은 내용 변경 시 URL도 바뀝니다. `_headers`는 Workers 정적 자산에서 직접 해석합니다.
+헤더 계약은 [Headers](https://developers.cloudflare.com/workers/static-assets/headers/)를 참고합니다.
+로컬 `preview`는 일반 정적 파일 미리보기이므로, 플랫폼의 경로와 헤더는 `wrangler dev` 또는 배포 주소에서 확인합니다.
 
-없는 문서가 README 홈으로 보이지 않도록 `content/dist/404.html`도 배포 결과에 포함.
-두 파일은 빌드가 지우는 `dist` 밖에 보관하고, 자신의 배포 명령에서 빌드 후 복사.
+## Pages migration
 
-## Other hosts
+1. `pnpm build:site`와 `pnpm exec wrangler deploy --dry-run`으로 자산과 설정을 확인합니다.
+2. 새 Worker를 배포하고 기본 `workers.dev` 주소에서 홈, 개별 문서, Mermaid, 이미지, 404와 헤더를 확인합니다.
+3. 기존 Pages의 `for-humanity.fyi` 연결을 해제하고 Worker Custom Domain으로 연결합니다. 공식 도메인은 `wrangler.jsonc`의 `routes`에서 관리합니다.
+4. 공식 도메인의 HTTPS와 문서 경로, `/robots.txt`, `/sitemap.xml`, private 경로의 404를 확인합니다.
+5. 기존 Pages 프로젝트의 자동 배포를 중단합니다. 이전 `for-humanity-1i2.pages.dev` 주소는 Worker 주소로 자동 이전되지 않습니다.
 
-정적 호스팅이면 같은 결과 폴더 사용 가능. `0.17.0`부터 `basePath`로 GitHub Pages 프로젝트 사이트의 `/<repository>/` 경로를 지원.
-`url`은 도메인, `basePath`는 사이트 경로로 지정. 생성된 출력 폴더 전체를 업로드하며 출력 안에 저장소 이름의 폴더를 추가하지 않음.
-GitHub Actions 템플릿과 수동 설정은 [Deployment](../public/deployment.md#github-pages).
+운영 전환이 검증되기 전에는 Pages 프로젝트를 삭제하지 않습니다.
+문서 설정의 `url`은 계속 `https://for-humanity.fyi`를 사용합니다.
+공식 절차는 [Migrate from Pages](https://developers.cloudflare.com/workers/static-assets/migration-guides/migrate-from-pages/)를 참고합니다.
 
-`0.18.0`의 `init`은 호스팅별 파일과 완료 안내를 준비. GitHub Pages는 저장소별 워크플로, Cloudflare Pages는 404와 준비 스크립트, 나중에 설정은 공통 문서 파일만 생성.
-공식 사이트의 `build:pages`와 사용자 프로젝트에 생성한 `docs:build`는 각각의 배포 파일을 처리.
+## Other projects
+
+설치 사용자의 배포 방법은 [Deployment](../public/deployment.md)를 참고합니다.
+정적 호스팅에는 생성된 문서 루트 아래의 `dist` 전체를 배포합니다. `basePath`로 GitHub Pages의 저장소별 경로도 지원합니다.
+공식 사이트의 배포 설정과 패키지 사용자의 초기화 파일은 각각 관리합니다.

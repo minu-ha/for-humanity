@@ -1,0 +1,10 @@
+{
+    "$schema": "node_modules/wrangler/config-schema.json",
+    "name": "for-humanity",
+    "compatibility_date": "2026-10-23",
+    "assets": {
+        "directory": "./content/dist",
+        "html_handling": "force-trailing-slash",
+        "not_found_handling": "404-page"
+    }
+}

@@ -44,7 +44,7 @@ jobs:
       - run: pnpm test
       - run: pnpm check
       - id: build
-        run: pnpm build:pages
+        run: pnpm build:site
       - id: browser
         run: pnpm exec playwright install --with-deps chromium
       - name: Check browser diagrams, navigation and development
