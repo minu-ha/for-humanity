@@ -147,6 +147,9 @@ describe("프로젝트 초기화", () => {
         expect(config).toMatchObject({
             name: "team-docs-site",
             compatibility_date: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
+            workers_dev: true,
+            preview_urls: true,
+            previews: {},
             assets: {directory: "team notes/dist", html_handling: "force-trailing-slash", not_found_handling: "404-page"},
         });
         expect(config).not.toHaveProperty("main");

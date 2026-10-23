@@ -126,10 +126,12 @@ Cloudflare의 Worker에서 Builds에 Git 저장소를 연결하고 배포 브랜
 | --- | --- | --- |
 | Build command | `pnpm docs:build` | `npm run docs:build` |
 | Deploy command | `pnpm exec wrangler deploy` | `npx wrangler deploy` |
+| Preview command | `pnpm exec wrangler preview` | `npx wrangler preview` |
 | Root directory | `package.json`이 있는 폴더 | `package.json`이 있는 폴더 |
 
 Worker 이름은 `wrangler.jsonc`와 대시보드에서 같아야 합니다. Node.js는 `22.12.0` 이상을 선택하고, pnpm 버전은 `package.json`의 `packageManager`와 일치시킵니다.
 Builds에서는 빌드와 배포 명령을 각각 지정합니다. `docs:deploy`는 로컬에서 두 단계를 함께 실행할 때 사용합니다.
+브랜치 미리보기를 사용할 경우 운영 브랜치는 `wrangler deploy`, 나머지 브랜치는 `wrangler preview`로 지정합니다. Workers 초기화가 생성한 설정에는 `previews: {}`와 미리보기 URL이 포함됩니다.
 연결 절차는 [Workers Builds](https://developers.cloudflare.com/workers/ci-cd/builds/)를 참고합니다.
 
 ### Manual setup

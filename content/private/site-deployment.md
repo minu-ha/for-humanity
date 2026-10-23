@@ -49,9 +49,11 @@ Workers의 Builds에 저장소를 연결하고 다음 값을 지정합니다.
 | Root directory | 저장소 루트 |
 | Build command | `pnpm build:site` |
 | Deploy command | `pnpm exec wrangler deploy` |
+| Preview command | `pnpm exec wrangler preview` |
 | `PNPM_VERSION` | `12.9.1` |
 
 `main` push로 공식 사이트를 갱신합니다. GitHub Actions의 CI도 `build:site`를 실행하며, npm과 GitHub Release는 버전 태그가 있어야 공개합니다.
+다른 브랜치는 같은 빌드 후 `wrangler preview`로 미리보기를 배포합니다. `wrangler.jsonc`의 `previews`와 `preview_urls`는 미리보기 배포를 허용하며 공식 도메인은 운영 Worker에만 연결합니다.
 빌드 명령과 배포 명령을 분리해 Workers Builds에서 중복 빌드를 피합니다.
 연결 절차는 [Workers Builds](https://developers.cloudflare.com/workers/ci-cd/builds/), 빌드 환경은 [Build image](https://developers.cloudflare.com/workers/ci-cd/builds/build-image/)를 참고합니다.
 
@@ -72,7 +74,7 @@ HTML에는 `public, max-age=0, must-revalidate, no-transform`, `/_fh/*`에는 `p
 
 1. `pnpm build:site`와 `pnpm exec wrangler deploy --dry-run`으로 자산과 설정을 확인합니다.
 2. 새 Worker를 배포하고 기본 `workers.dev` 주소에서 홈, 개별 문서, Mermaid, 이미지, 404와 헤더를 확인합니다.
-3. 기존 Pages의 `for-humanity.fyi` 연결을 해제하고 Worker Custom Domain으로 연결합니다. 공식 도메인은 `wrangler.jsonc`의 `routes`에서 관리합니다.
+3. 기존 Pages의 `for-humanity.fyi` 연결을 해제하고 Worker Custom Domain으로 연결합니다. Pages를 가리키는 기존 CNAME이 남아 `100117` 오류가 발생하면 그 CNAME만 제거한 뒤 연결합니다. 다른 TXT 등 DNS 레코드는 유지합니다. 공식 도메인은 `wrangler.jsonc`의 `routes`에서 관리합니다.
 4. 공식 도메인의 HTTPS와 문서 경로, `/robots.txt`, `/sitemap.xml`, private 경로의 404를 확인합니다.
 5. 기존 Pages 프로젝트의 자동 배포를 중단합니다. 이전 `for-humanity-1i2.pages.dev` 주소는 Worker 주소로 자동 이전되지 않습니다.
 
