@@ -11,6 +11,7 @@ export default {
 
         // init이 텍스트로 복사하고 docs:build가 실행하는 Cloudflare 준비 파일
         "template/cloudflare/prepare.mjs",
+        "template/cloudflare/prepare-workers.mjs",
 
         // Vite browser 모드와 dev 서버가 경로 문자열로 여는 모듈
         "src/entry/browser/browser.tsx",

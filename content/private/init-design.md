@@ -30,7 +30,7 @@ order: 60
 - 사이트 이름: 프로젝트 이름 또는 Project notes 추천값과 Custom 선택. 기존 이름이 비어 있거나 한 줄 제목으로 사용할 수 없으면 Project notes 제안.
 - 문서 폴더: content / docs / Custom 선택. 기본값은 content.
 - 문서 언어: 한국어(ko) / English(en) / Custom 선택. 기본값은 ko.
-- 배포 방식: 나중에 설정 / GitHub Pages / Cloudflare Pages. 기본 선택은 나중에 설정.
+- 배포 방식: 나중에 설정 / GitHub Pages / Cloudflare Workers / Cloudflare Pages. 기본 선택은 나중에 설정.
 - GitHub 선택 시 저장소와 배포 브랜치 확인. GitHub와 Cloudflare는 알고 있는 공개 주소를 선택 입력.
 
 추천값에서 타이핑하면 Custom으로 이동해 같은 질문 안에서 직접 입력. Custom 행을 먼저 고른 뒤 추가 Enter 없이 입력 가능. 추천값과 직접 입력 모두 Enter 한 번으로 확정하고 다음 질문으로 이동.
@@ -58,6 +58,17 @@ for-humanity 의존성이 없으면 실행 중인 CLI 버전을 devDependencies�
 - 실제 배포 브랜치와 문서 출력 경로를 적용한 .github/workflows/docs.yml 생성.
 - npm/pnpm과 lockfile에 맞는 설치 단계 생성.
 - 완료 메시지에 Settings → Pages → GitHub Actions 설정과 예상 공개 주소 안내.
+
+### Cloudflare Workers
+
+- Unreleased 기능, 기존 Pages 옵션 유지.
+- Worker 이름은 프로젝트 이름이나 폴더에서 유효한 후보를 제안. `--worker-name`으로 지정 가능.
+- `wrangler.jsonc`에 선택한 문서 루트의 `dist`, 끝 슬래시 정규화와 `404-page` 설정. 서버 진입점과 도메인 연결 미포함.
+- `.cloudflare/404.html`, `_headers`, 준비 스크립트 생성. 빌드가 두 파일을 `dist`에 복사.
+- `docs:build`와 `docs:deploy`, 기존 의존성이 없을 때 Wrangler 개발 의존성 추가.
+- Workers Builds에서는 빌드와 배포를 분리하고, 로컬에서는 `docs:deploy` 실행.
+- 기존 Wrangler 설정과 스크립트 충돌은 쓰기 전에 중단. 기존 Wrangler 의존성 위치와 버전 보존.
+- 계정 연결과 원격 배포 없이 초기화 완료. `--url`은 크롤러 주소만 지정.
 
 ### Cloudflare Pages
 

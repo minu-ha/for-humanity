@@ -124,6 +124,73 @@ describe("프로젝트 초기화", () => {
         expect(result.stdout).toContain("GitHub Actions");
     });
 
+    test.for(["npm", "pnpm"])("Workers는 %s의 빌드와 배포 명령을 생성한다", async (manager, {root}) => {
+        await writeFile(join(root, "package.json"), '{"name":"team-docs","scripts":{"build":"existing-build"},"dependencies":{"for-humanity":"~0.18.0"}}');
+        const result = spawnSync(
+            process.execPath,
+            [resolve("dist/cli.js"), "init", "--yes", "--manager", manager, "--deploy", "cloudflare-workers", "--content", "team notes", "--worker-name", "team-docs-site"],
+            {cwd: root, encoding: "utf8", env: cliEnv},
+        );
+
+        expect(result.status, result.stderr).toBe(0);
+        const manifest: unknown = JSON.parse(await readFile(join(root, "package.json"), "utf8"));
+        expect(manifest).toMatchObject({
+            dependencies: {"for-humanity": "~0.18.0"},
+            devDependencies: {wrangler: expect.stringMatching(/^4\./)},
+            scripts: {
+                build: "existing-build",
+                "docs:build": "for-humanity build && node .cloudflare/prepare.mjs",
+                "docs:deploy": `${manager === "npm" ? "npm run" : "pnpm"} docs:build && wrangler deploy`,
+            },
+        });
+        const config: unknown = JSON.parse(await readFile(join(root, "wrangler.jsonc"), "utf8"));
+        expect(config).toMatchObject({
+            name: "team-docs-site",
+            compatibility_date: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
+            assets: {directory: "team notes/dist", html_handling: "force-trailing-slash", not_found_handling: "404-page"},
+        });
+        expect(config).not.toHaveProperty("main");
+        expect(config).not.toHaveProperty("routes");
+        expect(await readFile(join(root, ".gitignore"), "utf8")).toContain("/.wrangler/");
+        expect(result.stdout).toContain(`${manager} install`);
+        expect(result.stdout).toContain("wrangler deploy");
+        const build = spawnSync(process.execPath, [resolve("dist/cli.js"), "build"], {cwd: root, encoding: "utf8", env: cliEnv, timeout: 30000});
+        expect(build.status, build.stderr).toBe(0);
+        const prepare = spawnSync(process.execPath, [join(root, ".cloudflare/prepare.mjs")], {cwd: resolve("."), encoding: "utf8"});
+        expect(prepare.status, prepare.stderr).toBe(0);
+        expect(await readFile(join(root, "team notes/dist/404.html"), "utf8")).toContain("Page not found");
+        expect(await readFile(join(root, "team notes/dist/_headers"), "utf8")).toContain("no-transform");
+    });
+
+    test.for(["wrangler.jsonc", "wrangler.json", "wrangler.toml"])("Workers는 기존 %s가 있으면 쓰기 전에 중단한다", async (file, {root}) => {
+        await writeFile(join(root, file), "EXISTING_CONFIG");
+        const result = spawnSync(process.execPath, [resolve("dist/cli.js"), "init", "--yes", "--manager", "npm", "--deploy", "cloudflare-workers"], {
+            cwd: root,
+            encoding: "utf8",
+            env: cliEnv,
+        });
+
+        expect(result.status).toBe(1);
+        expect(result.stderr).toContain(file);
+        expect(await readdir(root)).toEqual([file]);
+        expect(await readFile(join(root, file), "utf8")).toBe("EXISTING_CONFIG");
+    });
+
+    test("Workers는 기존 Wrangler 의존성과 고유한 프로젝트 이름을 유지한다", async ({root}) => {
+        await writeFile(join(root, "package.json"), '{"name":"existing-docs","devDependencies":{"for-humanity":"0.18.0","wrangler":"^4.100.0"}}');
+        const result = spawnSync(process.execPath, [resolve("dist/cli.js"), "init", "--yes", "--manager", "npm", "--deploy", "cloudflare-workers"], {
+            cwd: root,
+            encoding: "utf8",
+            env: cliEnv,
+        });
+
+        expect(result.status, result.stderr).toBe(0);
+        const manifest: unknown = JSON.parse(await readFile(join(root, "package.json"), "utf8"));
+        expect(manifest).toMatchObject({devDependencies: {"for-humanity": "0.18.0", wrangler: "^4.100.0"}});
+        expect(JSON.parse(await readFile(join(root, "wrangler.jsonc"), "utf8"))).toMatchObject({name: "existing-docs"});
+        expect(result.stdout).not.toContain("npm install");
+    });
+
     test("[INIT-009] Cloudflare는 사용자 문서 경로와 404 출력을 연결한다", async ({root}) => {
         const result = spawnSync(process.execPath, [resolve("dist/cli.js"), "init", "--yes", "--manager", "npm", "--deploy", "cloudflare-pages", "--content", "handbook"], {
             cwd: root,

@@ -415,8 +415,10 @@ try {
         {deploy: "none", manager: "npm", content: "content"},
         {deploy: "github-pages", manager: "pnpm", content: "handbook"},
         {deploy: "cloudflare-pages", manager: "npm", content: "team notes"},
+        {deploy: "cloudflare-workers", manager: "npm", content: "worker notes"},
+        {deploy: "cloudflare-workers", manager: "pnpm", content: "."},
     ]) {
-        const initialized = join(consumer, `init-${setup.deploy}`);
+        const initialized = join(consumer, `init-${setup.deploy}-${setup.manager}`);
         const cli = join(packageRoot, "dist/cli.js");
 
         execFileSync(
@@ -440,9 +442,20 @@ try {
         if (setup.deploy === "github-pages") {
             assert.match(initializedHome, /href="\/package-docs\/getting-started\/"/);
             assert.match(await readFile(join(initialized, ".github/workflows/docs.yml"), "utf8"), /pnpm install --frozen-lockfile/);
-        } else if (setup.deploy === "cloudflare-pages") {
+        } else if (setup.deploy === "cloudflare-pages" || setup.deploy === "cloudflare-workers") {
             execFileSync(process.execPath, [join(initialized, ".cloudflare/prepare.mjs")], {cwd: consumer, stdio: "inherit"});
             assert.match(await readFile(join(initializedOutput, "404.html"), "utf8"), /Page not found/);
+
+            if (setup.deploy === "cloudflare-workers") {
+                const config = await readFile(join(initialized, "wrangler.jsonc"), "utf8");
+                assert.ok(config.includes(JSON.stringify(setup.content === "." ? "dist" : `${setup.content}/dist`)));
+                assert.match(config, /"not_found_handling": "404-page"/);
+                assert.doesNotMatch(config, /"main"|"routes"/);
+                const manifest = await readFile(join(initialized, "package.json"), "utf8");
+                assert.match(manifest, /"wrangler": "4\./);
+                assert.ok(manifest.includes(JSON.stringify(`${setup.manager === "npm" ? "npm run" : "pnpm"} docs:build && wrangler deploy`)));
+                assert.match(await readFile(join(initializedOutput, "_headers"), "utf8"), /no-transform/);
+            }
         }
     }
 

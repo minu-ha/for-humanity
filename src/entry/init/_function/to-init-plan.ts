@@ -1,6 +1,7 @@
 import {promises as fileSystem} from "node:fs";
 import {join, posix} from "node:path";
 import {content_default} from "@/constant/content";
+import {deploy_workers} from "@/entry/init/_constant/deploy";
 import {init_copy, init_defaults, init_empty_entries} from "@/entry/init/_constant/init";
 import {readInitFile} from "@/entry/init/_function/read-init-file";
 import {readInitPath} from "@/entry/init/_function/read-init-path";
@@ -27,7 +28,11 @@ interface InitPlanParams {
  * 덮어쓰기 없는 파일 목록과 JSON·gitignore 병합 계획
  */
 export const toInitPlan = async (params: InitPlanParams): Promise<InitPlan> => {
-    for (const path of ["for-humanity.config.ts", "for-humanity.config.mjs"]) {
+    for (const path of [
+        "for-humanity.config.ts",
+        "for-humanity.config.mjs",
+        ...(params.options.deploy === "cloudflare-workers" ? ["wrangler.jsonc", "wrangler.json", "wrangler.toml"] : []),
+    ]) {
         if ((await readInitPath({root: params.project.root, path})) !== undefined) {
             throw new Error(`${init_copy.conflict}: ${path}`);
         }
@@ -47,8 +52,9 @@ export const toInitPlan = async (params: InitPlanParams): Promise<InitPlan> => {
     const prefix = params.options.manager === "npm" ? "npm run" : "pnpm";
     const scripts = {
         "docs:dev": "for-humanity dev",
-        "docs:build": params.options.deploy === "cloudflare-pages" ? "for-humanity build && node .cloudflare/prepare.mjs" : "for-humanity build",
+        "docs:build": ["cloudflare-pages", "cloudflare-workers"].includes(params.options.deploy) ? "for-humanity build && node .cloudflare/prepare.mjs" : "for-humanity build",
         "docs:preview": "for-humanity preview",
+        ...(params.options.deploy === "cloudflare-workers" ? {"docs:deploy": `${prefix} docs:build && wrangler deploy`} : {}),
     };
     const previousScripts = params.project.manifest.scripts ?? init_empty_entries;
 
@@ -59,10 +65,22 @@ export const toInitPlan = async (params: InitPlanParams): Promise<InitPlan> => {
     }
 
     const installed = params.project.manifest.devDependencies?.["for-humanity"] !== undefined || params.project.manifest.dependencies?.["for-humanity"] !== undefined;
+    const needsWrangler =
+        params.options.deploy === "cloudflare-workers" &&
+        params.project.manifest.devDependencies?.wrangler === undefined &&
+        params.project.manifest.dependencies?.wrangler === undefined;
     const manifest = {
         ...params.project.manifest,
         scripts: {...previousScripts, ...scripts},
-        ...(installed ? {} : {devDependencies: {...(params.project.manifest.devDependencies ?? init_empty_entries), "for-humanity": params.project.version}}),
+        ...(!installed || needsWrangler
+            ? {
+                  devDependencies: {
+                      ...(params.project.manifest.devDependencies ?? init_empty_entries),
+                      ...(installed ? {} : {"for-humanity": params.project.version}),
+                      ...(needsWrangler ? {wrangler: deploy_workers.version} : {}),
+                  },
+              }
+            : {}),
         ...(params.options.manager === "pnpm" && params.project.manifest.packageManager === undefined ? {packageManager: params.project.packageManager} : {}),
     };
     const original = params.project.packageFile?.toString("utf8");
@@ -74,9 +92,9 @@ export const toInitPlan = async (params: InitPlanParams): Promise<InitPlan> => {
     const ignoreEol = ignoreText.includes("\r\n") ? "\r\n" : "\n";
     const output = posix.join(params.options.content, "dist");
     const ignoreLine = `/${output.replace(/[!#[\] ]/g, "\\$&")}/`;
-    const ignoreContent = ignoreText.split(/\r?\n/).includes(ignoreLine)
-        ? ignoreText
-        : `${ignoreText}${ignoreText === "" || ignoreText.endsWith("\n") ? "" : ignoreEol}${ignoreLine}${ignoreEol}`;
+    const ignoreAdditions = [ignoreLine, ...(params.options.deploy === "cloudflare-workers" ? ["/.wrangler/"] : [])].filter((line) => !ignoreText.split(/\r?\n/).includes(line));
+    const ignoreContent =
+        ignoreAdditions.length === 0 ? ignoreText : `${ignoreText}${ignoreText === "" || ignoreText.endsWith("\n") ? "" : ignoreEol}${ignoreAdditions.join(ignoreEol)}${ignoreEol}`;
 
     for (const [name, buffer] of [
         ["package.json", params.project.packageFile],
@@ -137,6 +155,6 @@ export const toInitPlan = async (params: InitPlanParams): Promise<InitPlan> => {
             {path: ".gitignore", previous: ignore, content: ignoreContent},
         ],
         directories,
-        install: !installed,
+        install: !installed || needsWrangler,
     };
 };

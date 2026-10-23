@@ -1,4 +1,5 @@
 import {z} from "zod";
+import {deploy_workers} from "@/entry/init/_constant/deploy";
 import {init_deployments, init_managers, init_reserved_roots} from "@/entry/init/_constant/init";
 import {contentConfigSchema} from "@/type/content-config";
 import {siteConfigSchema} from "@/type/site-config";
@@ -47,6 +48,15 @@ export const initBranchSchema = z
 export const initUrlSchema = z.preprocess((value) => (value === "" ? undefined : value), siteConfigSchema.shape.url);
 
 /**
+ * Workers 배포 이름의 소문자, 숫자와 하이픈 제한
+ */
+export const initWorkerNameSchema = z
+    .string()
+    .trim()
+    .max(deploy_workers.name_length_limit, "Use 63 characters or fewer for the Worker name.")
+    .regex(/^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/, "Use lowercase letters, numbers and hyphens for the Worker name, starting and ending with a letter or number.");
+
+/**
  * Citty가 허용하는 임의 인자를 제한하는 초기화 입력 경계
  */
 export const initInputSchema = z.strictObject({
@@ -79,6 +89,14 @@ export const initInputSchema = z.strictObject({
      * 생성할 배포 설정
      */
     deploy: z.enum(init_deployments).optional(),
+    /**
+     * Workers 배포 이름 지정
+     */
+    "worker-name": initWorkerNameSchema.optional(),
+    /**
+     * Citty가 함께 전달하는 Worker 이름의 camelCase 별칭
+     */
+    workerName: initWorkerNameSchema.optional(),
     /**
      * GitHub 저장소 지정
      */

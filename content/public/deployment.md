@@ -24,7 +24,7 @@ pnpm exec for-humanity preview
 
 ## Hosting settings
 
-`for-humanity init`은 GitHub Pages, Cloudflare Pages, 나중에 설정을 선택할 수 있습니다. 직접 설정하려면 아래 값을 사용합니다.
+`for-humanity init`은 GitHub Pages, Cloudflare Workers, Cloudflare Pages, 나중에 설정을 지원합니다. Workers 초기화는 Unreleased 기능으로 다음 패키지 릴리스에 포함됩니다. 직접 설정하려면 아래 값을 사용합니다.
 초기화를 사용했다면 생성된 `docs:build` 스크립트와 완료 메시지의 출력 경로를 사용합니다. 선택만으로 원격 서비스에 배포되지는 않습니다.
 
 호스팅 서비스에 문서 프로젝트를 연결하고 다음 값을 지정합니다.
@@ -84,6 +84,104 @@ export default {
 워크플로는 문서를 빌드하고 `content/dist` 전체를 배포합니다. 빌드 결과를 Git에 커밋할 필요는 없습니다.
 선행 생성 작업이나 추가 파일 복사가 필요하다면 빌드 단계를 프로젝트의 문서 빌드 명령으로 교체합니다.
 [GitHub Pages의 사용자 워크플로](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)를 참고합니다.
+
+## Cloudflare Workers
+
+Cloudflare는 새 정적 사이트에 [Workers Static Assets](https://developers.cloudflare.com/workers/best-practices/workers-best-practices/#use-workers-static-assets-for-new-projects)를 권장합니다.
+`for-humanity`의 빌드 결과를 그대로 배포하며 Worker 서버 코드는 필요하지 않습니다.
+
+### Initialize for Workers
+
+다음 패키지 릴리스에 포함될 초기화 명령입니다. 현재 공개된 `0.18.0`은 아래 수동 설정을 사용합니다.
+
+```sh
+pnpm exec for-humanity init --deploy cloudflare-workers
+# 질문 없이 실행
+pnpm exec for-humanity init --yes --deploy cloudflare-workers --worker-name team-docs
+```
+
+Worker 이름은 계정 안에서 고유해야 합니다. 63자 이내의 소문자, 숫자와 하이픈을 사용하며, 프로젝트의 `package.json` 이름 또는 폴더 이름을 제안합니다. 사용할 수 없는 이름이면 `for-humanity-docs`를 제안합니다.
+다른 Worker와 이름이 겹치면 해당 배포를 갱신하므로, 첫 배포 전에 이름을 확인합니다.
+
+초기화가 생성하는 항목:
+
+| File or setting | Purpose |
+| --- | --- |
+| `wrangler.jsonc` | Worker 이름과 선택한 문서 폴더 아래의 `dist`, 문서 경로와 404 처리 |
+| `.cloudflare/404.html` | 없는 문서의 오류 화면 |
+| `.cloudflare/_headers` | HTML 재검증과 원문 보존, 내용 지문이 붙은 자원의 장기 캐시 |
+| `.cloudflare/prepare.mjs` | 빌드 후 404와 헤더를 출력 폴더에 복사 |
+| `docs:build` | 문서 빌드와 배포 파일 복사 |
+| `docs:deploy` | 빌드 후 `wrangler deploy` |
+| `wrangler` 개발 의존성 | 기존 의존성이 없을 때 검증한 버전 추가 |
+
+초기화 후 안내한 의존성 설치 명령을 실행하고 문서, 설정, 배포 파일과 lockfile을 커밋합니다.
+기존 `wrangler.jsonc`, `wrangler.json` 또는 `wrangler.toml`이 있으면 덮어쓰지 않고 초기화를 중단합니다. 기존 프로젝트는 아래 수동 설정으로 자산을 연결합니다.
+
+### Workers Builds
+
+Cloudflare의 Worker에서 Builds에 Git 저장소를 연결하고 배포 브랜치를 선택합니다.
+
+| Setting | pnpm | npm |
+| --- | --- | --- |
+| Build command | `pnpm docs:build` | `npm run docs:build` |
+| Deploy command | `pnpm exec wrangler deploy` | `npx wrangler deploy` |
+| Root directory | `package.json`이 있는 폴더 | `package.json`이 있는 폴더 |
+
+Worker 이름은 `wrangler.jsonc`와 대시보드에서 같아야 합니다. Node.js는 `22.12.0` 이상을 선택하고, pnpm 버전은 `package.json`의 `packageManager`와 일치시킵니다.
+Builds에서는 빌드와 배포 명령을 각각 지정합니다. `docs:deploy`는 로컬에서 두 단계를 함께 실행할 때 사용합니다.
+연결 절차는 [Workers Builds](https://developers.cloudflare.com/workers/ci-cd/builds/)를 참고합니다.
+
+### Manual setup
+
+기존 프로젝트에는 Wrangler를 개발 의존성으로 설치합니다.
+
+```sh
+pnpm add -D --save-exact wrangler@4.152.0
+```
+
+프로젝트 루트에 `wrangler.jsonc`를 만듭니다. 기존 파일이 있다면 다른 설정을 보존하면서 `assets`를 병합합니다.
+문서 루트를 바꿨다면 `assets.directory`도 맞춥니다.
+
+```json
+{
+    "$schema": "node_modules/wrangler/config-schema.json",
+    "name": "team-docs",
+    "compatibility_date": "2026-10-23",
+    "assets": {
+        "directory": "./content/dist",
+        "html_handling": "force-trailing-slash",
+        "not_found_handling": "404-page"
+    }
+}
+```
+
+```sh
+pnpm exec for-humanity build
+pnpm exec wrangler dev
+pnpm exec wrangler login
+pnpm exec wrangler deploy
+```
+
+사용자 지정 404 화면과 캐시 규칙은 `404.html`과 `_headers`를 `dist` 밖에 보관한 뒤 빌드 후 출력 폴더에 복사합니다.
+초기화가 생성한 프로젝트는 다음 명령이 빌드와 복사를 함께 처리합니다.
+
+```sh
+pnpm exec wrangler login
+pnpm docs:deploy
+# npm
+npx wrangler login
+npm run docs:deploy
+```
+
+### Site URL and custom domains
+
+첫 배포에서 확인한 `workers.dev` 주소 또는 실제 사용자 도메인을 사이트 설정의 `url`에 넣고 다시 빌드합니다.
+`--url`은 canonical URL과 크롤러 파일의 주소이며 도메인을 자동 연결하지 않습니다.
+별도 도메인은 Cloudflare의 Worker Custom Domains에서 연결합니다. 자세한 절차는 [Custom Domains](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/)를 참고합니다.
+
+기존 Pages에서 옮긴다면 새 Worker의 기본 주소를 검증한 뒤 도메인을 전환하고 Pages 자동 배포를 중단합니다.
+`pages.dev` 주소는 Worker의 주소로 자동 이전되지 않습니다. [Pages 이전 가이드](https://developers.cloudflare.com/workers/static-assets/migration-guides/migrate-from-pages/)를 참고합니다.
 
 ## Cloudflare Pages
 

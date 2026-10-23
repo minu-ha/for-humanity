@@ -30,6 +30,12 @@ export const printInitResult = (plan: InitPlan) => {
     if (plan.options.deploy === "github-pages") {
         const site = toInitSite(plan.options);
         printInitPanel({title: "GitHub Pages", message: `${init_copy.github}\n\nDeployment branch: ${plan.options.branch}\nExpected URL: ${site.url}${site.basePath}`});
+    } else if (plan.options.deploy === "cloudflare-workers") {
+        const exec = plan.options.manager === "npm" ? "npx" : "pnpm exec";
+        printInitPanel({
+            title: "Cloudflare Workers",
+            message: `${init_copy.workers}\n\nBuild command: ${prefix} docs:build\nDeploy command: ${exec} wrangler deploy\n\nLocal deployment:\n${exec} wrangler login\n${prefix} docs:deploy\n\nNode.js: 22.12 or later\nSet url after deployment. Add custom domains separately.`,
+        });
     } else if (plan.options.deploy === "cloudflare-pages") {
         printInitPanel({
             title: "Cloudflare Pages",

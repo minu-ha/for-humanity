@@ -22,3 +22,8 @@ export const deploy_build_step_index = 4;
  * GitHub Pages 템플릿의 아티팩트 업로드 단계
  */
 export const deploy_artifact_step_index = 5;
+
+/**
+ * Workers 배포 파일의 검증한 CLI 버전과 런타임 기준일
+ */
+export const deploy_workers = {version: "4.152.0", compatibility_date: "2026-10-23", name_length_limit: 63} as const;

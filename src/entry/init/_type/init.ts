@@ -31,6 +31,10 @@ export interface InitOptions {
      */
     deploy: InitDeployment;
     /**
+     * Workers 계정 안의 배포 이름, 다른 호스팅은 없음
+     */
+    workerName?: string;
+    /**
      * GitHub 소유자와 저장소, 미선택 시 없음
      */
     repository?: string;

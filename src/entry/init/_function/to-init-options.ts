@@ -1,10 +1,11 @@
+import {basename} from "node:path";
 import {z} from "zod";
 import {init_branch_choices, init_content_choices, init_copy, init_defaults, init_deploy_choices, init_deployments, init_lang_choices} from "@/entry/init/_constant/init";
 import {printInitPanel} from "@/entry/init/_function/print-init-panel";
 import {promptInitChoice} from "@/entry/init/_function/prompt-init-choice";
 import type {InitProject} from "@/entry/init/_function/read-init-project";
 import type {InitOptions} from "@/entry/init/_type/init";
-import {type InitInput, initBranchSchema, initContentSchema, initRepositorySchema, initTitleSchema, initUrlSchema} from "@/entry/init/_type/init-input";
+import {type InitInput, initBranchSchema, initContentSchema, initRepositorySchema, initTitleSchema, initUrlSchema, initWorkerNameSchema} from "@/entry/init/_type/init-input";
 import {siteConfigSchema} from "@/type/site-config";
 
 /**
@@ -99,6 +100,10 @@ export const toInitOptions = async (params: InitOptionsParams): Promise<InitOpti
         }
     }
 
+    if (params.args["worker-name"] !== undefined && deploy !== "cloudflare-workers") {
+        throw new Error("--worker-name requires --deploy cloudflare-workers.");
+    }
+
     const url =
         params.args.url ??
         (params.interactive && deploy !== "none"
@@ -109,6 +114,23 @@ export const toInitOptions = async (params: InitOptionsParams): Promise<InitOpti
                   schema: initUrlSchema,
               })
             : undefined);
+
+    if (deploy === "cloudflare-workers") {
+        const detectedWorker = initWorkerNameSchema.safeParse(params.project.manifest.name ?? basename(params.project.root));
+        const suggestedWorker = detectedWorker.success ? detectedWorker.data : init_defaults.workerName;
+        const workerName =
+            params.args["worker-name"] ??
+            (params.interactive
+                ? await promptInitChoice({
+                      message: init_copy.workerName,
+                      placeholder: init_copy.workerNameExample,
+                      presets: [{value: suggestedWorker, label: suggestedWorker, hint: init_copy.recommended}],
+                      schema: initWorkerNameSchema,
+                  })
+                : suggestedWorker);
+
+        return {title, content, lang, deploy, repository, branch, workerName, manager: params.project.manager, url};
+    }
 
     return {title, content, lang, deploy, repository, branch, manager: params.project.manager, url};
 };

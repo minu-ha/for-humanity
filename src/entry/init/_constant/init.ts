@@ -1,7 +1,7 @@
 /**
  * 초기화의 배포 선택값
  */
-export const init_deployments = ["none", "github-pages", "cloudflare-pages"] as const;
+export const init_deployments = ["none", "github-pages", "cloudflare-workers", "cloudflare-pages"] as const;
 
 /**
  * 초기화가 지원하는 패키지 매니저
@@ -22,6 +22,7 @@ export const init_defaults = {
     indent: "  ",
     configIndent: 4,
     emptyText: "",
+    workerName: "for-humanity-docs",
 } as const;
 
 /**
@@ -55,6 +56,7 @@ export const init_reserved_roots = ["package.json", ".gitignore", "for-humanity.
 export const init_deploy_choices = [
     {value: "none", label: "Set up later", hint: "Start writing locally"},
     {value: "github-pages", label: "GitHub Pages", hint: "Deploy with GitHub Actions"},
+    {value: "cloudflare-workers", label: "Cloudflare Workers", hint: "Recommended for Cloudflare"},
     {value: "cloudflare-pages", label: "Cloudflare Pages", hint: "Connect a Git repository"},
 ] as const;
 
@@ -130,6 +132,8 @@ export const init_copy = {
     repositoryExample: "owner/repository",
     branch: "Deployment branch",
     branchExample: "release/docs",
+    workerName: "Worker name",
+    workerNameExample: "team-docs",
     url: "Public site origin (optional)",
     emptyUrl: "Leave blank to skip",
     defaultUrl: "Use the GitHub Pages address",
@@ -142,6 +146,7 @@ export const init_copy = {
     next: "Next steps",
     github: "Settings > Pages > GitHub Actions\nCommit your files and lockfile.\nPush the deployment branch.",
     cloudflare: "Cloudflare Pages: connect your Git repository and use these build settings.",
+    workers: "Commit your files and lockfile.\nConnect your repository in Workers > Builds.\nUse the build and deploy commands below.",
     none: "Publish later: https://for-humanity.fyi/deployment/",
 } as const;
 
@@ -154,7 +159,8 @@ export const init_args = {
     title: {type: "string", description: "Site title"},
     content: {type: "string", description: "Documentation folder, default content"},
     lang: {type: "string", description: "Document language, default ko"},
-    deploy: {type: "enum", options: init_deployments.slice(), description: "none, github-pages or cloudflare-pages"},
+    deploy: {type: "enum", options: init_deployments.slice(), description: "none, github-pages, cloudflare-workers or cloudflare-pages"},
+    "worker-name": {type: "string", description: "Cloudflare Worker name, unique in your account"},
     repository: {type: "string", description: "GitHub owner/repository"},
     branch: {type: "string", description: "GitHub deployment branch"},
     manager: {type: "enum", options: init_managers.slice(), description: "npm or pnpm, detected from the project"},

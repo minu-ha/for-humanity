@@ -25,6 +25,8 @@ for-humanity <init|dev|build|preview> [project-dir]
 
 ## Initialize a project
 
+`cloudflare-workers`와 `--worker-name`은 Unreleased 기능으로 다음 패키지 릴리스에 포함됩니다. 현재 공개 버전의 수동 배포는 [Cloudflare Workers](deployment.md#cloudflare-workers)를 참고합니다.
+
 ```sh
 pnpm exec for-humanity init
 pnpm exec for-humanity init my-docs
@@ -41,7 +43,8 @@ npx for-humanity init
 | `--title` | 사이트 이름, 기본값은 기존 package.json의 name 또는 Project notes |
 | `--content` | 프로젝트 안의 문서 폴더, 기본값 content |
 | `--lang` | 문서 언어 태그, 기본값 ko |
-| `--deploy` | none, github-pages, cloudflare-pages |
+| `--deploy` | none, github-pages, cloudflare-workers, cloudflare-pages |
+| `--worker-name` | Workers 계정 안의 고유한 이름. 사용 가능한 프로젝트 이름 또는 for-humanity-docs를 제안 |
 | `--repository` | GitHub 저장소 owner/name, 로컬 Git에서 하나로 확인되면 제안 |
 | `--branch` | GitHub 배포 브랜치, 로컬 main/master 또는 main |
 | `--url` | 공개 HTTP(S) 도메인, 별도 도메인을 쓰는 GitHub 사이트는 루트 경로로 생성 |
@@ -53,7 +56,7 @@ npx for-humanity init
 ```sh
 pnpm exec for-humanity init --yes --deploy none
 pnpm exec for-humanity init --yes --deploy github-pages --repository username/project --branch main
-npx for-humanity init --yes --deploy cloudflare-pages --manager npm
+npx for-humanity init --yes --deploy cloudflare-workers --worker-name team-docs --manager npm
 ```
 
 비대화형 환경에서는 `--yes` 또는 `--deploy`를 명시합니다. GitHub Pages에는 저장소 정보가 필요합니다. 제공한 옵션은 `--yes`에서도 검증합니다.

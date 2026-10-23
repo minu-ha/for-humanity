@@ -144,6 +144,24 @@ describe("초기화 추천값과 직접 입력", () => {
         expect(prompt).toHaveBeenCalledWith(expect.objectContaining({message: "Deployment branch"}));
     });
 
+    test("Workers 이름은 프로젝트 추천값과 직접 입력을 제공한다", async () => {
+        prompt.mockResolvedValueOnce("custom-docs");
+
+        const result = await toInitOptions({args: {...args, deploy: "cloudflare-workers", url: "https://docs.example.org"}, project, interactive: true});
+
+        expect(result.workerName).toBe("custom-docs");
+        expect(prompt).toHaveBeenCalledExactlyOnceWith(
+            expect.objectContaining({message: "Worker name", presets: [{value: "team-notes", label: "team-notes", hint: "Recommended"}]}),
+        );
+    });
+
+    test("Workers 이름으로 사용할 수 없는 프로젝트 이름은 기본 후보를 사용한다", async () => {
+        const result = await toInitOptions({args: {...args, deploy: "cloudflare-workers"}, project: {...project, manifest: {name: "팀 문서"}}, interactive: false});
+
+        expect(result.workerName).toBe("for-humanity-docs");
+        expect(prompt).not.toHaveBeenCalled();
+    });
+
     test("공개 주소는 나중에 설정을 선택할 수 있다", async () => {
         prompt.mockResolvedValueOnce(undefined);
 

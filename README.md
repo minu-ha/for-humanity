@@ -66,7 +66,7 @@ Keep published documents in `content/public` and local notes in `content/private
 
 Instead of copying the template, run `pnpm exec for-humanity init` (`npx for-humanity init` with npm).
 
-The setup asks for a site title, documentation folder, language and hosting target: GitHub Pages, Cloudflare Pages or later. It prepares the configuration, first document and `docs:dev`, `docs:build` and `docs:preview` scripts. Hosting setup creates deployment files and shows the remaining service settings.
+The setup asks for a site title, documentation folder, language and hosting target: GitHub Pages, Cloudflare Pages or later. Cloudflare Workers setup is available in Unreleased and will be included in the next package release. It prepares the configuration, first document and `docs:dev`, `docs:build` and `docs:preview` scripts. Hosting setup creates deployment files and shows the remaining service settings. Workers setup also prepares Wrangler and a `docs:deploy` script.
 
 Existing application scripts and dependencies are kept. Review the file list before creation. See [Commands](https://github.com/minu-ha/for-humanity/blob/main/content/public/commands.md#initialize-a-project) for options and automation.
 

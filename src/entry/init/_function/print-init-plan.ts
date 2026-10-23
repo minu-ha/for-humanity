@@ -21,6 +21,7 @@ export const printInitPlan = (plan: InitPlan) => {
             `${colors.dim("Language")}  ${plan.options.lang}`,
             `${colors.dim("Hosting")}   ${deployment?.label ?? plan.options.deploy}`,
             `${colors.dim("Manager")}   ${plan.options.manager}`,
+            ...(plan.options.workerName === undefined ? [] : [`${colors.dim("Worker")}    ${plan.options.workerName}`]),
             "",
             colors.bold(`${created} new files, ${plan.files.length - created} existing files`),
             ...plan.files.map((file) => `${file.previous === undefined ? colors.green("+ create") : colors.yellow("~ update")}  ${file.path}`),
