@@ -15,7 +15,11 @@ order: 10
 pnpm add -D --save-exact for-humanity@latest
 ```
 
-버전별 패키지 파일은 [GitHub Releases](https://github.com/minu-ha/for-humanity/releases)에서 받을 수 있습니다.
+버전별 패키지 파일은 [GitHub Releases](https://github.com/nomeehej/for-humanity/releases)에서 받을 수 있습니다.
+
+## Unreleased
+
+- Point the package repository, issue tracker and documentation links to `github.com/nomeehej/for-humanity` after the GitHub account rename.
 
 ## 0.22.0 — 2026-10-26
 
@@ -119,7 +123,7 @@ pnpm add -D --save-exact for-humanity@latest
 
 **Upgrade:** CLI commands, configuration, document syntax and Node.js requirements remain unchanged.
 
-**Known issue:** The intermittent Windows cursor check (`NAV-010`) fails again in CI, and its cause is being investigated. See [Maintenance](https://github.com/minu-ha/for-humanity/blob/main/content/private/maintenance.md#known-windows-check-issue).
+**Known issue:** The intermittent Windows cursor check (`NAV-010`) fails again in CI, and its cause is being investigated. See [Maintenance](https://github.com/nomeehej/for-humanity/blob/main/content/private/maintenance.md#known-windows-check-issue).
 
 - Reorganize the documentation site into Start, Guide and Updates. Installation has its own page, Commands covers command options and troubleshooting, and the changelog is published with update instructions. The Reference and Releases pages are removed; their content is in Commands, Settings, Writing and Changelog.
 - Let the mouse wheel scroll the document over the document list and the outline when they fit on screen. Chrome previously kept the wheel inside them.
@@ -144,7 +148,7 @@ pnpm add -D --save-exact for-humanity@latest
 
 **Upgrade:** CLI commands, configuration and Node.js requirements remain unchanged. Navigation scroll positions saved by older versions may reset once after upgrading.
 
-**Known issue:** The previously recorded intermittent Windows cursor check (`NAV-010`) remains deferred. See [Maintenance](https://github.com/minu-ha/for-humanity/blob/main/content/private/maintenance.md#known-windows-check-issue).
+**Known issue:** The previously recorded intermittent Windows cursor check (`NAV-010`) remains deferred. See [Maintenance](https://github.com/nomeehej/for-humanity/blob/main/content/private/maintenance.md#known-windows-check-issue).
 
 - Let Zustand persist own navigation scroll storage and hydration; remove direct storage reads, legacy layout-key compatibility and duplicate restoration helpers.
 - Validate saved navigation positions once with a shared Zod schema, discard malformed snapshots, and compare navigation data without traversing DOM links on every scroll event.
@@ -154,7 +158,7 @@ pnpm add -D --save-exact for-humanity@latest
 
 **Upgrade:** Node.js 22.12.0 or later is now required; upgrade Node before installing. Existing `dev`, `build`, `preview` commands and `.mjs` configurations remain supported. To use typed configuration, replace the `.mjs` file with `for-humanity.config.ts`; keep only one configuration file per document folder. Development and preview servers bind to localhost.
 
-**Known issue:** The Windows browser check for cursor visibility after a reload (`NAV-010`) intermittently fails. The other browser checks and installed-package dev/preview checks pass; further cursor lifecycle investigation is deferred. See [Maintenance](https://github.com/minu-ha/for-humanity/blob/main/content/private/maintenance.md#known-windows-check-issue).
+**Known issue:** The Windows browser check for cursor visibility after a reload (`NAV-010`) intermittently fails. The other browser checks and installed-package dev/preview checks pass; further cursor lifecycle investigation is deferred. See [Maintenance](https://github.com/nomeehej/for-humanity/blob/main/content/private/maintenance.md#known-windows-check-issue).
 
 - Render page titles, metadata and resource tags with a request-local Unhead server instance; deduplicate links, preserve literal metadata text, and keep CSS and font loading in the initial HTML.
 - Use Citty for CLI commands and help/version output, reject unsupported options and extra paths before running, and format build results and document warnings with Consola.

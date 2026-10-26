@@ -8,7 +8,7 @@
 
 Markdown으로 쓰고 맥락을 남겨 정적 사이트로 공유합니다.
 
-[Documentation](https://for-humanity.fyi) | [npm](https://www.npmjs.com/package/for-humanity) | [Releases](https://github.com/minu-ha/for-humanity/releases)
+[Documentation](https://for-humanity.fyi) | [npm](https://www.npmjs.com/package/for-humanity) | [Releases](https://github.com/nomeehej/for-humanity/releases)
 
 [![MIT](https://img.shields.io/badge/license-MIT-1111aa?style=flat-square)](../LICENSE)
 [![npm](https://img.shields.io/npm/v/for-humanity?style=flat-square)](https://www.npmjs.com/package/for-humanity)
@@ -115,4 +115,4 @@ export default {
 
 ## License
 
-[MIT](../LICENSE) © 2026 [minu-ha](https://github.com/minu-ha)
+[MIT](../LICENSE) © 2026 [nomeehej](https://github.com/nomeehej)

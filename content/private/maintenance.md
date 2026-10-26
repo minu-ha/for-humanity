@@ -36,7 +36,7 @@ git diff --check
 ## Repository development
 
 ```sh
-git clone https://github.com/minu-ha/for-humanity.git
+git clone https://github.com/nomeehej/for-humanity.git
 cd for-humanity
 pnpm install
 pnpm dev
@@ -80,7 +80,7 @@ public은 라이브러리를 설치하고 사용하는 독자를 위한 안내�
 - Language: 제목과 짧은 라벨은 영어 우선, 본문과 설명은 한국어([Authoring](authoring.md#language))
 - Commits: 영어 동사로 시작, AI 도움을 받은 제목의 마지막은 ` | aa`, 저장소 루트 `AGENTS.md`와 `CLAUDE.md`
 
-주석 앞에는 빈 줄을 둡니다. 블록, 객체, 배열, JSX의 첫 줄과 연속 주석은 예외입니다. 선언 설명은 여러 줄 JSDoc, 본문의 의도와 절차 설명은 `//`를 사용합니다. JSDoc의 본문은 제목 다음 빈 줄과 들여쓴 목록으로 작성하고, 직접 선언한 타입과 스키마에는 헤더와 필드 설명을 남깁니다. 테스트의 GIVEN, WHEN, THEN은 [테스트 작성 기준](https://github.com/minu-ha/for-humanity/blob/main/test/README.md)에 따른 별도 블록을 사용합니다.
+주석 앞에는 빈 줄을 둡니다. 블록, 객체, 배열, JSX의 첫 줄과 연속 주석은 예외입니다. 선언 설명은 여러 줄 JSDoc, 본문의 의도와 절차 설명은 `//`를 사용합니다. JSDoc의 본문은 제목 다음 빈 줄과 들여쓴 목록으로 작성하고, 직접 선언한 타입과 스키마에는 헤더와 필드 설명을 남깁니다. 테스트의 GIVEN, WHEN, THEN은 [테스트 작성 기준](https://github.com/nomeehej/for-humanity/blob/main/test/README.md)에 따른 별도 블록을 사용합니다.
 
 ### Lint coverage
 
@@ -129,7 +129,7 @@ CSS 규칙 본문은 타입 검사하는 `util/stylelint.config.ts`에 둡니다
 | `prepare-release.test.ts` | 버전 불일치, 변경 기록 누락, 이전 설치 버전, 필수 파일 누락 검사 |
 | `smoke-package.ts` | 패키지를 별도 프로젝트에 설치, 실제 dev와 preview의 브라우저와 종료, 공개 타입의 정상과 오류 입력, TS와 ESM 설정, 페이지, Mermaid, 자원, README, 크롤러 파일, 기본형과 사용자 content 경로와 내부 문서 배포 제외 확인 |
 
-`test/`의 구조와 작성 기준은 [테스트 안내](https://github.com/minu-ha/for-humanity/blob/main/test/README.md)를 따릅니다. 함수 검증은 소스 옆 `*.test.ts`에 두고, 나머지 검사는 사용자 흐름 순서의 영역 폴더(`0-command`, `1-document`, `2-page`, `3-server`)에 층 접미사로 둡니다. 한글 시나리오, GIVEN/WHEN/THEN, 독립 fixture를 사용하며, 모든 케이스에 영역 코드 번호를, 브라우저 케이스에는 우선순위 태그도 붙입니다.
+`test/`의 구조와 작성 기준은 [테스트 안내](https://github.com/nomeehej/for-humanity/blob/main/test/README.md)를 따릅니다. 함수 검증은 소스 옆 `*.test.ts`에 두고, 나머지 검사는 사용자 흐름 순서의 영역 폴더(`0-command`, `1-document`, `2-page`, `3-server`)에 층 접미사로 둡니다. 한글 시나리오, GIVEN/WHEN/THEN, 독립 fixture를 사용하며, 모든 케이스에 영역 코드 번호를, 브라우저 케이스에는 우선순위 태그도 붙입니다.
 부품과 part 문법, 스니펫 region, 자원 형식의 빌드 오류와 링크 경고는 `1-document`의 Node 검사가 파일과 줄까지 확인합니다.
 
 ::part[Verification]
@@ -142,13 +142,13 @@ Hono 브라우저 셸, 탐색, 커서를 변경하면 자동 브라우저 검사
 
 `0.13.0`부터 Windows Node 22.12.0의 `[NAV-010]`이 새로고침 후 커서 장식을 `visible` 대신 `hidden`으로 확인하며 실패했습니다. `0.13.0`, `0.13.1`, `0.14.1`은 이 실패를 알려진 문제로 기록한 채 공개했습니다.
 
-원인은 Windows Chromium이 새로고침으로 문서를 떠나기 직전, 커서 장식의 표시 조건 `(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)`을 잠시 비활성으로 바꾸는 데 있었습니다. 조건 변화 처리가 장식을 숨기면서 마지막 좌표까지 지워, `pagehide`가 좌표를 저장하지 않았습니다. [진단 실행](https://github.com/minu-ha/for-humanity/actions/runs/39237682877)에서 30회 중 21회가 같은 순서로 실패했고, 새 문서의 표시 조건은 모두 다시 활성이었습니다.
+원인은 Windows Chromium이 새로고침으로 문서를 떠나기 직전, 커서 장식의 표시 조건 `(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)`을 잠시 비활성으로 바꾸는 데 있었습니다. 조건 변화 처리가 장식을 숨기면서 마지막 좌표까지 지워, `pagehide`가 좌표를 저장하지 않았습니다. [진단 실행](https://github.com/nomeehej/for-humanity/actions/runs/39237682877)에서 30회 중 21회가 같은 순서로 실패했고, 새 문서의 표시 조건은 모두 다시 활성이었습니다.
 
-이제 조건 변화에는 장식만 숨기고 좌표는 유지합니다. 복원 여부는 다음 문서가 자기 표시 조건으로 판정합니다. `[NAV-020]`은 같은 조건 변화를 `emulateMedia`로 모든 운영체제에서 재현합니다. [수정 확인 실행](https://github.com/minu-ha/for-humanity/actions/runs/39239457865)에서 Windows의 `[NAV-010]`과 `[NAV-020]`을 각각 30회 반복해 모두 통과했습니다.
+이제 조건 변화에는 장식만 숨기고 좌표는 유지합니다. 복원 여부는 다음 문서가 자기 표시 조건으로 판정합니다. `[NAV-020]`은 같은 조건 변화를 `emulateMedia`로 모든 운영체제에서 재현합니다. [수정 확인 실행](https://github.com/nomeehej/for-humanity/actions/runs/39239457865)에서 Windows의 `[NAV-010]`과 `[NAV-020]`을 각각 30회 반복해 모두 통과했습니다.
 
 ### Known first-paint check issue
 
-`0.18.0`의 [CI 실행](https://github.com/minu-ha/for-humanity/actions/runs/39748936267)에서 Ubuntu Node 22.12.0의 `[NAV-010]`이 새로고침 첫 프레임의 문서 목록 위치를 `200` 대신 `0`으로 확인하며 실패했습니다. 같은 커밋의 Windows와 Node 24는 통과했습니다.
+`0.18.0`의 [CI 실행](https://github.com/nomeehej/for-humanity/actions/runs/39748936267)에서 Ubuntu Node 22.12.0의 `[NAV-010]`이 새로고침 첫 프레임의 문서 목록 위치를 `200` 대신 `0`으로 확인하며 실패했습니다. 같은 커밋의 Windows와 Node 24는 통과했습니다.
 
 원인은 배포 HTML의 인라인 번들 위치에 있었습니다. 번들은 사이드바 마크업 뒤, 본문 앞의 `<body>` 안에서 실행되는데 `<body>` 안의 스크립트는 첫 페인트를 막지 못합니다. 느린 러너에서는 Chromium 파서가 사이드바를 파싱한 뒤 71KB 번들을 실행하기 전에 양보하고, 그 사이에 저장 위치를 적용하지 않은 프레임을 그렸습니다. 로컬 macOS에서는 재현되지 않았고, CDP `Emulation.setCPUThrottlingRate`로 CPU를 20배 느리게 하면 3회 중 2회에서 첫 프레임이 `readyState: loading`, 번들 실행 전 상태로 기록됐습니다.
 
@@ -244,7 +244,7 @@ Release는 `main`에 포함된 커밋, 태그와 일치하는 `package.json` 버
 | ----- | ----- |
 | Publisher | GitHub Actions |
 | Label | `GitHub release`(선택) |
-| Organization or user | `minu-ha` |
+| Organization or user | `nomeehej` |
 | Repository | `for-humanity` |
 | Workflow filename | `release.yml`(파일명만 입력) |
 | Environment name | 비워둠 |

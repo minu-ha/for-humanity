@@ -44,7 +44,7 @@ Workers의 Builds에 저장소를 연결하고 다음 값을 지정합니다.
 
 | Setting | Value |
 | --- | --- |
-| Repository | `minu-ha/for-humanity` |
+| Repository | `nomeehej/for-humanity` |
 | Production branch | `main` |
 | Root directory | 저장소 루트 |
 | Build command | `pnpm build:site` |

@@ -14,11 +14,11 @@
     "author": "nomeehej",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/minu-ha/for-humanity.git"
+        "url": "git+https://github.com/nomeehej/for-humanity.git"
     },
     "homepage": "https://for-humanity.fyi",
     "bugs": {
-        "url": "https://github.com/minu-ha/for-humanity/issues"
+        "url": "https://github.com/nomeehej/for-humanity/issues"
     },
     "type": "module",
     "bin": {

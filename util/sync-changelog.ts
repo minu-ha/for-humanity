@@ -27,7 +27,7 @@ const changelog_header = [
     "pnpm add -D --save-exact for-humanity@latest",
     "```",
     "",
-    "Package files for each version are available from [GitHub Releases](https://github.com/minu-ha/for-humanity/releases).",
+    "Package files for each version are available from [GitHub Releases](https://github.com/nomeehej/for-humanity/releases).",
 ].join("\n");
 
 /**
@@ -51,7 +51,7 @@ const changelog_header_ko = [
     "pnpm add -D --save-exact for-humanity@latest",
     "```",
     "",
-    "버전별 패키지 파일은 [GitHub Releases](https://github.com/minu-ha/for-humanity/releases)에서 받을 수 있습니다.",
+    "버전별 패키지 파일은 [GitHub Releases](https://github.com/nomeehej/for-humanity/releases)에서 받을 수 있습니다.",
 ].join("\n");
 
 const source = await readFile(new URL("../CHANGELOG.md", import.meta.url), "utf8");
