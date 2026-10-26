@@ -14,7 +14,7 @@ const toAssetApp = (url: string, path: string) => {
     return toHttpApp({
         pages: toPageApp({
             site: siteConfigSchema.parse({}),
-            store: {docs: []},
+            store: {docs: [], homes: new Map()},
             assets: {fontCss: "", preload: [], browser: {kind: "inline" as const, code: ""}, stylePaths: [asset_style_path]},
         }),
         files: new Map([[url, path]]),

@@ -181,7 +181,7 @@ describe("코드 블록", () => {
              * WHEN
              * 홈 렌더
              */
-            const home = await readHome({scope, processor: toProcessor({site, scope})});
+            const home = await readHome({dir: scope.root, scope, processor: toProcessor({site, scope})});
 
             /**
              * THEN

@@ -3,6 +3,7 @@ import {html} from "hono/html";
 import {crawling_robots_path, crawling_sitemap_path} from "@/app/_constant/crawling";
 import type {PageParams} from "@/app/_function/to-page-app/to-page-app";
 import type {ResolvedSiteConfig} from "@/type/site-config";
+import {toAlternates} from "@/util/locale/to-alternates";
 import {toPagePath} from "@/util/url/to-page-path";
 import {toSitePath} from "@/util/url/to-site-path";
 
@@ -16,9 +17,9 @@ interface CrawlingParams {
     url: NonNullable<ResolvedSiteConfig["url"]>;
 
     /**
-     * 크롤러 파일과 페이지의 배포 경로
+     * 배포 경로와 언어 설정
      */
-    basePath: ResolvedSiteConfig["basePath"];
+    site: ResolvedSiteConfig;
 
     /**
      * dev 파일 변경 시 교체되는 현재 문서 목록. 본문은 사이트맵에 포함하지 않음
@@ -28,20 +29,47 @@ interface CrawlingParams {
 
 /**
  * dev와 정적 빌드에서 같은 크롤러 파일 생성. 정책, 수정 시각은 추정하지 않음
+ *
+ *   - 번역이 둘 이상인 페이지만 hreflang 대체 링크, 기본 언어판은 x-default 겸함
  */
 export const toCrawlingApp = (params: CrawlingParams) => {
     const app = new Hono();
 
     app.get(crawling_robots_path, (c) =>
-        c.text(`User-agent: *\nAllow: ${params.basePath}\n\nSitemap: ${params.url}${toSitePath({basePath: params.basePath, path: crawling_sitemap_path})}\n`),
+        c.text(`User-agent: *\nAllow: ${params.site.basePath}\n\nSitemap: ${params.url}${toSitePath({basePath: params.site.basePath, path: crawling_sitemap_path})}\n`),
     );
 
     app.get(crawling_sitemap_path, (_c) => {
+        // 모든 언어의 홈은 서로의 언어판
+        const homes = toAlternates({site: params.site, docs: params.store.docs});
+        const pages = [
+            ...homes.map((home) => ({path: home.path, alternates: homes})),
+            ...params.store.docs.map((doc) => {
+                return {
+                    path: toPagePath(doc.id),
+                    alternates: toAlternates({site: params.site, docs: params.store.docs, current: doc.id, locale: doc.locale}).filter((alternate) => alternate.translated),
+                };
+            }),
+        ];
+
         return new Response(
             html`<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-<url><loc>${params.url}${params.basePath}</loc></url>
-${params.store.docs.map((doc) => html`<url><loc>${params.url}${toSitePath({basePath: params.basePath, path: toPagePath(doc.id)})}</loc></url>`)}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+${pages.map((page) => {
+    const links =
+        page.alternates.length < 2
+            ? []
+            : page.alternates.flatMap((alternate) => {
+                  const href = `${params.url}${toSitePath({basePath: params.site.basePath, path: alternate.path})}`;
+
+                  return [
+                      html`<xhtml:link rel="alternate" hreflang="${alternate.lang}" href="${href}"/>`,
+                      ...(alternate.code === undefined ? [html`<xhtml:link rel="alternate" hreflang="x-default" href="${href}"/>`] : []),
+                  ];
+              });
+
+    return html`<url><loc>${params.url}${toSitePath({basePath: params.site.basePath, path: page.path})}</loc>${links}</url>`;
+})}
 </urlset>`.toString(),
             {headers: {"Content-Type": "application/xml; charset=utf-8"}},
         );

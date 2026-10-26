@@ -26,6 +26,6 @@ export const test = base.extend<{root: string; scope: ContentScope}>({
      */
     scope: async ({root}, use) => {
         await mkdir(join(root, content_default.public));
-        await use({root, publicRoot: join(root, content_default.public), privateRoot: join(root, content_default.private), includePrivate: false});
+        await use({root, publicRoot: join(root, content_default.public), privateRoot: join(root, content_default.private), includePrivate: false, locales: []});
     },
 });

@@ -96,3 +96,13 @@ export const copy_error_url_encoding = "Invalid percent-encoding";
  * 없는 문서를 가리키는 Markdown, 원시 HTML 링크 경고. 빌드 계속
  */
 export const copy_warn_broken_link = "Link to a missing document";
+
+/**
+ * 번역 언어 코드의 형식 오류
+ */
+export const copy_error_site_locale = "locales keys must be lowercase language tags such as ko or zh-hans";
+
+/**
+ * 기본 언어 공개 문서 id가 번역 언어 접두사로 시작하는 오류
+ */
+export const copy_error_locale_id = "The locale URL prefix is reserved for translated documents";

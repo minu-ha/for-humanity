@@ -279,5 +279,97 @@ describe("문서", () => {
              */
             expect(new Set(docs.map((doc) => doc.id))).toStrictEqual(new Set(["guide/agents", "guide/claude"]));
         });
+
+        test("[DOC-015] 번역 폴더의 문서는 언어 코드 접두 id와 같은 언어의 부모로 수집한다", async ({scope}) => {
+            /**
+             * GIVEN
+             * 기본 언어 문서 둘과 같은 파일명의 한국어 번역, 번역 안에서 일반 id로 지정한 부모와 상대 링크
+             */
+            const site = siteConfigSchema.parse({lang: "en", locales: {ko: {}}});
+            const localeScope = {...scope, locales: [{code: "ko", root: join(scope.root, "ko"), publicRoot: join(scope.root, "ko/public")}]};
+
+            await mkdir(join(scope.root, "ko/public"), {recursive: true});
+
+            await Promise.all([
+                writeFile(join(scope.root, "ko/README.md"), "# 홈\n"),
+                writeFile(join(scope.publicRoot, "guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\nText.\n"),
+                writeFile(join(scope.publicRoot, "setup.md"), "---\nname: Setup\nlabel: Setup\ngroup: Guide\nparent: guide\n---\n\nText.\n"),
+                writeFile(join(scope.root, "ko/public/guide.md"), "---\nname: Guide\nlabel: 안내\ngroup: Guide\n---\n\n[설치](setup.md)\n"),
+                writeFile(
+                    join(scope.root, "ko/public/setup.md"),
+                    "---\nname: Setup\nlabel: 설치\ngroup: Guide\nparent: guide\n---\n\n[홈](../README.md) [English](../../public/setup.md)\n",
+                ),
+            ]);
+
+            /**
+             * WHEN
+             * 문서 로드
+             */
+            const docs = await readDocs({scope: localeScope, processor: toProcessor({site, scope: localeScope})});
+            const translated = docs.find((doc) => doc.id === "ko/setup");
+
+            /**
+             * THEN
+             * 접두 id와 locale, 같은 언어의 부모와 조상, 번역 안의 홈과 영어 문서 링크
+             */
+            expect(new Set(docs.map((doc) => `${doc.id}:${doc.locale}`))).toStrictEqual(new Set(["guide:undefined", "setup:undefined", "ko/guide:ko", "ko/setup:ko"]));
+            expect(translated?.data.parent).toBe("ko/guide");
+            expect(translated?.ancestors).toStrictEqual(["ko/guide"]);
+            expect(translated?.html).toContain('href="/ko/"');
+            expect(translated?.html).toContain('href="/setup/"');
+            expect(docs.find((doc) => doc.id === "ko/guide")?.html).toContain('href="/ko/setup/"');
+        });
+
+        test("[DOC-016] 기본 언어 공개 문서는 언어 코드 경로를 쓸 수 없다", async ({scope}) => {
+            /**
+             * GIVEN
+             * 번역 언어 코드와 같은 이름의 공개 하위 폴더
+             */
+            const site = siteConfigSchema.parse({lang: "en", locales: {ko: {}}});
+            const localeScope = {...scope, locales: [{code: "ko", root: join(scope.root, "ko"), publicRoot: join(scope.root, "ko/public")}]};
+
+            await mkdir(join(scope.publicRoot, "ko"));
+            await writeFile(join(scope.publicRoot, "ko/notes.md"), "---\nname: Notes\nlabel: Notes\ngroup: Guide\n---\n\nText.\n");
+
+            /**
+             * WHEN
+             * 문서 로드
+             */
+            const result = readDocs({scope: localeScope, processor: toProcessor({site, scope: localeScope})});
+
+            /**
+             * THEN
+             * 번역 접두사 예약 오류
+             */
+            await expect(result).rejects.toThrow(/The locale URL prefix is reserved for translated documents/);
+        });
+
+        test("[DOC-017] 번역 문서는 다른 언어 문서를 부모로 둘 수 없다", async ({scope}) => {
+            /**
+             * GIVEN
+             * 영어 부모를 상대 경로로 가리키는 한국어 문서
+             */
+            const site = siteConfigSchema.parse({lang: "en", locales: {ko: {}}});
+            const localeScope = {...scope, locales: [{code: "ko", root: join(scope.root, "ko"), publicRoot: join(scope.root, "ko/public")}]};
+
+            await mkdir(join(scope.root, "ko/public"), {recursive: true});
+
+            await Promise.all([
+                writeFile(join(scope.publicRoot, "guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\nText.\n"),
+                writeFile(join(scope.root, "ko/public/setup.md"), "---\nname: Setup\nlabel: 설치\ngroup: Guide\nparent: ../../public/guide\n---\n\nText.\n"),
+            ]);
+
+            /**
+             * WHEN
+             * 문서 로드
+             */
+            const result = readDocs({scope: localeScope, processor: toProcessor({site, scope: localeScope})});
+
+            /**
+             * THEN
+             * 다른 언어 부모 오류
+             */
+            await expect(result).rejects.toThrow(/Parent document is in another language: ko\/setup → guide/);
+        });
     });
 });

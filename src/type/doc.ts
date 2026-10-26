@@ -1,3 +1,4 @@
+import type {ContentLocale} from "@/type/content-locale";
 import type {DocContent} from "@/type/doc-content";
 import type {DocData} from "@/type/doc-data";
 
@@ -6,9 +7,14 @@ import type {DocData} from "@/type/doc-data";
  */
 export interface Doc extends DocContent {
     /**
-     * 문서 URL id. 확장자 제외 소문자 경로. 하위 폴더 포함
+     * 문서 URL id. 확장자 제외 소문자 경로. 하위 폴더 포함, 번역 문서는 언어 코드 접두
      */
     id: string;
+
+    /**
+     * 번역 문서의 언어 코드. 기본 언어 문서는 생략
+     */
+    locale?: ContentLocale["code"];
 
     /**
      * 검증된 머리말

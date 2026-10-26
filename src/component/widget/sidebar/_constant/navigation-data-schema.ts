@@ -91,6 +91,38 @@ export const navigationDataSchema: ZodMiniType<NavigationData> = object({
     title: string(),
 
     /**
+     * 브랜드 링크가 가리키는 현재 언어 홈의 사이트 경로
+     */
+    homePath: string(),
+
+    /**
+     * 언어 줄의 이름, 언어 태그, 경로, 현재 여부
+     */
+    languages: array(
+        object({
+            /**
+             * 그 언어로 쓴 언어 이름
+             */
+            name: string(),
+
+            /**
+             * 링크와 이름의 언어 태그
+             */
+            lang: string(),
+
+            /**
+             * 번역 또는 홈의 사이트 경로
+             */
+            path: string(),
+
+            /**
+             * 현재 페이지의 언어 여부
+             */
+            active: boolean(),
+        }),
+    ),
+
+    /**
      * 표시 순서가 확정된 문서 트리
      */
     groups: array(navigationGroupSchema),

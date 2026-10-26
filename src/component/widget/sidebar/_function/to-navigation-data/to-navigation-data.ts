@@ -8,6 +8,8 @@ import type {TocSection} from "@/component/widget/sidebar/_type/toc-group";
 import type {Doc} from "@/type/doc";
 import type {DocOutline} from "@/type/doc-outline";
 import type {ResolvedSiteConfig} from "@/type/site-config";
+import type {PageAlternate} from "@/util/locale/to-alternates";
+import {toPagePath} from "@/util/url/to-page-path";
 
 /**
  * 브라우저 탐색에 전달할 문서 자료
@@ -19,7 +21,7 @@ interface NavigationDataParams {
     site: ResolvedSiteConfig;
 
     /**
-     * 검증한 전체 문서
+     * 검증한 전체 문서. 현재 언어의 문서만 탐색에 포함
      */
     docs: Doc[];
 
@@ -27,6 +29,16 @@ interface NavigationDataParams {
      * 현재 문서 식별자, 홈이면 생략
      */
     current?: string;
+
+    /**
+     * 현재 페이지의 언어 코드, 기본 언어면 생략
+     */
+    locale?: Doc["locale"];
+
+    /**
+     * 셸이 계산한 현재 페이지의 언어판
+     */
+    alternates: PageAlternate[];
 
     /**
      * 현재 본문의 제목 계층
@@ -69,10 +81,11 @@ export const toNavigationData = (params: NavigationDataParams): NavigationData =
         ];
     });
 
-    // 3. 메타데이터 경로의 문서 계층. 설정 경로와 조상 경로마다 최초 지정 위치 사용
+    // 3. 현재 언어 문서의 메타데이터 경로 계층. 설정 경로와 조상 경로마다 최초 지정 위치 사용
+    const docs = params.docs.filter((doc) => doc.locale === params.locale);
     const groups = toNavigationGroups({
-        docs: params.docs,
-        children: Map.groupBy(params.docs, (doc) => doc.data.parent),
+        docs,
+        children: Map.groupBy(docs, (doc) => doc.data.parent),
         path: [],
         positions: new Map(
             uniqBy(
@@ -89,6 +102,20 @@ export const toNavigationData = (params: NavigationDataParams): NavigationData =
     return {
         basePath: params.site.basePath,
         title: params.site.title,
+        homePath: toPagePath(params.locale),
+
+        // 언어 이름은 그 언어의 자기 표기. Intl이 모르는 태그는 코드 그대로
+        languages:
+            params.site.locales.length === 0
+                ? []
+                : params.alternates.map((alternate) => {
+                      return {
+                          name: new Intl.DisplayNames([alternate.lang], {type: "language"}).of(alternate.lang) ?? alternate.lang,
+                          lang: alternate.lang,
+                          path: alternate.path,
+                          active: alternate.code === params.locale,
+                      };
+                  }),
         groups,
         signature: createHash("sha256")
             .update(params.site.basePath)

@@ -7,7 +7,7 @@ import type {SiteAssets} from "@/type/site-assets";
 import type {ResolvedSiteConfig} from "@/type/site-config";
 
 /**
- * / 첫 화면 입력. 문서 폴더 README의 본문과 목차
+ * / 첫 화면과 /<code>/ 번역 홈 입력. 문서 폴더 README의 본문과 목차
  */
 export interface PgHomeProps {
     /**
@@ -29,11 +29,23 @@ export interface PgHomeProps {
      * README 렌더링 결과. 파일이 없으면 작성 안내
      */
     home?: DocContent;
+
+    /**
+     * 번역 홈의 언어 설정. 기본 언어 홈은 생략
+     */
+    locale?: ResolvedSiteConfig["locales"][number];
 }
 
 export const PgHome = (props: PgHomeProps) => {
     return (
-        <WgShell site={props.site} docs={props.docs} assets={props.assets} outline={props.home?.outline}>
+        <WgShell
+            site={props.site}
+            docs={props.docs}
+            assets={props.assets}
+            description={props.locale === undefined ? props.site.description : props.locale.description}
+            locale={props.locale?.code}
+            outline={props.home?.outline}
+        >
             {/**
              * 작성한 README 본문
              */}

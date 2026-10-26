@@ -9,6 +9,7 @@ import {
     copy_error_doc_id_clash,
     copy_error_doc_parent_cycle,
     copy_error_doc_parent_group,
+    copy_error_doc_parent_locale,
     copy_error_doc_parent_missing,
     copy_error_frontmatter,
 } from "@/app/_constant/copy";
@@ -29,7 +30,7 @@ import {toContentId} from "@/util/file/to-content-id";
  */
 interface ReadDocsParams {
     /**
-     * 공개, 내부 문서 폴더와 참조 범위
+     * 공개, 내부, 번역 문서 폴더와 참조 범위
      */
     scope: ContentScope;
 
@@ -47,19 +48,29 @@ interface ReadDocsParams {
 /**
  * 공개 범위의 Markdown 수집과 렌더링
  *
- *   - 공개 문서와 개발 실행의 내부 문서만 수집
+ *   - 공개 문서, 있는 번역 폴더의 문서, 개발 실행의 내부 문서만 수집
  *   - 머리말, 문서 식별자 중복, 플러그인 오류 시 실패
  */
 export const readDocs = async (params: ReadDocsParams): Promise<Doc[]> => {
-    const roots = [params.scope.publicRoot, ...(params.scope.includePrivate && existsSync(params.scope.privateRoot) ? [params.scope.privateRoot] : [])];
+    const roots = [
+        {dir: params.scope.publicRoot, locale: undefined},
+        ...(params.scope.includePrivate && existsSync(params.scope.privateRoot) ? [{dir: params.scope.privateRoot, locale: undefined}] : []),
+        ...params.scope.locales.filter((locale) => existsSync(locale.publicRoot)).map((locale) => ({dir: locale.publicRoot, locale: locale.code})),
+    ];
 
-    const paths = (await Promise.all(roots.map(async (root) => (await readdir(root, {recursive: true})).map((path) => relative(params.scope.root, join(root, path))))))
+    const entries = (
+        await Promise.all(
+            roots.map(async (root) => {
+                return (await readdir(root.dir, {recursive: true})).map((path) => ({path: relative(params.scope.root, join(root.dir, path)), locale: root.locale}));
+            }),
+        )
+    )
         .flat()
-        .filter((path) => /\.mdx?$/i.test(path) && !hasReservedFolder(path));
+        .filter((entry) => /\.mdx?$/i.test(entry.path) && !hasReservedFolder(entry.path));
 
     const docs = await Promise.all(
-        paths.map(async (path): Promise<Doc> => {
-            const absolutePath = join(params.scope.root, path);
+        entries.map(async (entry): Promise<Doc> => {
+            const absolutePath = join(params.scope.root, entry.path);
 
             assertContentPath({scope: params.scope, path: absolutePath});
 
@@ -76,13 +87,13 @@ export const readDocs = async (params: ReadDocsParams): Promise<Doc[]> => {
                 segments[0] === asset_favicon_path.slice(1) ||
                 segments[0] === asset_not_found_path.slice(1)
             ) {
-                throw new Error(`${copy_error_doc_id}: ${path}`);
+                throw new Error(`${copy_error_doc_id}: ${entry.path}`);
             }
 
             const source = await readFile(absolutePath, "utf8");
 
             // 원문에서도 UTF-8 BOM 제거. remark 파서와 지시문 offset 기준 일치
-            const file = new VFile({value: source.replace(/^\uFEFF/, ""), path: absolutePath});
+            const file = new VFile({value: source.replace(/^﻿/, ""), path: absolutePath});
             const tree = params.processor.parse(file);
             const frontmatter = tree.children[0];
 
@@ -91,7 +102,7 @@ export const readDocs = async (params: ReadDocsParams): Promise<Doc[]> => {
             const yaml = frontmatter?.type === "yaml" ? parseDocument(`\n${frontmatter.value}`) : new Document(doc_data_absent);
 
             if (yaml.errors.length > 0) {
-                throw new Error(`${copy_error_frontmatter}: ${path}: ${yaml.errors[0].message}`);
+                throw new Error(`${copy_error_frontmatter}: ${entry.path}: ${yaml.errors[0].message}`);
             }
 
             for (const warning of yaml.warnings) {
@@ -101,8 +112,11 @@ export const readDocs = async (params: ReadDocsParams): Promise<Doc[]> => {
             const parsed = docDataSchema.safeParse(yaml.toJS());
 
             if (!parsed.success) {
-                throw new Error(`${copy_error_frontmatter}: ${path}: ${toIssueText(parsed.error)}`);
+                throw new Error(`${copy_error_frontmatter}: ${entry.path}: ${toIssueText(parsed.error)}`);
             }
+
+            // 일반 부모 id는 사이트 id. 번역 문서에서는 같은 언어 안의 id
+            const parentId = entry.locale === undefined || parsed.data.parent === undefined ? parsed.data.parent : `${entry.locale}/${parsed.data.parent}`;
 
             // 상대 부모 id는 파일 위치 기준으로 한 번 해소. 문서 루트를 바꿔도 같은 관계 유지
             const data = {
@@ -110,7 +124,7 @@ export const readDocs = async (params: ReadDocsParams): Promise<Doc[]> => {
                 parent:
                     parsed.data.parent !== undefined && /^\.\.?\//.test(parsed.data.parent)
                         ? toContentId({scope: params.scope, path: resolve(dirname(file.path), parsed.data.parent)})
-                        : parsed.data.parent,
+                        : parentId,
             };
 
             // 플러그인의 제목, 절 정보 공유
@@ -125,6 +139,7 @@ export const readDocs = async (params: ReadDocsParams): Promise<Doc[]> => {
 
             return {
                 id,
+                locale: entry.locale,
                 data,
                 ancestors: [],
                 html: params.processor.stringify(rendered, file),
@@ -154,6 +169,10 @@ export const readDocs = async (params: ReadDocsParams): Promise<Doc[]> => {
 
             if (ancestors.has(parent.id)) {
                 throw new Error(`${copy_error_doc_parent_cycle}: ${[...ancestors, parent.id].join(" → ")}`);
+            }
+
+            if (parent.locale !== doc.locale) {
+                throw new Error(`${copy_error_doc_parent_locale}: ${doc.id} → ${parent.id}`);
             }
 
             if (!isEqual(parent.data.group, doc.data.group)) {

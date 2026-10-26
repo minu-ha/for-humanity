@@ -23,7 +23,7 @@ describe("크롤러 파일", () => {
              */
             const site = siteConfigSchema.parse({});
             const assets = {fontCss: "", preload: [], browser: {kind: "inline" as const, code: ""}, stylePaths: [asset_style_path]};
-            const app = toHttpApp({pages: toPageApp({site, store: {docs: []}, assets}), files: new Map()});
+            const app = toHttpApp({pages: toPageApp({site, store: {docs: [], homes: new Map()}, assets}), files: new Map()});
 
             /**
              * WHEN
@@ -57,9 +57,9 @@ describe("크롤러 파일", () => {
              * 페이지와 크롤러 응답 생성, 개발 중 문서 삭제 후 사이트맵 재요청
              */
             const docs = await readDocs({scope, processor: toProcessor({site, scope})});
-            const store = {docs};
+            const store = {docs, homes: new Map()};
             const assets = {fontCss: "", preload: [], browser: {kind: "inline" as const, code: ""}, stylePaths: [asset_style_path]};
-            const app = toHttpApp({pages: toPageApp({site, store, assets}), crawling: toCrawlingApp({url, basePath: "/", store}), files: new Map()});
+            const app = toHttpApp({pages: toPageApp({site, store, assets}), crawling: toCrawlingApp({url, site, store}), files: new Map()});
             const robots = await app.request("/robots.txt");
             const sitemap = await app.request("/sitemap.xml");
             const xml = await sitemap.text();
@@ -82,7 +82,7 @@ describe("크롤러 파일", () => {
             expect(sitemap.status).toBe(200);
             expect(String(sitemap.headers.get("content-type"))).toMatch(/^application\/xml/);
             expect(xml).toMatch(/^<\?xml version="1\.0" encoding="UTF-8"\?>/);
-            expect(xml).toMatch(/<urlset xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9">/);
+            expect(xml).toMatch(/<urlset xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9" xmlns:xhtml="http:\/\/www\.w3\.org\/1999\/xhtml">/);
             expect(xml).toMatch(/<loc>https:\/\/docs\.example\.org\/<\/loc>/);
             expect(xml).toContain(`<loc>https://docs.example.org/guide/${encodeURIComponent("한국어 & tools")}/</loc>`);
             expect([...xml.matchAll(/<loc>/g)].length).toBe(3);
@@ -110,9 +110,9 @@ describe("크롤러 파일", () => {
              */
             const docs = await readDocs({scope, processor: toProcessor({site, scope})});
             const assets = {fontCss: "", preload: [], browser: {kind: "inline" as const, code: ""}, stylePaths: [asset_style_path]};
-            const app = toPageApp({site, store: {docs}, assets});
+            const app = toPageApp({site, store: {docs, homes: new Map()}, assets});
             const result = await toSSG(app, {writeFile, mkdir}, {dir: scope.root});
-            const crawlerResult = await toSSG(toCrawlingApp({url, basePath: "/", store: {docs}}), {writeFile, mkdir}, {dir: scope.root});
+            const crawlerResult = await toSSG(toCrawlingApp({url, site, store: {docs, homes: new Map()}}), {writeFile, mkdir}, {dir: scope.root});
 
             /**
              * THEN
@@ -169,6 +169,48 @@ describe("크롤러 파일", () => {
              * 크롤러 파일 이름의 두 문서 수집
              */
             await expect(result).resolves.toHaveLength(2);
+        });
+
+        test("[CRW-006] 사이트맵은 번역 홈을 포함하고 번역이 둘 이상인 주소를 hreflang으로 묶는다", async ({scope}) => {
+            /**
+             * GIVEN
+             * 공개 주소, 한국어 번역이 있는 문서와 없는 문서
+             */
+            const url = "https://docs.example.org";
+            const site = siteConfigSchema.parse({url, lang: "en", locales: {ko: {}}});
+            const localeScope = {...scope, locales: [{code: "ko", root: join(scope.root, "ko"), publicRoot: join(scope.root, "ko/public")}]};
+
+            await mkdir(join(scope.root, "ko/public"), {recursive: true});
+
+            await Promise.all([
+                writeFile(join(scope.publicRoot, "guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\nText.\n"),
+                writeFile(join(scope.publicRoot, "setup.md"), "---\nname: Setup\nlabel: Setup\ngroup: Guide\n---\n\nText.\n"),
+                writeFile(join(scope.root, "ko/public/guide.md"), "---\nname: Guide\nlabel: 안내\ngroup: Guide\n---\n\nText.\n"),
+            ]);
+
+            /**
+             * WHEN
+             * 사이트맵 요청과 주소별 대체 링크 수집
+             */
+            const docs = await readDocs({scope: localeScope, processor: toProcessor({site, scope: localeScope})});
+            const xml = await (await toCrawlingApp({url, site, store: {docs, homes: new Map()}}).request("/sitemap.xml")).text();
+            const entries = new Map(
+                [...xml.matchAll(/<url><loc>([^<]+)<\/loc>(.*?)<\/url>/gs)].map((match) => {
+                    return [match[1], [...match[2].matchAll(/hreflang="([^"]+)" href="([^"]+)"/g)].map((link) => `${link[1]} ${link[2]}`)];
+                }),
+            );
+
+            /**
+             * THEN
+             * 두 홈과 세 문서 주소, 홈과 번역 문서의 세 대체 링크, 번역 없는 문서의 대체 링크 없음
+             */
+            expect(xml).toContain('xmlns:xhtml="http://www.w3.org/1999/xhtml"');
+            expect(new Set(entries.keys())).toStrictEqual(new Set([`${url}/`, `${url}/ko/`, `${url}/guide/`, `${url}/setup/`, `${url}/ko/guide/`]));
+            expect(entries.get(`${url}/`)).toStrictEqual([`en ${url}/`, `x-default ${url}/`, `ko ${url}/ko/`]);
+            expect(entries.get(`${url}/ko/`)).toStrictEqual(entries.get(`${url}/`));
+            expect(entries.get(`${url}/guide/`)).toStrictEqual([`en ${url}/guide/`, `x-default ${url}/guide/`, `ko ${url}/ko/guide/`]);
+            expect(entries.get(`${url}/ko/guide/`)).toStrictEqual(entries.get(`${url}/guide/`));
+            expect(entries.get(`${url}/setup/`)).toStrictEqual([]);
         });
     });
 });

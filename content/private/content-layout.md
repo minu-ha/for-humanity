@@ -17,6 +17,7 @@ group: Development
 - 홈은 문서 루트의 README.md. 공개 문서는 공개 폴더 상대 URL, 내부 문서는 `/private/` URL.
 - 공개 빌드에서 내부 문서의 렌더, 탐색, 사이트맵, 이미지와 스니펫 수집 제외.
 - 공개 문서와 홈의 내부 파일 참조는 원본 위치를 포함한 오류. 내부 문서에서 공개 자료 참조 가능.
+- `locales`의 언어 코드는 `content/<code>/README.md`와 `content/<code>/<public>` 폴더, URL 접두 `/<code>/`. 내부 문서는 미러링하지 않음. 상세 계약은 [Locales](locales.md).
 - 기본형은 `template/`에 보관, 향후 init에서 재사용. 실제 init 명령 추가는 범위 밖.
 - 공개 버전과 태그 유지. 변경은 Unreleased에 기록하고 마이그레이션 안내 제공.
 

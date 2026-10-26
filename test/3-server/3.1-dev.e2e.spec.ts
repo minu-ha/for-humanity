@@ -521,7 +521,7 @@ test.describe("개발 서버", () => {
                  */
                 const path = join(devSite.kitRoot, "src/component/widget/shell/wg-shell.tsx");
 
-                await writeFile(path, (await readFile(path, "utf8")).replace("<html lang={props.site.lang}", '<html lang="en"'));
+                await writeFile(path, (await readFile(path, "utf8")).replace("<html lang={props.locale ?? props.site.lang}", '<html lang="en"'));
 
                 /**
                  * THEN

@@ -6,6 +6,7 @@ import {
     copy_error_site_host,
     copy_error_site_image,
     copy_error_site_lang,
+    copy_error_site_locale,
     copy_error_site_url,
     copy_error_status_image,
     copy_site_title_default,
@@ -18,6 +19,8 @@ import {
     site_image_pattern,
     site_lang_default,
     site_lang_pattern,
+    site_locale_pattern,
+    site_locales_default,
     site_navigation_default,
     site_port_default,
     site_port_max,
@@ -51,6 +54,22 @@ export const siteConfigSchema = z.object({
      * 문서 언어. html lang 속성
      */
     lang: z.string().regex(site_lang_pattern, copy_error_site_lang).default(site_lang_default),
+
+    /**
+     * 번역 언어. 키는 문서 폴더 이름과 URL 접두, html lang. 설정 순서의 목록으로 정규화
+     */
+    locales: z
+        .record(
+            z.string().regex(site_locale_pattern, copy_error_site_locale),
+            z.object({
+                /**
+                 * 번역 홈의 검색 결과와 링크 미리보기 설명
+                 */
+                description: z.string().optional(),
+            }),
+        )
+        .transform((locales) => Object.entries(locales).map(([code, locale]) => ({code, description: locale.description})))
+        .prefault(site_locales_default),
 
     /**
      * 사이트의 배포 경로, 검증 후 끝 슬래시 포함
@@ -161,6 +180,11 @@ export interface SiteConfig {
      * 문서 언어 태그, 기본값 ko. 예: en, en-US
      */
     lang?: z.input<typeof siteConfigSchema>["lang"];
+
+    /**
+     * 번역 언어별 설정. 키는 문서 루트 아래 폴더 이름이자 URL 접두, 예: {ko: {description: "한국어 안내"}}
+     */
+    locales?: z.input<typeof siteConfigSchema>["locales"];
 
     /**
      * 배포할 하위 경로, 기본값 /. 예: /project/

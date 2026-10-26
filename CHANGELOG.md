@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+**Upgrade:** Existing projects remain compatible. Sites without `locales` render as before, except that `sitemap.xml` now declares the `xhtml` namespace on `<urlset>`. To add a translation, set `locales` in the configuration and put its `README.md` and `public` folder under `content/<code>/`.
+
+- Add `locales` for translated documents. Each language code is a folder under the content root, the URL prefix and the `lang` of its pages, and files at the same relative path are translations of each other. The sidebar lists the current language only and shows a language line that links to the translation of the current page or to that language's home page. With `url`, pages that exist in two or more languages get `hreflang` alternate links in the head and in the sitemap, with the default language as `x-default`. A plain `parent` in a translated document resolves within its language, and a parent in another language fails the build.
+
 ## 0.21.1 — 2026-10-26
 
 **Upgrade:** Existing projects remain compatible. Rebuild and redeploy to apply the desktop navigation spacing. CLI commands, configuration, document syntax and Node.js requirements are unchanged.

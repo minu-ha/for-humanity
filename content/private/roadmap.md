@@ -23,6 +23,7 @@ order: 40
 | 8     | [Subpath deployment](#subpath-deployment) | Done | 하위 URL 경로의 정적 배포             |
 | 9     | [Vite integration](#vite-integration) | Done | 패키지 빌드, 사용자 dev와 preview 통합 |
 | 10    | [Server features](#server-features) | Planned | API, 인증, 사용자 저장소 연결 |
+| 11    | [Locales](#locales) | Done | 기본 언어 루트와 `/<code>/` 번역 문서 |
 
 각 단계의 체크박스는 작업 완료와 검증 후 Markdown 원본에서 갱신.
 일정은 부품과 문법, 배포 대상이 정해질 때 추가.
@@ -117,14 +118,14 @@ Node 22.12.0과 24.3.0에서 설치 패키지의 공개 타입, build, dev, prev
 
 문서 폴더, 설정, 시작 문서를 준비하는 `for-humanity init [project-dir]`을 `0.18.0`에서 공개. 템플릿 복사 방식도 계속 지원.
 
-명령과 도움말은 Citty, 시작·완료 박스와 색상·질문은 Consola 사용. 기본 문서 폴더는 content, 언어는 ko, 배포는 나중에 설정. npm/pnpm 감지와 GitHub Pages·Cloudflare Pages 파일 생성 지원. `0.19.0`에서 Workers 설정과 배포 명령 생성 추가.
+명령과 도움말은 Citty, 시작과 완료 박스, 색상과 질문은 Consola 사용. 기본 문서 폴더는 content, 언어는 ko, 배포는 나중에 설정. npm/pnpm 감지와 GitHub Pages, Cloudflare Pages 파일 생성 지원. `0.19.0`에서 Workers 설정과 배포 명령 생성 추가.
 설계와 검증 범위는 [Init design](init-design.md), 작업 기록은 [Init implementation plan](init-plan.md).
 
 - [x] 대상 폴더, 생성 계획과 마지막 확인
-- [x] 사이트 이름·문서 폴더·언어·배포 선택과 자동 실행 옵션
-- [x] 설정·시작 문서·docs 스크립트·gitignore·선택한 호스팅 파일 생성
-- [x] 기존 파일·스크립트 충돌, 링크 경유 거부와 실패 시 복원
-- [x] 실제 npm/pnpm 설치의 init → dev/build/preview와 공개·내부 문서 분리 확인
+- [x] 사이트 이름, 문서 폴더, 언어, 배포 선택과 자동 실행 옵션
+- [x] 설정, 시작 문서, docs 스크립트, gitignore, 선택한 호스팅 파일 생성
+- [x] 기존 파일과 스크립트 충돌, 링크 경유 거부와 실패 시 복원
+- [x] 실제 npm/pnpm 설치의 init → dev/build/preview와 공개와 내부 문서 분리 확인
 - [x] [Commands](../public/commands.md)에 명령, 결과, 오류 예시 반영
 
 산출물: `init` 명령, 시작 템플릿, 사용법.
@@ -145,6 +146,17 @@ prototype의 첫 버전 `0.1.0`은 `dev`, `build`, `preview`를 지원. `init`�
 
 산출물: npm 패키지, 릴리스 기록, 설치 가이드.
 완료 기준: npm에 공개한 패키지를 저장소를 복제하지 않은 환경에 설치하고, 작성한 문서의 개발, 빌드, 미리보기가 동작.
+
+## Locales
+
+기본 언어는 루트 URL, 번역은 `/<code>/` 접두 폴더에 같은 파일명으로 두는 VitePress 방식. 공식 사이트는 영어가 기본 언어, 한국어가 `/ko/`. 계약과 검증은 [Locales](locales.md).
+
+- [x] `locales` 설정, 번역 폴더 수집, 기본 언어의 접두 예약
+- [x] 언어별 홈, `html lang`, `hreflang` 대체 링크와 사이트맵
+- [x] 현재 언어의 사이드바와 언어 전환 줄
+- [x] 공식 사이트의 영어 문서와 `/ko/` 한국어 문서, README와 변경 기록 동기화
+
+완료 기준: 같은 문서의 두 언어판이 각자 URL과 `lang`을 갖고, 사이드바에서 서로 전환할 수 있으며 사이트맵이 두 주소를 대체 링크로 묶음.
 
 ::part[Later]
 

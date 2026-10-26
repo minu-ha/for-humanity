@@ -99,10 +99,12 @@ export const loadSite = async (params: SiteParams) => {
     const root = realpathSync(params.root);
     const publicRoot = join(root, params.site.content.public);
     const privateRoot = join(root, params.site.content.private);
+    const locales = params.site.locales.map((locale) => ({code: locale.code, root: join(root, locale.code), publicRoot: join(root, locale.code, params.site.content.public)}));
 
-    for (const path of [publicRoot, privateRoot]) {
+    // 공개 폴더만 필수. 내부 폴더와 번역 폴더는 있을 때만 실제 폴더 검사
+    for (const path of [publicRoot, privateRoot, ...locales.flatMap((locale) => [locale.root, locale.publicRoot])]) {
         if (!existsSync(path)) {
-            if (path === privateRoot) {
+            if (path !== publicRoot) {
                 continue;
             }
 
@@ -116,15 +118,20 @@ export const loadSite = async (params: SiteParams) => {
         }
     }
 
-    const scope: ContentScope = {root, publicRoot, privateRoot, includePrivate: params.includePrivate === true};
+    const scope: ContentScope = {root, publicRoot, privateRoot, includePrivate: params.includePrivate === true, locales};
     const processor = toProcessor({site: params.site, scope, files, mermaid: loadMermaidAssets(params.kitRoot)});
 
-    const [docs, home] = await Promise.all([
+    const [docs, homes] = await Promise.all([
         readDocs({scope, processor, reserved: params.site.url === undefined ? undefined : crawling_reserved_roots}),
-        readHome({scope, processor}),
+        Promise.all(
+            [{code: undefined, root}, ...locales.filter((locale) => existsSync(locale.root))].map(async (locale) => {
+                return {code: locale.code, home: await readHome({dir: locale.root, scope, processor})};
+            }),
+        ),
     ]);
 
-    const store = {docs, home};
+    // README가 없는 언어는 홈 항목 없이 작성 안내 표시
+    const store = {docs, homes: new Map(homes.flatMap((entry) => (entry.home === undefined ? [] : [[entry.code, entry.home] as const])))};
 
     const assets: SiteAssets = {
         stylePaths,
@@ -166,7 +173,7 @@ export const loadSite = async (params: SiteParams) => {
 
     pages.notFound((c) => c.html(notFound, http_status_not_found));
 
-    const crawling = params.site.url === undefined ? undefined : toCrawlingApp({url: params.site.url, basePath: params.site.basePath, store});
+    const crawling = params.site.url === undefined ? undefined : toCrawlingApp({url: params.site.url, site: params.site, store});
 
     return {pages, crawling, files, notFound, app: toHttpApp({pages, crawling, files})};
 };

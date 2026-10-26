@@ -1,3 +1,5 @@
+import type {ContentLocale} from "@/type/content-locale";
+
 /**
  * 문서 처리 한 회차의 절대 경로와 공개 범위
  */
@@ -21,4 +23,9 @@ export interface ContentScope {
      * 개발 실행의 내부 문서 포함 여부
      */
     includePrivate: boolean;
+
+    /**
+     * 번역 언어별 홈과 공개 문서 폴더. 설정 순서
+     */
+    locales: ContentLocale[];
 }

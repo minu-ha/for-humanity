@@ -10,6 +10,7 @@ import {WgToc} from "@/component/widget/sidebar/_wg-toc";
 import type {NavigationLayout} from "@/store/navigation/navigation-state";
 import type {toNavigationStores} from "@/store/navigation/to-navigation-stores";
 import {findSameTabLink} from "@/util/dom/find-same-tab-link";
+import {toSitePath} from "@/util/url/to-site-path";
 import "./wg-sidebar.css";
 
 /**
@@ -367,12 +368,12 @@ export const WgSidebar = (props: WgSidebarProps) => {
                  */}
                 <header className={clsx("wg_sidebar__brandRow")}>
                     {/**
-                     * 사이트 이름. 홈 문서에서는 현재 페이지로 표시
+                     * 사이트 이름. 현재 언어의 홈으로 이동, 홈 문서에서는 현재 페이지로 표시
                      */}
                     <a
                         ref={props.stores === undefined ? undefined : brandRef}
                         className={clsx("wg_sidebar__brand")}
-                        href={props.data.basePath}
+                        href={toSitePath({basePath: props.data.basePath, path: props.data.homePath})}
                         aria-current={props.data.home ? "page" : undefined}
                     >
                         {props.data.title}
@@ -402,7 +403,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
                 {layout !== "drawer" && (
                     <div className={clsx("wg_sidebar__docsPanel")} data-sidebar-docs="" data-sidebar-layout={layout}>
                         <WgSidebarScroll portRef={documentsRef} kind="documents" ready={props.stores !== undefined} onScroll={handleScrollSave} onClick={handleNavigationClick}>
-                            <WgDocTree groups={props.data.groups} basePath={props.data.basePath} />
+                            <WgDocTree groups={props.data.groups} languages={props.data.languages} basePath={props.data.basePath} />
                         </WgSidebarScroll>
                     </div>
                 )}
@@ -467,7 +468,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
                                 onScroll={handleScrollSave}
                                 onClick={handleNavigationClick}
                             >
-                                <WgDocTree groups={props.data.groups} basePath={props.data.basePath} />
+                                <WgDocTree groups={props.data.groups} languages={props.data.languages} basePath={props.data.basePath} />
                             </WgSidebarScroll>
                         </div>
                     )}

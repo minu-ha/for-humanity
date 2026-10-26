@@ -29,7 +29,7 @@ describe("페이지 셸", () => {
              * WHEN
              * 공통 셸을 사용하는 홈 응답
              */
-            const html = await (await toPageApp({site: siteConfigSchema.parse({}), store: {docs: []}, assets}).request("/")).text();
+            const html = await (await toPageApp({site: siteConfigSchema.parse({}), store: {docs: [], homes: new Map()}, assets}).request("/")).text();
             const head = html.slice(html.indexOf("<head>"), html.indexOf("</head>"));
 
             /**
@@ -59,8 +59,8 @@ describe("페이지 셸", () => {
                 outline: {headings: [], sections: []},
                 ancestors: [],
             };
-            const first = toPageApp({site: siteConfigSchema.parse({title: "First", description: "First description"}), store: {docs: [doc]}, assets});
-            const second = toPageApp({site: siteConfigSchema.parse({title: "Second"}), store: {docs: [doc]}, assets});
+            const first = toPageApp({site: siteConfigSchema.parse({title: "First", description: "First description"}), store: {docs: [doc], homes: new Map()}, assets});
+            const second = toPageApp({site: siteConfigSchema.parse({title: "Second"}), store: {docs: [doc], homes: new Map()}, assets});
 
             /**
              * WHEN
@@ -89,7 +89,7 @@ describe("페이지 셸", () => {
              * WHEN
              * 설정에서 서버 HTML 생성
              */
-            const html = await (await toPageApp({site, store: {docs: []}, assets}).request("/")).text();
+            const html = await (await toPageApp({site, store: {docs: [], homes: new Map()}, assets}).request("/")).text();
             const head = html.slice(html.indexOf("<head>"), html.indexOf("</head>"));
 
             /**
@@ -117,7 +117,7 @@ describe("페이지 셸", () => {
              * WHEN
              * 홈 응답
              */
-            const html = await (await toPageApp({site, store: {docs: []}, assets}).request("/")).text();
+            const html = await (await toPageApp({site, store: {docs: [], homes: new Map()}, assets}).request("/")).text();
 
             /**
              * THEN
@@ -140,9 +140,9 @@ describe("페이지 셸", () => {
                 ancestors: [],
             };
             const site = siteConfigSchema.parse({title: "Docs", description: "Site description", url: "https://docs.example.org"});
-            const published = toPageApp({site, store: {docs: [doc]}, assets: {...assets, image: "https://docs.example.org/_fh/media/asset.abc123.png"}});
-            const imageless = toPageApp({site, store: {docs: [doc]}, assets});
-            const local = toPageApp({site: siteConfigSchema.parse({title: "Docs"}), store: {docs: [doc]}, assets});
+            const published = toPageApp({site, store: {docs: [doc], homes: new Map()}, assets: {...assets, image: "https://docs.example.org/_fh/media/asset.abc123.png"}});
+            const imageless = toPageApp({site, store: {docs: [doc], homes: new Map()}, assets});
+            const local = toPageApp({site: siteConfigSchema.parse({title: "Docs"}), store: {docs: [doc], homes: new Map()}, assets});
 
             /**
              * WHEN
@@ -217,7 +217,7 @@ describe("페이지 셸", () => {
              */
             const site = siteConfigSchema.parse({});
             const assets = {fontCss: "", preload: [], browser: {kind: "inline" as const, code: "window.shellReady = true;"}, stylePaths: ["/_fh/style.abc123.css"]};
-            const app = toPageApp({site, store: {docs: []}, assets});
+            const app = toPageApp({site, store: {docs: [], homes: new Map()}, assets});
 
             /**
              * WHEN
@@ -248,7 +248,7 @@ describe("페이지 셸", () => {
              * WHEN
              * 페이지 렌더
              */
-            const html = await (await toPageApp({site, store: {docs: []}, assets}).request("/")).text();
+            const html = await (await toPageApp({site, store: {docs: [], homes: new Map()}, assets}).request("/")).text();
             const initialization = html.indexOf(`<script>${browserScript}</script>`);
 
             /**
@@ -279,7 +279,7 @@ describe("페이지 셸", () => {
              * WHEN
              * 페이지 렌더
              */
-            const html = await (await toPageApp({site, store: {docs: []}, assets}).request("/")).text();
+            const html = await (await toPageApp({site, store: {docs: [], homes: new Map()}, assets}).request("/")).text();
 
             /**
              * THEN
@@ -303,7 +303,7 @@ describe("페이지 셸", () => {
              * WHEN
              * 페이지 렌더
              */
-            const html = await (await toPageApp({site, store: {docs: []}, assets}).request("/")).text();
+            const html = await (await toPageApp({site, store: {docs: [], homes: new Map()}, assets}).request("/")).text();
             const initialization = html.indexOf(`<script>${browserScript}</script>`);
             const marker = html.indexOf('<div id="fh-browser-ready" hidden="">');
 
@@ -315,6 +315,58 @@ describe("페이지 셸", () => {
             expect(html.match(/rel="expect"/g)).toHaveLength(1);
             expect(html.slice(initialization, marker)).toBe(`<script>${browserScript}</script>`);
             expect(marker).toBeLessThan(html.indexOf('<main class="wg_shell__main">'));
+        });
+    });
+
+    describe("언어판", () => {
+        test("[SHL-013] url이 있는 사이트는 번역이 둘 이상인 페이지에만 hreflang 링크와 x-default를 둔다", async () => {
+            /**
+             * GIVEN
+             * 영어 기본 언어와 한국어 번역, 하위 경로 배포, 번역이 있는 문서와 없는 문서
+             */
+            const site = siteConfigSchema.parse({lang: "en", url: "https://docs.example.org", basePath: "/project/", locales: {ko: {}}});
+            const assets = {fontCss: "", preload: [], stylePaths: [asset_style_path], browser: {kind: "inline" as const, code: ""}};
+            const data = docDataSchema.parse({name: "Guide", label: "Guide label", group: "Guide"});
+            const outline = {headings: [], sections: []};
+            const docs = [
+                {id: "guide", data, html: "", outline, ancestors: []},
+                {id: "ko/guide", locale: "ko", data, html: "", outline, ancestors: []},
+                {id: "setup", data, html: "", outline, ancestors: []},
+            ];
+            const app = toPageApp({site, store: {docs, homes: new Map()}, assets});
+
+            /**
+             * WHEN
+             * 번역 문서 양쪽, 번역 없는 문서, 두 홈 렌더와 head의 대체 링크 수집
+             */
+            const [guide, korean, setup, home, koreanHome] = await Promise.all(
+                ["/guide/", "/ko/guide/", "/setup/", "/", "/ko/"].map(async (path) => (await app.request(path)).text()),
+            );
+            const alternates = (html: string) => {
+                return [...html.slice(0, html.indexOf("</head>")).matchAll(/<link rel="alternate" hreflang="([^"]+)" href="([^"]+)">/g)].map((match) => `${match[1]} ${match[2]}`);
+            };
+
+            /**
+             * THEN
+             * 번역 양쪽의 같은 대체 링크와 각자 대표 주소, 번역 없는 문서의 대체 링크 없음, 두 홈의 대체 링크
+             */
+            expect(alternates(guide)).toStrictEqual([
+                "en https://docs.example.org/project/guide/",
+                "x-default https://docs.example.org/project/guide/",
+                "ko https://docs.example.org/project/ko/guide/",
+            ]);
+            expect(alternates(korean)).toStrictEqual(alternates(guide));
+            expect(korean).toContain('<link rel="canonical" href="https://docs.example.org/project/ko/guide/">');
+            expect(korean).toContain('<html lang="ko"');
+            expect(guide).toContain('<html lang="en"');
+            expect(alternates(setup)).toStrictEqual([]);
+            expect(alternates(home)).toStrictEqual([
+                "en https://docs.example.org/project/",
+                "x-default https://docs.example.org/project/",
+                "ko https://docs.example.org/project/ko/",
+            ]);
+            expect(alternates(koreanHome)).toStrictEqual(alternates(home));
+            expect(koreanHome).toContain('<link rel="canonical" href="https://docs.example.org/project/ko/">');
         });
     });
 });

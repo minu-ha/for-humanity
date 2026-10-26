@@ -46,6 +46,7 @@ describe("사이트 설정", () => {
                 content: {root: "content", public: "public", private: "private"},
                 title: "for humanity",
                 lang: "ko",
+                locales: [],
                 basePath: "/",
                 port: 4321,
                 host: "localhost",
@@ -101,6 +102,7 @@ describe("사이트 설정", () => {
                 content: {root: "content", public: "public", private: "private"},
                 title: "for humanity",
                 lang: "ko",
+                locales: [],
                 basePath: "/",
                 port: 4322,
                 host: "localhost",
@@ -265,6 +267,34 @@ describe("사이트 설정", () => {
              * 서버 시작 전 입력 거부
              */
             expect(result.success).toBe(false);
+        });
+    });
+
+    describe("번역 언어", () => {
+        test("locales는 설정 순서의 언어 목록으로 정규화하고 대문자와 예약 이름 키를 거부한다", () => {
+            /**
+             * GIVEN
+             * 설명이 있는 번역 언어와 없는 번역 언어, 폴더와 URL에 쓸 수 없는 키
+             */
+            const input = {locales: {ko: {description: "한국어 안내"}, "zh-hans": {}}} satisfies SiteConfig;
+            const invalidCodes = ["KO", "private", "_fh", "404.html", "en/us", "k"];
+
+            /**
+             * WHEN
+             * 공개 설정과 잘못된 키 검증
+             */
+            const result = siteConfigSchema.parse(input);
+            const invalid = invalidCodes.map((code) => siteConfigSchema.safeParse({locales: {[code]: {}}}).success);
+
+            /**
+             * THEN
+             * 설정 순서의 코드와 설명, 잘못된 키 거부
+             */
+            expect(result.locales).toStrictEqual([
+                {code: "ko", description: "한국어 안내"},
+                {code: "zh-hans", description: undefined},
+            ]);
+            expect(invalid).toStrictEqual(invalidCodes.map(() => false));
         });
     });
 });

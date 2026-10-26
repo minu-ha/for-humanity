@@ -152,3 +152,8 @@ export const copy_error_region_open = "region not closed";
  * 패키지 빌드 전 Mermaid 진입 모듈 누락 오류
  */
 export const copy_error_mermaid_entry = "Missing Mermaid browser entry. Run pnpm build:kit before using the CLI";
+
+/**
+ * 다른 언어 문서 사이의 부모 참조
+ */
+export const copy_error_doc_parent_locale = "Parent document is in another language";

@@ -28,7 +28,7 @@ describe("Windows 문서 링크", () => {
              * WHEN
              * Markdown 상대 링크 변환
              */
-            remarkLinks({scope: {root: "C:\\docs", publicRoot: "C:\\docs\\public", privateRoot: "C:\\docs\\private", includePrivate: false}})(tree, file);
+            remarkLinks({scope: {root: "C:\\docs", publicRoot: "C:\\docs\\public", privateRoot: "C:\\docs\\private", includePrivate: false, locales: []}})(tree, file);
 
             /**
              * THEN

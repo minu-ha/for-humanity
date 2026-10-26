@@ -67,3 +67,13 @@ export const site_port_min = 1;
  * 포트 번호 상한. TCP
  */
 export const site_port_max = 65535;
+
+/**
+ * 번역 언어 설정의 기본값. 기본 언어만 제공
+ */
+export const site_locales_default = {};
+
+/**
+ * 번역 언어 코드 구문. 문서 폴더 이름과 URL 접두에 쓰는 소문자 BCP 47 태그
+ */
+export const site_locale_pattern = /^[a-z]{2,3}(?:-[a-z0-9]{2,8})*$/;

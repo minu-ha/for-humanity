@@ -166,7 +166,7 @@ describe("문서 링크와 목차", () => {
 
             const app = toPageApp({
                 site,
-                store: {docs},
+                store: {docs, homes: new Map()},
                 assets: {stylePaths: [asset_style_path], browser: {kind: "inline" as const, code: ""}, fontCss: "", preload: []},
             });
 

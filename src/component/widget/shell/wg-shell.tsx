@@ -11,6 +11,7 @@ import type {DocOutline} from "@/type/doc-outline";
 import type {SiteAssets} from "@/type/site-assets";
 import type {ResolvedSiteConfig} from "@/type/site-config";
 import {toScriptJson} from "@/util/json/to-script-json";
+import {toAlternates} from "@/util/locale/to-alternates";
 import {toPagePath} from "@/util/url/to-page-path";
 import {toSitePath} from "@/util/url/to-site-path";
 import "@/style/base.css";
@@ -52,6 +53,11 @@ export interface WgShellProps {
     current?: string;
 
     /**
+     * 현재 페이지의 번역 언어 코드. 기본 언어는 생략
+     */
+    locale?: Doc["locale"];
+
+    /**
      * 현재 문서 또는 README 홈의 목차
      */
     outline?: DocOutline;
@@ -63,17 +69,31 @@ export interface WgShellProps {
 }
 
 export const WgShell = (props: WgShellProps) => {
-    const navigationData = toNavigationData({site: props.site, docs: props.docs, current: props.current, outline: props.outline});
+    const alternates = toAlternates({site: props.site, docs: props.docs, current: props.current, locale: props.locale});
+    const navigationData = toNavigationData({site: props.site, docs: props.docs, current: props.current, outline: props.outline, locale: props.locale, alternates});
 
     // 요청별 head 격리, 언어와 문서 구조는 Hono 셸 소유
     const head = createHead({disableDefaults: true});
 
-    // 문서 설명 우선, 첫 화면은 사이트 설명. Unhead 속성 직렬화는 따옴표만 이스케이프, 입력의 HTML 엔티티도 텍스트로 보존
-    const description = props.description ?? props.site.description;
-    const descriptionContent = description === undefined ? undefined : escapeHtml(description);
+    // 문서는 label, 홈은 언어별 사이트 설명을 페이지가 전달. Unhead 속성 직렬화는 따옴표만 이스케이프, 입력의 HTML 엔티티도 텍스트로 보존
+    const descriptionContent = props.description === undefined ? undefined : escapeHtml(props.description);
 
-    // 공개 주소를 지정한 사이트만 대표 주소와 링크 미리보기 출력. 사이트맵과 같은 주소
-    const pageUrl = props.site.url === undefined ? undefined : `${props.site.url}${toSitePath({basePath: props.site.basePath, path: toPagePath(props.current)})}`;
+    // 공개 주소를 지정한 사이트만 대표 주소와 링크 미리보기 출력. 사이트맵과 같은 주소, 번역 홈은 언어 코드가 경로
+    const pageUrl = props.site.url === undefined ? undefined : `${props.site.url}${toSitePath({basePath: props.site.basePath, path: toPagePath(props.current ?? props.locale)})}`;
+
+    // 번역이 둘 이상인 페이지만 언어판 링크. 기본 언어판은 x-default 겸함
+    const translated = pageUrl === undefined ? [] : alternates.filter((alternate) => alternate.translated);
+    const alternateLinks =
+        translated.length < 2
+            ? []
+            : translated.flatMap<Link>((alternate) => {
+                  const href = `${props.site.url}${toSitePath({basePath: props.site.basePath, path: alternate.path})}`;
+
+                  return [
+                      {rel: "alternate", hreflang: alternate.lang, href} satisfies Link,
+                      ...(alternate.code === undefined ? [{rel: "alternate", hreflang: "x-default", href} satisfies Link] : []),
+                  ];
+              });
 
     head.push({
         title: props.title === undefined ? props.site.title : `${props.title} | ${props.site.title}`,
@@ -101,6 +121,7 @@ export const WgShell = (props: WgShellProps) => {
             ...(props.assets.browser.kind === "inline" ? [{rel: "expect", href: "#fh-browser-ready", blocking: "render"} satisfies Link] : []),
             {rel: "icon", href: toSitePath({basePath: props.site.basePath, path: asset_favicon_path}), type: "image/svg+xml"},
             ...(pageUrl === undefined ? [] : [{rel: "canonical", href: pageUrl} satisfies Link]),
+            ...alternateLinks,
             ...props.assets.preload.map<Link>((href) => ({
                 rel: "preload",
                 href: toSitePath({basePath: props.site.basePath, path: href}),
@@ -117,7 +138,7 @@ export const WgShell = (props: WgShellProps) => {
     });
 
     return (
-        <html lang={props.site.lang} className={clsx("wg_shell__document")}>
+        <html lang={props.locale ?? props.site.lang} className={clsx("wg_shell__document")}>
             {/**
              * Unhead의 서버 직렬화 결과. 글꼴과 CSS는 JavaScript 수신 전에 로드
              */}

@@ -54,7 +54,7 @@ describe("다이어그램", () => {
              * WHEN
              * 홈 문서 조립
              */
-            const result = await readHome({scope, processor: toProcessor({site, scope, mermaid})});
+            const result = await readHome({dir: scope.root, scope, processor: toProcessor({site, scope, mermaid})});
 
             /**
              * THEN

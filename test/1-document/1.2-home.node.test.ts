@@ -1,11 +1,12 @@
 import {mkdir, writeFile} from "node:fs/promises";
-import {join} from "node:path";
+import {join, resolve} from "node:path";
 import {test} from "@test/_fixture/temp-root";
 import {describe, expect} from "vitest";
 import {readDocs} from "@/app/_function/read-docs";
 import {readHome} from "@/app/_function/read-home";
 import {toPageApp} from "@/app/_function/to-page-app/to-page-app";
 import {toProcessor} from "@/app/_function/to-processor/to-processor";
+import {loadSite} from "@/app/load-site";
 import {asset_style_path} from "@/constant/asset";
 import {siteConfigSchema} from "@/type/site-config";
 
@@ -36,11 +37,11 @@ describe("홈", () => {
              * WHEN
              * 홈 렌더와 /readme/ 요청
              */
-            const [docs, home] = await Promise.all([readDocs({scope, processor}), readHome({scope, processor})]);
+            const [docs, home] = await Promise.all([readDocs({scope, processor}), readHome({dir: scope.root, scope, processor})]);
 
             const app = toPageApp({
                 site,
-                store: {docs, home},
+                store: {docs, homes: new Map(home === undefined ? [] : [[undefined, home] as const])},
                 assets: {stylePaths: [asset_style_path], browser: {kind: "inline" as const, code: ""}, fontCss: "", preload: []},
             });
 
@@ -79,11 +80,11 @@ describe("홈", () => {
              * WHEN
              * 홈 렌더
              */
-            const home = await readHome({scope, processor: toProcessor({site, scope})});
+            const home = await readHome({dir: scope.root, scope, processor: toProcessor({site, scope})});
 
             const app = toPageApp({
                 site,
-                store: {docs: [], home},
+                store: {docs: [], homes: new Map(home === undefined ? [] : [[undefined, home] as const])},
                 assets: {stylePaths: [asset_style_path], browser: {kind: "inline" as const, code: ""}, fontCss: "", preload: []},
             });
 
@@ -96,6 +97,40 @@ describe("홈", () => {
             expect(home).toBe(undefined);
             expect(html).toMatch(/문서 폴더에 README\.md를 추가/);
             expect(html).not.toMatch(/pg_home__card|>Overview<|>Documents</);
+        });
+
+        test("[HOM-003] 번역 폴더의 README는 /<code>/ 홈으로 렌더하고 언어별 lang과 설명을 쓴다", async ({scope}) => {
+            /**
+             * GIVEN
+             * 영어 홈과 한국어 README, 언어별 설명, README가 없는 세 번째 언어
+             */
+            const site = siteConfigSchema.parse({lang: "en", description: "English notes", locales: {ko: {description: "한국어 안내"}, ja: {}}});
+
+            await mkdir(join(scope.root, "ko"));
+
+            await Promise.all([writeFile(join(scope.root, "README.md"), "# Home\n\nWelcome.\n"), writeFile(join(scope.root, "ko/README.md"), "# 홈\n\n[English](../README.md)\n")]);
+
+            /**
+             * WHEN
+             * 사이트 로드와 세 홈 요청
+             */
+            const siteApp = await loadSite({root: scope.root, kitRoot: resolve("."), site});
+            const [home, korean, japanese] = await Promise.all(["/", "/ko/", "/ja/"].map(async (path) => (await siteApp.app.request(path)).text()));
+
+            /**
+             * THEN
+             * 언어별 lang과 설명, 번역 홈의 영어 홈 링크와 현재 페이지인 사이트 이름, README 없는 언어의 작성 안내
+             */
+            expect(home).toContain('<html lang="en"');
+            expect(home).toContain('name="description" content="English notes"');
+            expect(home).toMatch(/Welcome\./);
+            expect(korean).toContain('<html lang="ko"');
+            expect(korean).toContain('name="description" content="한국어 안내"');
+            expect(korean).toContain('<a href="/">English</a>');
+            expect(korean).toMatch(/wg_sidebar__brand" href="\/ko\/" aria-current="page"/);
+            expect(japanese).toContain('<html lang="ja"');
+            expect(japanese).not.toContain('name="description"');
+            expect(japanese).toMatch(/문서 폴더에 README\.md를 추가/);
         });
     });
 });

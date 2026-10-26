@@ -56,7 +56,7 @@ describe("문서 자원", () => {
 
             const files = new Map<string, string>();
             const site = siteConfigSchema.parse({});
-            const home = await readHome({scope, processor: toProcessor({site, scope, files})});
+            const home = await readHome({dir: scope.root, scope, processor: toProcessor({site, scope, files})});
             const before = [...files.keys()][0];
 
             /**
@@ -66,7 +66,7 @@ describe("문서 자원", () => {
             await writeFile(join(scope.root, "local image.png"), "changed");
 
             const updated = new Map<string, string>();
-            const changed = await readHome({scope, processor: toProcessor({site, scope, files: updated})});
+            const changed = await readHome({dir: scope.root, scope, processor: toProcessor({site, scope, files: updated})});
             const after = [...updated.keys()][0];
 
             /**
@@ -221,7 +221,7 @@ describe("문서 자원", () => {
              * GIVEN
              * 문서 루트 밖의 파일에 연결된 홈 이미지
              */
-            const scope = {root: join(root, "content"), publicRoot: join(root, "content/public"), privateRoot: join(root, "content/private"), includePrivate: false};
+            const scope = {root: join(root, "content"), publicRoot: join(root, "content/public"), privateRoot: join(root, "content/private"), includePrivate: false, locales: []};
 
             await mkdir(scope.root);
             await writeFile(join(root, "private.png"), "private");
@@ -232,7 +232,7 @@ describe("문서 자원", () => {
              * WHEN
              * 링크된 이미지를 포함한 홈 처리
              */
-            const result = readHome({scope, processor: toProcessor({site: siteConfigSchema.parse({}), scope})});
+            const result = readHome({dir: scope.root, scope, processor: toProcessor({site: siteConfigSchema.parse({}), scope})});
 
             /**
              * THEN

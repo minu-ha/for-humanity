@@ -38,6 +38,7 @@ export const PgDoc = (props: PgDocProps) => {
             title={props.doc.data.name}
             description={props.doc.data.label}
             current={props.doc.id}
+            locale={props.doc.locale}
             outline={props.doc.outline}
         >
             <WgArticle html={props.doc.html} />

@@ -22,7 +22,10 @@ export const test = base.extend<Record<never, never>, {docsSite: string; basePat
                 await cp("for-humanity.config.ts", join(root, "for-humanity.config.ts"));
 
                 if (basePath !== "/") {
-                    await writeFile(join(root, "for-humanity.config.ts"), `export default {title: "Project docs", basePath: ${JSON.stringify(basePath)}, cursorFace: true};\n`);
+                    await writeFile(
+                        join(root, "for-humanity.config.ts"),
+                        `export default {title: "Project docs", basePath: ${JSON.stringify(basePath)}, cursorFace: true, lang: "en", locales: {ko: {}}};\n`,
+                    );
                 }
 
                 execFileSync(process.execPath, ["dist/cli.js", "build", root]);
