@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.21.1 — 2026-10-26
+
+**Upgrade:** Existing projects remain compatible. Rebuild and redeploy to apply the desktop navigation spacing. CLI commands, configuration, document syntax and Node.js requirements are unchanged.
+
+- Leave the same 64px space below the end of the desktop sidebar and outline as below the document, so long lists no longer stop flush against the bottom of the window.
+
 ## 0.21.0 — 2026-10-23
 
 **Upgrade:** Existing projects remain compatible. `dev` and `preview` still listen on `localhost` unless `--host` or `host` is set. The `build` output, document syntax and Node.js requirements are unchanged.

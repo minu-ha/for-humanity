@@ -84,11 +84,17 @@
     /* 모든 배치에서 남은 탐색 높이를 문서 목록 전체에 사용 */
     flex: 1;
     min-height: 0;
+
+    /* 끝까지 내린 목록 아래는 본문 끝과 같은 section 여백 */
+    padding-block-end: var(--app-space-section);
 }
 
 .wg_sidebar__tocScroll {
     flex: 1;
     min-height: 0;
+
+    /* 문서 목록과 같은 끝 여백 */
+    padding-block-end: var(--app-space-section);
 }
 
 .wg_sidebar__docsPanel {
@@ -212,6 +218,11 @@
     & > .wg_sidebar__docsPanel {
         height: 100%;
     }
+
+    /* 드로어는 자체 아래 여백 유지 */
+    & .wg_sidebar__docsScroll {
+        padding-block-end: 0;
+    }
 }
 
 /* 강제 색상 환경은 흐림 대신 시스템 손잡이로 넘침 표시 */
@@ -237,6 +248,11 @@
         margin-block-end: var(--app-space-block);
         margin-inline-end: 0;
         border-bottom: 1px solid var(--app-color-border-layout);
+
+        /* 스크립트 없는 펼친 목록은 아래 보더까지 기존 간격 */
+        & .wg_sidebar__docsScroll {
+            padding-block-end: 0;
+        }
     }
 
     .wg_sidebar__docsColumn > .wg_sidebar__docsPanel {
