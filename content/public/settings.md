@@ -1,30 +1,30 @@
 ---
 name: Settings
-label: 사이트 이름, 문서 경로, 탐색 순서 설정
+label: Site name, content paths and navigation order
 group: Guide
 order: 30
 ---
 
-`for-humanity.config.ts`에서 사이트 이름과 문서 경로, 탐색 순서를 설정합니다. 파일과 각 항목은 선택 사항이며 생략한 항목에는 기본값을 사용합니다.
+Set the site name, content paths and navigation order in `for-humanity.config.ts`. The file and each item are optional, and omitted items use their defaults.
 
 ## Create a configuration
 
-프로젝트 루트에 `for-humanity.config.ts`를 만듭니다.
+Create `for-humanity.config.ts` in the project root.
 
 ```ts
 import type {SiteConfig} from "for-humanity";
 
 export default {
     title: "Project notes",
-    description: "프로젝트 사용 안내와 참고 문서",
+    description: "Usage guide and reference documents for the project",
     content: {root: "content", public: "public", private: "private"},
     navigation: ["Start", "Guide", "Updates"],
 } satisfies SiteConfig;
 ```
 
-`SiteConfig`를 사용하면 편집기에서 설정 항목을 자동완성하고 잘못된 타입을 확인할 수 있습니다. 설정 값은 명령을 실행할 때 검사합니다. **개발 중 설정을 수정했다면 서버를 다시 시작합니다.**
+With `SiteConfig`, your editor autocompletes the configuration items and flags incorrect types. Configuration values are validated when you run a command. **If you change the configuration during development, restart the server.**
 
-JavaScript를 사용한다면 `for-humanity.config.mjs`에 같은 객체를 내보냅니다.
+If you use JavaScript, export the same object from `for-humanity.config.mjs`.
 
 ```js
 // @ts-check
@@ -32,30 +32,31 @@ JavaScript를 사용한다면 `for-humanity.config.mjs`에 같은 객체를 내�
 export default {title: "Project notes"};
 ```
 
-한 프로젝트에는 `.ts`와 `.mjs` 중 하나만 둡니다.
+Keep only one of `.ts` and `.mjs` in a project.
 
 ## Site
 
 | Key | Use | Default |
 | --- | --- | --- |
-| `title` | 사이드바와 브라우저 탭의 사이트 이름 | `for humanity` |
-| `description` | 홈 페이지의 검색 결과와 링크 미리보기 설명 | 없음 |
-| `lang` | 문서 언어 태그, 예: `en`, `en-US` | `ko` |
-| `basePath` | 배포할 URL 경로, 예: `/project/`. `0.17.0`부터 지원 | `/` |
-| `url` | 배포한 사이트의 루트 주소 | 없음 |
-| `image` | 링크 미리보기 이미지의 문서 루트 기준 경로 | 없음 |
-| `statusImage` | 404 화면 이미지의 문서 루트 기준 경로. `0.20.0`부터 지원 | 기본 픽셀 얼굴의 슬픈 표정 |
-| `port` | dev와 preview 포트, 1부터 65535까지 정수 | `4321` |
-| `host` | dev와 preview 수신 주소. `0.21.0`부터 지원 | `localhost` |
-| `cursorFace` | 데스크톱에서 마우스를 따라다니는 픽셀 얼굴 | `false` |
+| `title` | Site name in the sidebar and the browser tab | `for humanity` |
+| `description` | Description of the home page in search results and link previews | None |
+| `lang` | Document language tag, for example `en`, `en-US` | `ko` |
+| `locales` | Translation languages, see [Languages](#languages) | None |
+| `basePath` | URL path to deploy under, for example `/project/`. Supported since `0.17.0` | `/` |
+| `url` | Root address of the deployed site | None |
+| `image` | Path of the link preview image relative to the content root | None |
+| `statusImage` | Path of the 404 screen image relative to the content root. Supported since `0.20.0` | Sad expression of the default pixel face |
+| `port` | Port for dev and preview, an integer from 1 to 65535 | `4321` |
+| `host` | Listening address for dev and preview. Supported since `0.21.0` | `localhost` |
+| `cursorFace` | Pixel face that follows the mouse on desktop | `false` |
 
-사이트 홈의 제목과 본문은 `content/README.md`에 작성합니다. 문서 페이지의 설명에는 각 문서의 `label`을 사용합니다. `url`을 지정하면 검색 엔진용 파일, 대표 주소, 링크 미리보기 태그를 생성합니다. `image`는 `url`과 함께 사용하며 PNG, JPEG, GIF, WebP 파일을 지정합니다. URL 형식과 출력은 [Crawling](crawling.md)을 참고합니다.
+Write the title and body of the site home in `content/README.md`. The description of a document page uses the `label` of each document. If you set `url`, crawler files, canonical URLs and link preview tags are generated. Use `image` together with `url` and point it to a PNG, JPEG, GIF or WebP file. For the URL format and the output, see [Crawling](crawling.md).
 
 ## Local server
 
-`host`는 `0.21.0`부터 지원합니다.
+`host` is supported since `0.21.0`.
 
-같은 네트워크의 다른 기기에서도 접속하려면 다음과 같이 설정합니다.
+To allow access from other devices on the same network, configure it as follows.
 
 ```ts
 import type {SiteConfig} from "for-humanity";
@@ -68,23 +69,23 @@ export default {
 
 | Value | Binding |
 | --- | --- |
-| 생략 또는 `false` | `localhost`에서만 수신 |
-| `true` | 모든 네트워크 인터페이스에서 수신 |
-| `"0.0.0.0"` | 모든 IPv4 인터페이스에서 수신 |
-| IP 또는 hostname 문자열 | 지정한 주소에서 수신, 예: `"192.168.1.144"`, `"::1"`, `"localhost"` |
+| Omitted or `false` | Listens on `localhost` only |
+| `true` | Listens on all network interfaces |
+| `"0.0.0.0"` | Listens on all IPv4 interfaces |
+| IP or hostname string | Listens on the specified address, for example `"192.168.1.144"`, `"::1"`, `"localhost"` |
 
-주소에는 `http://` 같은 프로토콜이나 `:9999` 같은 포트를 붙이지 않습니다. 포트는 `port`에 따로 지정합니다. 변경 후에는 서버를 다시 시작합니다.
-이 설정은 `dev`와 `preview`에 적용됩니다. 한 번만 바꾸려면 CLI의 `--host`를 사용하며 CLI 옵션이 설정보다 우선합니다. 브라우저 접속 주소와 공개 문서만 공유하는 방법은 [Commands](commands.md#connect-over-a-local-network)를 참고합니다.
+Do not add a protocol such as `http://` or a port such as `:9999` to the address. Set the port separately in `port`. Restart the server after the change.
+This setting applies to `dev` and `preview`. To change it just once, use the CLI `--host`, and the CLI option takes precedence over the configuration. For the address to open in the browser and how to share only the public documents, see [Commands](commands.md#connect-over-a-local-network).
 
 ## Status screen
 
-공통 404 화면과 `statusImage`는 `0.20.0`부터 지원합니다.
+The shared 404 screen and `statusImage` are supported since `0.20.0`.
 
-없는 문서는 중앙의 픽셀 얼굴과 404 번호, 안내, 홈 복귀 링크로 표시합니다. 밝은 테마와 어두운 테마를 따르며 JavaScript 없이도 읽고 이동할 수 있습니다.
-`build`는 같은 화면을 `<content.root>/dist/404.html`에 생성하고, `dev`와 `preview`는 없는 문서에 이 화면과 HTTP 404를 반환합니다. 오류 화면은 검색 색인에서 제외합니다.
-`404.html`은 생성되는 오류 파일의 예약 경로입니다. `404.html.md`처럼 같은 경로를 만드는 문서 이름은 사용할 수 없습니다.
+A missing document is shown with a pixel face in the center, the number 404, a message and a link back to the home page. The screen follows the light and dark themes, and you can read it and navigate without JavaScript.
+`build` generates the same screen at `<content.root>/dist/404.html`, and `dev` and `preview` return this screen with HTTP 404 for a missing document. The error screen is excluded from the search index.
+`404.html` is a reserved path for the generated error file. You cannot use a document name that produces the same path, such as `404.html.md`.
 
-이미지를 교체하려면 파일을 `content/asset/status.svg`처럼 문서 루트 안에 두고 설정합니다.
+To replace the image, put the file inside the content root, for example `content/asset/status.svg`, and configure it.
 
 ```ts
 import type {SiteConfig} from "for-humanity";
@@ -94,22 +95,22 @@ export default {
 } satisfies SiteConfig;
 ```
 
-경로는 `content.root` 기준입니다. SVG, PNG, JPEG, GIF, WebP, AVIF를 지원하며 `url` 없이도 사용할 수 있습니다.
-공개 빌드에서는 private 폴더나 문서 루트 밖의 파일을 사용할 수 없습니다. 파일을 바꿨다면 다시 빌드합니다.
-이 설정은 404의 그림만 바꾸며 favicon과 커서 얼굴은 유지합니다. 생략하면 기본 슬픈 픽셀 얼굴을 사용합니다.
+The path is relative to `content.root`. SVG, PNG, JPEG, GIF, WebP and AVIF are supported, and you can use it without `url`.
+A public build cannot use a file in the private folder or outside the content root. If you changed the file, build again.
+This setting changes only the picture on the 404 screen and keeps the favicon and the cursor face. If you omit it, the default sad pixel face is used.
 
 ## Content paths
 
 | Key | Relative to | Default |
 | --- | --- | --- |
-| `content.root` | 프로젝트 루트 | `content` |
-| `content.public` | content 루트 | `public` |
-| `content.private` | content 루트 | `private` |
+| `content.root` | Project root | `content` |
+| `content.public` | Content root | `public` |
+| `content.private` | Content root | `private` |
 
-기본값을 사용하면 홈은 `content/README.md`, 공개 문서는 `content/public`, 내부 문서는 `content/private`입니다.
-공개 폴더는 필수입니다. 내부 문서가 없으면 private 폴더는 생략할 수 있습니다.
+With the defaults, the home page is `content/README.md`, the public documents are in `content/public` and the private documents are in `content/private`.
+The public folder is required. If you have no private documents, you can omit the private folder.
 
-다른 이름을 사용하려면 다음과 같이 지정합니다.
+To use different names, specify them as follows.
 
 ```ts
 import type {SiteConfig} from "for-humanity";
@@ -119,23 +120,62 @@ export default {
 } satisfies SiteConfig;
 ```
 
-이 경우 홈은 `knowledge/README.md`, 문서는 `knowledge/published`와 `knowledge/internal`, 출력은 `knowledge/dist`입니다. 설정 파일은 계속 프로젝트 루트에 둡니다.
-공개 문서 `published/guide.md`의 URL은 `/guide/`, 내부 문서 `internal/plan.md`의 로컬 URL은 `/private/plan/`입니다.
+In this case, the home page is `knowledge/README.md`, the documents are in `knowledge/published` and `knowledge/internal`, and the output is in `knowledge/dist`. The configuration file stays in the project root.
+The URL of the public document `published/guide.md` is `/guide/`, and the local URL of the private document `internal/plan.md` is `/private/plan/`.
 
-경로는 프로젝트 내부의 상대 경로를 사용합니다. `content.root: "."`도 가능하지만 public과 private은 서로 다른 하위 폴더여야 합니다. 두 경로는 같을 수 없고 한쪽이 다른 쪽 안에 들어갈 수도 없습니다.
-`..`, `dist`, `.git`, `node_modules`가 포함된 경로는 사용할 수 없습니다. 공개 폴더와 내부 폴더 자체를 symlink로 지정할 수 없습니다. symlink로 프로젝트 밖이나 예약 폴더를 가리킬 수도 없습니다.
+Use relative paths within the project. `content.root: "."` is also possible, but public and private must be different subfolders. The two paths cannot be the same, and neither can be inside the other.
+A path that contains `..`, `dist`, `.git` or `node_modules` cannot be used. The public folder and the private folder themselves cannot be symlinks. A symlink also cannot point outside the project or to a reserved folder.
 
 ### Public and private content
 
-`dev`는 양쪽 문서를 보여 줍니다. `build`는 홈과 공개 문서만 생성합니다. 그 결과는 `preview`로 확인합니다.
-홈이나 공개 문서에서 private 문서, 이미지, 첨부, 스니펫을 참조하면 빌드가 실패합니다.
+`dev` shows both kinds of documents. `build` generates only the home page and the public documents. Check the result with `preview`.
+The build fails if the home page or a public document references a private document, image, attachment or code snippet.
 
-공용 자료는 `content/asset`, 내부 자료는 `content/private/asset`에 보관합니다. `asset` 이름은 자유롭게 바꿀 수 있으며 링크를 수정하면 됩니다. 별도 설정은 필요하지 않습니다.
-`private`은 사이트 배포 제외 규칙입니다. Git 저장소에 올린 파일의 접근 권한을 바꾸지는 않습니다.
+Keep shared assets in `content/asset` and private assets in `content/private/asset`. You can rename `asset` freely, and you only need to update the links. No separate configuration is required.
+`private` is a rule that excludes content from site deployment. It does not change the access permissions of files you pushed to a Git repository.
+
+## Languages
+
+A site has one default language and any number of translations. The default language uses `lang`, `description`, `content/README.md` and `content/public`. Each translation lives in a folder named after its language code, with its own `README.md` home page and a `public` folder that mirrors the default one.
+
+```ts
+import type {SiteConfig} from "for-humanity";
+
+export default {
+    lang: "en",
+    description: "Project notes",
+    locales: {
+        ko: {description: "프로젝트 안내"},
+    },
+} satisfies SiteConfig;
+```
+
+| Key | Use | Default |
+| --- | --- | --- |
+| `locales` | Translation languages keyed by language code. Each value can set the `description` of that language's home page | None |
+
+The key is a lowercase BCP 47 language tag such as `ko` or `zh-hans`. It is the folder name under the content root, the URL prefix and the `lang` attribute of the translated pages.
+
+```text
+content/
+├── README.md             # /
+├── public/
+│   └── guide.md          # /guide/
+└── ko/
+    ├── README.md         # /ko/
+    └── public/
+        └── guide.md      # /ko/guide/
+```
+
+A file at the same relative path is the translation of the default document. The sidebar lists only the documents of the current language and shows a language line above them. The current language is plain text. Other languages link to the translation of the current page, or to that language's home page when the page has no translation. The site name links to the home page of the current language.
+
+Private documents are not translated, and `content/asset` is shared by every language. A translated document references a shared asset with one more `../`, for example `../../asset/screen.png`. A plain `parent` id in a translated document refers to a document of the same language, and a parent in another language is an error. A public document of the default language cannot use a language code as its first path segment.
+
+If you set `url`, pages that exist in two or more languages get `hreflang` alternate links in the HTML head and in the sitemap. The default language is also `x-default`. See [Crawling](crawling.md).
 
 ## Navigation
 
-`navigation`에는 사이드바 그룹을 표시할 순서를 적습니다. 각 이름은 문서 frontmatter의 `group`과 일치해야 합니다.
+In `navigation`, list the order in which to show the sidebar groups. Each name must match the `group` in the document frontmatter.
 
 ```ts
 export default {
@@ -143,10 +183,10 @@ export default {
 };
 ```
 
-설정에 없는 그룹은 지정한 그룹 뒤에서 이름순으로 표시합니다. 문서가 없는 그룹은 표시하지 않습니다. 같은 그룹을 두 번 지정하면 오류입니다.
-그룹 안의 문서 순서는 문서의 `order`로 지정합니다.
+Groups not in the configuration appear after the specified groups, in name order. A group with no documents is not shown. Specifying the same group twice is an error.
+Set the order of documents within a group with the `order` of each document.
 
-중첩 그룹의 순서는 이름 배열로 지정합니다.
+Specify the order of nested groups with an array of names.
 
 ```ts
 export default {
@@ -159,12 +199,12 @@ export default {
 };
 ```
 
-위 설정은 Projects 안에서 Research를 Decisions보다 먼저 표시합니다. 같은 이름이라도 전체 경로가 다르면 별도 그룹입니다.
-문서의 `group`과 `parent`를 작성하는 방법은 [Navigation](navigation.md)을 참고합니다.
+The configuration above shows Research before Decisions inside Projects. Groups with the same name are separate groups if their full paths differ.
+For how to write `group` and `parent` in a document, see [Navigation](navigation.md).
 
 ## Status badges
 
-본문의 특정 문구를 상태 표지로 표시할 수 있습니다. 기본 문구는 `확인됨`과 `확인되지 않았다`입니다.
+You can display specific phrases in the body as status badges. The default phrases are `확인됨` and `확인되지 않았다`.
 
 ```ts
 export default {
@@ -177,15 +217,15 @@ export default {
 
 | Key | Use |
 | --- | --- |
-| `phrase` | 본문에서 찾을 비어 있지 않은 문구 |
-| `kind` | `verified`: 초록, `unverified`: 호박색 |
-| `date` | `true`이면 뒤의 `YYYY-MM-DD` 날짜도 함께 표시 |
+| `phrase` | Non-empty phrase to find in the body |
+| `kind` | `verified`: green, `unverified`: amber |
+| `date` | If `true`, a `YYYY-MM-DD` date that follows is also shown |
 
-위 설정을 사용한 문서에 `검토 완료 2026-10-01`을 쓰면 날짜까지 하나의 표지로 표시합니다.
-괄호로 감싼 문구도 인식합니다. 제목, 링크, 코드 안의 문구는 바꾸지 않습니다.
-`status`를 지정하면 기본 목록을 교체합니다. 표지를 끄려면 `status: []`를 사용합니다.
+Writing `검토 완료 2026-10-01` in a document that uses the configuration above displays the phrase and the date as a single badge.
+A phrase wrapped in parentheses is also recognized. Phrases inside headings, links and code are not converted.
+Setting `status` replaces the default list. To turn the badges off, use `status: []`.
 
 ## Appearance
 
-밝은 테마와 어두운 테마는 독자의 시스템 설정을 따릅니다. 글꼴은 빌드 결과에 포함됩니다.
-사이트 테마나 글꼴을 교체하는 설정은 현재 제공하지 않습니다.
+The light and dark themes follow the reader's system setting. Fonts are included in the build output.
+There is currently no setting to replace the site theme or fonts.

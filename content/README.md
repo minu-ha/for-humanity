@@ -17,13 +17,13 @@ Write Markdown. Keep the context. Share a static site.
 ![Node 22.12.0+](https://img.shields.io/badge/node-22.12.0%2B-444444?style=flat-square)
 ![Prototype](https://img.shields.io/badge/status-prototype-9a6400?style=flat-square)
 
-[Quick start](#quick-start) | [Guide](public/writing.md) | [Commands](public/commands.md) | [Deployment](public/deployment.md) | [Korean](https://github.com/minu-ha/for-humanity/blob/main/language/README.ko.md)
+[Quick start](#quick-start) | [Guide](public/writing.md) | [Commands](public/commands.md) | [Deployment](public/deployment.md) | [Korean](ko/README.md)
 
 </div>
 
 ## Write, organize, publish
 
-Write Markdown with code examples, tables and Mermaid diagrams, and add images, video and audio. Organize pages into groups and nested navigation. Use notes for context and collapsible details for longer explanations.
+Write Markdown with code examples, tables and Mermaid diagrams, and add images, video and audio. Organize pages into groups and nested navigation. Use notes for context and collapsible details for longer explanations. Add translations as a folder per language.
 
 The result is a static site with bundled fonts, light and dark themes, keyboard navigation and a layout that adapts to narrow screens.
 

@@ -1,26 +1,26 @@
 ---
 name: Installation
-label: 설치하고 첫 문서 실행하기
+label: Install and run your first document
 group: Start
 order: 10
 ---
 
-for humanity는 Markdown 파일로 문서 사이트를 만듭니다. 작성 중에는 `dev`, 배포할 때는 `build`, 배포 결과를 확인할 때는 `preview`를 사용합니다.
-Node.js 22.12.0 이상이 필요합니다. 아래 예시는 pnpm을 사용하며 npm으로도 설치할 수 있습니다.
+for humanity builds a documentation site from Markdown files. Use `dev` while you write, `build` when you deploy, and `preview` to check the deployed output.
+Node.js 22.12.0 or later is required. The examples below use pnpm, and you can also install with npm.
 
 ## Install the package
 
-`package.json`이 있는 프로젝트에서 설치합니다.
+Install it in a project that has a `package.json`.
 
 ```sh
 pnpm add -D --save-exact for-humanity@0.19.0
 ```
 
-`0.13.1` 이하에서 업데이트한다면 먼저 [Migration](migration.md)을 따라 문서와 설정 위치를 변경합니다.
+If you are updating from `0.13.1` or earlier, first follow [Migration](migration.md) to change the locations of your documents and configuration.
 
 ## Initialize a site
 
-프로젝트 루트에서 초기화 명령을 실행합니다. 직접 파일을 만들려면 아래 [Your first site](#your-first-site)를 따릅니다.
+Run the init command from the project root. To create the files by hand, follow [Your first site](#your-first-site) below.
 
 ```sh
 pnpm exec for-humanity init
@@ -28,65 +28,65 @@ pnpm exec for-humanity init
 npx for-humanity init
 ```
 
-사이트 이름, 문서 폴더, 언어와 배포 방식을 선택합니다. 추천값을 고르거나 같은 질문에서 바로 타이핑합니다. `Custom` 행으로 이동한 뒤 입력해도 됩니다. 기본 문서 폴더는 `content`, 언어는 `ko`, 배포는 나중에 설정입니다.
-GitHub Pages를 선택하면 저장소와 배포 브랜치를 확인합니다. Cloudflare에서는 Workers를 권장합니다. Workers 초기화는 `0.19.0`부터 지원하며 Worker 이름, Wrangler 설정과 빌드와 배포 명령을 준비합니다. 기존 Cloudflare Pages 선택도 지원합니다.
+You choose the site name, content folder, language, and deployment method. Pick a suggested value, or type directly at the same prompt. You can also move to the `Custom` row and then type. The default content folder is `content`, the default language is `ko`, and the default deployment is to set it up later.
+If you choose GitHub Pages, you confirm the repository and the deployment branch. For Cloudflare, Workers is recommended. Workers initialization is supported since `0.19.0` and prepares the Worker name, the Wrangler configuration, and the build and deploy commands. The existing Cloudflare Pages option is also supported.
 
-생성할 파일을 확인하면 설정, 첫 문서와 `docs:*` 스크립트를 만듭니다. 초기화 후 `pnpm docs:dev` 또는 `npm run docs:dev`를 실행합니다.
-필요한 의존성이 없으면 설치 명령부터 안내합니다. init은 패키지를 자동 설치하거나 호스팅 계정을 연결하지 않습니다.
+After you confirm the files to create, it creates the configuration, the first document, and the `docs:*` scripts. After initialization, run `pnpm docs:dev` or `npm run docs:dev`.
+If a required dependency is missing, it shows the install command first. init does not install packages automatically or connect a hosting account.
 
-새 폴더는 `for-humanity init my-docs`로 지정합니다. 기존 문서나 설정, 다른 내용의 `docs:*` 스크립트와 충돌하면 파일 생성 전에 중단합니다.
-자세한 옵션은 [Commands](commands.md#initialize-a-project), 배포 단계는 [Deployment](deployment.md)를 참고합니다.
+Specify a new folder with `for-humanity init my-docs`. If it conflicts with an existing document, an existing configuration, or a `docs:*` script with different contents, it stops before creating any files.
+For the details of each option, see [Commands](commands.md#initialize-a-project). For the deployment steps, see [Deployment](deployment.md).
 
 ## Your first site
 
-`content/public` 폴더를 만들고 홈에 표시할 내용을 `content/README.md`에 작성합니다. 기본 파일을 복사해서 시작하려면 아래 [Content layout](#content-layout)을 참고합니다.
+Create the `content/public` folder and write the content to show on the home page in `content/README.md`. To start by copying the default files, see [Content layout](#content-layout) below.
 
 ```markdown
 # Project notes
 
-프로젝트 소개와 사용 안내입니다.
+An introduction to the project and a usage guide.
 
-[시작하기](public/guide.md)
+[Get started](public/guide.md)
 ```
 
-`content/public/guide.md`에는 문서 정보와 본문을 작성합니다.
+Write the document information and the body in `content/public/guide.md`.
 
 ```markdown
 ---
 name: Guide
-label: 처음 사용하는 사람을 위한 안내
+label: A guide for first-time users
 group: Guide
 order: 10
 ---
 
 ## Overview
 
-첫 번째 문서입니다.
+This is the first document.
 ```
 
-프로젝트 루트에서 실행합니다.
+Run it from the project root.
 
 ```sh
 pnpm exec for-humanity dev
 ```
 
-`http://localhost:4321/`에서 홈과 Guide 문서를 확인합니다. Markdown을 저장하면 열린 페이지가 새로고침됩니다.
-설정 없이도 기본 경로로 실행할 수 있습니다. 설정을 추가할 때는 프로젝트 루트에 `for-humanity.config.ts`를 둡니다.
+Check the home page and the Guide document at `http://localhost:4321/`. When you save a Markdown file, the open page reloads.
+You can run with the default paths without any configuration. When you add configuration, place `for-humanity.config.ts` in the project root.
 
-배포할 결과를 만들고 확인합니다.
+Build the output to deploy and check it.
 
 ```sh
 pnpm exec for-humanity build
 pnpm exec for-humanity preview
 ```
 
-출력은 `content/dist`입니다. 홈과 `content/public`의 문서만 배포 결과에 포함합니다.
+The output is `content/dist`. Only the home page and the documents in `content/public` are included in the deployed output.
 
 ## Content layout
 
-설정은 프로젝트 루트에 두고 문서는 공개 폴더와 내부 폴더로 구분합니다.
+Keep the configuration in the project root and divide the documents into a public folder and a private folder.
 
-설치된 `node_modules/for-humanity/template`에서 설정 파일과 `content` 폴더를 자신의 프로젝트로 복사합니다. 기존 파일이 있다면 필요한 항목만 병합합니다.
+Copy the configuration file and the `content` folder from the installed `node_modules/for-humanity/template` into your project. If files already exist, merge only the items you need.
 
 ```text
 project/
@@ -99,11 +99,11 @@ project/
     └── asset/
 ```
 
-- `README.md`: 사이트 홈에 표시할 소개
-- `public`: 배포할 문서
-- `private`: 로컬에서만 읽을 문서
-- `asset`: 공개 문서에서 사용할 이미지와 첨부
+- `README.md`: the introduction shown on the site home page
+- `public`: documents to deploy
+- `private`: documents to read only locally
+- `asset`: images and attachments used by public documents
 
-`dist`는 빌드할 때 생성되므로 `.gitignore`에 `content/dist/`를 추가합니다. 폴더 이름을 바꾸는 설정은 [Settings](settings.md#content-paths)를 참고합니다.
+`dist` is generated at build time, so add `content/dist/` to `.gitignore`. To rename the folders, see the configuration in [Settings](settings.md#content-paths).
 
-문서 작성은 [Writing](writing.md), 명령의 자세한 동작은 [Commands](commands.md), 결과 공개는 [Deployment](deployment.md)로 이어집니다.
+Writing documents continues in [Writing](writing.md), the details of how commands behave in [Commands](commands.md), and publishing the result in [Deployment](deployment.md).

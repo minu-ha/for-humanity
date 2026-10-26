@@ -11,7 +11,12 @@ export default {
     // 링크 미리보기 이미지. favicon 픽셀 얼굴의 PNG
     image: "asset/preview.png",
 
-    description: "Markdown으로 문서를 작성하고 정적 사이트로 공유하는 문서 도구. 설치와 실행, 문서 작성, 사이트 설정과 배포 방법.",
+    // 영어가 기본 언어, 한국어 번역은 content/ko와 /ko/
+    lang: "en",
+    description: "A docs kit that writes Markdown and shares it as a static site. Installation, writing, site configuration and deployment.",
+    locales: {
+        ko: {description: "Markdown으로 문서를 작성하고 정적 사이트로 공유하는 문서 도구. 설치와 실행, 문서 작성, 사이트 설정과 배포 방법."},
+    },
     navigation: ["Start", "Guide", "Updates", "Examples", "Development"],
 
     // 기본 비활성인 데스크톱 커서 장식 사용

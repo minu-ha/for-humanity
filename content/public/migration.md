@@ -1,15 +1,15 @@
 ---
 name: Migration
-label: 버전별 이전 방법
+label: Upgrade steps by version
 group: Updates
 order: 20
 ---
 
-`0.14.0`부터 설정 위치와 문서 수집 방식이 바뀝니다. `0.13.1` 이하에서 업데이트할 때 이 절차를 따릅니다. `0.14.x`에서 `0.15.0`으로 업데이트할 때는 [Update to 0.15.0](#update-to-0150)을 확인합니다. 새 프로젝트는 [Installation](installation.md#your-first-site)에서 시작합니다.
+Starting with `0.14.0`, the configuration location and the way documents are collected change. Follow this procedure when you update from `0.13.1` or earlier. When you update from `0.14.x` to `0.15.0`, see [Update to 0.15.0](#update-to-0150). For a new project, start at [Installation](installation.md#your-first-site).
 
 ## Before and after
 
-기존에는 `docs` 같은 문서 폴더 안에서 설정, 홈, 일반 문서를 함께 읽었습니다. 새 구조는 프로젝트 루트 설정, 공개 문서 폴더, 내부 문서 폴더를 구분합니다.
+Previously, the configuration, the home page, and regular documents were all read from a single document folder such as `docs`. The new structure separates the configuration at the project root, the public documents folder, and the private documents folder.
 
 ```text
 project/
@@ -21,35 +21,35 @@ project/
     ├── private/
     │   └── maintenance.md
     ├── asset/
-    └── dist/                 # 빌드할 때 생성
+    └── dist/                 # generated at build time
 ```
 
 | Item | Previous | New default |
 | --- | --- | --- |
-| 설정 | `docs/for-humanity.config.ts` | `for-humanity.config.ts` |
-| 홈 | `docs/README.md` | `content/README.md` |
-| 공개 문서 | `docs/guide.md` | `content/public/guide.md` |
-| 내부 문서 | `docs/maintenance.md` | `content/private/maintenance.md` |
-| 공용 이미지와 첨부 | `docs/images` | `content/asset` |
-| 출력 | `docs/dist` | `content/dist` |
-| 명령 | `for-humanity build docs` | 프로젝트 루트에서 `for-humanity build` |
+| Configuration | `docs/for-humanity.config.ts` | `for-humanity.config.ts` |
+| Home page | `docs/README.md` | `content/README.md` |
+| Public documents | `docs/guide.md` | `content/public/guide.md` |
+| Private documents | `docs/maintenance.md` | `content/private/maintenance.md` |
+| Shared images and attachments | `docs/images` | `content/asset` |
+| Output | `docs/dist` | `content/dist` |
+| Command | `for-humanity build docs` | `for-humanity build` from the project root |
 
-기존 평면 폴더를 자동으로 공개 수집하지 않습니다. 공개 폴더가 없으면 실행이 실패하므로 이전 누락을 확인할 수 있습니다.
+An existing flat folder is not collected as public documents automatically. The run fails when there is no public folder, so you can catch a step you missed in the migration.
 
 ## Move the files
 
-1. 설정 파일을 프로젝트 루트로 옮깁니다. `.ts` 또는 `.mjs` 하나만 유지합니다. 이웃 모듈을 import했다면 그 경로도 맞춥니다.
-2. 홈 README를 `content/README.md`로 옮깁니다. 프로젝트 소개용 루트 README는 따로 유지할 수 있습니다.
-3. 배포할 문서는 `content/public`, 로컬에서만 읽을 문서는 `content/private`으로 나눕니다. 각 폴더 안의 Markdown에는 기존 frontmatter가 필요합니다.
-4. 공용 자원을 `content/asset`, 내부 자원을 `content/private/asset`에 둡니다. 링크, 스니펫, 그림의 경로를 새 파일 위치에 맞춥니다.
-5. 실행 스크립트에서 문서 폴더 인자를 제거합니다. 다른 곳에서 실행한다면 **프로젝트 루트**를 지정합니다.
-6. `.gitignore`와 호스팅 출력 경로를 `content/dist`로 맞춥니다. 새 빌드 확인 후 예전 출력 폴더를 정리합니다.
+1. Move the configuration file to the project root. Keep only one of `.ts` or `.mjs`. If it imports neighboring modules, adjust those paths as well.
+2. Move the home page README to `content/README.md`. You can keep a separate root README that introduces the project.
+3. Split your documents into `content/public` for documents you deploy and `content/private` for documents you read only locally. The Markdown in each folder still needs its existing frontmatter.
+4. Put shared assets in `content/asset` and private assets in `content/private/asset`. Adjust the paths of links, snippets, and images to the new file locations.
+5. Remove the document folder argument from your run scripts. If you run the command from another directory, specify the **project root**.
+6. Point `.gitignore` and the hosting output path to `content/dist`. After you confirm the new build, clean up the old output folder.
 
-기본형은 패키지의 `template/`에 포함됩니다. 기존 파일을 덮어쓰지 말고 필요한 구조만 가져옵니다.
+The starter template is included in the package under `template/`. Do not overwrite your existing files; copy only the structure you need.
 
 ## Keep custom names
 
-폴더명을 `content`, `public`, `private`으로 바꾸기 어려우면 프로젝트 설정에서 지정합니다.
+If renaming your folders to `content`, `public`, and `private` is difficult, set the names in the project configuration.
 
 ```ts
 import type {SiteConfig} from "for-humanity";
@@ -59,23 +59,23 @@ export default {
 } satisfies SiteConfig;
 ```
 
-이 구성의 홈은 `docs/README.md`, 공개 문서는 `docs/published`, 내부 문서는 `docs/internal`, 출력은 `docs/dist`입니다. 설정 파일은 여전히 프로젝트 루트에 둡니다.
-문서 루트를 프로젝트와 같게 하려면 `content.root: "."`를 사용할 수 있습니다. 공개 폴더와 내부 폴더는 각각 별도 하위 폴더여야 합니다. `public: "."`로 예전 평면 수집을 복원할 수는 없습니다.
-경로 검증 규칙은 [Settings](settings.md#content-paths)를 참고합니다.
+With this setup, the home page is `docs/README.md`, public documents are in `docs/published`, private documents are in `docs/internal`, and the output goes to `docs/dist`. The configuration file still stays at the project root.
+To make the content root the same as the project, you can use `content.root: "."`. The public folder and the private folder must each be a separate subfolder. You cannot restore the old flat collection with `public: "."`.
+For the path validation rules, see [Settings](settings.md#content-paths).
 
 ## Update links and parent references
 
-공개 폴더 안에서 기존 상대 위치를 유지하면 공개 URL도 유지됩니다. `content/public/guide.md`는 `/guide/`이며 `/public/guide/`가 아닙니다.
-내부 문서는 로컬 `/private/maintenance/`로 이동하고 공개 사이트에서는 사라집니다. 폴더명을 `internal`로 지정해도 로컬 URL은 `/private/`을 사용합니다.
+If you keep the same relative location inside the public folder, the public URL stays the same. `content/public/guide.md` is `/guide/`, not `/public/guide/`.
+Private documents move to the local `/private/maintenance/` and disappear from the public site. Even if you name the folder `internal`, the local URL uses `/private/`.
 
-- 홈 → 공개 문서: `[Guide](public/guide.md)`
-- 공개 문서 → 홈: `[Home](../README.md)`
-- 공개 문서 → 공용 자원: `![Screen](../asset/screen.png)`
-- 내부 문서 → 공개 문서: `[Guide](../public/guide.md)`
-- `parent: guide`: 사이트 문서 ID입니다. `public/`을 붙이지 않습니다.
-- `parent: ../guide`: 원본 파일 위치를 기준으로 합니다. 파일을 옮기면 경로도 다시 확인합니다.
+- Home page to public document: `[Guide](public/guide.md)`
+- Public document to home page: `[Home](../README.md)`
+- Public document to shared assets: `![Screen](../asset/screen.png)`
+- Private document to public document: `[Guide](../public/guide.md)`
+- `parent: guide`: the site document ID. Do not prefix it with `public/`.
+- `parent: ../guide`: relative to the source file location. If you move the file, check the path again.
 
-홈과 공개 문서는 공개 빌드에 항상 포함됩니다. 여기에서 private Markdown, 그림, 첨부, 스니펫을 참조하면 빌드가 실패합니다. HTML 참조와 symlink 대상도 검사합니다. 함께 보여야 하는 내용은 공개 자료로 분리합니다.
+The home page and public documents are always included in the public build. If they reference private Markdown, images, attachments, or snippets, the build fails. HTML references and symlink targets are checked as well. Split content that needs to appear together into public material.
 
 ## Verify the result
 
@@ -85,28 +85,28 @@ pnpm exec for-humanity build
 pnpm exec for-humanity preview
 ```
 
-dev에서 양쪽 문서가 표시되는지 확인합니다. build 후에는 private 페이지, 메뉴, 사이트맵 항목, 내부 자원이 없는지 확인합니다. preview에서는 공개 문서를 직접 열어 봅니다.
-배포에는 생성된 `dist`만 사용합니다. 기존 호스팅이 예전 출력 경로를 보고 있다면 다음 배포 전에 변경합니다. 호스팅 설정은 [Deployment](deployment.md#hosting-settings)를 참고합니다.
+In dev, check that documents from both folders appear. After build, check that there are no private pages, menu entries, sitemap entries, or private assets. In preview, open the public documents directly.
+Deploy only the generated `dist`. If your existing hosting points to the old output path, change it before the next deployment. For hosting settings, see [Deployment](deployment.md#hosting-settings).
 
-`private`은 배포 제외 규칙입니다. 공개 Git 저장소에 넣은 파일은 Git에서 읽을 수 있습니다. 로그인으로 비공개 문서를 제공하는 기능은 이번 구조에 포함하지 않습니다.
+`private` is a rule that excludes files from deployment. Files you put in a public Git repository can be read from Git. Serving private documents behind a login is not part of this structure.
 
 ## Update to 0.15.0
 
-`0.15.0`부터는 이전 버전에서 빌드되던 일부 입력이 빌드 오류가 됩니다. 업데이트한 뒤 `build`를 실행하고 오류에 표시된 파일과 줄을 차례로 고칩니다.
-터미널에는 파일과 줄 번호에 이어 `Invalid part syntax`, `Invalid code snippet`, `Invalid asset` 문구가 나옵니다.
+Starting with `0.15.0`, some inputs that built in earlier versions become build errors. After you update, run `build` and fix the files and lines shown in the errors one by one.
+The terminal prints the file and line number followed by the message `Invalid part syntax`, `Invalid code snippet`, or `Invalid asset`.
 
 | Input | Fix |
 | --- | --- |
-| 제목이 없거나 빈 `::part` | `::part[제목]` 작성 |
-| 제목에 링크, 강조, 인라인 코드를 쓰거나 속성을 붙인 `::part` | 서식과 속성 없이 일반 텍스트 제목 작성 |
-| `##` 절 없이 다음 `::part`나 문서 끝이 오는 `::part` | `::part` 뒤에 `##` 절 작성 |
-| `<<<`로 지정했지만 끝 표시가 없는 region | region 끝에 `#endregion` 같은 끝 표시 추가 |
-| Markdown 이미지, `<img>`, `srcset`, `poster`의 PDF처럼 이미지가 아닌 파일 | 이미지 파일로 교체하거나 첨부 링크로 연결 |
-| `<video>`, `<audio>`, `<source>`의 `src`가 가리키는 없는 로컬 파일 | 파일 추가 또는 경로 수정 |
-| `<video>`, `<audio>`, `<source>`의 `src`가 가리키는 MP4, WebM, MP3 외의 로컬 파일 | 지원 형식으로 변환하거나 직접 제공하는 절대 URL로 지정 |
-| `<track>`, `<embed>`의 `src`나 `<object>`의 `data`가 가리키는 없는 로컬 파일 | 파일 추가 또는 경로 수정 |
-| `<track>`의 WebVTT 외 형식, `<embed>`와 `<object>`의 PDF, 이미지 외 형식 | 지원 형식으로 변환하거나 직접 제공하는 절대 URL로 지정 |
-| Note, Details 안의 원시 HTML `<h1>`, `<h2>` | 제목을 부품 밖으로 옮기거나 `<h3>` 이하로 작성 |
+| A `::part` with no title or an empty title | Write `::part[Title]` |
+| A `::part` whose title uses a link, emphasis, or inline code, or has attributes | Write a plain text title without formatting or attributes |
+| A `::part` followed by the next `::part` or the end of the document with no `##` section | Write a `##` section after the `::part` |
+| A region specified with `<<<` that has no end marker | Add an end marker such as `#endregion` at the end of the region |
+| A non-image file, such as a PDF in a Markdown image, `<img>`, `srcset`, or `poster` | Replace it with an image file or link to it as an attachment |
+| A missing local file that the `src` of `<video>`, `<audio>`, or `<source>` points to | Add the file or fix the path |
+| A local file other than MP4, WebM, or MP3 that the `src` of `<video>`, `<audio>`, or `<source>` points to | Convert it to a supported format or specify an absolute URL that serves it directly |
+| A missing local file that the `src` of `<track>` or `<embed>`, or the `data` of `<object>`, points to | Add the file or fix the path |
+| A format other than WebVTT for `<track>`, or a format other than PDF or an image for `<embed>` and `<object>` | Convert it to a supported format or specify an absolute URL that serves it directly |
+| A raw HTML `<h1>` or `<h2>` inside Note or Details | Move the heading outside the part or write it as `<h3>` or deeper |
 
-없는 문서나 배포하지 않는 로컬 파일을 가리키는 링크와 로컬 파일을 가리키는 `<iframe>`에는 경고만 표시하고 빌드를 계속합니다.
-작성 규칙은 [Parts](parts.md#errors), [Code snippets](writing.md#code-snippets), [Supported files](images.md#supported-files)를 참고합니다.
+For links that point to a missing document or to a local file that is not deployed, and for an `<iframe>` that points to a local file, the build only shows a warning and continues.
+For the authoring rules, see [Parts](parts.md#errors), [Code snippets](writing.md#code-snippets), and [Supported files](images.md#supported-files).

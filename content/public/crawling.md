@@ -1,17 +1,17 @@
 ---
 name: Crawling
-label: 검색 엔진에 공개 문서 주소 알리기
+label: Public document URLs for search engines
 group: Guide
 parent: settings
 order: 10
 ---
 
-사이트 주소를 `url`로 설정하면 `robots.txt`와 `sitemap.xml`을 생성합니다. 각 페이지에는 대표 주소와 링크 미리보기 태그도 추가합니다.
-프로젝트 루트의 설정 파일에 배포 주소를 지정합니다.
+When you set the site address as `url`, for humanity generates `robots.txt` and `sitemap.xml`. It also adds a canonical URL and link preview tags to each page.
+Specify the deployment URL in the configuration file at the project root.
 
 ## Public site URL
 
-`for-humanity.config.ts`에 배포할 주소를 지정합니다.
+Specify the URL you deploy to in `for-humanity.config.ts`.
 
 ```ts
 import type {SiteConfig} from "for-humanity";
@@ -22,11 +22,11 @@ export default {
 } satisfies SiteConfig;
 ```
 
-`url`에는 HTTP(S) 도메인의 루트 주소를 사용합니다. 하위 경로, 사용자 이름, 비밀번호, query, hash는 넣지 않습니다.
-예를 들어 `https://docs.example.com`은 가능하고 `https://example.com/docs/`는 사용할 수 없습니다.
+Use the root address of an HTTP(S) domain for `url`. Do not include a subpath, username, password, query, or hash.
+For example, `https://docs.example.com` is valid, but `https://example.com/docs/` is not.
 
-하위 경로 배포는 `url: "https://example.com"`, `basePath: "/docs/"`로 지정합니다. `basePath`는 `0.17.0`부터 지원합니다.
-대표 주소, 링크 미리보기 이미지와 사이트맵에 배포 경로가 함께 적용됩니다.
+To deploy under a subpath, specify `url: "https://example.com"` and `basePath: "/docs/"`. `basePath` is supported since `0.17.0`.
+The base path is applied to the canonical URL, the link preview image, and the sitemap as well.
 
 ## Build the files
 
@@ -35,17 +35,17 @@ pnpm exec for-humanity build
 pnpm exec for-humanity preview
 ```
 
-기본 출력은 `content/dist/robots.txt`와 `content/dist/sitemap.xml`입니다. 두 파일을 나머지 빌드 결과와 함께 배포합니다.
+The default output is `content/dist/robots.txt` and `content/dist/sitemap.xml`. Deploy both files together with the rest of the build output.
 
-`basePath: "/docs/"`라면 두 파일의 배포 주소는 `/docs/robots.txt`와 `/docs/sitemap.xml`입니다.
-검색 엔진은 도메인 루트의 `/robots.txt`를 조회하므로 하위 경로의 robots 파일만으로 도메인 정책을 제어할 수는 없습니다.
-GitHub 프로젝트 사이트에서는 생성한 사이트맵 URL을 검색 엔진에 직접 등록할 수 있습니다.
+With `basePath: "/docs/"`, the two files are served at `/docs/robots.txt` and `/docs/sitemap.xml`.
+Search engines request `/robots.txt` at the domain root, so a robots file under a subpath cannot control the policy for the whole domain.
+On a GitHub project site, you can submit the generated sitemap URL to search engines directly.
 
-`url`을 생략하면 두 파일을 생성하지 않습니다. 설정을 바꾼 뒤에는 다시 빌드합니다.
+If you omit `url`, neither file is generated. Rebuild after you change the configuration.
 
 ## What is included
 
-`robots.txt`는 크롤링 안내와 사이트맵 주소를 포함합니다.
+`robots.txt` contains the crawling instructions and the sitemap URL.
 
 ```text
 User-agent: *
@@ -54,26 +54,27 @@ Allow: /
 Sitemap: https://docs.example.com/sitemap.xml
 ```
 
-사이트맵에는 홈과 공개 문서의 URL을 포함합니다. 제목 앵커, 이미지, 글꼴은 포함하지 않습니다.
-공개 빌드에서는 private 문서를 제외합니다. 로컬 dev에서는 양쪽 문서가 표시됩니다.
+The sitemap contains the URLs of the home page and the public documents. It does not include heading anchors, images, or fonts.
+With `locales`, the sitemap also lists the home page of each language. A page that exists in two or more languages carries an `xhtml:link` alternate for each language, and the default language is also `x-default`. The same alternates appear in the page head as `<link rel="alternate" hreflang>`. See [Settings](settings.md#languages).
+The public build excludes private documents. In local dev, documents from both folders appear.
 
-각 페이지의 `<head>`에는 사이트맵과 같은 주소의 `<link rel="canonical">`과 링크 미리보기용 Open Graph, Twitter 카드 태그를 추가합니다. 미리보기의 제목과 설명은 문서의 `name`과 `label`, 홈은 사이트의 `title`과 `description`입니다.
+The `<head>` of each page gets a `<link rel="canonical">` with the same URL as in the sitemap, along with Open Graph and Twitter card tags for link previews. The preview title and description are the document's `name` and `label`, and the site's `title` and `description` for the home page.
 
-`image`를 지정하면 모든 페이지의 미리보기에 같은 이미지를 표시합니다. 경로는 `image: "asset/preview.png"`처럼 문서 루트를 기준으로 적습니다.
-PNG, JPEG, GIF, WebP 파일을 사용합니다. 미리보기 서비스 대부분은 SVG를 표시하지 않습니다. 공개 빌드에서는 private 폴더의 이미지를 사용할 수 없습니다.
+If you set `image`, every page shows the same image in its preview. Write the path relative to the content root, like `image: "asset/preview.png"`.
+Use a PNG, JPEG, GIF, or WebP file. Most preview services do not display SVG. The public build cannot use images from the private folder.
 
-`url`을 사용하면 `robots.txt`와 `sitemap.xml`은 생성 파일 전용 경로입니다. `robots.txt.md`처럼 같은 출력 경로를 만드는 문서 이름은 사용할 수 없습니다.
+When you use `url`, `robots.txt` and `sitemap.xml` are reserved paths for the generated files. You cannot use a document name that produces the same output path, such as `robots.txt.md`.
 
 ## Verify the deployment
 
-브라우저나 다음 명령으로 배포 결과를 확인합니다.
+Check the deployment in a browser or with the following commands.
 
 ```sh
 curl -i https://docs.example.com/robots.txt
 curl -i https://docs.example.com/sitemap.xml
 ```
 
-두 주소가 `200`을 반환하는지, 사이트맵의 주소가 실제 배포 주소와 일치하는지 확인합니다.
-호스팅 서비스가 robots.txt를 추가하거나 수정한다면 배포된 응답을 기준으로 확인합니다.
+Check that both URLs return `200` and that the URLs in the sitemap match the actual deployed URL.
+If your hosting service adds or modifies robots.txt, check against the deployed response.
 
-두 파일은 크롤러에게 문서 위치를 알려 주지만 검색 결과 노출을 보장하지는 않습니다. `robots.txt`는 접근 제어 수단도 아닙니다. 공개하지 않을 문서는 배포 결과에서 제외합니다.
+The two files tell crawlers where your documents are, but they do not guarantee that the documents appear in search results. `robots.txt` is also not an access control mechanism. Exclude documents you do not want to publish from the deployed output.
