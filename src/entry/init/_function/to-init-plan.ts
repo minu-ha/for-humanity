@@ -15,7 +15,7 @@ import type {InitOptions, InitPlan} from "@/entry/init/_type/init";
  */
 interface InitPlanParams {
     /**
-     * 설치·저장소 정보를 읽은 프로젝트
+     * 설치와 저장소 정보를 읽은 프로젝트
      */
     project: InitProject;
     /**
@@ -25,7 +25,7 @@ interface InitPlanParams {
 }
 
 /**
- * 덮어쓰기 없는 파일 목록과 JSON·gitignore 병합 계획
+ * 덮어쓰기 없는 파일 목록과 JSON과 gitignore 병합 계획
  */
 export const toInitPlan = async (params: InitPlanParams): Promise<InitPlan> => {
     for (const path of [

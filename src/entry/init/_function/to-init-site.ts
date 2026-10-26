@@ -3,7 +3,7 @@ import type {InitOptions} from "@/entry/init/_type/init";
 import {siteConfigSchema} from "@/type/site-config";
 
 /**
- * 사용자 사이트·프로젝트 사이트·사용자 도메인의 공개 경로
+ * 사용자 사이트, 프로젝트 사이트, 사용자 도메인의 공개 경로
  */
 export const toInitSite = (options: InitOptions) => {
     let url = options.url;
