@@ -45,6 +45,33 @@
     padding-inline: var(--app-space-column);
 }
 
+.wg_shell__languages {
+    /* 사이트 이름과 같은 줄에 배치. 본문 위 여백을 되돌려 제목의 시작선 유지, 언어가 많아 줄이 늘면 제목을 내림 */
+    box-sizing: border-box;
+    min-height: var(--app-size-brand);
+    margin-block-start: calc(-1 * var(--app-size-brand));
+    padding-block: var(--app-space-page-top) var(--app-space-group);
+    color: var(--app-color-text-muted);
+    font-size: var(--app-font-size-dense);
+    line-height: var(--app-line-height-tight);
+}
+
+.wg_shell__language {
+    /* 글줄 안의 링크는 색만으로 구분하지 않고 밑줄 유지. axe의 link-in-text-block 기준 */
+    color: var(--app-color-link);
+    text-decoration: underline;
+
+    &:where(:focus-visible) {
+        outline: var(--app-outline-focus);
+        outline-offset: var(--app-outline-focus-offset);
+    }
+}
+
+.wg_shell__language--active {
+    color: var(--app-color-text-strong);
+    font-weight: var(--app-font-weight-active);
+}
+
 /* 목차 숨김, 본문 최소 약 800px 확보와 오른쪽 여백까지 본문 확장 */
 @media (width < 1360px) {
     .wg_shell__root {
@@ -64,5 +91,12 @@
         padding-block-start: var(--app-space-page-top);
         padding-inline: 0;
         border-inline: 0;
+    }
+
+    .wg_shell__languages {
+        /* 모바일 헤더 아래의 본문 흐름 안에 한 줄 */
+        min-height: 0;
+        margin-block: 0 var(--app-space-block);
+        padding-block: 0;
     }
 }

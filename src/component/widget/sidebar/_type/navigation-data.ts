@@ -2,7 +2,6 @@ import type {TocGroup} from "@/component/widget/sidebar/_type/toc-group";
 import type {Doc} from "@/type/doc";
 import type {DocData} from "@/type/doc-data";
 import type {ResolvedSiteConfig} from "@/type/site-config";
-import type {PageAlternate} from "@/util/locale/to-alternates";
 
 /**
  * 브라우저 문서 가지. 본문, 파일 경로를 포함하지 않는 탐색 전용 계약
@@ -60,31 +59,6 @@ export interface NavigationGroup {
 }
 
 /**
- * 언어 줄의 항목. 현재 언어는 링크 없이 표시
- */
-interface NavigationLanguage {
-    /**
-     * 그 언어로 쓴 언어 이름
-     */
-    name: string;
-
-    /**
-     * 링크와 이름의 언어 태그
-     */
-    lang: PageAlternate["lang"];
-
-    /**
-     * 같은 문서의 번역 또는 그 언어 홈의 사이트 경로
-     */
-    path: PageAlternate["path"];
-
-    /**
-     * 현재 페이지의 언어
-     */
-    active: boolean;
-}
-
-/**
  * 서버가 계산한 최소 탐색 자료. 서버 출력과 클라이언트 JSX의 공통 입력
  */
 export interface NavigationData {
@@ -101,12 +75,7 @@ export interface NavigationData {
     /**
      * 현재 언어 홈의 사이트 경로. 브랜드 링크
      */
-    homePath: PageAlternate["path"];
-
-    /**
-     * 언어 줄. 기본 언어부터 설정 순서, 번역 언어가 없으면 빈 목록
-     */
-    languages: NavigationLanguage[];
+    homePath: string;
 
     /**
      * 읽는 순서의 문서 트리

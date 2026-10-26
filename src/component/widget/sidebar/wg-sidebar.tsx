@@ -403,7 +403,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
                 {layout !== "drawer" && (
                     <div className={clsx("wg_sidebar__docsPanel")} data-sidebar-docs="" data-sidebar-layout={layout}>
                         <WgSidebarScroll portRef={documentsRef} kind="documents" ready={props.stores !== undefined} onScroll={handleScrollSave} onClick={handleNavigationClick}>
-                            <WgDocTree groups={props.data.groups} languages={props.data.languages} basePath={props.data.basePath} />
+                            <WgDocTree groups={props.data.groups} basePath={props.data.basePath} />
                         </WgSidebarScroll>
                     </div>
                 )}
@@ -468,7 +468,7 @@ export const WgSidebar = (props: WgSidebarProps) => {
                                 onScroll={handleScrollSave}
                                 onClick={handleNavigationClick}
                             >
-                                <WgDocTree groups={props.data.groups} languages={props.data.languages} basePath={props.data.basePath} />
+                                <WgDocTree groups={props.data.groups} basePath={props.data.basePath} />
                             </WgSidebarScroll>
                         </div>
                     )}

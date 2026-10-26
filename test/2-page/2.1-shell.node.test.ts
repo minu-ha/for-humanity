@@ -319,7 +319,7 @@ describe("페이지 셸", () => {
     });
 
     describe("언어판", () => {
-        test("[SHL-013] url이 있는 사이트는 번역이 둘 이상인 페이지에만 hreflang 링크와 x-default를 둔다", async () => {
+        test("[SHL-013] 언어판이 둘 이상인 페이지만 본문 위 언어 줄과 hreflang 링크, x-default를 둔다", async () => {
             /**
              * GIVEN
              * 영어 기본 언어와 한국어 번역, 하위 경로 배포, 번역이 있는 문서와 없는 문서
@@ -348,7 +348,7 @@ describe("페이지 셸", () => {
 
             /**
              * THEN
-             * 번역 양쪽의 같은 대체 링크와 각자 대표 주소, 번역 없는 문서의 대체 링크 없음, 두 홈의 대체 링크
+             * 번역 양쪽의 같은 대체 링크와 각자 대표 주소, 번역 없는 문서의 대체 링크와 언어 줄 없음, 두 홈의 대체 링크, 본문 위 언어 줄
              */
             expect(alternates(guide)).toStrictEqual([
                 "en https://docs.example.org/project/guide/",
@@ -367,6 +367,14 @@ describe("페이지 셸", () => {
             ]);
             expect(alternates(koreanHome)).toStrictEqual(alternates(home));
             expect(koreanHome).toContain('<link rel="canonical" href="https://docs.example.org/project/ko/">');
+            expect(korean).toContain(
+                '<main class="wg_shell__main"><nav class="wg_shell__languages" aria-label="Languages"><a class="wg_shell__language" href="/project/guide/" lang="en" hreflang="en">English</a> | <span class="wg_shell__language wg_shell__language--active" lang="ko" aria-current="true">한국어</span></nav>',
+            );
+            expect(guide).toContain(
+                '<span class="wg_shell__language wg_shell__language--active" lang="en" aria-current="true">English</span> | <a class="wg_shell__language" href="/project/ko/guide/" lang="ko" hreflang="ko">한국어</a>',
+            );
+            expect(setup).not.toContain("wg_shell__languages");
+            expect(home).toContain('href="/project/ko/" lang="ko" hreflang="ko">한국어</a>');
         });
     });
 });

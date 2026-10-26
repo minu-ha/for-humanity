@@ -2,10 +2,10 @@ import {toNavigationData} from "@/component/widget/sidebar/_function/to-navigati
 import {WgSidebar} from "@/component/widget/sidebar/wg-sidebar";
 
 /**
- * 서버 탐색 마크업의 문서 목록만 추출, 사이트 이름 링크와 목차 제외. 언어판 없는 기본 언어 탐색
+ * 서버 탐색 마크업의 문서 목록만 추출, 사이트 이름 링크와 목차 제외
  */
-export const toNavigationHtml = (params: Omit<Parameters<typeof toNavigationData>[0], "alternates">) => {
-    const navigation = WgSidebar({data: toNavigationData({...params, alternates: []})})
+export const toNavigationHtml = (params: Parameters<typeof toNavigationData>[0]) => {
+    const navigation = WgSidebar({data: toNavigationData(params)})
         .toString()
         .match(/<nav[^>]*class="wg_docTree__root"[\s\S]*?<\/nav>/)?.[0];
 

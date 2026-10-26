@@ -44,12 +44,10 @@ export const toCrawlingApp = (params: CrawlingParams) => {
         const homes = toAlternates({site: params.site, docs: params.store.docs});
         const pages = [
             ...homes.map((home) => ({path: home.path, alternates: homes})),
-            ...params.store.docs.map((doc) => {
-                return {
-                    path: toPagePath(doc.id),
-                    alternates: toAlternates({site: params.site, docs: params.store.docs, current: doc.id, locale: doc.locale}).filter((alternate) => alternate.translated),
-                };
-            }),
+            ...params.store.docs.map((doc) => ({
+                path: toPagePath(doc.id),
+                alternates: toAlternates({site: params.site, docs: params.store.docs, current: doc.id, locale: doc.locale}),
+            })),
         ];
 
         return new Response(

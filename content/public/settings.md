@@ -167,7 +167,7 @@ content/
         └── guide.md      # /ko/guide/
 ```
 
-A file at the same relative path is the translation of the default document. The sidebar lists only the documents of the current language and shows a language line above them. The current language is plain text. Other languages link to the translation of the current page, or to that language's home page when the page has no translation. The site name links to the home page of the current language.
+A file at the same relative path is the translation of the default document. The sidebar lists only the documents of the current language, and the site name links to the home page of the current language. A page that exists in two or more languages shows a language line above its body that links to each translation. The current language is plain text, and a page without translations shows no line.
 
 Private documents are not translated, and `content/asset` is shared by every language. A translated document references a shared asset with one more `../`, for example `../../asset/screen.png`. A plain `parent` id in a translated document refers to a document of the same language, and a parent in another language is an error. A public document of the default language cannot use a language code as its first path segment.
 

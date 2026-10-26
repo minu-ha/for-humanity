@@ -12,7 +12,6 @@ import {toNavigationData} from "@/component/widget/sidebar/_function/to-navigati
 import {asset_style_path} from "@/constant/asset";
 import {siteConfigSchema} from "@/type/site-config";
 import {toScriptJson} from "@/util/json/to-script-json";
-import {toAlternates} from "@/util/locale/to-alternates";
 
 /**
  * 탐색 자료와 문서 트리(src/component/widget/sidebar/_function/to-navigation-data) 검증
@@ -34,7 +33,7 @@ describe("문서 탐색", () => {
              * 탐색 자료와 script JSON 생성
              */
             const docs = await readDocs({scope, processor: toProcessor({site, scope})});
-            const data = toNavigationData({site, alternates: [], docs, current: "guide"});
+            const data = toNavigationData({site, docs, current: "guide"});
             const json = toScriptJson(data);
 
             /**
@@ -92,9 +91,9 @@ describe("문서 탐색", () => {
              * 현재 문서별 탐색 자료와 문서 하나를 뺀 목록의 탐색 자료 생성
              */
             const docs = await readDocs({scope, processor: toProcessor({site, scope})});
-            const guide = toNavigationData({site, alternates: [], docs, current: "guide"});
-            const setup = toNavigationData({site, alternates: [], docs, current: "setup"});
-            const shorter = toNavigationData({site, alternates: [], docs: docs.filter((doc) => doc.id === "guide"), current: "guide"});
+            const guide = toNavigationData({site, docs, current: "guide"});
+            const setup = toNavigationData({site, docs, current: "setup"});
+            const shorter = toNavigationData({site, docs: docs.filter((doc) => doc.id === "guide"), current: "guide"});
 
             /**
              * THEN
@@ -163,8 +162,8 @@ describe("문서 탐색", () => {
              * 탐색 자료와 마크업 생성
              */
             const docs = await readDocs({scope, processor: toProcessor({site, scope})});
-            const groups = toNavigationData({site, alternates: [], docs}).groups;
-            const reversed = toNavigationData({site, alternates: [], docs: docs.toReversed()}).groups;
+            const groups = toNavigationData({site, docs}).groups;
+            const reversed = toNavigationData({site, docs: docs.toReversed()}).groups;
             const html = toNavigationHtml({site, docs, current: "authoring"});
             const unselected = toNavigationHtml({site, docs});
 
@@ -222,9 +221,9 @@ describe("문서 탐색", () => {
              * 탐색 자료와 마크업 생성, 문서별 페이지 요청
              */
             const docs = await readDocs({scope, processor: toProcessor({site, scope})});
-            const groups = toNavigationData({site, alternates: [], docs}).groups;
+            const groups = toNavigationData({site, docs}).groups;
             const guide = groups[0].groups[0].groups[0];
-            const reversed = toNavigationData({site, alternates: [], docs: docs.toReversed()}).groups;
+            const reversed = toNavigationData({site, docs: docs.toReversed()}).groups;
             const html = toNavigationHtml({site, docs, current: "details"});
             const unselected = toNavigationHtml({site, docs});
 
@@ -288,7 +287,7 @@ describe("문서 탐색", () => {
                  * 공개 폴더별 탐색 데이터 생성
                  */
                 const docs = await readDocs({scope: current, processor: toProcessor({site, scope: current})});
-                const groups = toNavigationData({site, alternates: [], docs}).groups;
+                const groups = toNavigationData({site, docs}).groups;
                 const children = docs.filter((doc) => doc.id !== parentId);
 
                 /**
@@ -304,7 +303,7 @@ describe("문서 탐색", () => {
     });
 
     describe("번역 언어", () => {
-        test("[NAV-028] 탐색은 현재 언어의 문서만 포함하고 언어 줄은 번역 또는 그 언어의 홈으로 연결한다", async ({scope}) => {
+        test("[NAV-028] 탐색은 현재 언어의 문서만 포함하고 사이트 이름은 현재 언어의 홈으로 연결한다", async ({scope}) => {
             /**
              * GIVEN
              * 영어 문서 둘과 한국어 번역 하나
@@ -323,39 +322,24 @@ describe("문서 탐색", () => {
 
             /**
              * WHEN
-             * 영어 문서, 한국어 번역, 번역 없는 영어 문서, 한국어 홈의 탐색 자료와 한국어 문서 페이지 렌더
+             * 영어 문서, 한국어 번역, 한국어 홈의 탐색 자료와 한국어 문서 페이지 렌더
              */
             const docs = await readDocs({scope: localeScope, processor: toProcessor({site, scope: localeScope})});
-            const toData = (current?: string, locale?: string) => toNavigationData({site, docs, current, locale, alternates: toAlternates({site, docs, current, locale})});
-            const guide = toData("guide");
-            const korean = toData("ko/guide", "ko");
-            const setup = toData("setup");
-            const koreanHome = toData(undefined, "ko");
+            const guide = toNavigationData({site, docs, current: "guide"});
+            const korean = toNavigationData({site, docs, current: "ko/guide", locale: "ko"});
+            const koreanHome = toNavigationData({site, docs, locale: "ko"});
             const html = await (await toPageApp({site, store: {docs, homes: new Map()}, assets}).request("/ko/guide/")).text();
 
             /**
              * THEN
-             * 언어별 문서 목록과 홈 경로, 언어 줄의 자기 표기 이름과 번역 또는 홈 링크, 스키마 통과, 렌더된 언어 줄과 사이트 이름 링크
+             * 언어별 문서 목록과 홈 경로, 스키마 통과, 렌더된 사이트 이름 링크와 영어 문서 링크 없음
              */
             expect(guide.groups[0].docs.map((doc) => doc.id)).toStrictEqual(["guide", "setup"]);
             expect(korean.groups[0].docs.map((doc) => doc.id)).toStrictEqual(["ko/guide"]);
             expect(guide.homePath).toBe("/");
             expect(korean.homePath).toBe("/ko/");
-            expect(guide.languages).toStrictEqual([
-                {name: "English", lang: "en", path: "/guide/", active: true},
-                {name: "한국어", lang: "ko", path: "/ko/guide/", active: false},
-            ]);
-            expect(korean.languages).toStrictEqual([
-                {name: "English", lang: "en", path: "/guide/", active: false},
-                {name: "한국어", lang: "ko", path: "/ko/guide/", active: true},
-            ]);
-            expect(setup.languages[1]).toStrictEqual({name: "한국어", lang: "ko", path: "/ko/", active: false});
-            expect(koreanHome.languages.map((language) => language.path)).toStrictEqual(["/", "/ko/"]);
             expect(koreanHome.home).toBe(true);
             expect(navigationDataSchema.parse(JSON.parse(toScriptJson(korean)))).toStrictEqual(korean);
-            expect(html).toContain(
-                '<p class="wg_docTree__languages"><a class="wg_docTree__language" href="/guide/" lang="en">English</a> | <span class="wg_docTree__language wg_docTree__language--active" lang="ko" aria-current="true">한국어</span></p>',
-            );
             expect(html).toMatch(/wg_sidebar__brand" href="\/ko\/"/);
             expect(html).not.toContain('href="/setup/"');
         });

@@ -1,8 +1,9 @@
 import clsx from "clsx";
 import {raw} from "hono/html";
-import type {Child} from "hono/jsx";
+import {type Child, Fragment} from "hono/jsx";
 import {createHead, escapeHtml} from "unhead/server";
 import type {Link} from "unhead/types";
+import {copy_languages_label} from "@/component/widget/shell/_constant/copy";
 import {WgShellControls} from "@/component/widget/shell-controls/wg-shell-controls";
 import {toNavigationData} from "@/component/widget/sidebar/_function/to-navigation-data/to-navigation-data";
 import {asset_favicon_path} from "@/constant/asset";
@@ -70,7 +71,7 @@ export interface WgShellProps {
 
 export const WgShell = (props: WgShellProps) => {
     const alternates = toAlternates({site: props.site, docs: props.docs, current: props.current, locale: props.locale});
-    const navigationData = toNavigationData({site: props.site, docs: props.docs, current: props.current, outline: props.outline, locale: props.locale, alternates});
+    const navigationData = toNavigationData({site: props.site, docs: props.docs, current: props.current, outline: props.outline, locale: props.locale});
 
     // 요청별 head 격리, 언어와 문서 구조는 Hono 셸 소유
     const head = createHead({disableDefaults: true});
@@ -81,12 +82,11 @@ export const WgShell = (props: WgShellProps) => {
     // 공개 주소를 지정한 사이트만 대표 주소와 링크 미리보기 출력. 사이트맵과 같은 주소, 번역 홈은 언어 코드가 경로
     const pageUrl = props.site.url === undefined ? undefined : `${props.site.url}${toSitePath({basePath: props.site.basePath, path: toPagePath(props.current ?? props.locale)})}`;
 
-    // 번역이 둘 이상인 페이지만 언어판 링크. 기본 언어판은 x-default 겸함
-    const translated = pageUrl === undefined ? [] : alternates.filter((alternate) => alternate.translated);
+    // 공개 주소가 있고 언어판이 둘 이상인 페이지만 hreflang 링크. 기본 언어판은 x-default 겸함
     const alternateLinks =
-        translated.length < 2
+        pageUrl === undefined || alternates.length < 2
             ? []
-            : translated.flatMap<Link>((alternate) => {
+            : alternates.flatMap<Link>((alternate) => {
                   const href = `${props.site.url}${toSitePath({basePath: props.site.basePath, path: alternate.path})}`;
 
                   return [
@@ -166,7 +166,41 @@ export const WgShell = (props: WgShellProps) => {
                  * 인라인 번들 실행 완료 지점. head의 expect 링크가 이 요소까지 첫 페인트 보류
                  */}
                 {props.assets.browser.kind === "inline" && <div id="fh-browser-ready" hidden />}
-                <main className={clsx("wg_shell__main")}>{props.children}</main>
+                <main className={clsx("wg_shell__main")}>
+                    {/**
+                     * 이 페이지가 있는 언어판. 현재 언어는 링크 없이 표시, 한 언어뿐이면 줄 생략
+                     */}
+                    {alternates.length > 1 && (
+                        <nav className={clsx("wg_shell__languages")} aria-label={copy_languages_label}>
+                            {alternates.map((alternate, index) => {
+                                // 언어 이름은 그 언어의 자기 표기. Intl이 모르는 태그는 코드 그대로
+                                const name = new Intl.DisplayNames([alternate.lang], {type: "language"}).of(alternate.lang) ?? alternate.lang;
+
+                                return (
+                                    <Fragment key={alternate.path}>
+                                        {index > 0 && " | "}
+                                        {alternate.code === props.locale && (
+                                            <span className={clsx("wg_shell__language", "wg_shell__language--active")} lang={alternate.lang} aria-current="true">
+                                                {name}
+                                            </span>
+                                        )}
+                                        {alternate.code !== props.locale && (
+                                            <a
+                                                className={clsx("wg_shell__language")}
+                                                href={toSitePath({basePath: props.site.basePath, path: alternate.path})}
+                                                lang={alternate.lang}
+                                                hreflang={alternate.lang}
+                                            >
+                                                {name}
+                                            </a>
+                                        )}
+                                    </Fragment>
+                                );
+                            })}
+                        </nav>
+                    )}
+                    {props.children}
+                </main>
             </body>
         </html>
     );
