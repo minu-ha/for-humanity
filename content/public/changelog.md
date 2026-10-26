@@ -17,7 +17,9 @@ pnpm add -D --save-exact for-humanity@latest
 
 Package files for each version are available from [GitHub Releases](https://github.com/nomeehej/for-humanity/releases).
 
-## Unreleased
+## 0.22.1 — 2026-10-27
+
+**Upgrade:** Existing projects remain compatible. Only package metadata and documentation links change. CLI commands, configuration, document syntax and Node.js requirements are unchanged.
 
 - Point the package repository, issue tracker and documentation links to `github.com/nomeehej/for-humanity` after the GitHub account rename.
 
