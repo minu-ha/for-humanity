@@ -109,9 +109,9 @@ Vite의 Mermaid library 빌드는 ESM 형식과 동적 import 경계를 유지�
 
 `vite.config.ts`는 CLI와 CSS, 동기 브라우저 번들, Mermaid ESM의 세 빌드 모드를 관리합니다. `tsconfig.package.json`으로 공개 타입 선언을 별도 생성합니다. 저장소 도구는 `tsx`로 실행하며 모두 `pnpm typecheck`에 포함합니다. `vitest.config.ts`는 제품 Vite 설정과 분리해 Node 테스트를 실행하며 `playwright.config.ts`는 Chromium 검사를 실행합니다. 제품과 브라우저 fixture는 같은 `to-browser-config.ts`의 Hono DOM 설정을 사용합니다. 직접 esbuild 의존성은 없으며 `tsx` 같은 도구의 전이 의존성은 남을 수 있습니다. `0.13.0`부터 개발과 설치 패키지 모두 Node 22.12.0 이상이 필요합니다.
 
-CI는 Ubuntu의 Node 22.12.0과 24, Windows의 Node 22.12.0에서 같은 단위, 브라우저, 설치 검사를 실행하도록 구성합니다. Windows의 npm 실행은 Node 배포본의 `npm-cli.js`를 사용하고, 재귀 파일 목록은 URL 경로와 비교하기 전에 구분자를 정규화합니다.
+CI는 Ubuntu의 Node 22.12.0과 24, Windows의 Node 22.12.0에서 단위와 설치 검사를 실행합니다. 브라우저 검사는 Node 버전이 아닌 운영체제의 차이를 보므로 Ubuntu와 Windows의 Node 22.12.0에서만 실행합니다. CI와 Release는 브라우저를 내려받지 않고 러너에 설치된 Chrome을 `FH_TEST_BROWSER_CHANNEL=chrome`으로 사용합니다. Windows의 npm 실행은 Node 배포본의 `npm-cli.js`를 사용하고, 재귀 파일 목록은 URL 경로와 비교하기 전에 구분자를 정규화합니다.
 
-`smoke-package.ts`는 설치한 CLI를 `dev .`와 `preview .`로 실행하고 Chromium에서 갱신 연결, 문서 수정, Mermaid, 이미지를 확인합니다. 설치 번들의 `init`도 네 배포 방식으로 실행해 GitHub 하위 경로와 Cloudflare 404, 사용자 문서 경로의 실제 출력을 확인합니다. 실행 전에 `pnpm exec playwright install chromium`으로 브라우저를 준비합니다.
+`smoke-package.ts`는 설치한 CLI를 `dev .`와 `preview .`로 실행하고 Chromium에서 갱신 연결, 문서 수정, Mermaid, 이미지를 확인합니다. 설치 번들의 `init`도 네 배포 방식으로 실행해 GitHub 하위 경로와 Cloudflare 404, 사용자 문서 경로의 실제 출력을 확인합니다. 로컬에서는 실행 전에 `pnpm exec playwright install chromium`으로 브라우저를 준비하거나 `FH_TEST_BROWSER_CHANNEL=chrome`으로 설치된 Chrome을 사용합니다.
 
 설치 CLI의 도움말과 버전도 소비 프로젝트에서 검증합니다. head 검사는 제목과 설명의 텍스트 보존, 요청 간 격리, 자원 중복 제거와 CSS 순서를 포함합니다. 브라우저에서는 소스와 설치 번들의 JavaScript 비활성 상태에서도 메타데이터와 첫 화면 스타일을 확인합니다.
 

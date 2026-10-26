@@ -19,6 +19,8 @@ jobs:
     permissions:
       contents: write
       id-token: write
+    env:
+      FH_TEST_BROWSER_CHANNEL: chrome
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -41,7 +43,6 @@ jobs:
       - run: pnpm test
       - run: pnpm check
       - run: pnpm build
-      - run: pnpm exec playwright install --with-deps chromium
       - name: Check generated files
         run: |
           git diff --check

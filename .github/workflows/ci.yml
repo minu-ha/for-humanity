@@ -22,12 +22,17 @@ jobs:
         include:
           - os: ubuntu-latest
             node: '22.12.0'
+            browser: true
           - os: ubuntu-latest
             node: '24'
+            browser: false
           - os: windows-latest
             node: '22.12.0'
+            browser: true
     runs-on: ${{ matrix.os }}
     timeout-minutes: 20
+    env:
+      FH_TEST_BROWSER_CHANNEL: chrome
     defaults:
       run:
         shell: bash
@@ -45,9 +50,8 @@ jobs:
       - run: pnpm check
       - id: build
         run: pnpm build:site
-      - id: browser
-        run: pnpm exec playwright install --with-deps chromium
       - name: Check browser diagrams, navigation and development
+        if: ${{ matrix.browser }}
         run: pnpm exec playwright test
       - name: Check generated files
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
@@ -55,7 +59,7 @@ jobs:
           git diff --check
           git diff --exit-code
       - name: Test the installed package
-        if: ${{ !cancelled() && steps.build.outcome == 'success' && steps.browser.outcome == 'success' }}
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: |
           release_directory="$RUNNER_TEMP/for-humanity-release"
           mkdir -p "$release_directory"
