@@ -9,7 +9,7 @@ group: Development
 기본 언어 하나와 번역 언어 여럿을 한 사이트에서 제공하는 계약. VitePress의 방식과 같이 기본 언어는 루트 URL, 번역은 `/<code>/` 접두 폴더에 같은 파일명으로 둔다.
 문서 영역만 번역 대상이다. 사이드바와 상태 화면의 UI 문구는 언어 중립이거나 영어이며 별도 번역 계층을 두지 않는다.
 
-상태: 승인된 설계. 구현과 검증 대상. 공식 사이트는 영어가 기본 언어, 한국어가 `/ko/` 번역.
+상태: 구현과 검증 완료(2026-10-26). 공식 사이트는 영어가 기본 언어, 한국어가 `/ko/` 번역.
 
 ## Contracts
 
@@ -34,23 +34,23 @@ group: Development
 
 ### 1. Configuration and scope
 
-- [ ] `locales` 스키마와 공개 타입, 언어 코드 형식 오류 문구
-- [ ] `ContentScope.locales`와 번역 폴더의 실제 폴더 검사
-- [ ] `toContentId`의 번역 홈, 번역 공개 폴더, 기본 언어의 접두 예약
+- [x] `locales` 스키마와 공개 타입, 언어 코드 형식 오류 문구
+- [x] `ContentScope.locales`와 번역 폴더의 실제 폴더 검사
+- [x] `toContentId`의 번역 홈, 번역 공개 폴더, 기본 언어의 접두 예약
 
 ### 2. Collection and pages
 
-- [ ] `readDocs`의 번역 폴더 수집, `Doc.locale`, 같은 언어의 `parent` 해소와 언어 불일치 오류
-- [ ] 언어별 README 홈과 `/<code>/` 라우트
-- [ ] 셸의 `html lang`, 언어별 설명, `hreflang` 대체 링크
-- [ ] 현재 언어로 걸러낸 사이드바, 언어 줄, 현재 언어 홈으로 가는 사이트 이름
-- [ ] 사이트맵의 번역 홈과 대체 링크
+- [x] `readDocs`의 번역 폴더 수집, `Doc.locale`, 같은 언어의 `parent` 해소와 언어 불일치 오류
+- [x] 언어별 README 홈과 `/<code>/` 라우트
+- [x] 셸의 `html lang`, 언어별 설명, `hreflang` 대체 링크
+- [x] 현재 언어로 걸러낸 사이드바, 언어 줄, 현재 언어 홈으로 가는 사이트 이름
+- [x] 사이트맵의 번역 홈과 대체 링크
 
 ### 3. Site content
 
-- [ ] 한국어 공개 문서를 `content/ko/public`으로 이동, 영어 문서 작성
-- [ ] README와 변경 기록의 두 언어 동기화
-- [ ] Settings, Crawling, Content layout, Roadmap, CHANGELOG Unreleased 갱신
+- [x] 한국어 공개 문서를 `content/ko/public`으로 이동, 영어 문서 작성
+- [x] README와 변경 기록의 두 언어 동기화
+- [x] Settings, Crawling, Content layout, Roadmap, CHANGELOG Unreleased 갱신
 
 ## Verification
 
@@ -60,6 +60,13 @@ group: Development
 - 탐색: 현재 언어 문서만 포함, 언어 줄의 번역 링크와 홈 폴백, 현재 언어의 비링크 표시, 사이트 이름의 홈 경로.
 - 사이트맵: 번역 홈 주소, 문서별 대체 링크.
 - 저장소: `pnpm test`, `pnpm check`, `pnpm build`, Playwright e2e, `git diff --check`, 가운뎃점 검사.
+
+### Completed checks
+
+- 단위와 node 검사: 36개 파일, 403개 검사 통과 (`pnpm test`). 새 검사는 DOC-015, DOC-016, DOC-017, HOM-003, CRW-006, SHL-013, NAV-028과 설정 스키마의 locales 검사.
+- `pnpm check`, `pnpm build`, `git diff --check` 통과. 공개 출력 29개 HTML 페이지, `/ko/` 홈과 번역 12개, 사이트맵의 두 홈과 대체 링크.
+- Playwright: 전체 65개 중 58개 통과 후 실패 7개를 수정하고 재실행해 16개 통과. 수정은 docs fixture의 `locales` 설정, DEV-003의 셸 치환 대상, 언어 줄 링크의 밑줄 고정(axe link-in-text-block).
+- 가운뎃점 검사 0건.
 
 ## References
 
