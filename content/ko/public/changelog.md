@@ -17,11 +17,12 @@ pnpm add -D --save-exact for-humanity@latest
 
 버전별 패키지 파일은 [GitHub Releases](https://github.com/minu-ha/for-humanity/releases)에서 받을 수 있습니다.
 
-## Unreleased
+## 0.22.0 — 2026-10-26
 
 **Upgrade:** Existing projects remain compatible. Sites without `locales` render as before, except that `sitemap.xml` now declares the `xhtml` namespace on `<urlset>`. To add a translation, set `locales` in the configuration and put its `README.md` and `public` folder under `content/<code>/`.
 
 - Add `locales` for translated documents. Each language code is a folder under the content root, the URL prefix and the `lang` of its pages, and files at the same relative path are translations of each other. The sidebar lists the current language only, and a page that exists in two or more languages shows a language line above its body that links to each translation. With `url`, pages that exist in two or more languages get `hreflang` alternate links in the head and in the sitemap, with the default language as `x-default`. A plain `parent` in a translated document resolves within its language, and a parent in another language fails the build.
+- Serve the official documentation in English at the root and in Korean under `/ko/`, with links between translated pages.
 
 ## 0.21.1 — 2026-10-26
 

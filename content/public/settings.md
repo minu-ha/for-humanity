@@ -41,7 +41,7 @@ Keep only one of `.ts` and `.mjs` in a project.
 | `title` | Site name in the sidebar and the browser tab | `for humanity` |
 | `description` | Description of the home page in search results and link previews | None |
 | `lang` | Document language tag, for example `en`, `en-US` | `ko` |
-| `locales` | Translation languages, see [Languages](#languages) | None |
+| `locales` | Translation languages, see [Languages](#languages). Supported since `0.22.0` | None |
 | `basePath` | URL path to deploy under, for example `/project/`. Supported since `0.17.0` | `/` |
 | `url` | Root address of the deployed site | None |
 | `image` | Path of the link preview image relative to the content root | None |
