@@ -17,7 +17,7 @@ pnpm add -D --save-exact for-humanity@latest
 
 버전별 패키지 파일은 [GitHub Releases](https://github.com/nomeehej/for-humanity/releases)에서 받을 수 있습니다.
 
-## Unreleased
+## 0.23.0 — 2026-10-27
 
 **Upgrade:** Existing projects remain compatible, except that a document whose frontmatter already uses `created` or `revised` for anything other than a `YYYY-MM` or `YYYY-MM-DD` date now fails the build; earlier versions ignored both keys. Rebuild and redeploy to apply the new figure and Details layout. CLI commands, configuration and Node.js requirements are unchanged.
 
