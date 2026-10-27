@@ -188,7 +188,7 @@
         font-size: 1em;
     }
 
-    /* 코드 블록, Shiki의 --app-code-* 참조 */
+    /* 코드 블록, 토큰 색상은 Shiki 인라인 스타일 */
     & pre {
         overflow-x: auto;
         margin: var(--app-space-block) 0;
@@ -213,8 +213,8 @@
     }
 
     & .wg_article__code {
-        background: var(--app-code-background);
-        color: var(--app-code-foreground);
+        background: var(--app-color-code);
+        color: var(--app-color-text);
     }
 
     & .wg_article__code--bad {
@@ -351,7 +351,7 @@
         border: 1px solid var(--app-color-border);
         border-bottom: 0;
         border-radius: var(--app-radius-box) var(--app-radius-box) 0 0;
-        background: var(--app-code-background);
+        background: var(--app-color-code);
         color: var(--app-color-text-muted);
         font-family: var(--app-font-mono);
         font-size: var(--app-font-size-dense);

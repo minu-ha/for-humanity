@@ -78,5 +78,5 @@ export const copy_warn_unknown_status = "Status phrase not in the configuration"
  */
 export const copy_doc_dates = {
     en: {created: "Created", revised: "Revised"},
-    ko: {created: "처음 작성", revised: "다시 정리"},
+    ko: {created: "작성일", revised: "수정일"},
 } as const;

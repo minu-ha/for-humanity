@@ -7,7 +7,6 @@ import remarkGfm from "remark-gfm";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import remarkSmartypants from "remark-smartypants";
-import {createCssVariablesTheme} from "shiki";
 import {unified} from "unified";
 import {rehypeAssets} from "@/app/_function/to-processor/_rehype-assets";
 import {rehypeBasePath} from "@/app/_function/to-processor/_rehype-base-path";
@@ -63,7 +62,8 @@ interface ProcessorParams {
  *   - 코드와 문서 머리 생성 후 제목 ID와 가름 수집
  *   - 원시 HTML과 플러그인 HTML 조각은 Shiki 다음 rehype-raw에서 해석. Mermaid 원문과 원시 pre의 코드 강조 방지
  *   - 부품 제목 검사, 머리, 제목 ID, 가름, 표, 그림, 링크, 자원 처리는 원시 HTML 포함
- *   - 코드 상자의 색상은 article CSS 소유, Shiki 토큰 색상은 --app-code-* 참조
+ *   - 코드 상자의 바탕과 글색은 article CSS 소유, 토큰 색상은 GitHub 기본 테마의 light-dark()
+ *   - 주석과 보라 토큰은 github.com 현행 값으로 교체, 코드 상자 바탕 위 대비 4.5 확보
  */
 export const toProcessor = (params: ProcessorParams) => {
     const files = params.files ?? new Map<string, string>();
@@ -83,7 +83,12 @@ export const toProcessor = (params: ProcessorParams) => {
         .use(remarkLinks, {scope: params.scope})
         .use(remarkUnknownDirectives)
         .use(remarkRehype, {allowDangerousHtml: true})
-        .use(rehypeShiki, {theme: createCssVariablesTheme({name: "for-humanity", variablePrefix: "--app-code-"}), transformers: shikiTransformers})
+        .use(rehypeShiki, {
+            themes: {light: "github-light-default", dark: "github-dark-default"},
+            defaultColor: "light-dark()",
+            colorReplacements: {"github-light-default": {"#6e7781": "#59636e", "#8250df": "#6639ba"}, "github-dark-default": {"#8b949e": "#9198a1"}},
+            transformers: shikiTransformers,
+        })
         .use(rehypeRaw)
         .use(rehypeBlocks)
         .use(rehypeHead, {lang: params.site.lang})

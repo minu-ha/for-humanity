@@ -74,7 +74,7 @@ created: 2022-12
 revised: 2026-10
 ```
 
-The document above shows `Created 2022-12, Revised 2026-10` in small gray text under the title. Pages in Korean label the dates `처음 작성` and `다시 정리`, and pages in other languages use the English labels. Either date can be written alone.
+The document above shows `Created 2022-12, Revised 2026-10` in small gray text under the title. Pages in Korean label the dates `작성일` and `수정일`, and pages in other languages use the English labels. Either date can be written alone.
 Write a month as `YYYY-MM` or a day as `YYYY-MM-DD`. The date is shown as written. A different format, a day that does not exist or a `revised` date earlier than `created` is a build error.
 A date written with the day also becomes the page's `<lastmod>` in the sitemap. See [Crawling](crawling.md#what-is-included).
 

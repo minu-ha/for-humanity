@@ -140,22 +140,6 @@
     /* 사이드바 사이트 이름, 커서 장식 */
     --app-z-index-sticky: 100;
     --app-z-index-popper: 300;
-
-    /*
-     * Shiki CSS 변수, 기존 역할색 재사용
-     * 키워드 strong, 함수 accent
-     */
-    --app-code-foreground: var(--app-color-text);
-    --app-code-background: var(--app-color-code);
-    --app-code-token-keyword: var(--app-color-text-strong);
-    --app-code-token-function: var(--app-color-accent);
-    --app-code-token-string: var(--app-color-verified);
-    --app-code-token-string-expression: var(--app-color-verified);
-    --app-code-token-constant: var(--app-color-unverified);
-    --app-code-token-parameter: var(--app-color-text);
-    --app-code-token-comment: var(--app-color-text-muted);
-    --app-code-token-punctuation: var(--app-color-text-muted);
-    --app-code-token-link: var(--app-color-link);
 }
 
 /* 폭 조건, 셸의 브레이크포인트와 일치 */

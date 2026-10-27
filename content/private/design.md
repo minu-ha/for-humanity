@@ -48,7 +48,6 @@ order: 20
 | `z-index`        | `sticky` 모바일 고정 헤더, `popper` 커서 장식                                |
 | `radius`         | `box`, `inline`, `mark`                                                                |
 | `outline`        | `focus`, `focus-offset`                                                                |
-| `code`           | Shiki의 `foreground`, `background`, `token-*`                                          |
 
 ## Colors
 
@@ -107,7 +106,7 @@ Monoplex KR에는 코드 합자 없음: `>=`, `!=` 원문 그대로 표시.
 h1 자간은 `-0.045em`, h2와 part는 `-0.04em`으로 본문보다 조금 더 조임. 작성자가 붙인 번호도 제목과 같은 글꼴과 크기 사용.
 h1, 문서와 목차 묶음 라벨, On this page에는 `text-box: trim-start cap alphabetic` 적용. 크기가 달라도 대문자 위쪽 시작선을 맞추며, 미지원 브라우저는 기존 행 상자로 표시. [MDN text-box](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-box).
 README 홈의 소개 제목은 `24px`, 얼굴은 `72px`. Markdown 원문의 내용은 유지하고 사이트에서만 크기 조정.
-Shiki는 기존 역할색 참조: 키워드 strong, 함수 accent, 문자열 verified, 숫자 unverified, 주석 muted, 링크 link.
+Shiki 토큰 색상은 GitHub 기본 테마 `github-light-default`, `github-dark-default`를 `light-dark()`로 적용. 주석과 보라 토큰은 github.com 현행 값 `#59636e`, `#6639ba`, 어두운 주석 `#9198a1`로 교체해 코드 상자 바탕 위 대비 4.5 이상 확보.
 코드 상자와 파일 제목의 바탕은 `wg-article.css`에서 상태 수정자로 지정. `token.css`는 역할색과 테마 값만 소유하며 컴포넌트 클래스를 선언하지 않음. Shiki 토큰의 구문 색상은 유지하고 `pre`의 인라인 색상은 제거.
 
 글꼴 이름과 fallback은 `token.css`에 정적 선언. CLI는 내장 `@font-face`와 내용 지문이 붙은 자원 URL 생성.
@@ -146,7 +145,7 @@ Shiki는 기존 역할색 참조: 키워드 strong, 함수 accent, 문자열 ver
 앵커 도착점은 데스크톱 80px, 모바일에서는 고정 헤더 56px과 여백 14px을 합친 70px. 제목 위 여백을 남기고 아래 본문을 바로 읽는 기준. 화면 높이 비율 기준은 사용하지 않음. 높은 화면에서는 첫 화면 위쪽의 둘째 제목까지 이미 지난 제목으로 판정.
 TOC의 현재 위치도 같은 `anchor` 토큰 사용. 본문 끝은 `section` 여백만 둠. 읽는 선에 닿지 못하는 끝 절이 있으면 마지막 한 화면의 도착 위치를 문서 끝까지 비례 압축하고, 압축한 거리만큼 그 제목들의 `scroll-margin-top`을 늘려 앵커 도착 위치와 TOC 전환 위치를 일치. TOC는 남은 제목을 차례로 표시. 링크로 이동한 제목은 사용자 스크롤 전까지 TOC에 유지하며 링크를 누르는 동안에는 다시 계산하지 않음.
 
-문서 탐색과 목차의 묶음 사이는 `tree-group` 16px로 공유. 문서 탐색은 묶음 목록의 `gap`, 목차는 이름 있는 가름의 위 여백. 한 소유자에만 필요한 보정은 지역 값. 예: 하위 목록 아래 여백 4px.
+문서 탐색과 목차의 묶음 사이는 `tree-group` 16px로 공유. 문서 탐색은 묶음 목록의 `gap`, 목차는 이름 있는 가름의 위 여백. 목차의 절 사이는 `inline` 6px, 소제목은 절 아래에 붙여 묶음 표시. 한 소유자에만 필요한 보정은 지역 값.
 같은 숫자여도 아이콘 크기, 글자 크기, 페이지 폭은 간격과 별도 역할.
 모서리 토큰의 기본값은 `0`. 표와 다이어그램의 바깥 경계는 얇은 선으로 구분.
 겹침 요소 추가 시 `z-index` 역할 토큰 먼저 정의. 사이트 이름이 든 모바일 고정 헤더는 `--app-z-index-sticky`, 커서 장식은 `--app-z-index-popper` 층.
