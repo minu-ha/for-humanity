@@ -17,6 +17,13 @@ pnpm add -D --save-exact for-humanity@latest
 
 버전별 패키지 파일은 [GitHub Releases](https://github.com/nomeehej/for-humanity/releases)에서 받을 수 있습니다.
 
+## 0.26.0 — 2026-10-27
+
+**Upgrade:** Existing projects remain compatible. Rebuild and redeploy to apply the diagram theme and the label fix. CLI commands, configuration, document syntax and Node.js requirements are unchanged.
+
+- Stop cutting off flowchart labels longer than Mermaid's 120px wrapping width. Mermaid 12 switches a label to wrapped lines only when its measured width equals that limit exactly, and a label that misses the comparison stayed on one line and was cut at the box edge. Labels are no longer wrapped automatically; the box grows to fit the text, and `<br>` breaks a line.
+- Draw diagrams in the site's own palette and font instead of Mermaid's default theme: soft blue boxes with rounded corners, gray lines and the body font, with a matching dark palette when the system color scheme is dark. A diagram that sets its own `theme` in frontmatter keeps it.
+
 ## 0.25.0 — 2026-10-27
 
 **Upgrade:** Existing projects remain compatible. Rebuild and redeploy to apply the heading chips. CLI commands, configuration, document syntax and Node.js requirements are unchanged.

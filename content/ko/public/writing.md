@@ -160,6 +160,8 @@ flowchart LR
     Review --> Publish[배포]
 ```
 
+라벨은 자동으로 줄이 바뀌지 않고 상자가 글자 폭대로 커집니다. 줄을 바꿀 자리에는 `<br>`을 적습니다.
+
 순서, 상태, 관계, 폴더 구조에 맞는 작성 예시는 [Diagrams](diagrams.md)를 참고합니다.
 
 ## Code notation

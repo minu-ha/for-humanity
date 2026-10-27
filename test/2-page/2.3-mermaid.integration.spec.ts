@@ -65,6 +65,40 @@ test.describe("다이어그램", () => {
             ).toBeGreaterThanOrEqual(4.5);
         });
 
+        test("[MRM-027] 줄바꿈 폭보다 긴 라벨은 잘리지 않고 상자가 글자 폭대로 커진다", {tag: "@high"}, async ({page}) => {
+            /**
+             * GIVEN
+             * Mermaid 12의 줄바꿈 폭 120px보다 긴 한글 라벨의 흐름도
+             */
+            await page.goto("/lifecycle/");
+            await page.evaluate(() => window.diagramFixture.mount());
+            await expect(page.locator('[data-mermaid-status="rendered"]')).toHaveCount(diagram_cases.length);
+
+            /**
+             * WHEN
+             * 긴 라벨 노드의 라벨 상자와 글자 폭 측정
+             */
+            const label = page.locator(".wg_mermaid__result").nth(8).locator(".node foreignObject").first();
+            const widths = await label.evaluate((box) => {
+                const text = box.querySelector("div");
+                const glyphs = text?.querySelector("span");
+
+                if (text === null || glyphs === null || glyphs === undefined) {
+                    throw new Error("라벨 요소가 없습니다");
+                }
+
+                return {box: Number(box.getAttribute("width")), text: glyphs.getBoundingClientRect().width, whiteSpace: getComputedStyle(text).whiteSpace};
+            });
+
+            /**
+             * THEN
+             * 한 줄 글자 전체를 담는 상자
+             */
+            expect(widths.whiteSpace).toBe("nowrap");
+            expect(widths.box).toBeGreaterThan(120);
+            expect(widths.box).toBeGreaterThanOrEqual(widths.text);
+        });
+
         test("[MRM-018] 다른 다이어그램을 펼친 뒤에도 기존 툴팁이 표시된다", {tag: "@mid"}, async ({page}) => {
             /**
              * GIVEN

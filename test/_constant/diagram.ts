@@ -22,4 +22,5 @@ export const diagram_cases = [
     {caseId: "MRM-006", id: "mindmap", name: "마인드맵", label: "Documentation", source: "mindmap\n  root((Documentation))\n    Guide\n    Reference"},
     {caseId: "MRM-007", id: "pie", name: "원형 차트", label: "Readers", source: 'pie title Readers\n    "Guide" : 60\n    "Reference" : 40'},
     {caseId: "MRM-008", id: "authored", name: "작성자 테마", label: "Custom", source: "---\nconfig:\n  theme: neutral\n---\nflowchart LR\n    Custom --> Theme"},
+    {caseId: "MRM-027", id: "wide", name: "긴 라벨", label: "공통 모듈: 설정과 동조 방식", source: 'flowchart LR\n    a["공통 모듈: 설정과 동조 방식"] --> b["끝"]'},
 ];

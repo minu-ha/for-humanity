@@ -160,6 +160,8 @@ flowchart LR
     Review --> Publish[Publish]
 ```
 
+A label is not wrapped automatically; its box grows to fit the text. Write `<br>` where a label should break.
+
 For examples of diagrams for sequences, states, relationships and folder structures, see [Diagrams](diagrams.md).
 
 ## Code notation
