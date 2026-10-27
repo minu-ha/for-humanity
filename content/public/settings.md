@@ -249,6 +249,7 @@ export default {
 | `color` | `gray` (default), `blue`, `violet` or `amber` |
 
 Only a link whose whole text is the prefix and digits becomes a chip, so `Q3` matches and `Q3a` or `q3` does not. The link address is not changed. Without `refs`, links are shown as usual.
+A heading whose whole text is a prefix and a number, such as `### Q3`, is shown as the same chip at the heading's size, so the chip in the body and the anchor it points to look alike. Supported since `0.25.0`.
 
 ## Appearance
 

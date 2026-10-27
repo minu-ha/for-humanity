@@ -19,12 +19,12 @@ import {rehypeBlocks} from "@/component/widget/article/_function/rehype-blocks";
 import {rehypeFigures} from "@/component/widget/article/_function/rehype-figures";
 import {rehypeHead} from "@/component/widget/article/_function/rehype-head";
 import {rehypeHeadingIds} from "@/component/widget/article/_function/rehype-heading-ids";
+import {rehypeRefs} from "@/component/widget/article/_function/rehype-refs";
 import {rehypeSections} from "@/component/widget/article/_function/rehype-sections/rehype-sections";
 import {rehypeTables} from "@/component/widget/article/_function/rehype-tables";
 import {remarkBlocks} from "@/component/widget/article/_function/remark-blocks/remark-blocks";
 import {remarkLinks} from "@/component/widget/article/_function/remark-links";
 import {remarkParts} from "@/component/widget/article/_function/remark-parts";
-import {remarkRefs} from "@/component/widget/article/_function/remark-refs";
 import {remarkStatus} from "@/component/widget/article/_function/remark-status";
 import {remarkSwatch} from "@/component/widget/article/_function/remark-swatch";
 import {remarkUnknownDirectives} from "@/component/widget/article/_function/remark-unknown-directives";
@@ -81,7 +81,6 @@ export const toProcessor = (params: ProcessorParams) => {
         .use(remarkParts)
         .use(remarkMermaid, {assets: params.mermaid, files})
         .use(remarkStatus, {status: params.site.status})
-        .use(remarkRefs, {refs: params.site.refs})
         .use(remarkSwatch)
         .use(remarkLinks, {scope: params.scope})
         .use(remarkUnknownDirectives)
@@ -96,6 +95,7 @@ export const toProcessor = (params: ProcessorParams) => {
         .use(rehypeBlocks)
         .use(rehypeHead, {lang: params.site.lang})
         .use(rehypeHeadingIds)
+        .use(rehypeRefs, {refs: params.site.refs})
         .use(rehypeSections)
         .use(rehypeTables)
         .use(rehypeFigures)

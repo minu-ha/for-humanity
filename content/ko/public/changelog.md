@@ -17,6 +17,12 @@ pnpm add -D --save-exact for-humanity@latest
 
 버전별 패키지 파일은 [GitHub Releases](https://github.com/nomeehej/for-humanity/releases)에서 받을 수 있습니다.
 
+## 0.25.0 — 2026-10-27
+
+**Upgrade:** Existing projects remain compatible. Rebuild and redeploy to apply the heading chips. CLI commands, configuration, document syntax and Node.js requirements are unchanged.
+
+- Show a heading whose whole text is a configured `refs` prefix and a number, such as `### Q3`, as the same chip as a link to it, at the heading's size, so a numbered question and the chips that point to it look alike. Raw HTML links whose text is a prefix and a number become chips too.
+
 ## 0.24.0 — 2026-10-27
 
 **Upgrade:** Existing projects remain compatible. The `status` configuration accepts two more `kind` values, `refs` is a new optional key, and hash links to missing headings now print a build warning. Rebuild and redeploy to apply the new badge and chip styles. CLI commands, document syntax and Node.js requirements are unchanged.

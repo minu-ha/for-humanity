@@ -506,7 +506,8 @@
     color: var(--app-color-neutral);
 }
 
-/* 참조 칩, 글자가 접두와 번호인 링크. 본문 링크 규칙보다 class 수가 많아 색과 밑줄을 덮음 */
+/* 참조 칩, 글자가 접두와 번호인 링크와 제목. 본문 링크 규칙보다 class 수가 많아 색과 밑줄을 덮음 */
+.wg_article__ref,
 .wg_article__ref:any-link,
 .wg_article__ref:any-link:visited,
 .wg_article__ref:any-link:hover {
@@ -521,24 +522,38 @@
     white-space: nowrap;
 }
 
+/* 제목 칩은 제목 글자 크기 유지, 본문 칩과 같은 모양 */
+.wg_article__ref--heading {
+    font-size: inherit;
+}
+
+.wg_article__ref--gray,
 .wg_article__ref--gray:any-link {
     background: var(--app-color-ref-gray-soft);
     color: var(--app-color-ref-gray);
 }
 
+.wg_article__ref--blue,
 .wg_article__ref--blue:any-link {
     background: var(--app-color-ref-blue-soft);
     color: var(--app-color-ref-blue);
 }
 
+.wg_article__ref--violet,
 .wg_article__ref--violet:any-link {
     background: var(--app-color-ref-violet-soft);
     color: var(--app-color-ref-violet);
 }
 
+.wg_article__ref--amber,
 .wg_article__ref--amber:any-link {
     background: var(--app-color-ref-amber-soft);
     color: var(--app-color-ref-amber);
+}
+
+/* 칩 제목도 앵커 이동 강조는 보이게 */
+.wg_article__ref--heading.wg_article__headingText--highlighted {
+    background-color: var(--app-color-anchor-highlight);
 }
 
 /* 인라인 hex 색 칩, remark-swatch의 CSS 변수 */
