@@ -24,9 +24,6 @@
 }
 
 .wg_toc__list {
-    /* 절 사이만 분리, 절 안의 소제목은 붙여 묶음 표시 */
-    display: grid;
-    gap: var(--app-space-inline);
     margin: 0;
     padding: 0;
     list-style: none;
@@ -59,7 +56,7 @@
 }
 
 .wg_toc__sub {
-    margin: var(--app-space-tree-row) 0 0 var(--app-space-tree-indent);
+    margin: var(--app-space-tree-row) 0 4px var(--app-space-tree-indent);
     padding: 0;
     list-style: none;
 }
