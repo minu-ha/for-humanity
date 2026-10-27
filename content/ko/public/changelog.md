@@ -17,7 +17,7 @@ pnpm add -D --save-exact for-humanity@latest
 
 버전별 패키지 파일은 [GitHub Releases](https://github.com/nomeehej/for-humanity/releases)에서 받을 수 있습니다.
 
-## Unreleased
+## 0.24.0 — 2026-10-27
 
 **Upgrade:** Existing projects remain compatible. The `status` configuration accepts two more `kind` values, `refs` is a new optional key, and hash links to missing headings now print a build warning. Rebuild and redeploy to apply the new badge and chip styles. CLI commands, document syntax and Node.js requirements are unchanged.
 

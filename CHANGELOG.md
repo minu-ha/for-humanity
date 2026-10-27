@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.24.0 — 2026-10-27
 
 **Upgrade:** Existing projects remain compatible. The `status` configuration accepts two more `kind` values, `refs` is a new optional key, and hash links to missing headings now print a build warning. Rebuild and redeploy to apply the new badge and chip styles. CLI commands, document syntax and Node.js requirements are unchanged.
 
