@@ -6,6 +6,7 @@
 
 - Add `blocked` (red) and `neutral` (gray) status badge kinds next to `verified` and `unverified`, so a document can mark blocked work and settled outcomes in their own colors.
 - Add the `refs` configuration. A link whose text is a configured uppercase prefix and a number, such as `[Q3](questions.md#q3)`, is shown as a small chip in gray, blue, violet or amber, so numbered decisions and questions stand out where the body refers to them. The link address is unchanged and documents without `refs` render as before.
+- Warn at build time when a `#hash` link points to a heading that does not exist, in the same document or in another document, with the file and line number. Links to headings on the home page are not checked. The build continues as it does for a link to a missing document.
 
 ## 0.23.2 — 2026-10-27
 

@@ -1,4 +1,5 @@
 import type {ContentLocale} from "@/type/content-locale";
+import type {DocAnchor} from "@/type/doc-anchor";
 import type {DocData} from "@/type/doc-data";
 import type {DocOutline} from "@/type/doc-outline";
 
@@ -15,4 +16,9 @@ export interface DocFileData extends DocOutline {
      * 번역 문서의 언어 코드. 기본 언어 문서와 README 홈은 생략
      */
     locale?: ContentLocale["code"];
+
+    /**
+     * 다른 문서의 제목을 가리키는 링크. read-docs 가 전체 수집 뒤 검증
+     */
+    anchors: DocAnchor[];
 }

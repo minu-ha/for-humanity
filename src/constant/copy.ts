@@ -98,6 +98,11 @@ export const copy_error_url_encoding = "Invalid percent-encoding";
 export const copy_warn_broken_link = "Link to a missing document";
 
 /**
+ * 없는 제목을 가리키는 hash 링크 경고. 빌드 계속
+ */
+export const copy_warn_broken_anchor = "Link to a missing heading";
+
+/**
  * 참조 접두 형식 오류
  */
 export const copy_error_ref_prefix = "refs[].prefix must be 1 to 3 uppercase letters";

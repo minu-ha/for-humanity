@@ -15,6 +15,7 @@ import {
 } from "@/app/_constant/copy";
 import type {Processor} from "@/app/_type/processor";
 import {asset_dir, asset_favicon_path, asset_not_found_path} from "@/constant/asset";
+import {copy_warn_broken_anchor} from "@/constant/copy";
 import {doc_data_absent} from "@/constant/doc";
 import type {ContentScope} from "@/type/content-scope";
 import type {Doc} from "@/type/doc";
@@ -24,6 +25,7 @@ import {toIssueText} from "@/util/error/to-issue-text";
 import {assertContentPath} from "@/util/file/assert-content-path";
 import {hasReservedFolder} from "@/util/file/has-reserved-folder";
 import {toContentId} from "@/util/file/to-content-id";
+import {logger} from "@/util/logger/logger";
 
 /**
  * 문서 폴더를 읽고 명령별 출력 경로와 함께 검증하는 입력
@@ -68,8 +70,8 @@ export const readDocs = async (params: ReadDocsParams): Promise<Doc[]> => {
         .flat()
         .filter((entry) => /\.mdx?$/i.test(entry.path) && !hasReservedFolder(entry.path));
 
-    const docs = await Promise.all(
-        entries.map(async (entry): Promise<Doc> => {
+    const rendered = await Promise.all(
+        entries.map(async (entry): Promise<{doc: Doc; path: string; anchors: DocFileData["anchors"]}> => {
             const absolutePath = join(params.scope.root, entry.path);
 
             assertContentPath({scope: params.scope, path: absolutePath});
@@ -128,25 +130,31 @@ export const readDocs = async (params: ReadDocsParams): Promise<Doc[]> => {
             };
 
             // 플러그인의 제목, 절 정보 공유
-            const fh: DocFileData = {frontmatter: data, locale: entry.locale, headings: [], sections: []};
+            const fh: DocFileData = {frontmatter: data, locale: entry.locale, headings: [], sections: [], anchors: []};
 
             file.data.fh = fh;
 
             // YAML 노드만 제외. 본문 위치와 오류의 원본 줄, 열, offset 유지
             tree.children = tree.children.filter((node) => node.type !== "yaml");
 
-            const rendered = await params.processor.run(tree, file);
+            const hast = await params.processor.run(tree, file);
 
             return {
-                id,
-                locale: entry.locale,
-                data,
-                ancestors: [],
-                html: params.processor.stringify(rendered, file),
-                outline: {headings: fh.headings, sections: fh.sections},
+                doc: {
+                    id,
+                    locale: entry.locale,
+                    data,
+                    ancestors: [],
+                    html: params.processor.stringify(hast, file),
+                    outline: {headings: fh.headings, sections: fh.sections},
+                },
+                path: entry.path,
+                anchors: fh.anchors,
             };
         }),
     );
+
+    const docs = rendered.map((entry) => entry.doc);
 
     const duplicateIds = [...Map.groupBy(docs, (doc) => doc.id)].filter((entry) => entry[1].length > 1);
 
@@ -156,6 +164,17 @@ export const readDocs = async (params: ReadDocsParams): Promise<Doc[]> => {
 
     // 전체 파일 수집 후 부모 참조 검증. 파일 읽기 순서와 무관한 문서 경로
     const docsById = new Map(docs.map((doc) => [doc.id, doc]));
+
+    // 다른 문서의 제목 대조. 없는 문서는 remark-links 가 이미 경고
+    for (const entry of rendered) {
+        for (const anchor of entry.anchors) {
+            const target = docsById.get(anchor.id);
+
+            if (target !== undefined && !target.outline.headings.some((heading) => heading.slug === anchor.hash)) {
+                logger.warn(`${anchor.line === undefined ? entry.path : `${entry.path}:${anchor.line}`} ${copy_warn_broken_anchor}: /${anchor.id}/#${anchor.hash}`);
+            }
+        }
+    }
 
     return docs.map((doc) => {
         const ancestors = new Set([doc.id]);

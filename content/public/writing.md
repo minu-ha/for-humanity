@@ -137,6 +137,7 @@ A link to a document that does not exist does not stop the build. The terminal s
 A link to a local file of a type that is not deployed shows the same warning. For the types that are deployed, see [Images](images.md#supported-files).
 
 Heading anchors are generated automatically from the headings. If the same heading repeats, `-1` and `-2` are appended.
+A `#hash` that points to a heading that does not exist, in the same document or in another document, shows the same kind of warning with the file and line number. Links to headings on the home page are not checked. Supported since `0.24.0`.
 Navigating to a heading inside Details expands the collapsed content.
 In public documents and the home page, do not link to private files or `/private/` paths.
 A link whose text is a configured prefix and a number, such as `[Q3](questions.md#q3)`, is shown as a chip. See [Reference chips](settings.md#reference-chips).

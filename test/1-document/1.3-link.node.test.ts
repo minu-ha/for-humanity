@@ -382,4 +382,58 @@ describe("문서 링크와 목차", () => {
             await expect(result).rejects.toHaveProperty("line", scenario.line);
         });
     });
+
+    describe("hash 앵커", () => {
+        test("[LNK-023] 같은 문서에 없는 제목을 가리키는 hash 링크는 줄 번호와 함께 경고한다", async ({scope}) => {
+            /**
+             * GIVEN
+             * 있는 제목과 없는 제목을 가리키는 링크 둘
+             */
+            const site = siteConfigSchema.parse({});
+            const warn = vi.spyOn(logger, "warn").mockImplementation(() => undefined);
+
+            await writeFile(join(scope.publicRoot, "guide.md"), "---\nname: Guide\nlabel: Guide\ngroup: Guide\n---\n\n## Setup\n\n[Ok](#setup)\n\n[Missing](#teardown)\n");
+
+            /**
+             * WHEN
+             * 문서 로드
+             */
+            await readDocs({scope, processor: toProcessor({site, scope})});
+
+            /**
+             * THEN
+             * 없는 제목만 파일과 줄 번호가 붙은 경고
+             */
+            expect(warn.mock.calls).toStrictEqual([[`${join("public", "guide.md")}:11 Link to a missing heading: #teardown`]]);
+        });
+
+        test("[LNK-024] 다른 문서에 없는 제목을 가리키는 링크는 전체 수집 뒤 경고한다", async ({scope}) => {
+            /**
+             * GIVEN
+             * 다른 문서의 있는 제목과 없는 제목, 문서가 아닌 주소를 가리키는 링크
+             */
+            const site = siteConfigSchema.parse({});
+            const warn = vi.spyOn(logger, "warn").mockImplementation(() => undefined);
+
+            await Promise.all([
+                writeFile(join(scope.publicRoot, "questions.md"), "---\nname: Questions\nlabel: Questions\ngroup: Guide\n---\n\n### Q3\n"),
+                writeFile(
+                    join(scope.publicRoot, "screen.md"),
+                    "---\nname: Screen\nlabel: Screen\ngroup: Guide\n---\n\n[Q3](questions.md#q3)\n\n[Q4](questions.md#q4)\n\n[Asset](/diagram.svg#label)\n",
+                ),
+            ]);
+
+            /**
+             * WHEN
+             * 문서 로드
+             */
+            await readDocs({scope, processor: toProcessor({site, scope})});
+
+            /**
+             * THEN
+             * 있는 문서의 없는 제목만 경고. 문서가 아닌 주소는 제외
+             */
+            expect(warn.mock.calls).toStrictEqual([[`${join("public", "screen.md")}:9 Link to a missing heading: /questions/#q4`]]);
+        });
+    });
 });

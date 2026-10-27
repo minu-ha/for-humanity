@@ -8,6 +8,7 @@ import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import remarkSmartypants from "remark-smartypants";
 import {unified} from "unified";
+import {rehypeAnchors} from "@/app/_function/to-processor/_rehype-anchors";
 import {rehypeAssets} from "@/app/_function/to-processor/_rehype-assets";
 import {rehypeBasePath} from "@/app/_function/to-processor/_rehype-base-path";
 import {rehypeContentLinks} from "@/app/_function/to-processor/_rehype-content-links";
@@ -62,7 +63,7 @@ interface ProcessorParams {
  *
  *   - 코드와 문서 머리 생성 후 제목 ID와 가름 수집
  *   - 원시 HTML과 플러그인 HTML 조각은 Shiki 다음 rehype-raw에서 해석. Mermaid 원문과 원시 pre의 코드 강조 방지
- *   - 부품 제목 검사, 머리, 제목 ID, 가름, 표, 그림, 링크, 자원 처리는 원시 HTML 포함
+ *   - 부품 제목 검사, 머리, 제목 ID, 가름, 표, 그림, 링크, hash 대상, 자원 처리는 원시 HTML 포함
  *   - 코드 상자의 바탕과 글색은 article CSS 소유, 토큰 색상은 GitHub 기본 테마의 light-dark()
  *   - 주석과 보라 토큰은 github.com 현행 값으로 교체, 코드 상자 바탕 위 대비 4.5 확보
  */
@@ -99,6 +100,7 @@ export const toProcessor = (params: ProcessorParams) => {
         .use(rehypeTables)
         .use(rehypeFigures)
         .use(rehypeContentLinks, {scope: params.scope})
+        .use(rehypeAnchors)
         .use(rehypeAssets, {scope: params.scope, files})
         .use(rehypeBasePath, {basePath: params.site.basePath})
         .use(rehypeReport, {root: params.scope.root})

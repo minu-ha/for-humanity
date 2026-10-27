@@ -49,7 +49,7 @@ export const readHome = async (params: ReadHomeParams): Promise<DocContent | und
 
     assertContentPath({scope: params.scope, path});
 
-    const fh: DocFileData = {headings: [], sections: []};
+    const fh: DocFileData = {headings: [], sections: [], anchors: []};
 
     // 파서와 지시문 원문의 offset 일치, UTF-8 BOM 제외
     const file = new VFile({value: (await readFile(path, "utf8")).replace(/^﻿/, ""), path, data: {fh}});
