@@ -43,7 +43,7 @@ The README in content and the child documents are handled the same way. A refere
 
 ## Narrow screens
 
-An image alone in its own paragraph is laid out as a figure, with the same space above and below as tables and code blocks.
+An image alone in its own paragraph is laid out as a figure, with the same space above and below as tables and code blocks. An SVG figure is centered in a box with the same border and padding as Mermaid diagrams.
 On screens narrower than 640px, an SVG figure keeps the `width` and `height` written in the SVG file, and a figure wider than the body scrolls sideways like a wide table. Keyboard users can focus the figure and scroll it with the arrow keys. Wider screens show the figure at its own size, narrowed to the body width when it is wider.
 An SVG with only a `viewBox` has no size of its own and fills the body width. Write `width` and `height` at the size its text is meant to be read.
 Raster images such as PNG and JPEG always shrink to the body width, because their pixel size depends on the capture scale. An image inside a sentence, an image wrapped in a link and an image in a raw HTML paragraph with attributes are not laid out as figures.

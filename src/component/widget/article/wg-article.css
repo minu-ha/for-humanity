@@ -32,6 +32,11 @@
         display: block;
     }
 
+    /* SVG 그림은 상자 가운데, 상자보다 넓으면 auto 여백이 0이 되어 왼쪽부터 스크롤 */
+    & .wg_article__figure--svg > img {
+        margin-inline: auto;
+    }
+
     /* 휴대폰 폭에서는 SVG에 적은 크기 유지, 줄이면 글자를 읽을 수 없는 폭. token.css의 640px 구간과 일치 */
     @media (width < 640px) {
         & .wg_article__figure--svg > img {
@@ -445,9 +450,12 @@
     margin: var(--app-space-block) 0;
 }
 
-/* SVG 그림, 좁은 화면에서 넘치면 표처럼 내부 가로 스크롤 */
+/* SVG 그림, Mermaid 상자(wg-mermaid.css)와 같은 테두리와 안쪽 여백. 좁은 화면에서 넘치면 표처럼 내부 가로 스크롤 */
 .wg_article__figure--svg {
     overflow-x: auto;
+    padding: var(--app-space-block);
+    border: 1px solid var(--app-color-border);
+    border-radius: var(--app-radius-box);
 
     &:focus-visible {
         outline: var(--app-outline-focus);
