@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.23.1 — 2026-10-27
 
 **Upgrade:** Existing projects remain compatible. Rebuild and redeploy to apply the figure border. CLI commands, configuration, document syntax and Node.js requirements are unchanged.
 
