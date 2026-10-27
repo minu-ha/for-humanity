@@ -131,7 +131,8 @@ Shiki 토큰 색상은 GitHub 기본 테마 `github-light-default`, `github-dark
 | `tree-row`, `tree-group`, `tree-label`, `tree-indent` | 트리 항목 위아래 여백, 묶음 사이, 묶음 라벨 아래, 중첩 들여쓰기 |
 | `anchor`                         | hash 제목 위치, TOC 읽는 선 |
 
-공통 리듬: `inline` 6px, `stack` 10px, `block` 14px, `group` 20px, `section` 64px.
+공통 리듬: `inline` 6px, `stack` 10px, `block` 14px, `group` 20px, `subsection` 28px, `section` 64px.
+본문 제목: h2는 구분선 아래 `subsection`, 제목 아래 `block`. h3는 위 `subsection`, 아래 `stack`. 구분선과 제목 사이는 제목과 본문 사이의 두 배, 제목을 아래 본문에 묶어 표시.
 같은 역할의 간격은 `margin`, `padding`, `gap`에서 공통 토큰 재사용.
 사이드바는 묶음 간격 `tree-group` 16px, 라벨 아래 `tree-label` 2px, 행 위아래 여백 없이 배치. 데스크톱의 한 줄 항목 높이는 16.8px. 모바일에서는 위아래 여백 7px로 약 31px 높이를 확보하며 행 사이 별도 간격 없음. 홈 이동은 사이트 이름 하나로 제공.
 사이트 이름은 사이드바 상단. 제목의 행 높이, 페이지 위 여백, 목록 전 `group` 20px를 합친 `size-brand` 사용.

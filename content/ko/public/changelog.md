@@ -24,6 +24,7 @@ pnpm add -D --save-exact for-humanity@latest
 - Color code blocks with GitHub's light and dark syntax themes, following the system color scheme. Comments and purple tokens use the darker values github.com uses today, so they stay readable on the code box background. The code box keeps its own background and border.
 - Label document dates on Korean pages as `작성일` and `수정일` instead of `처음 작성` and `다시 정리`. Pages in other languages keep `Created` and `Revised`.
 - Leave space between sections in the table of contents, and keep each section's subheadings close under it.
+- Give body headings more room: a section heading sits 28px below its divider and 14px above its text, and subheadings and h4 headings leave 10px above their text.
 
 ## 0.23.1 — 2026-10-27
 
