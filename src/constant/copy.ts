@@ -98,6 +98,16 @@ export const copy_error_url_encoding = "Invalid percent-encoding";
 export const copy_warn_broken_link = "Link to a missing document";
 
 /**
+ * 참조 접두 형식 오류
+ */
+export const copy_error_ref_prefix = "refs[].prefix must be 1 to 3 uppercase letters";
+
+/**
+ * 참조 접두 중복 오류
+ */
+export const copy_error_ref_duplicate = "refs[].prefix must be unique";
+
+/**
  * 번역 언어 코드의 형식 오류
  */
 export const copy_error_site_locale = "locales keys must be lowercase language tags such as ko or zh-hans";

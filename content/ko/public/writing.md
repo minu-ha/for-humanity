@@ -139,6 +139,7 @@ part는 본문과 목차에서 절의 묶음을 표시합니다. 제목에 자�
 제목 앵커는 제목으로부터 자동 생성됩니다. 같은 제목이 반복되면 `-1`, `-2`가 붙습니다.
 Details 안의 제목으로 이동하면 접힌 내용이 펼쳐집니다.
 공개 문서와 홈에서는 private 파일이나 `/private/` 경로를 링크하지 않습니다.
+`[Q3](questions.md#q3)`처럼 글자가 설정한 접두와 번호인 링크는 칩으로 표시합니다. [Reference chips](settings.md#reference-chips)를 참고합니다.
 
 ## Flowcharts
 

@@ -54,6 +54,33 @@ describe("사이트 설정", () => {
             expect(invalid.success).toBe(false);
         });
 
+        test("참조 접두는 대문자 1~3자이고 색을 생략하면 gray 이며 중복은 거부한다", () => {
+            /**
+             * GIVEN
+             * 색 있는 접두와 없는 접두, 소문자 접두, 중복 접두
+             */
+            const input = {refs: [{prefix: "Q", color: "violet"}, {prefix: "BE"}]} satisfies SiteConfig;
+
+            /**
+             * WHEN
+             * 참조 설정 검증
+             */
+            const result = siteConfigSchema.parse(input);
+            const lowercase = siteConfigSchema.safeParse({refs: [{prefix: "q"}]});
+            const duplicate = siteConfigSchema.safeParse({refs: [{prefix: "Q"}, {prefix: "Q", color: "blue"}]});
+
+            /**
+             * THEN
+             * 기본 색 적용과 형식, 중복 오류
+             */
+            expect(result.refs).toStrictEqual([
+                {prefix: "Q", color: "violet"},
+                {prefix: "BE", color: "gray"},
+            ]);
+            expect(lowercase.success).toBe(false);
+            expect(duplicate.success).toBe(false);
+        });
+
         test("설정을 생략하면 기본 이름, 포트, 탐색 순서를 적용한다", () => {
             /**
              * GIVEN
@@ -85,6 +112,7 @@ describe("사이트 설정", () => {
                     {phrase: "확인됨", kind: "verified", date: true},
                     {phrase: "확인되지 않았다", kind: "unverified"},
                 ],
+                refs: [],
             });
         });
 
@@ -138,6 +166,7 @@ describe("사이트 설정", () => {
                 cursorFace: true,
                 navigation: [["Guide"], ["Projects", "Research"]],
                 status: [],
+                refs: [],
             });
 
             expectTypeOf<NonNullable<SiteConfig["navigation"]>[number]>().toEqualTypeOf<string | string[]>();

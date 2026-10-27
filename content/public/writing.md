@@ -139,6 +139,7 @@ A link to a local file of a type that is not deployed shows the same warning. Fo
 Heading anchors are generated automatically from the headings. If the same heading repeats, `-1` and `-2` are appended.
 Navigating to a heading inside Details expands the collapsed content.
 In public documents and the home page, do not link to private files or `/private/` paths.
+A link whose text is a configured prefix and a number, such as `[Q3](questions.md#q3)`, is shown as a chip. See [Reference chips](settings.md#reference-chips).
 
 ## Flowcharts
 

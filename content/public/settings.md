@@ -227,6 +227,29 @@ Writing `검토 완료 2026-10-01` in a document that uses the configuration abo
 A phrase wrapped in parentheses is also recognized. Phrases inside headings, links and code are not converted.
 Setting `status` replaces the default list. To turn the badges off, use `status: []`.
 
+## Reference chips
+
+Supported since `0.24.0`.
+
+A link whose text is a configured prefix followed by a number, such as `[Q3](questions.md#q3)`, is shown as a small chip instead of an underlined link. Use it for numbered decisions and questions that the body refers to.
+
+```ts
+export default {
+    refs: [
+        {prefix: "Q", color: "violet"},
+        {prefix: "B", color: "amber"},
+        {prefix: "D"},
+    ],
+};
+```
+
+| Key | Use |
+| --- | --- |
+| `prefix` | One to three uppercase letters. Each prefix once |
+| `color` | `gray` (default), `blue`, `violet` or `amber` |
+
+Only a link whose whole text is the prefix and digits becomes a chip, so `Q3` matches and `Q3a` or `q3` does not. The link address is not changed. Without `refs`, links are shown as usual.
+
 ## Appearance
 
 The light and dark themes follow the reader's system setting. Fonts are included in the build output.

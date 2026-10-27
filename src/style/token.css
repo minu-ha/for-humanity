@@ -58,6 +58,16 @@
     --app-color-neutral: light-dark(#555, #b5b5b5);
     --app-color-neutral-soft: light-dark(#f0f0ec, #262626);
 
+    /* 참조 칩, 접두마다 고르는 색 */
+    --app-color-ref-gray: var(--app-color-neutral);
+    --app-color-ref-gray-soft: var(--app-color-neutral-soft);
+    --app-color-ref-blue: light-dark(#1d4f91, #9fc0f5);
+    --app-color-ref-blue-soft: light-dark(#e8f0fb, #1b2736);
+    --app-color-ref-violet: light-dark(#5b3a9e, #c7b3ef);
+    --app-color-ref-violet-soft: light-dark(#f0eaf9, #2a2238);
+    --app-color-ref-amber: var(--app-color-unverified);
+    --app-color-ref-amber-soft: var(--app-color-unverified-soft);
+
     /*
      * 내장 글꼴, CLI는 @font-face와 자원 URL 생성
      * 본문, 라벨, 인라인 코드 한글 IBM Plex Sans KR, 영문 Monoplex KR, 코드 블록 Monoplex KR, 사이트 이름 Architects Daughter

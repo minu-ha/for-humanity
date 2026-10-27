@@ -2,6 +2,8 @@ import {z} from "zod";
 import {content_default} from "@/constant/content";
 import {
     copy_error_navigation_clash,
+    copy_error_ref_duplicate,
+    copy_error_ref_prefix,
     copy_error_site_base_path,
     copy_error_site_host,
     copy_error_site_image,
@@ -11,6 +13,7 @@ import {
     copy_error_status_image,
     copy_site_title_default,
 } from "@/constant/copy";
+import {ref_color, ref_prefix_pattern} from "@/constant/ref";
 import {
     site_base_path_default,
     site_base_path_pattern,
@@ -150,6 +153,26 @@ export const siteConfigSchema = z.object({
             }),
         )
         .default(status_default_phrases),
+
+    /**
+     * 글자가 접두와 번호인 링크를 참조 칩으로 표시할 접두 목록
+     */
+    refs: z
+        .array(
+            z.object({
+                /**
+                 * 대문자 1~3자 접두. Q, BE 등
+                 */
+                prefix: z.string().regex(ref_prefix_pattern, copy_error_ref_prefix),
+
+                /**
+                 * 칩 색, 생략 시 gray
+                 */
+                color: z.enum(ref_color).default(ref_color.gray),
+            }),
+        )
+        .refine((refs) => new Set(refs.map((ref) => ref.prefix)).size === refs.length, copy_error_ref_duplicate)
+        .default([]),
 });
 
 /**
@@ -230,4 +253,9 @@ export interface SiteConfig {
      * 상태 표지 목록, 빈 배열 지정 시 상태 표지 미표시
      */
     status?: z.input<typeof siteConfigSchema>["status"];
+
+    /**
+     * 참조 칩 접두 목록, 생략 시 칩 없음
+     */
+    refs?: z.input<typeof siteConfigSchema>["refs"];
 }

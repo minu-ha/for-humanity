@@ -5,6 +5,7 @@
 **Upgrade:** Existing projects remain compatible. The `status` configuration accepts two more `kind` values, `refs` is a new optional key, and hash links to missing headings now print a build warning. Rebuild and redeploy to apply the new badge and chip styles. CLI commands, document syntax and Node.js requirements are unchanged.
 
 - Add `blocked` (red) and `neutral` (gray) status badge kinds next to `verified` and `unverified`, so a document can mark blocked work and settled outcomes in their own colors.
+- Add the `refs` configuration. A link whose text is a configured uppercase prefix and a number, such as `[Q3](questions.md#q3)`, is shown as a small chip in gray, blue, violet or amber, so numbered decisions and questions stand out where the body refers to them. The link address is unchanged and documents without `refs` render as before.
 
 ## 0.23.2 — 2026-10-27
 

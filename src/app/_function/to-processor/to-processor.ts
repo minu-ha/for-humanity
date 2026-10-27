@@ -23,6 +23,7 @@ import {rehypeTables} from "@/component/widget/article/_function/rehype-tables";
 import {remarkBlocks} from "@/component/widget/article/_function/remark-blocks/remark-blocks";
 import {remarkLinks} from "@/component/widget/article/_function/remark-links";
 import {remarkParts} from "@/component/widget/article/_function/remark-parts";
+import {remarkRefs} from "@/component/widget/article/_function/remark-refs";
 import {remarkStatus} from "@/component/widget/article/_function/remark-status";
 import {remarkSwatch} from "@/component/widget/article/_function/remark-swatch";
 import {remarkUnknownDirectives} from "@/component/widget/article/_function/remark-unknown-directives";
@@ -79,6 +80,7 @@ export const toProcessor = (params: ProcessorParams) => {
         .use(remarkParts)
         .use(remarkMermaid, {assets: params.mermaid, files})
         .use(remarkStatus, {status: params.site.status})
+        .use(remarkRefs, {refs: params.site.refs})
         .use(remarkSwatch)
         .use(remarkLinks, {scope: params.scope})
         .use(remarkUnknownDirectives)
