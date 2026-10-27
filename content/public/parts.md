@@ -53,6 +53,7 @@ Check the following before you build the public documents.
 ## Details
 
 The title of Details is always visible, and the body is collapsed by default. A title and a body are required.
+The title starts with `+` while the body is collapsed and with `−` while it is open.
 Add `{open}` to expand it from the start. `open=true` and `open=false` are not allowed.
 `open=""`, which attaches a value, and a duplicate `open` are also errors. `{open}` is a single attribute without a value.
 
@@ -90,6 +91,28 @@ Confirm the scope of the implementation after you check the inputs, errors and o
 
 :::details[Review criteria]{open}
 Confirm the scope of the implementation after you check the inputs, errors and open issues.
+:::
+
+### In a row
+
+Details written one after another share one divider and read as a list.
+
+```markdown
+:::details[Inputs]
+The files and settings the build reads.
+:::
+
+:::details[Outputs]
+The pages and assets the build writes.
+:::
+```
+
+:::details[Inputs]
+The files and settings the build reads.
+:::
+
+:::details[Outputs]
+The pages and assets the build writes.
 :::
 
 ::part[Contract]

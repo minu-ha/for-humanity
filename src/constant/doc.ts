@@ -17,3 +17,8 @@ export const doc_data_absent = {};
  * 순서 미지정 문서는 번호가 있는 문서 뒤에서 이름순 배치
  */
 export const doc_order_default = Number.MAX_SAFE_INTEGER;
+
+/**
+ * 달까지 적은 문서 날짜. 날까지 적은 날짜는 Zod ISO 날짜 검증
+ */
+export const doc_date_month_pattern = /^\d{4}-(?:0[1-9]|1[0-2])$/;

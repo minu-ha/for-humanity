@@ -372,4 +372,66 @@ describe("문서", () => {
             await expect(result).rejects.toThrow(/Parent document is in another language: ko\/setup → guide/);
         });
     });
+
+    describe("작성 날짜", () => {
+        test("[DOC-018] 머리말 날짜는 제목 아래에 페이지 언어의 라벨과 함께 표시한다", async ({scope}) => {
+            /**
+             * GIVEN
+             * 영어 기본 문서와 한국어 번역의 두 날짜, 처음 작성 날짜만 있는 문서, 날짜 없는 문서
+             */
+            const site = siteConfigSchema.parse({lang: "en", locales: {ko: {}}});
+            const localeScope = {...scope, locales: [{code: "ko", root: join(scope.root, "ko"), publicRoot: join(scope.root, "ko/public")}]};
+
+            await mkdir(join(scope.root, "ko/public"), {recursive: true});
+
+            await Promise.all([
+                writeFile(join(scope.publicRoot, "post.md"), "---\nname: Post\nlabel: Post\ngroup: Posts\ncreated: 2022-12\nrevised: 2026-10-05\n---\n\nLead.\n"),
+                writeFile(join(scope.root, "ko/public/post.md"), "---\nname: Post\nlabel: 글\ngroup: Posts\ncreated: 2022-12\nrevised: 2026-10-05\n---\n\n소개.\n"),
+                writeFile(join(scope.publicRoot, "note.md"), "---\nname: Note\nlabel: Note\ngroup: Posts\ncreated: 2026-10\n---\n\nLead.\n"),
+                writeFile(join(scope.publicRoot, "plain.md"), "---\nname: Plain\nlabel: Plain\ngroup: Posts\n---\n\nLead.\n"),
+            ]);
+
+            /**
+             * WHEN
+             * 문서 로드
+             */
+            const docs = await readDocs({scope: localeScope, processor: toProcessor({site, scope: localeScope})});
+            const html = Object.fromEntries(docs.map((doc) => [doc.id, doc.html]));
+
+            /**
+             * THEN
+             * 제목과 소개 사이의 날짜 줄, 영어와 한국어 라벨, 적은 그대로의 time 값, 날짜가 없으면 줄 생략
+             */
+            expect(html.post).toContain(
+                '</h1><p class="wg_article__dates">Created <time datetime="2022-12">2022-12</time>, Revised <time datetime="2026-10-05">2026-10-05</time></p><p>Lead.</p>',
+            );
+            expect(html["ko/post"]).toContain(
+                '<p class="wg_article__dates">처음 작성 <time datetime="2022-12">2022-12</time>, 다시 정리 <time datetime="2026-10-05">2026-10-05</time></p>',
+            );
+            expect(html.note).toContain('<p class="wg_article__dates">Created <time datetime="2026-10">2026-10</time></p>');
+            expect(html.plain).not.toContain("wg_article__dates");
+        });
+
+        test("[DOC-019] 형식이 다른 날짜는 문서 경로와 항목 이름과 함께 거부한다", async ({scope}) => {
+            /**
+             * GIVEN
+             * 연도만 적은 처음 작성 날짜
+             */
+            const site = siteConfigSchema.parse({});
+
+            await writeFile(join(scope.publicRoot, "post.md"), "---\nname: Post\nlabel: Post\ngroup: Posts\ncreated: 2022\n---\n\nText.\n");
+
+            /**
+             * WHEN
+             * 문서 로드
+             */
+            const result = readDocs({scope, processor: toProcessor({site, scope})});
+
+            /**
+             * THEN
+             * 문서 경로와 날짜 형식 안내가 붙은 머리말 오류
+             */
+            await expect(result).rejects.toThrow(/Invalid frontmatter: public[\\/]post\.md: created must be YYYY-MM or YYYY-MM-DD/);
+        });
+    });
 });

@@ -27,8 +27,21 @@
         vertical-align: middle;
     }
 
-    /* 제목 아래 첫 문단, 소개 크기 */
-    & h1 + p {
+    /* 문단에 혼자 있는 그림, 인라인 이미지의 글자 줄 아래 여백 제거 */
+    & .wg_article__figure > img {
+        display: block;
+    }
+
+    /* 휴대폰 폭에서는 SVG에 적은 크기 유지, 줄이면 글자를 읽을 수 없는 폭. token.css의 640px 구간과 일치 */
+    @media (width < 640px) {
+        & .wg_article__figure--svg > img {
+            max-width: none;
+        }
+    }
+
+    /* 제목 아래 첫 문단, 소개 크기. 날짜 줄이 있으면 그다음 문단 */
+    & h1 + p,
+    & .wg_article__dates + p {
         font-size: var(--app-font-size-lead);
     }
 
@@ -47,6 +60,13 @@
     & .wg_article__lead {
         margin: 0 0 var(--app-space-stack);
         font-size: var(--app-font-size-lead);
+    }
+
+    /* 제목 아래 작성 날짜, 클릭할 수 없는 라벨 */
+    & .wg_article__dates {
+        margin: 0 0 var(--app-space-stack);
+        color: var(--app-color-text-muted);
+        font-size: var(--app-font-size-detail);
     }
 
     & h2 {
@@ -420,6 +440,21 @@
     letter-spacing: var(--app-letter-spacing-heading);
 }
 
+/* 문단에 혼자 있는 그림, 표와 코드 상자와 같은 위아래 간격 */
+.wg_article__figure {
+    margin: var(--app-space-block) 0;
+}
+
+/* SVG 그림, 좁은 화면에서 넘치면 표처럼 내부 가로 스크롤 */
+.wg_article__figure--svg {
+    overflow-x: auto;
+
+    &:focus-visible {
+        outline: var(--app-outline-focus);
+        outline-offset: var(--app-outline-focus-offset);
+    }
+}
+
 /* 넓은 표의 내부 가로 스크롤, 키보드 스크롤용 포커스 */
 .wg_article__table {
     overflow-x: auto;
@@ -489,10 +524,9 @@
     font-weight: var(--app-font-weight-strong);
 }
 
-/* 구현 상세, 펼침 상태와 marker는 네이티브 Details 소유 */
+/* 구현 상세, 펼침 상태는 네이티브 Details 소유 */
 .wg_article__details {
     margin: var(--app-space-block) 0;
-    padding-bottom: var(--app-space-stack);
     border-top: 1px dotted var(--app-color-border);
     border-bottom: 1px dotted var(--app-color-border);
 
@@ -500,13 +534,44 @@
     & > :last-child {
         margin-bottom: 0;
     }
+
+    /* 접힌 제목 줄은 위아래 같은 여백, 펼친 본문 아래만 여백 */
+    &[open] {
+        padding-bottom: var(--app-space-stack);
+    }
+
+    /* 이어진 Details는 점선 하나를 나눠 쓰는 목록 */
+    &:has(+ .wg_article__details) {
+        margin-bottom: 0;
+    }
+
+    & + .wg_article__details {
+        margin-top: 0;
+        border-top: 0;
+    }
 }
 
+/* 펼침 표시는 기본 삼각형 대신 글자 폭의 +, −. 화면 낭독기는 Details의 열림 상태를 읽음 */
 .wg_article__detailsSummary {
-    padding: var(--app-space-inline) 0;
+    display: block;
+    padding: var(--app-space-stack) 0;
     color: var(--app-color-link);
     font-weight: var(--app-font-weight-strong);
     cursor: pointer;
+
+    &::-webkit-details-marker {
+        display: none;
+    }
+
+    /* 고정폭 한 칸과 라벨 간격, 두 표시의 글리프 폭과 무관한 제목 위치 */
+    &::before {
+        display: inline-block;
+        width: calc(1ch + var(--app-space-inline));
+
+        /* 대체 텍스트 문법을 모르는 Safari 17.3 이하는 앞 선언 사용 */
+        content: "+";
+        content: "+" / "";
+    }
 
     &:hover {
         color: var(--app-color-link-hover);
@@ -518,4 +583,10 @@
         outline: var(--app-outline-focus);
         outline-offset: var(--app-outline-focus-offset);
     }
+}
+
+/* 펼친 Details의 표시 */
+.wg_article__details[open] > .wg_article__detailsSummary::before {
+    content: "\2212";
+    content: "\2212" / "";
 }

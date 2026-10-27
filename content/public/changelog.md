@@ -17,6 +17,15 @@ pnpm add -D --save-exact for-humanity@latest
 
 Package files for each version are available from [GitHub Releases](https://github.com/nomeehej/for-humanity/releases).
 
+## Unreleased
+
+**Upgrade:** Existing projects remain compatible, except that a document whose frontmatter already uses `created` or `revised` for anything other than a `YYYY-MM` or `YYYY-MM-DD` date now fails the build; earlier versions ignored both keys. Rebuild and redeploy to apply the new figure and Details layout. CLI commands, configuration and Node.js requirements are unchanged.
+
+- Add optional `created` and `revised` frontmatter dates, written as `YYYY-MM` or `YYYY-MM-DD`. They appear under the document title in small gray text, as `Created 2022-12, Revised 2026-10`, or `처음 작성 2022-12, 다시 정리 2026-10` on Korean pages. A different format, a day that does not exist or a `revised` date earlier than `created` fails the build with the file and the key.
+- Use the last frontmatter date, `revised` or else `created`, as the page's `<lastmod>` in `sitemap.xml` when it is written with the day. Month-only dates and home pages get no `<lastmod>`.
+- Lay out an image that is alone in its paragraph as a figure, with the same space above and below as tables and code blocks. On screens narrower than 640px, an SVG figure keeps the `width` and `height` written in the file and scrolls sideways like a wide table instead of shrinking its text, and keyboard users can focus and scroll it. Raster images and wider screens keep their current size.
+- Mark Details titles with `+` while collapsed and `−` while open instead of the browser's triangle, give a collapsed title the same space above and below, and let Details written one after another share one divider.
+
 ## 0.22.1 — 2026-10-27
 
 **Upgrade:** Existing projects remain compatible. Only package metadata and documentation links change. CLI commands, configuration, document syntax and Node.js requirements are unchanged.

@@ -37,7 +37,8 @@ test/
     1.2-home.node.test.ts        ↔ src/app/_function/read-home.ts, src/page/home        HOM
     1.3-link.node.test.ts        ↔ remark-links, remark-parts, _rehype-content-links    LNK
     1.4-code.node.test.ts        ↔ shiki-transformers, _remark-snippets                 COD
-    1.5-asset.node.test.ts       ↔ _rehype-assets                                       AST
+    1.5-asset.node.test.ts       ↔ _rehype-assets, rehype-figures                       AST
+    1.5-asset.e2e.spec.ts
     1.6-crawling.node.test.ts    ↔ src/app/_function/to-crawling-app.ts                 CRW
   2-page/
     2.1-shell.node.test.ts       ↔ src/component/widget/shell                           SHL

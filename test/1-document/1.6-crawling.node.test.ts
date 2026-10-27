@@ -89,6 +89,42 @@ describe("크롤러 파일", () => {
             expect(xml).not.toMatch(/<lastmod>|<changefreq>|<priority>|robots\.txt|sitemap\.xml|_fh|#read/);
             expect([...updated.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1])).toStrictEqual(["https://docs.example.org/"]);
         });
+
+        test("[CRW-007] 사이트맵 lastmod는 날까지 적은 마지막 머리말 날짜만 사용한다", async ({scope}) => {
+            /**
+             * GIVEN
+             * 정리 날짜를 날까지 적은 문서, 처음 작성 날짜만 날까지 적은 문서, 정리 날짜를 달까지 적은 문서, 날짜 없는 문서
+             */
+            const url = "https://docs.example.org";
+            const site = siteConfigSchema.parse({url});
+
+            await Promise.all([
+                writeFile(join(scope.publicRoot, "revised.md"), "---\nname: Revised\nlabel: Revised\ngroup: Posts\ncreated: 2022-12-01\nrevised: 2026-10-05\n---\n\nText.\n"),
+                writeFile(join(scope.publicRoot, "created.md"), "---\nname: Created\nlabel: Created\ngroup: Posts\ncreated: 2025-03-14\n---\n\nText.\n"),
+                writeFile(join(scope.publicRoot, "month.md"), "---\nname: Month\nlabel: Month\ngroup: Posts\ncreated: 2022-12-01\nrevised: 2026-10\n---\n\nText.\n"),
+                writeFile(join(scope.publicRoot, "plain.md"), "---\nname: Plain\nlabel: Plain\ngroup: Posts\n---\n\nText.\n"),
+            ]);
+
+            /**
+             * WHEN
+             * 사이트맵 요청과 주소별 lastmod 수집
+             */
+            const docs = await readDocs({scope, processor: toProcessor({site, scope})});
+            const xml = await (await toCrawlingApp({url, site, store: {docs, homes: new Map()}}).request("/sitemap.xml")).text();
+            const lastmods = Object.fromEntries([...xml.matchAll(/<url><loc>([^<]+)<\/loc>(?:<lastmod>([^<]+)<\/lastmod>)?/g)].map((match) => [match[1], match[2]]));
+
+            /**
+             * THEN
+             * loc 바로 뒤의 정리 날짜와 처음 작성 날짜, 달까지만 적은 정리 날짜와 날짜 없는 문서, 홈의 lastmod 없음
+             */
+            expect(lastmods).toStrictEqual({
+                [`${url}/`]: undefined,
+                [`${url}/revised/`]: "2026-10-05",
+                [`${url}/created/`]: "2025-03-14",
+                [`${url}/month/`]: undefined,
+                [`${url}/plain/`]: undefined,
+            });
+        });
     });
 
     describe("정적 빌드와 예약 경로", () => {

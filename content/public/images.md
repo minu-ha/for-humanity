@@ -41,6 +41,15 @@ A fictional figure that distinguishes the selected bookshelf by its name and a h
 The same relative path rules apply to reference-style images and to `<img src="...">` in raw HTML. Each candidate in `srcset` and the `poster` of `<video>` follow the same rules. The same goes for the `src` of `<video>`, `<audio>`, `<source>`, `<track>` and `<embed>` and the `data` of `<object>`.
 The README in content and the child documents are handled the same way. A referenced file must be inside the content root. Keep shared assets in `content/asset` and private assets in `content/private/asset`. Referencing private assets in a public build causes an error.
 
+## Narrow screens
+
+An image alone in its own paragraph is laid out as a figure, with the same space above and below as tables and code blocks.
+On screens narrower than 640px, an SVG figure keeps the `width` and `height` written in the SVG file, and a figure wider than the body scrolls sideways like a wide table. Keyboard users can focus the figure and scroll it with the arrow keys. Wider screens show the figure at its own size, narrowed to the body width when it is wider.
+An SVG with only a `viewBox` has no size of its own and fills the body width. Write `width` and `height` at the size its text is meant to be read.
+Raster images such as PNG and JPEG always shrink to the body width, because their pixel size depends on the capture scale. An image inside a sentence, an image wrapped in a link and an image in a raw HTML paragraph with attributes are not laid out as figures.
+
+The example figure above is 560px wide, so on a phone you scroll it sideways.
+
 ## Build and dev
 
 Only referenced files are copied to `content/dist/_fh/media/`. Whole image folders and nearby personal files are not copied automatically.

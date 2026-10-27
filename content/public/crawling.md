@@ -55,6 +55,7 @@ Sitemap: https://docs.example.com/sitemap.xml
 ```
 
 The sitemap contains the URLs of the home page and the public documents. It does not include heading anchors, images, or fonts.
+A document gets a `<lastmod>` when its last frontmatter date, `revised` or else `created`, is written with the day, such as `2026-10-05`. A month such as `2026-10` is left out because the sitemap format needs a full date. The date comes from the frontmatter as written, not from file modification times, and the home page has no `<lastmod>`. See [Writing](writing.md#dates).
 With `locales`, the sitemap also lists the home page of each language. A page that exists in two or more languages carries an `xhtml:link` alternate for each language, and the default language is also `x-default`. The same alternates appear in the page head as `<link rel="alternate" hreflang>`. See [Settings](settings.md#languages).
 The public build excludes private documents. In local dev, documents from both folders appear.
 

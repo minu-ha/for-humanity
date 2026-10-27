@@ -61,9 +61,22 @@ public과 private 안의 README는 일반 문서이므로 다른 문서처럼 fr
 | `group` | 사이드바 그룹 이름 또는 이름 배열 | 필수, 비어 있지 않은 값 |
 | `order` | 같은 그룹 안에서 읽을 순서 | 선택, 0 이상의 정수 |
 | `parent` | 같은 그룹 안의 부모 문서 ID | 선택 |
+| `created` | 문서를 처음 작성한 날짜, 제목 아래에 표시 | 선택, `YYYY-MM` 또는 `YYYY-MM-DD` |
+| `revised` | 문서를 다시 정리한 날짜, 제목 아래에 표시 | 선택, 같은 형식, `created`보다 앞설 수 없음 |
 
 새 문서는 `type`을 지정할 필요가 없습니다. 기존 `document`와 `blueprint` 값은 계속 읽으며 같은 문서로 표시합니다.
 제목과 그룹에는 원하는 언어를 사용할 수 있습니다.
+
+### Dates
+
+```yaml
+created: 2022-12
+revised: 2026-10
+```
+
+위 문서는 제목 아래에 `처음 작성 2022-12, 다시 정리 2026-10`을 작은 회색 글자로 표시합니다. 한국어 페이지는 `처음 작성`과 `다시 정리`, 다른 언어의 페이지는 영어 라벨 `Created`와 `Revised`를 사용합니다. 두 날짜 중 하나만 적어도 됩니다.
+달까지는 `YYYY-MM`, 날까지는 `YYYY-MM-DD`로 적습니다. 날짜는 적은 그대로 표시합니다. 다른 형식, 없는 날짜, `created`보다 앞선 `revised`는 빌드 오류입니다.
+날까지 적은 날짜는 사이트맵의 `<lastmod>`로도 사용합니다. [Crawling](crawling.md#what-is-included)을 참고합니다.
 
 ### Navigation groups
 

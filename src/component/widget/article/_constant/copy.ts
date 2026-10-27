@@ -72,3 +72,11 @@ export const copy_error_part_code_fence = "needs closed code fences and an outer
  * 미등록 날짜 상태 문구 경고
  */
 export const copy_warn_unknown_status = "Status phrase not in the configuration";
+
+/**
+ * 문서 제목 아래 날짜 라벨. 페이지 언어의 기본 하위 태그가 ko면 한국어, 그 밖은 영어
+ */
+export const copy_doc_dates = {
+    en: {created: "Created", revised: "Revised"},
+    ko: {created: "처음 작성", revised: "다시 정리"},
+} as const;

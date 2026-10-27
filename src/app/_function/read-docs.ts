@@ -128,7 +128,7 @@ export const readDocs = async (params: ReadDocsParams): Promise<Doc[]> => {
             };
 
             // 플러그인의 제목, 절 정보 공유
-            const fh: DocFileData = {frontmatter: data, headings: [], sections: []};
+            const fh: DocFileData = {frontmatter: data, locale: entry.locale, headings: [], sections: []};
 
             file.data.fh = fh;
 

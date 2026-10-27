@@ -149,7 +149,7 @@ Consola는 빌드 결과, 문서 경고, 사이트 실행 오류의 공통 출�
 페이지 앱의 라우트: `/`, `/:slug{.+}/`. 문서 id에는 하위 폴더 포함.
 `/`는 content 루트의 `README.md`. 일반 문서 목록과 별도로 읽고, 개발 중 함께 갱신.
 
-공개 `url`이 설정됐으면 공통 앱의 `toCrawlingApp`에서 `/robots.txt`와 `/sitemap.xml` 응답을 만듭니다. 크롤러 앱은 페이지 앱과 별도로 유지합니다. dev 앱은 두 파일 요청만 크롤러 앱에 위임하고, build는 각 앱을 `toSSG`로 출력합니다. 사이트맵은 같은 문서 store의 URL만 읽습니다. URL 미지정 프로젝트에는 크롤러 앱과 생성 파일이 없습니다.
+공개 `url`이 설정됐으면 공통 앱의 `toCrawlingApp`에서 `/robots.txt`와 `/sitemap.xml` 응답을 만듭니다. 크롤러 앱은 페이지 앱과 별도로 유지합니다. dev 앱은 두 파일 요청만 크롤러 앱에 위임하고, build는 각 앱을 `toSSG`로 출력합니다. 사이트맵은 같은 문서 store의 URL과 frontmatter 날짜만 읽습니다. 날까지 적은 `revised`, 없으면 `created`가 `<lastmod>`이며 파일 수정 시각은 쓰지 않습니다. URL 미지정 프로젝트에는 크롤러 앱과 생성 파일이 없습니다.
 
 - Hono JSX: `c.html`에 컴포넌트를 전달해 HTML 문서 생성
 - build: Hono `ssgParams`와 `toSSG`로 같은 라우트 출력

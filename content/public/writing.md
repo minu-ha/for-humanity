@@ -61,9 +61,22 @@ READMEs inside public and private are ordinary documents, so write frontmatter i
 | `group` | Sidebar group name or array of names | Required, a non-empty value |
 | `order` | Reading order within the same group | Optional, an integer of 0 or more |
 | `parent` | ID of the parent document in the same group | Optional |
+| `created` | Date the document was first written, shown under the title | Optional, `YYYY-MM` or `YYYY-MM-DD` |
+| `revised` | Date the document was last revised, shown under the title | Optional, same format, not earlier than `created` |
 
 A new document does not need `type`. Existing `document` and `blueprint` values are still read and shown as the same kind of document.
 You can use any language for titles and groups.
+
+### Dates
+
+```yaml
+created: 2022-12
+revised: 2026-10
+```
+
+The document above shows `Created 2022-12, Revised 2026-10` in small gray text under the title. Pages in Korean label the dates `처음 작성` and `다시 정리`, and pages in other languages use the English labels. Either date can be written alone.
+Write a month as `YYYY-MM` or a day as `YYYY-MM-DD`. The date is shown as written. A different format, a day that does not exist or a `revised` date earlier than `created` is a build error.
+A date written with the day also becomes the page's `<lastmod>` in the sitemap. See [Crawling](crawling.md#what-is-included).
 
 ### Navigation groups
 

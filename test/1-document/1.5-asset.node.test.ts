@@ -9,7 +9,7 @@ import {siteConfigSchema} from "@/type/site-config";
 import {logger} from "@/util/logger/logger";
 
 /**
- * 문서 자원 수집(src/app/_function/to-processor/_rehype-assets.ts) 검증
+ * 문서 자원 수집(src/app/_function/to-processor/_rehype-assets.ts)과 그림 상자(src/component/widget/article/_function/rehype-figures.ts) 검증
  */
 describe("문서 자원", () => {
     describe("자원 수집", () => {
@@ -189,6 +189,40 @@ describe("문서 자원", () => {
             expect(docs[0].html).toMatch(/<img src="\/_fh\/media\/asset\.[a-f0-9]+\.png" alt="Sized" width="15">/);
             expect(docs[0].html).toMatch(/<img src="\/_fh\/media\/asset\.[a-f0-9]+\.svg" alt="Diagram">/);
             expect(docs[0].html).toMatch(/<img src="\/_fh\/media\/asset\.[a-f0-9]+\.png" alt="Broken">/);
+        });
+
+        test("[AST-019] 문단에 혼자 있는 이미지는 그림 상자에 넣고 SVG 그림은 키보드로 스크롤할 수 있다", async ({scope}) => {
+            /**
+             * GIVEN
+             * 혼자 있는 로컬 SVG, 쿼리가 붙은 외부 SVG, 래스터 이미지, 문장 안의 이미지, 속성을 적은 원시 HTML 문단
+             */
+            await Promise.all([
+                writeFile(join(scope.publicRoot, "diagram.svg"), '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" width="720" height="360"/>'),
+                writeFile(join(scope.publicRoot, "shot.png"), "png"),
+            ]);
+
+            await writeFile(
+                join(scope.publicRoot, "page.md"),
+                '---\nname: Media\nlabel: Media\ngroup: Guide\n---\n\n## Figures\n\n![Diagram](diagram.svg)\n\n![Chart](https://example.com/chart.svg?v=1)\n\n![Shot](shot.png)\n\nSee ![Inline](shot.png) here.\n\n<p align="center"><img src="diagram.svg" alt="Raw"></p>\n',
+            );
+
+            /**
+             * WHEN
+             * 문서 렌더링
+             */
+            const docs = await readDocs({scope, processor: toProcessor({site: siteConfigSchema.parse({}), scope, files: new Map()})});
+
+            /**
+             * THEN
+             * SVG 그림의 스크롤 상자와 포커스, 래스터 그림의 그림 상자, 문장과 원시 HTML 문단 유지
+             */
+            expect(docs[0].html).toMatch(
+                /<div class="wg_article__figure wg_article__figure--svg" tabindex="0"><img src="\/_fh\/media\/asset\.[a-f0-9]+\.svg" alt="Diagram"><\/div>/,
+            );
+            expect(docs[0].html).toContain('<div class="wg_article__figure wg_article__figure--svg" tabindex="0"><img src="https://example.com/chart.svg?v=1" alt="Chart"></div>');
+            expect(docs[0].html).toMatch(/<div class="wg_article__figure"><img src="\/_fh\/media\/asset\.[a-f0-9]+\.png" alt="Shot"><\/div>/);
+            expect(docs[0].html).toMatch(/<p>See <img src="\/_fh\/media\/asset\.[a-f0-9]+\.png" alt="Inline"> here\.<\/p>/);
+            expect(docs[0].html).toMatch(/<p align="center"><img src="\/_fh\/media\/asset\.[a-f0-9]+\.svg" alt="Raw"><\/p>/);
         });
     });
 

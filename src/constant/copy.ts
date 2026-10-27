@@ -106,3 +106,13 @@ export const copy_error_site_locale = "locales keys must be lowercase language t
  * 기본 언어 공개 문서 id가 번역 언어 접두사로 시작하는 오류
  */
 export const copy_error_locale_id = "The locale URL prefix is reserved for translated documents";
+
+/**
+ * 문서 날짜 형식 오류. 앞에 항목 이름
+ */
+export const copy_error_doc_date = "must be YYYY-MM or YYYY-MM-DD";
+
+/**
+ * created보다 앞선 revised 오류. 앞에 항목 이름
+ */
+export const copy_error_doc_revised = "must not be earlier than created";

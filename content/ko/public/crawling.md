@@ -55,6 +55,7 @@ Sitemap: https://docs.example.com/sitemap.xml
 ```
 
 사이트맵에는 홈과 공개 문서의 URL을 포함합니다. 제목 앵커, 이미지, 글꼴은 포함하지 않습니다.
+frontmatter의 마지막 날짜(`revised`, 없으면 `created`)를 `2026-10-05`처럼 날까지 적은 문서는 그 날짜를 `<lastmod>`로 받습니다. 사이트맵 형식은 날까지 적은 날짜가 필요하므로 `2026-10`처럼 달까지만 적은 날짜는 넣지 않습니다. 날짜는 파일 수정 시각이 아니라 frontmatter에 적은 값이며 홈에는 `<lastmod>`가 없습니다. [Writing](writing.md#dates)을 참고합니다.
 `locales`를 설정하면 각 언어의 홈 주소도 포함합니다. 두 언어 이상으로 존재하는 페이지에는 언어별 `xhtml:link` 대체 링크를 넣고 기본 언어는 `x-default`로도 표시합니다. 같은 대체 링크를 페이지 head의 `<link rel="alternate" hreflang>`으로도 출력합니다. [Settings](settings.md#languages)를 참고합니다.
 공개 빌드에서는 private 문서를 제외합니다. 로컬 dev에서는 양쪽 문서가 표시됩니다.
 

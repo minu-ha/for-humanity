@@ -28,7 +28,7 @@ interface CrawlingParams {
 }
 
 /**
- * dev와 정적 빌드에서 같은 크롤러 파일 생성. 정책, 수정 시각은 추정하지 않음
+ * dev와 정적 빌드에서 같은 크롤러 파일 생성. 정책, 수정 시각은 추정하지 않고 frontmatter 날짜만 사용
  *
  *   - 번역이 둘 이상인 페이지만 hreflang 대체 링크, 기본 언어판은 x-default 겸함
  */
@@ -43,11 +43,17 @@ export const toCrawlingApp = (params: CrawlingParams) => {
         // 모든 언어의 홈은 서로의 언어판
         const homes = toAlternates({site: params.site, docs: params.store.docs});
         const pages = [
-            ...homes.map((home) => ({path: home.path, alternates: homes})),
-            ...params.store.docs.map((doc) => ({
-                path: toPagePath(doc.id),
-                alternates: toAlternates({site: params.site, docs: params.store.docs, current: doc.id, locale: doc.locale}),
-            })),
+            ...homes.map((home) => ({path: home.path, alternates: homes, lastmod: undefined})),
+            ...params.store.docs.map((doc) => {
+                // 작성자가 적은 마지막 날짜. 사이트맵 스키마의 날짜는 날까지 필요, 달까지만 적으면 생략
+                const lastmod = doc.data.revised ?? doc.data.created;
+
+                return {
+                    path: toPagePath(doc.id),
+                    alternates: toAlternates({site: params.site, docs: params.store.docs, current: doc.id, locale: doc.locale}),
+                    lastmod: lastmod?.length === "YYYY-MM-DD".length ? lastmod : undefined,
+                };
+            }),
         ];
 
         return new Response(
@@ -66,7 +72,7 @@ ${pages.map((page) => {
                   ];
               });
 
-    return html`<url><loc>${params.url}${toSitePath({basePath: params.site.basePath, path: page.path})}</loc>${links}</url>`;
+    return html`<url><loc>${params.url}${toSitePath({basePath: params.site.basePath, path: page.path})}</loc>${page.lastmod === undefined ? "" : html`<lastmod>${page.lastmod}</lastmod>`}${links}</url>`;
 })}
 </urlset>`.toString(),
             {headers: {"Content-Type": "application/xml; charset=utf-8"}},

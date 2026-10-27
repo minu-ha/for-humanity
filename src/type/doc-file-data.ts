@@ -1,3 +1,4 @@
+import type {ContentLocale} from "@/type/content-locale";
 import type {DocData} from "@/type/doc-data";
 import type {DocOutline} from "@/type/doc-outline";
 
@@ -9,4 +10,9 @@ export interface DocFileData extends DocOutline {
      * 일반 문서의 검증된 머리말. README 홈은 생략
      */
     frontmatter?: DocData;
+
+    /**
+     * 번역 문서의 언어 코드. 기본 언어 문서와 README 홈은 생략
+     */
+    locale?: ContentLocale["code"];
 }
