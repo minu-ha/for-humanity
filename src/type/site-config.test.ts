@@ -25,6 +25,35 @@ describe("사이트 설정", () => {
             expect(invalid.success).toBe(false);
         });
 
+        test("상태 표지 종류는 blocked 와 neutral 도 받고 그 밖의 이름은 거부한다", () => {
+            /**
+             * GIVEN
+             * 네 종류의 상태 문구와 없는 종류 하나
+             */
+            const input = {
+                status: [
+                    {phrase: "Done", kind: "verified", date: true},
+                    {phrase: "Needs answer", kind: "unverified"},
+                    {phrase: "Blocked", kind: "blocked"},
+                    {phrase: "Kept", kind: "neutral", date: true},
+                ],
+            } satisfies SiteConfig;
+
+            /**
+             * WHEN
+             * 상태 표지 설정 검증
+             */
+            const result = siteConfigSchema.parse(input);
+            const invalid = siteConfigSchema.safeParse({status: [{phrase: "Danger", kind: "danger"}]});
+
+            /**
+             * THEN
+             * 네 종류 보존과 없는 종류 오류
+             */
+            expect(result.status.map((item) => item.kind)).toStrictEqual(["verified", "unverified", "blocked", "neutral"]);
+            expect(invalid.success).toBe(false);
+        });
+
         test("설정을 생략하면 기본 이름, 포트, 탐색 순서를 적용한다", () => {
             /**
              * GIVEN

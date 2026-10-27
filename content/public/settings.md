@@ -218,8 +218,10 @@ export default {
 | Key | Use |
 | --- | --- |
 | `phrase` | Non-empty phrase to find in the body |
-| `kind` | `verified`: green, `unverified`: amber |
+| `kind` | `verified`: green, `unverified`: amber, `blocked`: red, `neutral`: gray |
 | `date` | If `true`, a `YYYY-MM-DD` date that follows is also shown |
+
+`blocked` and `neutral` are supported since `0.24.0`.
 
 Writing `검토 완료 2026-10-01` in a document that uses the configuration above displays the phrase and the date as a single badge.
 A phrase wrapped in parentheses is also recognized. Phrases inside headings, links and code are not converted.

@@ -1,9 +1,11 @@
 /**
- * 상태 표지 종류. verified 초록, unverified amber
+ * 상태 표지 종류. verified 초록, unverified amber, blocked 빨강, neutral 회색
  */
 export const status_kind = {
     verified: "verified",
     unverified: "unverified",
+    blocked: "blocked",
+    neutral: "neutral",
 } as const;
 
 /**

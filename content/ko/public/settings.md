@@ -218,8 +218,10 @@ export default {
 | Key | Use |
 | --- | --- |
 | `phrase` | 본문에서 찾을 비어 있지 않은 문구 |
-| `kind` | `verified`: 초록, `unverified`: 호박색 |
+| `kind` | `verified`: 초록, `unverified`: 호박색, `blocked`: 빨강, `neutral`: 회색 |
 | `date` | `true`이면 뒤의 `YYYY-MM-DD` 날짜도 함께 표시 |
+
+`blocked`와 `neutral`은 `0.24.0`부터 지원합니다.
 
 위 설정을 사용한 문서에 `검토 완료 2026-10-01`을 쓰면 날짜까지 하나의 표지로 표시합니다.
 괄호로 감싼 문구도 인식합니다. 제목, 링크, 코드 안의 문구는 바꾸지 않습니다.

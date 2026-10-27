@@ -475,7 +475,7 @@
     }
 }
 
-/* 상태 표지, 확인 초록, 미확인 amber */
+/* 상태 표지, 확인 초록, 미확인 amber, 막힘 빨강, 중립 회색 */
 .wg_article__pill {
     display: inline-block;
     padding: 0 5px;
@@ -494,6 +494,16 @@
 .wg_article__pill--unverified {
     background: var(--app-color-unverified-soft);
     color: var(--app-color-unverified);
+}
+
+.wg_article__pill--blocked {
+    background: var(--app-color-blocked-soft);
+    color: var(--app-color-blocked);
+}
+
+.wg_article__pill--neutral {
+    background: var(--app-color-neutral-soft);
+    color: var(--app-color-neutral);
 }
 
 /* 인라인 hex 색 칩, remark-swatch의 CSS 변수 */

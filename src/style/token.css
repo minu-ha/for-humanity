@@ -48,11 +48,15 @@
     --app-color-link-visited: light-dark(#51a, #c5a5ed);
     --app-color-link-hover: light-dark(#44d, #c1d1ff);
 
-    /* 상태 표지, verified 초록, unverified amber */
+    /* 상태 표지, verified 초록, unverified amber, blocked 빨강, neutral 회색 */
     --app-color-verified: light-dark(#176b36, #82cf95);
     --app-color-verified-soft: light-dark(#edf5ed, #1d2c20);
     --app-color-unverified: light-dark(#855700, #dfb26c);
     --app-color-unverified-soft: light-dark(#faf2df, #30291c);
+    --app-color-blocked: light-dark(#9b2c2c, #f0a0a0);
+    --app-color-blocked-soft: light-dark(#f9ebe8, #3a2522);
+    --app-color-neutral: light-dark(#555, #b5b5b5);
+    --app-color-neutral-soft: light-dark(#f0f0ec, #262626);
 
     /*
      * 내장 글꼴, CLI는 @font-face와 자원 URL 생성

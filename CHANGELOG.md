@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+**Upgrade:** Existing projects remain compatible. The `status` configuration accepts two more `kind` values, `refs` is a new optional key, and hash links to missing headings now print a build warning. Rebuild and redeploy to apply the new badge and chip styles. CLI commands, document syntax and Node.js requirements are unchanged.
+
+- Add `blocked` (red) and `neutral` (gray) status badge kinds next to `verified` and `unverified`, so a document can mark blocked work and settled outcomes in their own colors.
+
 ## 0.23.2 — 2026-10-27
 
 **Upgrade:** Existing projects remain compatible. Rebuild and redeploy to apply the new code colors, date labels and heading spacing. CLI commands, configuration, document syntax and Node.js requirements are unchanged.
