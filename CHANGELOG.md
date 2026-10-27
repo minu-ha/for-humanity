@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.26.1 — 2026-10-27
+
+**Upgrade:** Same package as 0.26.0, which was tagged but never published to npm because the release check failed. Install this version.
+
+- Publish the 0.26.0 changes: flowchart labels longer than 120px are no longer cut off, and diagrams use the site's palette and font.
+
 ## 0.26.0 — 2026-10-27
 
 **Upgrade:** Existing projects remain compatible. Rebuild and redeploy to apply the diagram theme and the label fix. CLI commands, configuration, document syntax and Node.js requirements are unchanged.
