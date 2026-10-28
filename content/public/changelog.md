@@ -17,9 +17,9 @@ pnpm add -D --save-exact for-humanity@latest
 
 Package files for each version are available from [GitHub Releases](https://github.com/nomeehej/for-humanity/releases).
 
-## Unreleased
+## 0.26.2 — 2026-10-28
 
-**Upgrade:** Existing projects remain compatible. Rebuild and redeploy to apply the new heading sizes, lines and code font. CLI commands, configuration, document syntax and Node.js requirements are unchanged.
+**Upgrade:** Existing projects remain compatible. Rebuild and redeploy to apply the new heading sizes, lines, code font and diagram style. CLI commands, configuration, document syntax and Node.js requirements are unchanged.
 
 - Make headings easier to tell apart from body text: page titles are 20px, section headings 17px and subheadings 14px instead of 16px, 15px and 12px. A subheading now leaves about three lines (60px) of space above it, and a subheading right under a section heading stays close to it. The site name in the sidebar keeps its 16px size.
 - Replace the dotted lines with solid gray ones under the document head, between parts, for `---` and around Details. Hovering a Details title shades the whole row, and an open Details draws a thin line down its content, indented to the title text, so it is clear where the folded content ends.
