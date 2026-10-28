@@ -17,7 +17,7 @@ pnpm add -D --save-exact for-humanity@latest
 
 버전별 패키지 파일은 [GitHub Releases](https://github.com/nomeehej/for-humanity/releases)에서 받을 수 있습니다.
 
-## Unreleased
+## 0.26.3 — 2026-10-28
 
 **Upgrade:** Existing projects remain compatible. Rebuild and redeploy to apply the new card type. CLI commands, configuration, document syntax and Node.js requirements are unchanged.
 
