@@ -224,6 +224,10 @@ Hex color values of 3, 4, 6 or 8 digits written as inline code, such as `#e80030
 You can also use raw HTML, but it does not automatically fetch CSS and JavaScript from other sites.
 Heading anchors are also created for `<h2>` and `<h3>` in raw HTML, and they appear in the outline. Raw HTML tables are also put in the same horizontal scroll box as Markdown tables.
 
+A table with a header row and at least two body rows sorts by its column headers. Pointing at a header shows an arrow at its right edge; the first click sorts ascending, the second descending and the third restores the written order, and the arrow turns as the direction changes.
+Numbers and dates in the text sort by value, empty cells and `-` stay at the end, and the sorted column is exposed to assistive technology as `aria-sort`. Without JavaScript the table keeps its written order.
+A table with merged cells or a link in a header keeps its written order. Supported since `0.27.0`.
+
 ## Block components
 
 Use Note to keep supplementary explanations visible, and Details to let readers expand them when needed.

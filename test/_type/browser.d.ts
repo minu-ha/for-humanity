@@ -79,5 +79,10 @@ declare global {
          * 전역 구독의 수명 기록
          */
         shellListeners: ShellListener[];
+
+        /**
+         * 표 정렬 위젯의 마운트와 해제 명령
+         */
+        tableSortFixture: {mount: () => void; unmount: () => void};
     }
 }

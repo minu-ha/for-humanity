@@ -4,6 +4,7 @@ import {WgCursorFace} from "@/component/widget/cursor-face/wg-cursor-face";
 import {WgMermaid} from "@/component/widget/mermaid/wg-mermaid";
 import {heading_highlight_hold_ms} from "@/component/widget/shell-controls/_constant/heading-highlight";
 import {WgSidebar, type WgSidebarProps} from "@/component/widget/sidebar/wg-sidebar";
+import {WgTableSort} from "@/component/widget/table-sort/wg-table-sort";
 import {scroll_user_input_events} from "@/constant/scroll";
 import {findHashLink} from "@/util/dom/find-hash-link";
 import {isRestoringNavigation} from "@/util/dom/is-restoring-navigation";
@@ -11,7 +12,7 @@ import {revealHashTarget} from "@/util/dom/reveal-hash-target";
 import "./wg-shell-controls.css";
 
 /**
- * 브라우저 셸 컨트롤 입력. 사이드바, 커서 장식, 다이어그램 연결, 제목 강조는 셸 소유
+ * 브라우저 셸 컨트롤 입력. 사이드바, 커서 장식, 다이어그램 연결, 표 정렬, 제목 강조는 셸 소유
  */
 export interface WgShellControlsProps {
     /**
@@ -186,6 +187,7 @@ export const WgShellControls = (props: WgShellControlsProps) => {
             </div>
             {props.data.cursorFace && <WgCursorFace ready={props.stores !== undefined} basePath={props.data.basePath} />}
             <WgMermaid onRendered={handlePageLoad} />
+            <WgTableSort />
         </Fragment>
     );
 };

@@ -24,9 +24,9 @@ unit과 node는 Vitest, integration과 e2e는 Playwright입니다. 프로젝트 
 ```text
 test/
   _constant/    여러 검사가 공유하는 입력 자료. 공식 문법별 다이어그램 원문과 기대 라벨(diagram)
-  _fixture/     Vitest 임시 루트와 공개 범위(temp-root), Playwright 사이트별 서버(dev, docs, mermaid, navigation),
+  _fixture/     Vitest 임시 루트와 공개 범위(temp-root), Playwright 사이트별 서버(dev, docs, mermaid, navigation, table-sort),
                 갤러리 번들(load-browser-script), 탐색 조회 도우미(read-navigation-scroll, to-navigation-html)
-  _gallery/     공개 번들 밖에서 위젯을 마운트하고 해제하는 페이지 스크립트(mermaid-lifecycle, navigation-lifecycle)
+  _gallery/     공개 번들 밖에서 위젯을 마운트하고 해제하는 페이지 스크립트(mermaid-lifecycle, navigation-lifecycle, table-sort-lifecycle)
   _type/        갤러리와 spec이 공유하는 브라우저 전역 계약(browser.d.ts)
   0-command/
     0.1-command.node.test.ts     ↔ src/entry/cli                                        CMD
@@ -52,6 +52,8 @@ test/
     2.4-accessibility.e2e.spec.ts ↔ content/public, src/component                       ACC
     2.5-status.node.test.ts      ↔ src/page/status, src/component/ui/status, load-site   STA
     2.5-status.e2e.spec.ts
+    2.6-table-sort.e2e.spec.ts   ↔ src/component/widget/table-sort                      TBL
+    2.6-table-sort.integration.spec.ts
   3-server/
     3.1-dev.e2e.spec.ts          ↔ src/entry/dev                                        DEV
     3.2-preview.node.test.ts     ↔ src/entry/preview                                    PRV

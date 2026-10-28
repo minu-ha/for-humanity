@@ -1,0 +1,53 @@
+/* 머리글 오른쪽 끝의 화살표. 평소에는 숨기고 가리키면 흐리게, 정렬하면 진하게. 방향이 바뀌면 돌아감 */
+.wg_tableSort__arrow {
+    flex: none;
+    width: 0.9em;
+    height: 0.9em;
+    color: var(--app-color-text-muted);
+    opacity: 0;
+    transform: rotate(0deg);
+    transition:
+        transform 320ms var(--app-motion-easing-out),
+        opacity 160ms var(--app-motion-easing-out);
+}
+
+/* 머리글 전체를 누르는 정렬 버튼. 라벨은 왼쪽, 화살표는 오른쪽 끝. 칸 여백만큼 넓혀 글자 밖의 빈 자리도 누름 */
+.wg_tableSort__button {
+    display: flex;
+    gap: var(--app-space-inline);
+    align-items: center;
+    justify-content: space-between;
+    width: calc(100% + 2 * var(--app-space-stack));
+    margin: calc(-1 * var(--app-space-inline)) calc(-1 * var(--app-space-stack));
+    padding: var(--app-space-inline) var(--app-space-stack);
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    text-align: inherit;
+    white-space: inherit;
+    cursor: pointer;
+
+    &:focus-visible {
+        outline: var(--app-outline-focus);
+        outline-offset: calc(-1 * var(--app-outline-focus-offset));
+    }
+
+    &:where(:hover, :focus-visible) .wg_tableSort__arrow {
+        opacity: 0.5;
+    }
+}
+
+/* 오름차순은 위를 가리키도록 돌림 */
+.wg_tableSort__button--ascending .wg_tableSort__arrow {
+    color: var(--app-color-text-strong);
+    opacity: 1;
+    transform: rotate(180deg);
+}
+
+/* 내림차순은 아래 */
+.wg_tableSort__button--descending .wg_tableSort__arrow {
+    color: var(--app-color-text-strong);
+    opacity: 1;
+}
