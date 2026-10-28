@@ -189,11 +189,12 @@
         color: var(--app-color-text-strong);
 
         /*
-         * 인라인 코드는 UA monospace 대신 부모 글꼴
-         * 코드 블록의 고정폭과 자간 0은 pre 담당
+         * 코드 블록과 같은 글꼴. Monoplex KR은 x높이가 커서 둘레 글자의 15/16 크기가 같은 높이로 보임
+         * 자간은 코드 블록과 같은 0, 제목 안에서도 둘레 크기를 따라감
          */
-        font-family: inherit;
-        font-size: 1em;
+        font-family: var(--app-font-mono);
+        font-size: 0.9375em;
+        letter-spacing: 0;
     }
 
     /* 코드 블록, 토큰 색상은 Shiki 인라인 스타일 */
@@ -638,9 +639,8 @@
 .wg_article__detailsSummary {
     display: block;
 
-    /* 누르는 영역은 줄 전체, hover 바탕은 글자 시작선 밖으로 조금 넓혀 칠함 */
-    margin-inline: calc(-1 * var(--app-space-inline));
-    padding: var(--app-space-stack) var(--app-space-inline);
+    /* 누르는 영역은 줄 전체, hover 바탕은 위아래 선과 같은 너비. 선 밖으로 넓히면 선 끝보다 튀어나옴 */
+    padding: var(--app-space-stack) 0;
     color: var(--app-color-link);
     font-weight: var(--app-font-weight-strong);
     cursor: pointer;

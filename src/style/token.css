@@ -107,7 +107,7 @@
     /* 묶음 라벨의 줄 높이, 작은 글씨도 탐색 행과 같은 높이 */
     --app-line-height-group: calc(var(--app-font-size-dense) * var(--app-line-height-tight));
 
-    /* 자간, 본문, 라벨, 인라인 코드는 좁게, 제목은 더 좁게, 사이트 이름은 기본 폭, 코드 블록은 고정폭 칸 기준 0 */
+    /* 자간, 본문과 라벨은 좁게, 제목은 더 좁게, 사이트 이름은 기본 폭, 인라인 코드와 코드 블록은 고정폭 칸 기준 0 */
     --app-letter-spacing-body: -0.02em;
     --app-letter-spacing-brand: 0;
     --app-letter-spacing-heading: -0.04em;
