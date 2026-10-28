@@ -104,13 +104,20 @@
         border-top: 0;
     }
 
+    /* 앞 문단과는 세 줄쯤 떼고 아래 본문에 붙여 새 소절의 시작을 표시 */
     & h3 {
-        margin: var(--app-space-subsection) 0 var(--app-space-stack);
+        margin: 60px 0 var(--app-space-stack);
         color: var(--app-color-text-strong);
-        font-size: var(--app-font-size-lead);
+        font-size: var(--app-font-size-subsection);
         font-weight: var(--app-font-weight-strong);
-        line-height: var(--app-line-height-tight);
+        line-height: var(--app-line-height-heading);
+        letter-spacing: var(--app-letter-spacing-heading);
         scroll-margin-top: calc(var(--app-space-anchor) + var(--wg-article-anchor-shift, 0px));
+    }
+
+    /* 절 제목 바로 아래 소절 제목은 두 제목을 한 묶음으로 */
+    & h2 + h3 {
+        margin-top: var(--app-space-block);
     }
 
     & h4 {
@@ -176,7 +183,7 @@
     }
 
     & code {
-        padding: 1px 3px;
+        padding: 1px 2px;
         border-radius: var(--app-radius-inline);
         background: var(--app-color-code);
         color: var(--app-color-text-strong);
@@ -272,7 +279,7 @@
     & hr {
         margin: var(--app-space-section) 0;
         border: 0;
-        border-top: 1px dotted var(--app-color-border);
+        border-top: 1px solid var(--app-color-border);
     }
 
     /* Shiki가 만드는 line, highlighted, diff 클래스 */
@@ -393,7 +400,7 @@
 .wg_article__head {
     margin-bottom: var(--app-space-inline);
     padding-bottom: var(--app-space-block);
-    border-bottom: 1px dotted var(--app-color-border);
+    border-bottom: 1px solid var(--app-color-border);
 
     /* 작성한 블록의 종류와 무관하게 마지막 블록의 아래 여백 제거 */
     & > :last-child {
@@ -438,7 +445,7 @@
 .wg_article__part {
     margin-top: var(--app-space-section);
     padding-top: var(--app-space-stack);
-    border-top: 1px dotted var(--app-color-border);
+    border-top: 1px solid var(--app-color-border);
     color: var(--app-color-text-strong);
     font-size: var(--app-font-size-part);
     font-weight: var(--app-font-weight-strong);
@@ -596,8 +603,8 @@
 /* 구현 상세, 펼침 상태는 네이티브 Details 소유 */
 .wg_article__details {
     margin: var(--app-space-block) 0;
-    border-top: 1px dotted var(--app-color-border);
-    border-bottom: 1px dotted var(--app-color-border);
+    border-top: 1px solid var(--app-color-border);
+    border-bottom: 1px solid var(--app-color-border);
 
     /* 작성한 블록의 종류와 무관하게 마지막 블록의 아래 여백 제거 */
     & > :last-child {
@@ -609,7 +616,7 @@
         padding-bottom: var(--app-space-stack);
     }
 
-    /* 이어진 Details는 점선 하나를 나눠 쓰는 목록 */
+    /* 이어진 Details는 선 하나를 나눠 쓰는 목록 */
     &:has(+ .wg_article__details) {
         margin-bottom: 0;
     }
@@ -618,12 +625,22 @@
         margin-top: 0;
         border-top: 0;
     }
+
+    /* 펼친 본문은 +, − 표시 아래 세로선으로 범위를 표시하고 글자는 제목 글자와 같은 시작선 */
+    &[open]::details-content {
+        margin-left: calc(0.5ch - 0.5px);
+        padding-left: calc(0.5ch + var(--app-space-inline) - 0.5px);
+        border-left: 1px solid var(--app-color-border);
+    }
 }
 
 /* 펼침 표시는 기본 삼각형 대신 글자 폭의 +, −. 화면 낭독기는 Details의 열림 상태를 읽음 */
 .wg_article__detailsSummary {
     display: block;
-    padding: var(--app-space-stack) 0;
+
+    /* 누르는 영역은 줄 전체, hover 바탕은 글자 시작선 밖으로 조금 넓혀 칠함 */
+    margin-inline: calc(-1 * var(--app-space-inline));
+    padding: var(--app-space-stack) var(--app-space-inline);
     color: var(--app-color-link);
     font-weight: var(--app-font-weight-strong);
     cursor: pointer;
@@ -643,9 +660,8 @@
     }
 
     &:hover {
+        background: var(--app-color-accent-soft);
         color: var(--app-color-link-hover);
-        text-decoration: underline;
-        text-underline-offset: 2px;
     }
 
     &:focus-visible {

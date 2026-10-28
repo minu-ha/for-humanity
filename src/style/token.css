@@ -28,7 +28,7 @@
     --app-motion-duration-highlight-fade: 600ms;
     --app-motion-easing-out: ease-out;
 
-    /* 선, border 상자와 목록, layout 열 경계 */
+    /* 선, border 상자, 목록, 구분선과 접기, layout 열 경계 */
     --app-color-border: light-dark(#aaa, #555);
     --app-color-border-layout: light-dark(#eee, #2b2b2b);
 
@@ -70,23 +70,25 @@
 
     /*
      * 내장 글꼴, CLI는 @font-face와 자원 URL 생성
-     * 본문, 라벨, 인라인 코드 한글 IBM Plex Sans KR, 영문 Monoplex KR, 코드 블록 Monoplex KR, 사이트 이름 Architects Daughter
-     * 영문 폭 0.528em, 코드 블록의 한글은 정확히 2칸
-     * 본문 맨 앞의 IBM Plex Sans KR은 한글 unicode-range만 담당, 영문, 숫자, 기호는 다음 순서의 Monoplex KR
+     * 한글은 어디서나 IBM Plex Sans KR, 영문, 숫자, 기호는 Monoplex KR, 사이트 이름 Architects Daughter
+     * 맨 앞의 IBM Plex Sans KR은 한글 unicode-range만 담당, 영문 폭 0.528em 고정폭은 다음 순서의 Monoplex KR
+     * 코드 블록의 한글은 비례폭이라 영문 2칸에 맞지 않음. 코드의 한글은 대부분 주석이라 본문과 같은 모양을 우선
      */
-    --app-font-mono: "Monoplex KR", ui-monospace, monospace;
-    --app-font-body: "IBM Plex Sans KR", var(--app-font-mono);
+    --app-font-mono: "IBM Plex Sans KR", "Monoplex KR", ui-monospace, monospace;
+    --app-font-body: var(--app-font-mono);
     --app-font-brand: "Architects Daughter", var(--app-font-body);
 
-    /* 글자 크기, 11px 비상호작용 묶음, 12px 기본과 역할별 제목 크기 */
+    /* 글자 크기, 11px 비상호작용 묶음, 12px 기본, 제목은 약 1.2배씩 */
     --app-font-size-group: 11px;
     --app-font-size-detail: 12px;
     --app-font-size-dense: 12px;
     --app-font-size-body: 12px;
     --app-font-size-lead: 12px;
     --app-font-size-part: 13px;
-    --app-font-size-section: 15px;
-    --app-font-size-title: 16px;
+    --app-font-size-subsection: 14px;
+    --app-font-size-section: 17px;
+    --app-font-size-title: 20px;
+    --app-font-size-brand: 16px;
 
     /* 굵기, 기본 400, 현재 위치, 제목, 강조는 600 */
     --app-font-weight-mark: 400;
@@ -133,7 +135,7 @@
 
     /* 페이지 최대 폭, 본문은 사이드바와 간격을 뺀 나머지 전체 */
     --app-size-page: 1600px;
-    --app-size-brand: calc(var(--app-font-size-title) * var(--app-line-height-title) + var(--app-space-page-top) + var(--app-space-group));
+    --app-size-brand: calc(var(--app-font-size-brand) * var(--app-line-height-title) + var(--app-space-page-top) + var(--app-space-group));
     --app-size-mobile-header: 56px;
     --app-size-menu-button: 44px;
     --app-size-drawer: 320px;
