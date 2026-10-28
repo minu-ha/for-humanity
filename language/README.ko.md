@@ -30,7 +30,7 @@ Markdown에 코드 예제, 표, Mermaid 다이어그램을 작성하고 이미�
 Node.js 22.12.0 이상과 pnpm이 필요합니다. `package.json`이 있는 프로젝트에서 패키지를 설치합니다.
 
 ```sh
-pnpm add -D --save-exact for-humanity@0.26.3
+pnpm add -D --save-exact for-humanity@0.27.0
 ```
 
 `node_modules/for-humanity/template`의 `for-humanity.config.ts`와 `content` 폴더를 프로젝트로 복사합니다. 기존 문서가 있다면 파일을 옮기기 전에 [Migration](../content/ko/public/migration.md)을 확인합니다.

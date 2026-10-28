@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.27.0 — 2026-10-29
 
 **Upgrade:** Existing projects remain compatible. Rebuild and redeploy to apply the larger text, the body font change and table sorting. Text struck through with a single `~` on each side needs `~~` now. CLI commands, configuration and Node.js requirements are unchanged.
 
