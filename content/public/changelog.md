@@ -17,6 +17,14 @@ pnpm add -D --save-exact for-humanity@latest
 
 Package files for each version are available from [GitHub Releases](https://github.com/nomeehej/for-humanity/releases).
 
+## Unreleased
+
+**Upgrade:** Existing projects remain compatible. Rebuild and redeploy to apply the larger text, the body font change and table sorting. CLI commands, configuration, document syntax and Node.js requirements are unchanged.
+
+- Enlarge text for reading: body text is 16px instead of 12px, navigation, outline, tables, code blocks and metadata are 14px, group labels 13px, part titles 17px, subheadings 18px, section headings 20px, page titles 26px, the site name 20px and a centered README title 32px. Diagram labels are 14px instead of 13px, and body letter spacing loosens from -0.03em to -0.02em.
+- Set Latin, digits and punctuation in body text, labels, inline code and diagrams in IBM Plex Sans KR, the Latin its Hangul was designed with, instead of the monospaced Monoplex KR. Document navigation, the outline, code blocks, code file titles, reference chips and the status code keep Monoplex KR for Latin next to IBM Plex Sans KR Hangul, so the sidebars frame the text like a terminal; the outline narrows its word spaces so Hangul headings keep about their body spacing. A page that has not received the fonts yet shows the system sans-serif instead of the system monospace.
+- Sort a table by clicking a column header. A table with a header row and at least two body rows gets a button in each header: the first click sorts ascending, the second descending and the third restores the written order. Numbers and dates in cell text sort by value, empty cells and `-` stay at the end, the sorted column is exposed as `aria-sort`, and the written order stays without JavaScript. A table with merged cells or a link in a header keeps its written order.
+
 ## 0.26.3 — 2026-10-28
 
 **Upgrade:** Existing projects remain compatible. Rebuild and redeploy to apply the new card type. CLI commands, configuration, document syntax and Node.js requirements are unchanged.

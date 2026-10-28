@@ -20,18 +20,18 @@ const render_theme_css = [
 ].join("\n");
 
 /**
- * token.css의 --app-font-mono와 같은 글꼴 목록
+ * token.css의 --app-font-body와 같은 글꼴 목록
  *
  *   - 제약: Mermaid의 최상위 fontFamily는 괄호를 받지 않아 var() 대신 값 그대로 작성
  */
-const render_font_family = '"IBM Plex Sans KR", "Monoplex KR", ui-monospace, monospace';
+const render_font_family = '"IBM Plex Sans KR", "Monoplex KR", system-ui, sans-serif';
 
 /**
  * 사이트 토큰과 같은 글꼴과 흑백 팔레트. 상자는 accent-soft 바탕에 회색 선, 묶음은 페이지 바탕, 노트는 형광펜 노랑
  */
 const render_light_variables: MermaidConfig["themeVariables"] = {
     fontFamily: "var(--app-font-body)",
-    fontSize: "13px",
+    fontSize: "14px",
     background: "#fff",
     primaryColor: "#f5f5f2",
     primaryTextColor: "#222",
@@ -90,7 +90,7 @@ export const render_config: MermaidConfig = {
 
     // 시퀀스는 그릴 때 이 두 값으로 참여자, 메시지, 노트의 글꼴을 덮어씀. 공식 기본은 trebuchet와 16px
     fontFamily: render_font_family,
-    fontSize: 13,
+    fontSize: 14,
 };
 
 /**

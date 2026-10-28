@@ -70,25 +70,26 @@
 
     /*
      * 내장 글꼴, CLI는 @font-face와 자원 URL 생성
-     * 한글은 어디서나 IBM Plex Sans KR, 영문, 숫자, 기호는 Monoplex KR, 사이트 이름 Architects Daughter
-     * 맨 앞의 IBM Plex Sans KR은 한글 unicode-range만 담당, 영문 폭 0.528em 고정폭은 다음 순서의 Monoplex KR
+     * 본문은 한글과 영문 모두 IBM Plex Sans KR, 코드의 영문, 숫자, 기호는 Monoplex KR, 사이트 이름 Architects Daughter
+     * 코드 맨 앞의 IBM Plex Sans KR Hangul은 같은 파일의 한글 unicode-range만 담당, 영문 폭 0.528em 고정폭은 다음 순서의 Monoplex KR
      * 코드 블록의 한글은 비례폭이라 영문 2칸에 맞지 않음. 코드의 한글은 대부분 주석이라 본문과 같은 모양을 우선
+     * 본문의 Monoplex KR은 IBM Plex Sans KR에 없는 글자의 대체, 글꼴을 못 받은 첫 표시는 시스템 산세리프
      */
-    --app-font-mono: "IBM Plex Sans KR", "Monoplex KR", ui-monospace, monospace;
-    --app-font-body: var(--app-font-mono);
+    --app-font-mono: "IBM Plex Sans KR Hangul", "Monoplex KR", ui-monospace, monospace;
+    --app-font-body: "IBM Plex Sans KR", "Monoplex KR", system-ui, sans-serif;
     --app-font-brand: "Architects Daughter", var(--app-font-body);
 
-    /* 글자 크기, 11px 비상호작용 묶음, 12px 기본, 제목은 약 1.2배씩 */
-    --app-font-size-group: 11px;
-    --app-font-size-detail: 12px;
-    --app-font-size-dense: 12px;
-    --app-font-size-body: 12px;
-    --app-font-size-lead: 12px;
-    --app-font-size-part: 13px;
-    --app-font-size-subsection: 14px;
-    --app-font-size-section: 17px;
-    --app-font-size-title: 20px;
-    --app-font-size-brand: 16px;
+    /* 글자 크기, 16px 본문, 14px 탐색, 표, 코드와 부가 정보, 13px 비상호작용 묶음, 제목은 약 1.1배씩 */
+    --app-font-size-group: 13px;
+    --app-font-size-detail: 14px;
+    --app-font-size-dense: 14px;
+    --app-font-size-body: 16px;
+    --app-font-size-lead: 16px;
+    --app-font-size-part: 17px;
+    --app-font-size-subsection: 18px;
+    --app-font-size-section: 20px;
+    --app-font-size-title: 26px;
+    --app-font-size-brand: 20px;
 
     /* 굵기, 기본 400, 현재 위치, 제목, 강조는 600 */
     --app-font-weight-mark: 400;
@@ -107,7 +108,7 @@
     --app-line-height-group: calc(var(--app-font-size-dense) * var(--app-line-height-tight));
 
     /* 자간, 본문, 라벨, 인라인 코드는 좁게, 제목은 더 좁게, 사이트 이름은 기본 폭, 코드 블록은 고정폭 칸 기준 0 */
-    --app-letter-spacing-body: -0.03em;
+    --app-letter-spacing-body: -0.02em;
     --app-letter-spacing-brand: 0;
     --app-letter-spacing-heading: -0.04em;
     --app-letter-spacing-title: -0.045em;

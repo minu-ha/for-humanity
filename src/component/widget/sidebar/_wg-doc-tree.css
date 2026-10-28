@@ -1,10 +1,12 @@
 /*
  * 읽는 순서의 문서 목록, 작은 회색 묶음과 링크색 문서
+ * 영문은 코드와 같은 Monoplex KR, 본문 글과 구분되는 터미널 느낌의 틀. 한글은 본문과 같은 글꼴
  */
 .wg_docTree__root {
     display: flex;
     flex-direction: column;
     gap: var(--app-space-tree-group);
+    font-family: var(--app-font-mono);
     font-size: var(--app-font-size-dense);
     line-height: var(--app-line-height-tight);
 }

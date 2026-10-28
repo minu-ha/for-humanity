@@ -11,8 +11,8 @@ order: 20
 
 ## Overview
 
-- 본문: 영문 고정폭 Monoplex KR, 한글 IBM Plex Sans KR, 넉넉한 행간, 낱말 단위 줄바꿈
-- 라벨: 작은 회색 글자, 본문과 같은 글꼴, 인라인 코드도 본문 글꼴, 코드 블록의 한글도 본문과 같은 IBM Plex Sans KR
+- 본문: 한글과 영문 모두 IBM Plex Sans KR, 넉넉한 행간, 낱말 단위 줄바꿈
+- 라벨: 작은 회색 글자, 본문과 같은 글꼴, 인라인 코드도 본문 글꼴, 문서 탐색, 목차, 코드 블록은 영문 고정폭 Monoplex KR에 본문과 같은 IBM Plex Sans KR 한글
 - 페이지 시작선: 문서 탐색의 첫 묶음과 h1의 위쪽 정렬, 사이트 이름은 그 위
 - 본문 머리: README 홈과 문서의 제목, 작성 날짜, 소개, 회색 실선
 - 면의 구분: 가는 선, 직각 모서리, 그림자와 그라데이션 없음
@@ -77,10 +77,10 @@ order: 20
 
 ## Typography
 
-본문, 라벨, 인라인 코드, 코드 블록 모두 한글 IBM Plex Sans KR과 영문 Monoplex KR, 사이트 이름은 Architects Daughter. 내장 파일 사용.
+본문, 라벨, 인라인 코드, 다이어그램은 한글과 영문 모두 IBM Plex Sans KR, 문서 탐색, 목차, 코드 블록, 코드 파일 제목, 참조 칩, 상태 코드는 한글 IBM Plex Sans KR과 영문 Monoplex KR, 사이트 이름은 Architects Daughter. 내장 파일 사용. 사이드바의 Monoplex KR은 본문 글과 구분되는 터미널 느낌의 틀. 목차는 고정폭 공백(0.53em) 때문에 한글 제목의 띄어쓰기가 본문(0.24em)보다 벌어져 `word-spacing: -0.2em`으로 그 사이에 맞춤, 문서 탐색은 영문 제목이 대부분이라 고정폭 공백 그대로.
 Monoplex KR은 Regular `400`과 SemiBold `600` 두 파일. 영문 반각과 한글 전각의 폭은 1:2.
-IBM Plex Sans KR도 Regular `400`과 SemiBold `600` 두 파일. Monoplex KR 한글의 원본이라 모양, 크기, 높이가 같고 폭만 원래 비례폭. `unicode-range`로 한글 음절과 호환 자모만 담당하고 영문, 숫자, 기호는 Monoplex KR. 코드 블록의 한글도 비례폭이라 영문 2칸에 맞지 않음. 코드의 한글은 대부분 주석이라 본문과 같은 모양을 우선. 인라인 코드는 본문과 같은 글꼴과 자간.
-Mermaid SVG는 공식 `base` 테마에 본문 글꼴과 사이트의 흑백 팔레트를 넣어 본문의 SVG 그림과 같은 모양으로 그림: `accent-soft` 바탕 상자, 한 색의 회색 테두리(밝은 `#888`, 어두운 `#777`, Mermaid 12 neo 모양의 그라데이션 끔), 페이지 바탕의 묶음, 직각 모서리, 그림자 없음, 1.2px 연결선과 끝의 작은 빈 꺾쇠(순서도와 시퀀스, 그린 SVG의 표식 교체), 형광펜 노랑 노트, 시퀀스까지 13px 본문 글꼴. 본문 폭보다 넓은 그림은 줄여서 맞추므로 글이 가로로 긴 흐름을 세로(`TB`)로 쓰거나 라벨에 `<br>`을 넣음. Mermaid 12의 기본 배치(ELK)는 `nodeSpacing`, `rankSpacing`을 받지 않음. Shadow DOM으로 본문 스타일과 격리합니다. 다이어그램 원문 대체 표시는 일반 코드 블록과 같은 글꼴을 사용합니다. [Diagrams](../public/diagrams.md#themes-and-rendering).
+IBM Plex Sans KR도 Regular `400`과 SemiBold `600` 두 파일. Monoplex KR 한글의 원본이라 모양, 크기, 높이가 같고 폭만 원래 비례폭. 영문은 한글과 함께 설계된 IBM Plex Sans라 본문에서는 영문, 숫자, 기호까지 이 파일이 담당. 같은 파일을 `IBM Plex Sans KR Hangul` 이름으로 한 번 더 선언해 `unicode-range`로 한글 음절과 호환 자모만 맡기고 코드에서 Monoplex KR 앞에 둠. 코드 블록의 한글은 비례폭이라 영문 2칸에 맞지 않음. 코드의 한글은 대부분 주석이라 본문과 같은 모양을 우선. 인라인 코드는 본문과 같은 글꼴과 자간. 글꼴을 아직 못 받은 첫 표시는 시스템 산세리프.
+Mermaid SVG는 공식 `base` 테마에 본문 글꼴과 사이트의 흑백 팔레트를 넣어 본문의 SVG 그림과 같은 모양으로 그림: `accent-soft` 바탕 상자, 한 색의 회색 테두리(밝은 `#888`, 어두운 `#777`, Mermaid 12 neo 모양의 그라데이션 끔), 페이지 바탕의 묶음, 직각 모서리, 그림자 없음, 1.2px 연결선과 끝의 작은 빈 꺾쇠(순서도와 시퀀스, 그린 SVG의 표식 교체), 형광펜 노랑 노트, 시퀀스까지 14px 본문 글꼴. 본문 폭보다 넓은 그림은 줄여서 맞추므로 글이 가로로 긴 흐름을 세로(`TB`)로 쓰거나 라벨에 `<br>`을 넣음. Mermaid 12의 기본 배치(ELK)는 `nodeSpacing`, `rankSpacing`을 받지 않음. Shadow DOM으로 본문 스타일과 격리합니다. 다이어그램 원문 대체 표시는 일반 코드 블록과 같은 글꼴을 사용합니다. [Diagrams](../public/diagrams.md#themes-and-rendering).
 사이트 이름은 Architects Daughter Regular `400`. 사이트 이름 폰트의 미지원 글자와 한글은 본문 글꼴로 fallback.
 글꼴의 출처는 [Monoplex](https://github.com/y-kim/monoplex), [IBM Plex](https://github.com/IBM/plex), [Google Fonts](https://fonts.google.com/specimen/Architects+Daughter). OFL은 자원 폴더에 포함.
 
@@ -101,10 +101,10 @@ Mermaid SVG는 공식 `base` 테마에 본문 글꼴과 사이트의 흑백 팔�
 문서 링크는 링크색, 목차의 절과 소제목 링크는 본문 글색. 클릭할 수 없는 묶음은 회색과 작은 크기로 구분. `On this page` 제목도 묶음 라벨과 같은 표현.
 TOC는 작성한 제목을 그대로 표시하고 자동 번호를 붙이지 않음.
 Monoplex KR에는 코드 합자 없음: `>=`, `!=` 원문 그대로 표시.
-본문, 사이드바 링크, 목차, 코드는 `12px`, 사이드바 묶음과 On this page는 `11px`, h1은 `20px`, h2는 `17px`, h3는 `14px`, part는 `13px`, 사이트 이름은 `16px`. 제목은 약 1.2배씩 커져 본문의 굵은 문장과 h3가 구분됨.
-작은 묶음의 행 상자는 탐색 링크와 같은 `16.8px`(12px × 1.4).
-본문 행간은 `1.7`(20.4px), 작은 제목과 탐색은 `1.4`, 코드 블록은 `1.65`.
-본문, 라벨, 인라인 코드 자간은 `-0.03em`. 코드 블록은 영문 고정폭 칸을 위해 `0`, 사이트 이름과 Mermaid 측정과 표시 영역도 `0`.
+본문은 `16px`, 사이드바 링크, 목차, 표, 코드, 날짜는 `14px`, 사이드바 묶음과 On this page는 `13px`, h1은 `26px`, h2는 `20px`, h3는 `18px`, part는 `17px`, 사이트 이름은 `20px`. 제목은 약 1.1배씩 커져 본문의 굵은 문장과 h3가 구분됨.
+작은 묶음의 행 상자는 탐색 링크와 같은 `19.6px`(14px × 1.4).
+본문 행간은 `1.7`(27.2px), 작은 제목과 탐색은 `1.4`, 코드 블록은 `1.65`.
+본문, 라벨, 인라인 코드 자간은 `-0.02em`. 코드 블록은 영문 고정폭 칸을 위해 `0`, 사이트 이름과 Mermaid 측정과 표시 영역도 `0`.
 h1 자간은 `-0.045em`, h2, h3와 part는 `-0.04em`으로 본문보다 조금 더 조임. 작성자가 붙인 번호도 제목과 같은 글꼴과 크기 사용.
 h1, 문서와 목차 묶음 라벨, On this page에는 `text-box: trim-start cap alphabetic` 적용. 크기가 달라도 대문자 위쪽 시작선을 맞추며, 미지원 브라우저는 기존 행 상자로 표시. [MDN text-box](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-box).
 README 홈의 소개 제목은 `24px`, 얼굴은 `72px`. Markdown 원문의 내용은 유지하고 사이트에서만 크기 조정.

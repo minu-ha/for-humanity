@@ -1,9 +1,12 @@
 /*
  * 와이드 화면의 오른쪽 목차, 라벨과 묶음은 문서 탐색의 묶음과 같은 표현
+ * 영문은 문서 탐색과 같은 Monoplex KR. 공백도 고정폭 칸(0.53em)이라 한글 제목의 띄어쓰기가 본문(0.24em)보다 벌어지므로 그 사이로 좁힘
  */
 .wg_toc__root {
+    font-family: var(--app-font-mono);
     font-size: var(--app-font-size-dense);
     line-height: var(--app-line-height-tight);
+    word-spacing: -0.2em;
 }
 
 .wg_toc__label {
