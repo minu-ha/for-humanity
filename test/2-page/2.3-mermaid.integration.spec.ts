@@ -99,6 +99,36 @@ test.describe("다이어그램", () => {
             expect(widths.box).toBeGreaterThanOrEqual(widths.text);
         });
 
+        test("[MRM-028] 화살표 끝은 속이 빈 꺾쇠이고 상자 테두리는 한 색이다", {tag: "@mid"}, async ({page}) => {
+            /**
+             * GIVEN
+             * 흐름도와 시퀀스를 포함한 다이어그램 위젯
+             */
+            await page.goto("/lifecycle/");
+            await page.evaluate(() => window.diagramFixture.mount());
+            await expect(page.locator('[data-mermaid-status="rendered"]')).toHaveCount(diagram_cases.length);
+
+            /**
+             * WHEN
+             * 흐름도와 시퀀스의 화살표 끝 표식, 흐름도 상자의 테두리 조회
+             */
+            const flowArrow = page.locator(".wg_mermaid__result").nth(0).locator('marker[id$="_flowchart-v2-pointEnd-margin"] path');
+            const sequenceArrow = page.locator(".wg_mermaid__result").nth(1).locator('marker[id$="arrowhead"] path');
+            const node = page.locator(".wg_mermaid__result").nth(0).locator(".node rect").first();
+
+            /**
+             * THEN
+             * 채우지 않은 꺾쇠 표식과 그라데이션 없는 테두리
+             */
+            for (const arrow of [flowArrow, sequenceArrow]) {
+                await expect(arrow).toHaveCount(1);
+                expect(await arrow.evaluate((path) => getComputedStyle(path).fill)).toBe("none");
+                expect(await arrow.getAttribute("d")).not.toMatch(/z$/i);
+            }
+
+            expect(await node.evaluate((rect) => getComputedStyle(rect).stroke)).not.toMatch(/^url\(/);
+        });
+
         test("[MRM-018] 다른 다이어그램을 펼친 뒤에도 기존 툴팁이 표시된다", {tag: "@mid"}, async ({page}) => {
             /**
              * GIVEN

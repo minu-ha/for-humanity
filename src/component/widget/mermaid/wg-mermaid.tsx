@@ -1,6 +1,7 @@
 import {useLayoutEffect} from "hono/jsx";
 import {copy_error_load, copy_error_render} from "@/component/widget/mermaid/_constant/copy";
 import {render_config, render_dark_config, render_id_words, render_source_max_chars} from "@/component/widget/mermaid/_constant/render";
+import {toOpenArrows} from "@/component/widget/mermaid/_function/open-arrows";
 import {toChangeQueue} from "@/util/async/to-change-queue";
 import "./wg-mermaid.css";
 
@@ -115,7 +116,9 @@ export const WgMermaid = (props: WgMermaidProps) => {
                         }
 
                         // Mermaid 설정은 렌더마다 초기화. 앞 다이어그램의 frontmatter 전파 제외
-                        library.default.initialize(mode === "dark" ? render_dark_config : render_config);
+                        const config = mode === "dark" ? render_dark_config : render_config;
+
+                        library.default.initialize(config);
 
                         const rendered = await library.default.render(
                             `fh-mermaid-${crypto.getRandomValues(new Uint32Array(render_id_words)).join("-")}`,
@@ -130,6 +133,7 @@ export const WgMermaid = (props: WgMermaidProps) => {
                         const canvas = document.createElement("div");
 
                         canvas.innerHTML = rendered.svg;
+                        toOpenArrows(canvas, config.themeVariables?.lineColor);
 
                         // 생성 SVG의 공식 스타일 격리. 본문 p, code, a 선택자의 내부 라벨 개입 제외
                         (result.shadowRoot ?? result.attachShadow({mode: "open"})).replaceChildren(canvas);
