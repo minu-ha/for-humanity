@@ -62,6 +62,7 @@ frontmatter의 마지막 날짜(`revised`, 없으면 `created`)를 `2026-10-05`�
 각 페이지의 `<head>`에는 사이트맵과 같은 주소의 `<link rel="canonical">`과 링크 미리보기용 Open Graph, Twitter 카드 태그를 추가합니다. 미리보기의 제목과 설명은 문서의 `name`과 `label`, 홈은 사이트의 `title`과 `description`입니다.
 
 `image`를 지정하면 모든 페이지의 미리보기에 같은 이미지를 표시합니다. 경로는 `image: "asset/preview.png"`처럼 문서 루트를 기준으로 적습니다.
+`image`가 있으면 Twitter 카드를 `summary_large_image`로 두어 Slack과 X도 작은 썸네일 대신 미리보기 너비로 이미지를 보여 줍니다. 대부분의 서비스에는 1200×630 이미지가 맞습니다. `image`가 없으면 카드는 `summary`로 남습니다.
 PNG, JPEG, GIF, WebP 파일을 사용합니다. 미리보기 서비스 대부분은 SVG를 표시하지 않습니다. 공개 빌드에서는 private 폴더의 이미지를 사용할 수 없습니다.
 
 `url`을 사용하면 `robots.txt`와 `sitemap.xml`은 생성 파일 전용 경로입니다. `robots.txt.md`처럼 같은 출력 경로를 만드는 문서 이름은 사용할 수 없습니다.

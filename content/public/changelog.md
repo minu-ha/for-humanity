@@ -17,6 +17,12 @@ pnpm add -D --save-exact for-humanity@latest
 
 Package files for each version are available from [GitHub Releases](https://github.com/nomeehej/for-humanity/releases).
 
+## Unreleased
+
+**Upgrade:** Existing projects remain compatible. Rebuild and redeploy to apply the new card type. CLI commands, configuration, document syntax and Node.js requirements are unchanged.
+
+- Show the link preview image at full width on Slack and X. With `image` set, pages declare the `summary_large_image` Twitter card instead of `summary`, which those services drew as a small thumbnail beside the text. Sites without `image` keep `summary`.
+
 ## 0.26.2 — 2026-10-28
 
 **Upgrade:** Existing projects remain compatible. Rebuild and redeploy to apply the new heading sizes, lines, code font and diagram style. CLI commands, configuration, document syntax and Node.js requirements are unchanged.

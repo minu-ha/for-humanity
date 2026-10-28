@@ -156,7 +156,7 @@ describe("페이지 셸", () => {
 
             /**
              * THEN
-             * 사이트맵과 같은 인코딩의 대표 주소, 문서별 미리보기 태그, 이미지 없는 사이트의 og:image 생략, 공개 주소 없는 사이트의 태그 없음
+             * 사이트맵과 같은 인코딩의 대표 주소, 문서별 미리보기 태그와 큰 이미지 카드, 이미지 없는 사이트의 og:image 생략과 작은 카드, 공개 주소 없는 사이트의 태그 없음
              */
             expect(page).toContain('<link rel="canonical" href="https://docs.example.org/%EA%B0%80%EC%9D%B4%EB%93%9C/%EC%84%A4%EC%B9%98/">');
             expect(page).toContain('<meta property="og:url" content="https://docs.example.org/%EA%B0%80%EC%9D%B4%EB%93%9C/%EC%84%A4%EC%B9%98/">');
@@ -164,13 +164,14 @@ describe("페이지 셸", () => {
             expect(page).toContain('<meta property="og:site_name" content="Docs">');
             expect(page).toContain('<meta property="og:description" content="Install the package">');
             expect(page).toContain('<meta property="og:image" content="https://docs.example.org/_fh/media/asset.abc123.png">');
-            expect(page).toContain('<meta name="twitter:card" content="summary">');
+            expect(page).toContain('<meta name="twitter:card" content="summary_large_image">');
             expect(home).toContain('<link rel="canonical" href="https://docs.example.org/">');
             expect(home).toContain('<meta property="og:title" content="Docs">');
             expect(home).toContain('<meta property="og:description" content="Site description">');
             expect(home).toContain('<meta property="og:image" content="https://docs.example.org/_fh/media/asset.abc123.png">');
             expect(imagelessPage).toContain('<meta property="og:url"');
             expect(imagelessPage).not.toContain("og:image");
+            expect(imagelessPage).toContain('<meta name="twitter:card" content="summary">');
             expect(localPage).not.toMatch(/rel="canonical"|property="og:|name="twitter:/);
         });
     });

@@ -62,6 +62,7 @@ The public build excludes private documents. In local dev, documents from both f
 The `<head>` of each page gets a `<link rel="canonical">` with the same URL as in the sitemap, along with Open Graph and Twitter card tags for link previews. The preview title and description are the document's `name` and `label`, and the site's `title` and `description` for the home page.
 
 If you set `image`, every page shows the same image in its preview. Write the path relative to the content root, like `image: "asset/preview.png"`.
+With `image`, the Twitter card is `summary_large_image`, so Slack and X show the image across the preview instead of as a small thumbnail. A 1200×630 image fits most services. Without `image`, the card stays `summary`.
 Use a PNG, JPEG, GIF, or WebP file. Most preview services do not display SVG. The public build cannot use images from the private folder.
 
 When you use `url`, `robots.txt` and `sitemap.xml` are reserved paths for the generated files. You cannot use a document name that produces the same output path, such as `robots.txt.md`.

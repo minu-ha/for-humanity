@@ -112,7 +112,8 @@ export const WgShell = (props: WgShellProps) => {
                       {property: "og:description", content: descriptionContent},
                       {property: "og:url", content: pageUrl},
                       {property: "og:image", content: props.assets.image},
-                      {name: "twitter:card", content: "summary"},
+                      // 미리보기 이미지가 있으면 Slack과 X도 작은 썸네일 대신 본문 너비로 표시
+                      {name: "twitter:card", content: props.assets.image === undefined ? "summary" : "summary_large_image"},
                   ]),
         ],
         style: [{textContent: props.assets.fontCss}],
