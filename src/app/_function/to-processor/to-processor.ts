@@ -70,39 +70,42 @@ interface ProcessorParams {
 export const toProcessor = (params: ProcessorParams) => {
     const files = params.files ?? new Map<string, string>();
 
-    return unified()
-        .use(remarkParse)
-        .use(remarkFrontmatter, ["yaml"])
-        .use(remarkGfm)
-        .use(remarkSnippets, {scope: params.scope})
-        .use(remarkSmartypants)
-        .use(remarkDirective)
-        .use(remarkBlocks)
-        .use(remarkParts)
-        .use(remarkMermaid, {assets: params.mermaid, files})
-        .use(remarkStatus, {status: params.site.status})
-        .use(remarkSwatch)
-        .use(remarkLinks, {scope: params.scope})
-        .use(remarkUnknownDirectives)
-        .use(remarkRehype, {allowDangerousHtml: true})
-        .use(rehypeShiki, {
-            themes: {light: "github-light-default", dark: "github-dark-default"},
-            defaultColor: "light-dark()",
-            colorReplacements: {"github-light-default": {"#6e7781": "#59636e", "#8250df": "#6639ba"}, "github-dark-default": {"#8b949e": "#9198a1"}},
-            transformers: shikiTransformers,
-        })
-        .use(rehypeRaw)
-        .use(rehypeBlocks)
-        .use(rehypeHead, {lang: params.site.lang})
-        .use(rehypeHeadingIds)
-        .use(rehypeRefs, {refs: params.site.refs})
-        .use(rehypeSections)
-        .use(rehypeTables)
-        .use(rehypeFigures)
-        .use(rehypeContentLinks, {scope: params.scope})
-        .use(rehypeAnchors)
-        .use(rehypeAssets, {scope: params.scope, files})
-        .use(rehypeBasePath, {basePath: params.site.basePath})
-        .use(rehypeReport, {root: params.scope.root})
-        .use(rehypeStringify, {allowDangerousHtml: true});
+    return (
+        unified()
+            .use(remarkParse)
+            .use(remarkFrontmatter, ["yaml"])
+            // 취소선은 ~~만. 물결표 하나는 10~11 같은 범위 표기라 글자 그대로
+            .use(remarkGfm, {singleTilde: false})
+            .use(remarkSnippets, {scope: params.scope})
+            .use(remarkSmartypants)
+            .use(remarkDirective)
+            .use(remarkBlocks)
+            .use(remarkParts)
+            .use(remarkMermaid, {assets: params.mermaid, files})
+            .use(remarkStatus, {status: params.site.status})
+            .use(remarkSwatch)
+            .use(remarkLinks, {scope: params.scope})
+            .use(remarkUnknownDirectives)
+            .use(remarkRehype, {allowDangerousHtml: true})
+            .use(rehypeShiki, {
+                themes: {light: "github-light-default", dark: "github-dark-default"},
+                defaultColor: "light-dark()",
+                colorReplacements: {"github-light-default": {"#6e7781": "#59636e", "#8250df": "#6639ba"}, "github-dark-default": {"#8b949e": "#9198a1"}},
+                transformers: shikiTransformers,
+            })
+            .use(rehypeRaw)
+            .use(rehypeBlocks)
+            .use(rehypeHead, {lang: params.site.lang})
+            .use(rehypeHeadingIds)
+            .use(rehypeRefs, {refs: params.site.refs})
+            .use(rehypeSections)
+            .use(rehypeTables)
+            .use(rehypeFigures)
+            .use(rehypeContentLinks, {scope: params.scope})
+            .use(rehypeAnchors)
+            .use(rehypeAssets, {scope: params.scope, files})
+            .use(rehypeBasePath, {basePath: params.site.basePath})
+            .use(rehypeReport, {root: params.scope.root})
+            .use(rehypeStringify, {allowDangerousHtml: true})
+    );
 };

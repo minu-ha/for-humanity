@@ -19,12 +19,13 @@ pnpm add -D --save-exact for-humanity@latest
 
 ## Unreleased
 
-**Upgrade:** Existing projects remain compatible. Rebuild and redeploy to apply the larger text, the body font change and table sorting. CLI commands, configuration, document syntax and Node.js requirements are unchanged.
+**Upgrade:** Existing projects remain compatible. Rebuild and redeploy to apply the larger text, the body font change and table sorting. Text struck through with a single `~` on each side needs `~~` now. CLI commands, configuration and Node.js requirements are unchanged.
 
 - Enlarge text for reading: body text is 16px instead of 12px, navigation, outline, tables, code blocks and metadata are 14px, group labels 13px, part titles 17px, subheadings 18px, section headings 20px, page titles 26px, the site name 20px and a centered README title 32px. Diagram labels are 14px instead of 13px, and body letter spacing loosens from -0.03em to -0.02em.
 - Set Latin, digits and punctuation in body text, labels and diagrams in IBM Plex Sans KR, the Latin its Hangul was designed with, instead of the monospaced Monoplex KR. Inline code, document navigation, the outline, code blocks, code file titles, reference chips and the status code keep Monoplex KR for Latin next to IBM Plex Sans KR Hangul, so code and the sidebars frame the text like a terminal; inline code is 15/16 of the surrounding size so it reads at the same height, and the outline narrows its word spaces so Hangul headings keep about their body spacing. A page that has not received the fonts yet shows the system sans-serif instead of the system monospace.
 - Keep the hover shade of a Details title between its top and bottom lines. The title row used to reach 6px past both ends of the lines.
 - Sort a table by clicking a column header. A table with a header row and at least two body rows shows an arrow at the right edge of a header when pointed at: the first click sorts that column ascending, the second descending and the third restores the written order, and the arrow turns as the direction changes. Numbers and dates in cell text sort by value, empty cells and `-` stay at the end, the sorted column is exposed as `aria-sort`, and the written order stays without JavaScript. A table with merged cells or a link in a header keeps its written order.
+- Keep a single `~` as written, so a range such as `10~11개월` or `400~600` is no longer struck through. Strikethrough needs `~~` on each side.
 
 ## 0.26.3 — 2026-10-28
 

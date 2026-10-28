@@ -219,6 +219,7 @@ The language is determined by the file extension. After the path you can use the
 ## Content features
 
 You can use tables, lists, task lists, links, inline code and ordinary Markdown formatting.
+Strikethrough needs two tildes on each side, as in `~~done~~`. A single `~` stays as written, so a range such as `10~11` is not struck through.
 For image and attachment paths, see [Images](images.md), and for emphasis of status phrases in the body, see [Status badges](settings.md#status-badges).
 Hex color values of 3, 4, 6 or 8 digits written as inline code, such as `#e80030`, are shown with a color swatch.
 You can also use raw HTML, but it does not automatically fetch CSS and JavaScript from other sites.

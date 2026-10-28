@@ -434,4 +434,28 @@ describe("문서", () => {
             await expect(result).rejects.toThrow(/Invalid frontmatter: public[\\/]post\.md: created must be YYYY-MM or YYYY-MM-DD/);
         });
     });
+    describe("본문 문법", () => {
+        test("[DOC-020] 물결표 하나는 글자 그대로 두고 두 개만 취소선으로 바꾼다", async ({scope}) => {
+            /**
+             * GIVEN
+             * 범위 표기와 취소선이 함께 있는 문서
+             */
+            const site = siteConfigSchema.parse({});
+
+            await writeFile(join(scope.publicRoot, "ranges.md"), "---\nname: Ranges\nlabel: Ranges\ngroup: Guide\n---\n\n10~11개월, 월 400~600만원, ~~지난 값~~.\n");
+
+            /**
+             * WHEN
+             * 문서 로드
+             */
+            const docs = await readDocs({scope, processor: toProcessor({site, scope})});
+
+            /**
+             * THEN
+             * 범위는 그대로, 두 개로 감싼 글만 del
+             */
+            expect(docs[0]?.html).toContain("10~11개월, 월 400~600만원");
+            expect(docs[0]?.html).toContain("<del>지난 값</del>");
+        });
+    });
 });
