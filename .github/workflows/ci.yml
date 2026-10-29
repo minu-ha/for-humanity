@@ -53,6 +53,12 @@ jobs:
       - name: Check browser diagrams, navigation and development
         if: ${{ matrix.browser }}
         run: pnpm exec playwright test
+      - uses: actions/upload-artifact@v4
+        if: ${{ failure() && matrix.browser }}
+        with:
+          name: playwright-${{ matrix.os }}
+          path: .cache/playwright
+          if-no-files-found: ignore
       - name: Check generated files
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: |
