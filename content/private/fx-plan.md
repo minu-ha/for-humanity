@@ -2325,6 +2325,7 @@ test.describe("그림", () => {
 
             await figure.getByRole("button", {name: "Reset code"}).click();
             await expect(output).toHaveText("");
+            await expect(page.locator("iframe[sandbox]")).toHaveCount(0);
             await expect(figure.getByRole("textbox", {name: "Code to run"})).toHaveValue(/hello/);
         });
     });
