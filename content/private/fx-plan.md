@@ -1084,14 +1084,14 @@ export const enhanceRun: FxEnhance = ({root, copy, signal}) => {
     );
 
     root.append(bar, code, output);
-    root.classList.add("fx--ready", "fx__run");
+    root.classList.add("fx--ready");
 
     return () => {
         finish();
         bar.remove();
         code.remove();
         output.remove();
-        root.classList.remove("fx--ready", "fx__run");
+        root.classList.remove("fx--ready");
     };
 };
 ```
@@ -1799,7 +1799,7 @@ git commit -m "Mount the figure widget in the shell | aa"
     background: none;
 }
 
-.fx__run textarea {
+.fx[data-fx="run"] textarea {
     box-sizing: border-box;
     width: 100%;
     min-height: 12em;
