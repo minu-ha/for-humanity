@@ -14,6 +14,11 @@ export const fx_first_interval_ms = 500;
 export const fx_run_wait_ms = 2000;
 
 /**
+ * 슬라이더의 min 속성이 없을 때의 HTML 기본값
+ */
+export const fx_range_default_min = 0;
+
+/**
  * 슬라이더의 max 속성이 없을 때의 HTML 기본값
  */
 export const fx_range_default_max = 100;
