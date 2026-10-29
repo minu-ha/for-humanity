@@ -2,7 +2,7 @@
  * 인터랙티브 그림. 작성자가 Markdown에 쓰는 .fx 상자와 위젯이 만드는 조작부
  *
  *   - fx 접두 클래스는 작성자 문법이라 wg_ 문법 밖의 외부 클래스로 둔다. 작성자도 fx__bar, fx--ready를 직접 쓴다
- *   - svg text, figcaption, button, li, input, svg, textarea는 작성자 HTML이라 클래스를 요구하지 않고 요소 선택자로 꾸민다. 위젯이 만드는 textarea와 아이콘 svg도 런타임 선택자를 그대로 쓴다
+ *   - svg text, figcaption, button, li, input, svg는 작성자 HTML이라 클래스를 요구하지 않고 요소 선택자로 꾸민다. 위젯이 만드는 textarea와 아이콘 svg도 런타임 선택자를 그대로 쓴다
  *   - --fx-* 변수는 작성자 그림의 style과 script가 읽는 공개 계약이다
  */
 

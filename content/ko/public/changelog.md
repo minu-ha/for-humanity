@@ -19,7 +19,7 @@ pnpm add -D --save-exact for-humanity@latest
 
 ## Unreleased
 
-**Upgrade:** Existing projects remain compatible. Rebuild and redeploy to get the figure widget. A site that already carries its own copy of a figure runtime script in its documents must remove it, or each figure gets two control bars. CLI commands, configuration, document syntax and Node.js requirements are unchanged.
+**Upgrade:** Existing projects remain compatible. Rebuild and redeploy to get the figure widget. A site that already carries its own copy of a figure runtime script in its documents must remove it, or step figures and run boxes get two sets of controls. CLI commands, configuration, document syntax and Node.js requirements are unchanged.
 
 - Add interactive figures. A `<figure class="fx" data-fx="steps">` written in raw HTML gets a bar with play, previous, next, a scrubber and the step count, and its elements show, highlight or move per step with `data-on`, `data-hl` and `data-pos`; `data-labels` turns the bar into tabs. `data-fx="range"` wires a slider to the `--fx-v` variable and an `<output>`, `data-fx="run"` runs the code block above it in a sandboxed iframe and shows the console, and `data-fx="custom"` leaves the scene to the author's own module script. The widget ships in the inline browser bundle like table sorting, so every page carries about 11 KB more script (under 4 KB compressed). Without JavaScript the page shows the elements marked to the end and every caption. Control names are English, or Korean when the page language is `ko` or a regional form such as `ko-KR`. See [Figures](https://github.com/nomeehej/for-humanity/blob/main/content/public/figures.md).
 
