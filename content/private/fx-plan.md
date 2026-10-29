@@ -2571,7 +2571,7 @@ Keep no blank lines inside an HTML block. A blank line ends the block and Markdo
 
 Mark the elements of the scene with step ranges. `data-on` shows the element only on those steps, `data-hl` paints a highlight on them, and `data-pos` moves the element to a position from that step on.
 A range is `3`, `2-5`, `4-` (to the end) or `-2` (from the start), and several ranges are separated by spaces. A position is `step:x y`, and several positions are separated by `;`.
-The number of steps is the number of items in `<ol class="fx__captions">`. One caption is visible per step. Without captions, set `data-steps`.
+`data-steps` sets the number of steps. Without it, the number of items in `<ol class="fx__captions">` is used. One caption is visible per step.
 
 ### Source
 
@@ -2615,7 +2615,7 @@ Play holds each step for two seconds and makes the first change half a second af
 
 ### Tabs
 
-With `data-labels`, the bar shows one tab per label instead of play, previous and next. Separate labels with `|`. Set `data-steps` when there are no captions.
+With `data-labels`, the bar shows one tab per label instead of play, previous and next. Separate labels with `|`. Set `data-steps` when there are no captions to count.
 
 ```html
 <figure class="fx" data-fx="steps" data-labels="Before|After" data-steps="2" aria-label="Before and after">
@@ -2716,7 +2716,7 @@ root.addEventListener("fx:step", (event) => {
 | Attribute | On | Meaning |
 | --- | --- | --- |
 | `data-fx` | the figure | `steps`, `range`, `run` or `custom` |
-| `data-steps` | a steps figure | Number of steps when there are no captions |
+| `data-steps` | a steps figure | Number of steps. Without it, the number of captions |
 | `data-labels` | a steps figure | Tab labels separated by `\|` |
 | `data-on` | an element | Steps on which the element is visible |
 | `data-hl` | an element | Steps on which the element is highlighted. Inside SVG, put it on a `rect.fx-mark` |
