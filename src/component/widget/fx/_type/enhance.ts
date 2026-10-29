@@ -21,6 +21,6 @@ export interface FxEnhanceParams {
 }
 
 /**
- * 종류별 enhance. 되돌리기는 signal의 abort 이벤트에서
+ * 종류별 enhance. 되돌리기는 signal의 abort 이벤트에서 처리
  */
 export type FxEnhance = (params: FxEnhanceParams) => void;

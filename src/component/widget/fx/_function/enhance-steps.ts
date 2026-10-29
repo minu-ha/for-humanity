@@ -29,7 +29,15 @@ const goto_default_step = 1;
 /**
  * 스크러버 진행의 끝 퍼센트. 단계가 하나면 항상 이 값
  */
-const full_progress = 100;
+const scrub_full_percent = 100;
+
+/**
+ * 단계 범위를 받는 속성과 그 단계에서 붙일 클래스
+ */
+const step_mark_attributes = [
+    ["data-on", "is-on"],
+    ["data-hl", "is-hl"],
+] as const;
 
 /**
  * 단계 재생 그림의 조작부 추가, data-on, data-hl, data-pos의 단계별 반영
@@ -41,6 +49,11 @@ const full_progress = 100;
  *   - 해제는 signal의 abort에서 조작부와 상태 복원
  */
 export const enhanceSteps: FxEnhance = (params) => {
+    // 이미 해제된 signal은 abort 이벤트 없음, 복원 불가
+    if (params.signal.aborted) {
+        return;
+    }
+
     const captions = [...params.root.querySelectorAll<HTMLLIElement>(".fx__captions > li")];
     const list = params.root.querySelector(".fx__captions");
     const count = Math.trunc(Number(params.root.dataset.steps)) || captions.length;
@@ -49,11 +62,12 @@ export const enhanceSteps: FxEnhance = (params) => {
         return;
     }
 
-    const shown = [...params.root.querySelectorAll<HTMLElement>("[data-on]")].flatMap((element) =>
-        element.dataset.on === undefined ? [] : [{element, steps: toSteps(element.dataset.on, count)}],
-    );
-    const marked = [...params.root.querySelectorAll<HTMLElement>("[data-hl]")].flatMap((element) =>
-        element.dataset.hl === undefined ? [] : [{element, steps: toSteps(element.dataset.hl, count)}],
+    const marks = step_mark_attributes.flatMap(([attribute, className]) =>
+        [...params.root.querySelectorAll<HTMLElement>(`[${attribute}]`)].flatMap((element) => {
+            const spec = element.getAttribute(attribute);
+
+            return spec === null ? [] : [{element, className, steps: toSteps(spec, count)}];
+        }),
     );
     const moved = [...params.root.querySelectorAll<HTMLElement>("[data-pos]")].flatMap((element) =>
         element.dataset.pos === undefined ? [] : [{element, positions: toPositions(element.dataset.pos)}],
@@ -66,80 +80,6 @@ export const enhanceSteps: FxEnhance = (params) => {
 
     // 0이면 정지 상태
     let timer = 0;
-
-    /**
-     * 재생 중지, 재생 버튼 아이콘 복귀
-     */
-    const stop = () => {
-        window.clearTimeout(timer);
-        timer = 0;
-        setIcon({button: play, icon: "play", label: params.copy.play});
-    };
-
-    /**
-     * 단계를 1과 count 사이로 제한하고 모든 요소와 조작부에 반영
-     */
-    const show = (target: number) => {
-        step = Math.min(Math.max(target, 1), count);
-        params.root.dataset.step = String(step);
-
-        for (const item of shown) {
-            item.element.classList.toggle("is-on", item.steps.has(step));
-        }
-
-        for (const item of marked) {
-            item.element.classList.toggle("is-hl", item.steps.has(step));
-        }
-
-        for (const item of moved) {
-            const at = item.positions.findLast((position) => position.step <= step);
-
-            item.element.style.transform = at === undefined ? "" : `translate(${at.x}px, ${at.y}px)`;
-        }
-
-        captions.forEach((caption, index) => {
-            caption.hidden = index !== step - 1;
-        });
-
-        scrub.value = String(step);
-        scrub.style.setProperty("--fx-p", `${count > 1 ? ((step - 1) / (count - 1)) * full_progress : full_progress}%`);
-        counter.textContent = `${step} / ${count}`;
-        previous.setAttribute("aria-disabled", String(step <= 1));
-        next.setAttribute("aria-disabled", String(step >= count));
-        tabs?.forEach((tab, index) => {
-            tab.setAttribute("aria-pressed", String(index === step - 1));
-        });
-        params.root.dispatchEvent(new CustomEvent("fx:step", {detail: {step}}));
-    };
-
-    /**
-     * 재생 중 다음 단계 표시. 마지막 단계에서 재생 종료
-     */
-    const tick = () => {
-        show(step + 1);
-
-        if (step >= count) {
-            stop();
-
-            return;
-        }
-
-        timer = window.setTimeout(tick, fx_interval_ms);
-    };
-
-    /**
-     * 재생 시작. 끝에서 누르면 1단계로 복귀, 첫 장면도 한 간격 동안 표시
-     */
-    const start = (wait = fx_first_interval_ms) => {
-        const restart = step >= count;
-
-        if (restart) {
-            show(1);
-        }
-
-        setIcon({button: play, icon: "pause", label: params.copy.pause});
-        timer = window.setTimeout(tick, restart ? fx_interval_ms : wait);
-    };
 
     const play = toButton({
         label: "",
@@ -179,8 +119,100 @@ export const enhanceSteps: FxEnhance = (params) => {
         });
     });
 
+    setIcon({button: play, icon: "play", label: params.copy.play});
     setIcon({button: previous, icon: "prev", label: params.copy.previous});
     setIcon({button: next, icon: "next", label: params.copy.next});
+
+    /**
+     * 재생 중지, 재생 버튼 아이콘 복귀. 정지 상태면 변경 없음
+     */
+    const stop = () => {
+        if (timer === 0) {
+            return;
+        }
+
+        window.clearTimeout(timer);
+        timer = 0;
+        setIcon({button: play, icon: "play", label: params.copy.play});
+    };
+
+    /**
+     * 단계를 1과 count 사이로 제한하고 요소와 조작부에 반영
+     *
+     *   - 마지막에 fx:step 발송. 수신 측의 fx:goto로 재진입 가능
+     */
+    const show = (target: number) => {
+        step = Math.min(Math.max(target, 1), count);
+        params.root.dataset.step = String(step);
+
+        for (const mark of marks) {
+            mark.element.classList.toggle(mark.className, mark.steps.has(step));
+        }
+
+        for (const item of moved) {
+            const at = item.positions.findLast((position) => position.step <= step);
+
+            item.element.style.transform = at === undefined ? "" : `translate(${at.x}px, ${at.y}px)`;
+        }
+
+        captions.forEach((caption, index) => {
+            caption.hidden = index !== step - 1;
+        });
+
+        scrub.value = String(step);
+        scrub.style.setProperty("--fx-p", `${count > 1 ? ((step - 1) / (count - 1)) * scrub_full_percent : scrub_full_percent}%`);
+        counter.textContent = `${step} / ${count}`;
+        previous.setAttribute("aria-disabled", String(step <= 1));
+        next.setAttribute("aria-disabled", String(step >= count));
+        tabs?.forEach((tab, index) => {
+            tab.setAttribute("aria-pressed", String(index === step - 1));
+        });
+        params.root.dispatchEvent(new CustomEvent("fx:step", {detail: {step}}));
+    };
+
+    /**
+     * 다음 tick 예약. 이전 예약 해제, 해제 뒤 예약 없음
+     */
+    const schedule = (delay: number) => {
+        window.clearTimeout(timer);
+        timer = params.signal.aborted ? 0 : window.setTimeout(tick, delay);
+    };
+
+    /**
+     * 재생 중 다음 단계 표시. 마지막 단계에서 재생 종료
+     */
+    const tick = () => {
+        show(step + 1);
+
+        // fx:step 수신 측의 fx:goto가 재생을 멈춘 경우
+        if (timer === 0) {
+            return;
+        }
+
+        if (step >= count) {
+            stop();
+
+            return;
+        }
+
+        schedule(fx_interval_ms);
+    };
+
+    /**
+     * 재생 시작. 끝에서 누르면 1단계로 복귀, 첫 장면도 한 간격 동안 표시
+     *
+     *   - wait는 첫 전환까지의 시간. 재생 버튼은 짧은 기본값, fx:goto의 바로 재생은 한 간격
+     */
+    const start = (wait = fx_first_interval_ms) => {
+        const restart = step >= count;
+
+        if (restart) {
+            show(1);
+        }
+
+        setIcon({button: play, icon: "pause", label: params.copy.pause});
+        schedule(restart ? fx_interval_ms : wait);
+    };
 
     scrub.type = "range";
     scrub.className = "fx__scrub";
@@ -200,10 +232,16 @@ export const enhanceSteps: FxEnhance = (params) => {
     counter.className = "fx__count";
     bar.className = "fx__bar";
 
-    // 입력 상자 안의 화살표 키는 커서 이동, 단계 이동 제외
+    // 좌우 화살표 키 단계 이동
     params.root.addEventListener(
         "keydown",
         (event) => {
+            // 다른 처리기가 소비한 키와 조합 키 제외, Alt+ArrowLeft는 브라우저 뒤로가기
+            if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) {
+                return;
+            }
+
+            // 입력 상자 안의 화살표 키는 커서 이동
             if (event.target instanceof Element && event.target.closest("input, textarea") !== null) {
                 return;
             }
@@ -244,12 +282,8 @@ export const enhanceSteps: FxEnhance = (params) => {
             delete params.root.dataset.step;
             list?.removeAttribute("aria-live");
 
-            for (const item of shown) {
-                item.element.classList.remove("is-on");
-            }
-
-            for (const item of marked) {
-                item.element.classList.remove("is-hl");
+            for (const mark of marks) {
+                mark.element.classList.remove(mark.className);
             }
 
             for (const item of moved) {
@@ -274,6 +308,5 @@ export const enhanceSteps: FxEnhance = (params) => {
 
     params.root.append(bar);
     params.root.classList.add("fx--ready");
-    stop();
     show(1);
 };
