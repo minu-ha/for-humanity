@@ -1858,6 +1858,10 @@ git commit -m "Style the figure box, scenes and controls | aa"
 
 ### Task 7: 브라우저 검사
 
+:::note[Task 3 검토에서 추가된 케이스]
+`show`가 `fx:step`을 동기로 보내므로 수신 측이 그 안에서 `fx:goto {play: true}`를 보내거나 `abort()`를 부를 수 있다. 재생 타이머는 예약 전에 이전 예약을 지우고 abort 뒤에는 예약하지 않는다. e2e에 두 케이스를 더한다. (1) `fx:step` 리스너가 2단계에서 `fx:goto {step: 2, play: true}`를 보내도 멈춤 버튼이 재생을 멈춘다. (2) integration에서 `fx:step` 리스너 안에서 위젯을 해제해도 그 뒤 `data-step`과 `fx:step`이 없다. Playwright는 `aria-disabled="true"` 버튼을 비활성로 보므로 양 끝에서 이전, 다음을 누르는 검사는 속성만 확인하거나 `{force: true}`를 쓴다.
+:::
+
 **Files:**
 - Create: `test/_fixture/fx.ts`
 - Create: `test/_gallery/fx-lifecycle.tsx`
