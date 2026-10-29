@@ -15,12 +15,12 @@ export interface FxEnhanceParams {
     copy: FxCopy;
 
     /**
-     * 위젯 해제에서 끊는 이벤트 구독
+     * 위젯 해제 신호. abort에서 이벤트 구독 해제와 DOM 복원
      */
     signal: AbortSignal;
 }
 
 /**
- * 종류별 enhance. 되돌리는 함수를 돌려줌
+ * 종류별 enhance. 되돌리기는 signal의 abort 이벤트에서
  */
-export type FxEnhance = (params: FxEnhanceParams) => () => void;
+export type FxEnhance = (params: FxEnhanceParams) => void;
