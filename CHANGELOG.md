@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.28.0 — 2026-10-29
 
 **Upgrade:** Existing projects remain compatible. Rebuild and redeploy to get the figure widget. A site that already carries its own copy of a figure runtime script in its documents must remove it, or step figures and run boxes get two sets of controls. CLI commands, configuration, document syntax and Node.js requirements are unchanged.
 

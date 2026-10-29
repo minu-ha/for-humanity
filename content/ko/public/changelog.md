@@ -17,7 +17,7 @@ pnpm add -D --save-exact for-humanity@latest
 
 버전별 패키지 파일은 [GitHub Releases](https://github.com/nomeehej/for-humanity/releases)에서 받을 수 있습니다.
 
-## Unreleased
+## 0.28.0 — 2026-10-29
 
 **Upgrade:** Existing projects remain compatible. Rebuild and redeploy to get the figure widget. A site that already carries its own copy of a figure runtime script in its documents must remove it, or step figures and run boxes get two sets of controls. CLI commands, configuration, document syntax and Node.js requirements are unchanged.
 

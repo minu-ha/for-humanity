@@ -9,7 +9,7 @@ order: 16
 Write an interactive figure as raw HTML in a `<figure class="fx">` box and name its kind with `data-fx`. The site adds the controls, highlights and transitions in the browser; without JavaScript the page shows the elements marked to the end and all captions.
 Figures suit sequences and state changes, side by side comparisons of the same transition, values that change with a slider, and a prediction the reader checks by running code. Static structure stays an [image](images.md) or a [diagram](diagrams.md).
 
-Figures are not published to npm yet. They arrive in the next release after `0.27.0`.
+Supported since `0.28.0`.
 
 ## Overview
 
