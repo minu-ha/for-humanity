@@ -83,14 +83,14 @@ src/component/widget/shell-controls/wg-shell-controls.tsx   <WgFx onEnhanced={ha
 | 런타임 | 규칙 | 대응 |
 | --- | --- | --- |
 | `.fx [hidden]{display:none!important}` | `declaration-no-important` | 이유를 적은 예외 주석으로 유지. 작성자 `<style>`은 본문에 있어 head의 위젯 CSS보다 뒤에 오므로 같은 특이도의 작성자 `display` 규칙이 숨긴 요소를 다시 보이게 한다. 실제 그림 셋이 이 규칙에 기댄다 |
-| `:not(.fx--ready)`, `:not(.fx-cols)`, `:hover:not(:disabled)` | `selector-pseudo-class-disallowed-list: not` | 기본 규칙 뒤에 수정자 규칙을 두는 순서로 재구성 |
+| `:not(.fx-cols)`, `:hover:not(:disabled)`, `:not(:first-child)` | `selector-pseudo-class-disallowed-list: not` | `:nth-child(n + 2)`, `&:enabled:hover`, 수정자 순서로 재구성. 단계 요소의 `:not(.fx--ready)`와 `:not(.is-on)` 둘은 이유를 적은 예외 |
 | `.fx{--fx-line:...}` | `property-disallowed-list: --` | `.fx` 블록 하나에 모아 두고 이유를 적은 예외 주석. 작성자 그림이 소비하는 공개 변수 |
 | `[aria-pressed=true]`, `[aria-disabled=true]` | `selector-attribute-name-disallowed-list` | 이유를 적은 예외 주석. 작성자 마크업 버튼의 상태 계약 |
 | `.fx-button:hover` | 최상위 상태 선택자 금지 | `.fx-button { &:hover {} }`로 중첩 |
 | `.fx__bar button`, `.fx svg text`, `.fx-lines > li` | 소유 마크업의 요소 선택자 | 작성자 마크업이라 평면 선택자로 둔다. 파일 머리 주석에 이유 |
 | `fx__bar`, `fx--ready` 같은 생성 클래스 | `selector-class-pattern`의 `wg_` 문법 | `wg_` 밖의 클래스는 외부 클래스로 허용된다. 작성자도 같은 이름을 쓰므로 `wg_fx__*`로 바꾸지 않는다 |
 | `@media (width<640px)` | `media-feature-range-notation: context` | 그대로 |
-| `.fx [data-on]`, `.fx [data-hl]`, `.fx--ready [data-pos]` 같은 동작 규칙 | 적재 순서 | 옛 런타임의 `<style>`은 본문 끝에 있어 작성자 규칙과 특이도가 같으면 런타임이 이겼다. 위젯 CSS는 head에 있어 작성자가 이기므로 동작 규칙(단계 표시, 형광펜, 전환)만 `html` 접두로 특이도 (0,0,1)을 더해 같은 순위를 만든다. 클래스 하나를 더하면 작성자가 일부러 요소 선택자로 덮어쓴 세 쪽까지 뒤집혀서 (0,0,1)이 맞다. 모양 규칙(칩, 라벨, 버튼)은 작성자가 덮어쓸 수 있게 그대로 두고 남는 차이 아홉 군데는 이관 때 문서를 고친다 |
+| `.fx [data-on]`, `.fx [data-hl]`, `.fx--ready [data-pos]` 같은 동작 규칙 | 적재 순서 | 옛 런타임의 `<style>`은 본문 끝에 있어 작성자 규칙과 특이도가 같으면 런타임이 이겼다. 위젯 CSS는 head에 있어 작성자가 이기므로 동작 규칙(단계 표시, 형광펜, 전환)만 `html` 접두로 특이도 (0,0,1)을 더해 같은 순위를 만든다. 클래스 하나를 더하면 작성자가 일부러 요소 선택자로 덮어쓴 세 쪽까지 뒤집혀서 (0,0,1)이 맞다. 모양 규칙(칩, 라벨, 버튼)은 작성자가 덮어쓸 수 있게 그대로 두고 남는 모양 차이 열 군데는 이관 때 문서를 고친다. 켜진 단계 요소에는 위젯 규칙이 없어야 작성자 규칙이 어떤 특이도에서도 적용되므로 `:not` 예외 둘(스크립트 전 숨김, 꺼진 상태)만 이유를 적고 둔다 |
 
 ## 검증
 

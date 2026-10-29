@@ -2950,9 +2950,9 @@ git rm scripts/fx.ts scripts/fx/runtime.ts scripts/fx/runtime.html
 
 `scripts/check.ts`에서 `import {withRuntime} from '@/scripts/fx/runtime'` 줄과 `if (rel.endsWith('.md') && withRuntime(text) !== text) problems.push(...)` 줄을 지운다.
 
-- [ ] **Step 3b: 적재 순서가 바뀌어 달라지는 모양 여덟 군데**
+- [ ] **Step 3b: 적재 순서가 바뀌어 달라지는 모양 열 군데**
 
-위젯 CSS는 head에 있어 작성자 `<style>`과 특이도가 같으면 작성자가 이긴다. 옛 런타임은 본문 끝에 있어 런타임이 이겼다. Task 6에서 40편 전부를 두 CSS로 비교한 결과 동작은 같고 모양만 아래 여덟 군데가 달라진다. 작성자 규칙이 이제 적용되는 것이므로 각 문서에서 의도를 보고 그 값을 원하면 그대로 두고, 옛 모양을 원하면 작성자 규칙의 특이도를 올리거나 지운다.
+위젯 CSS는 head에 있어 작성자 `<style>`과 특이도가 같으면 작성자가 이긴다. 옛 런타임은 본문 끝에 있어 런타임이 이겼다. Task 6에서 40편 전부를 두 CSS로 비교한 결과 동작은 같고 모양만 아래 열 군데가 달라진다. 켜진 단계 요소에는 위젯 규칙이 없어 작성자 규칙이 그대로 적용되며, 이는 `:not` 예외 둘로 옛 런타임과 같게 맞췄다. 작성자 규칙이 이제 적용되는 것이므로 각 문서에서 의도를 보고 그 값을 원하면 그대로 두고, 옛 모양을 원하면 작성자 규칙의 특이도를 올리거나 지운다.
 
 | 문서 | 요소 | 옛 값 → 새 값 |
 | --- | --- | --- |
@@ -2960,12 +2960,14 @@ git rm scripts/fx.ts scripts/fx/runtime.ts scripts/fx/runtime.html
 | portfolio/personal/agent-conventions | `text.fx-muted.fx-acv__sub` | 12px → 11px |
 | posts/frontend-infra/e2e-deploy-gate | `p.fx-label` | margin-top 14px → 6px |
 | portfolio/lab/expo-app-poc | `p.fx-label` | margin-top 14px → 0 |
+| portfolio/lab/wafer-selection-poc | `p.fx-label` | margin-top 14px → 0 |
+| posts/frontend-infra/msw-runtime-mocks | `p.fx-label` | margin-top 14px → 6px |
 | posts/react/rtk-query-rerenders | `div.fx-ord__group` | margin-top 14px → 20px |
 | posts/frontend-infra/sentry-releases | `ol.fx-lines.fx-sdbg__issue` | border `--fx-line` → `--fx-line-strong` |
 | posts/language/typescript-inference | 좁은 화면의 `ol.fx-lines`와 `li` | 12px → 11px |
 | portfolio/minor/pyeonggang-church | 좁은 화면의 `.fx-rs__code > li` | 좌우 padding 10px → 6px |
 
-확인은 for-humanity 작업에서 쓴 비교 스크립트(scratchpad의 `diff.mjs`, 옛 런타임 CSS를 본문 끝에 둔 결과와 위젯 CSS를 비교)를 다시 돌리거나 해당 여덟 쪽을 두 폭에서 눈으로 본다.
+확인은 for-humanity 작업에서 쓴 비교 스크립트(scratchpad의 `diff.mjs`, 옛 런타임 CSS를 본문 끝에 둔 결과와 위젯 CSS를 비교)를 다시 돌리거나 해당 열 쪽을 두 폭에서 눈으로 본다.
 
 - [ ] **Step 4: 내부 문서**
 
