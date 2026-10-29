@@ -47,6 +47,7 @@
         "test:browser": "pnpm build:kit && playwright test",
         "test:navigation": "pnpm build:kit && playwright test navigation",
         "test:mermaid": "pnpm build:kit && playwright test mermaid",
+        "test:fx": "pnpm build:kit && playwright test fx",
         "lint": "biome check && stylelint \"src/**/*.css\"",
         "lint:fix": "biome check --write && stylelint \"src/**/*.css\" --fix",
         "typecheck": "tsc --noEmit",

@@ -84,5 +84,15 @@ declare global {
          * 표 정렬 위젯의 마운트와 해제 명령
          */
         tableSortFixture: {mount: () => void; unmount: () => void};
+
+        /**
+         * 그림 위젯의 마운트와 해제 명령
+         */
+        fxFixture: {mount: () => void; unmount: () => void};
+
+        /**
+         * 갤러리에서 마운트한 그림 위젯의 onEnhanced 호출 횟수
+         */
+        fxEnhanced: number;
     }
 }

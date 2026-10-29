@@ -24,9 +24,9 @@ unit과 node는 Vitest, integration과 e2e는 Playwright입니다. 프로젝트 
 ```text
 test/
   _constant/    여러 검사가 공유하는 입력 자료. 공식 문법별 다이어그램 원문과 기대 라벨(diagram)
-  _fixture/     Vitest 임시 루트와 공개 범위(temp-root), Playwright 사이트별 서버(dev, docs, mermaid, navigation, table-sort),
+  _fixture/     Vitest 임시 루트와 공개 범위(temp-root), Playwright 사이트별 서버(dev, docs, fx, mermaid, navigation, table-sort),
                 갤러리 번들(load-browser-script), 탐색 조회 도우미(read-navigation-scroll, to-navigation-html)
-  _gallery/     공개 번들 밖에서 위젯을 마운트하고 해제하는 페이지 스크립트(mermaid-lifecycle, navigation-lifecycle, table-sort-lifecycle)
+  _gallery/     공개 번들 밖에서 위젯을 마운트하고 해제하는 페이지 스크립트(fx-lifecycle, mermaid-lifecycle, navigation-lifecycle, table-sort-lifecycle)
   _type/        갤러리와 spec이 공유하는 브라우저 전역 계약(browser.d.ts)
   0-command/
     0.1-command.node.test.ts     ↔ src/entry/cli                                        CMD
@@ -54,6 +54,8 @@ test/
     2.5-status.e2e.spec.ts
     2.6-table-sort.e2e.spec.ts   ↔ src/component/widget/table-sort                      TBL
     2.6-table-sort.integration.spec.ts
+    2.7-fx.e2e.spec.ts           ↔ src/component/widget/fx                              FIG
+    2.7-fx.integration.spec.ts
   3-server/
     3.1-dev.e2e.spec.ts          ↔ src/entry/dev                                        DEV
     3.2-preview.node.test.ts     ↔ src/entry/preview                                    PRV
@@ -81,6 +83,7 @@ pnpm exec playwright install chromium
 pnpm test:browser
 pnpm test:navigation
 pnpm test:mermaid --grep MRM-019
+pnpm test:fx
 pnpm test:browser --grep @high
 pnpm exec playwright test --project integration
 FH_TEST_BROWSER_CHANNEL=chrome pnpm test:mermaid
@@ -111,7 +114,7 @@ test("[MRM-014] 모듈 수신에 실패하면 안내와 원문을 표시한다",
 
 **번호(제목 접두)**
 
-- 형식은 `[<영역 코드>-<3자리>]`입니다. 영역 코드는 CMD(CLI 명령), CFG(설정), CNT(공개와 내부 문서), DOC(문서 수집), HOM(홈), LNK(링크와 목차), COD(코드 블록), AST(자원), CRW(크롤러 파일), SHL(페이지 셸), NAV(문서 탐색), MRM(다이어그램), DEV(개발 서버), PRV(정적 미리보기), ACC(접근성), STA(상태 화면)입니다. 새 영역은 세 글자 코드를 하나 더합니다.
+- 형식은 `[<영역 코드>-<3자리>]`입니다. 영역 코드는 CMD(CLI 명령), CFG(설정), CNT(공개와 내부 문서), DOC(문서 수집), HOM(홈), LNK(링크와 목차), COD(코드 블록), AST(자원), CRW(크롤러 파일), SHL(페이지 셸), NAV(문서 탐색), MRM(다이어그램), DEV(개발 서버), PRV(정적 미리보기), ACC(접근성), STA(상태 화면), TBL(표 정렬), FIG(인터랙티브 그림)입니다. 새 영역은 세 글자 코드를 하나 더합니다.
 - 코드마다 1부터 선언 순서대로 붙입니다. 지운 번호는 재사용하지 않습니다. 새 케이스는 해당 묶음 끝에 그 코드의 다음 번호로 붙입니다. 같은 코드가 여러 층에 있으면 층과 무관하게 이어 붙입니다.
 - 반복 시나리오는 자료에 `caseId`를 두고 제목에 `[$caseId]`나 `` `[${scenario.caseId}]` ``로 넣습니다. 변형마다 번호가 하나씩 붙습니다.
 - `--grep DOC-002`(Playwright)나 `-t DOC-002`(Vitest)로 한 건만 실행합니다.
