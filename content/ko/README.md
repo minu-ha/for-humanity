@@ -110,7 +110,7 @@ export default {
 | --- | --- |
 | 설치와 실행 | [Installation](public/installation.md), [Commands](public/commands.md) |
 | 문서 작성과 정리 | [Writing](public/writing.md), [Navigation](public/navigation.md) |
-| 표현 추가 | [Parts](public/parts.md), [Diagrams](public/diagrams.md), [Images](public/images.md) |
+| 표현 추가 | [Parts](public/parts.md), [Diagrams](public/diagrams.md), [Figures](public/figures.md), [Images](public/images.md) |
 | 사이트 설정 | [Settings](public/settings.md) |
 | 배포 | [Deployment](public/deployment.md), [Crawling](public/crawling.md) |
 | 업데이트 | [Changelog](public/changelog.md), [Migration](public/migration.md) |

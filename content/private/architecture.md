@@ -261,6 +261,10 @@ SVG는 Shadow DOM 안에 삽입해 본문의 `p`, `code`, `a` 스타일과 격�
 테마 변경과 Details 공개 요청은 직렬 처리하고 해제 뒤의 비동기 결과는 적용하지 않습니다. 브라우저 오류와 JavaScript 비활성 환경에서는 원문을 유지합니다.
 공식 `bindFunctions`에는 Shadow DOM 내부의 SVG 부모를 전달합니다. 해제 시 생성 SVG와 툴팁을 제거하고 원문으로 복원합니다.
 렌더 완료는 셸에 통지하며, 초기 hash와 사용자 이동 여부를 소유한 셸이 비동기 배치 변경 후 앵커 위치를 보정합니다.
+
+인터랙티브 그림은 작성자의 원시 HTML `.fx[data-fx]`(`figure`, 실행 상자는 `div`)이며 Markdown 처리기는 손대지 않습니다. `WgFx`가 표 정렬처럼 `DOMContentLoaded` 뒤 그림마다 종류별 enhance를 붙이고 해제 시 조작부와 상태를 되돌립니다. 모든 enhance는 `AbortController` 하나의 signal을 받아 `abort`에서 각자 DOM을 복원합니다. 조작부가 붙고 캡션이 접혀 본문 높이가 바뀌면 셸에 알려 Mermaid 렌더 뒤처럼 앵커 위치를 보정합니다. 실행 상자는 `sandbox="allow-scripts"`만 준 `srcdoc` iframe에서 코드를 돌리고 실행마다 만든 id가 맞는 `postMessage`만 받습니다.
+작성자의 `<style>`은 본문에 있어 head의 사이트 CSS보다 뒤에 옵니다. 그래서 동작 규칙(단계 표시, 형광펜, 전환)에만 `html` 접두를 붙여 특이도가 같은 작성자 규칙보다 앞서게 하고, 모양 규칙은 작성자가 덮어쓸 수 있게 둡니다. 작성 계약은 [Figures](../public/figures.md).
+
 frontmatter는 정규식으로 잘라내지 않고 AST 노드로 읽음. 본문 노드의 원본 줄과 열은 유지.
 Note와 Details의 검증은 Markdown 부품 변환 전. 제목은 native label, 본문은 기존 처리 흐름.
 part는 문서 최상위의 `::part[...]` 한 줄만 허용. 일반 텍스트 제목과 다음 part나 문서 끝 전의 `##` 절 필수.
@@ -304,7 +308,7 @@ gray-matter는 frontmatter를 분리하고 해석하는 다른 선택지. 여기
 - `dist/cli.js`: npm bin 진입점
 - `dist/site.js`: 설치 개발 서버가 읽는 공통 문서 앱
 - `dist/cli.css`: 컴포넌트 CSS 묶음
-- `dist/browser.js`: HTML에 포함하는 셸, 탐색, 커서의 Hono JSX 런타임
+- `dist/browser.js`: HTML에 포함하는 셸, 탐색, 커서, 표 정렬, 인터랙티브 그림의 Hono JSX 런타임
 - `dist/mermaid/`: 필요한 페이지에서 불러오는 Mermaid 진입 모듈, 지연 청크, 배포 고지
 - 자원 URL: `/_fh/`, favicon: `/favicon.svg`
 

@@ -111,7 +111,7 @@ Add examples or explanations readers can open when needed.
 | --- | --- |
 | Install and run | [Installation](public/installation.md), [Commands](public/commands.md) |
 | Write and organize pages | [Writing](public/writing.md), [Navigation](public/navigation.md) |
-| Add rich content | [Parts](public/parts.md), [Diagrams](public/diagrams.md), [Images](public/images.md) |
+| Add rich content | [Parts](public/parts.md), [Diagrams](public/diagrams.md), [Figures](public/figures.md), [Images](public/images.md) |
 | Configure the site | [Settings](public/settings.md) |
 | Publish | [Deployment](public/deployment.md), [Crawling](public/crawling.md) |
 | Update | [Changelog](public/changelog.md), [Migration](public/migration.md) |

@@ -109,7 +109,7 @@ Add examples or explanations readers can open when needed.
 | --- | --- |
 | Install and run | [Installation](https://github.com/nomeehej/for-humanity/blob/main/content/public/installation.md), [Commands](https://github.com/nomeehej/for-humanity/blob/main/content/public/commands.md) |
 | Write and organize pages | [Writing](https://github.com/nomeehej/for-humanity/blob/main/content/public/writing.md), [Navigation](https://github.com/nomeehej/for-humanity/blob/main/content/public/navigation.md) |
-| Add rich content | [Parts](https://github.com/nomeehej/for-humanity/blob/main/content/public/parts.md), [Diagrams](https://github.com/nomeehej/for-humanity/blob/main/content/public/diagrams.md), [Images](https://github.com/nomeehej/for-humanity/blob/main/content/public/images.md) |
+| Add rich content | [Parts](https://github.com/nomeehej/for-humanity/blob/main/content/public/parts.md), [Diagrams](https://github.com/nomeehej/for-humanity/blob/main/content/public/diagrams.md), [Figures](https://github.com/nomeehej/for-humanity/blob/main/content/public/figures.md), [Images](https://github.com/nomeehej/for-humanity/blob/main/content/public/images.md) |
 | Configure the site | [Settings](https://github.com/nomeehej/for-humanity/blob/main/content/public/settings.md) |
 | Publish | [Deployment](https://github.com/nomeehej/for-humanity/blob/main/content/public/deployment.md), [Crawling](https://github.com/nomeehej/for-humanity/blob/main/content/public/crawling.md) |
 | Update | [Changelog](https://github.com/nomeehej/for-humanity/blob/main/content/public/changelog.md), [Migration](https://github.com/nomeehej/for-humanity/blob/main/content/public/migration.md) |

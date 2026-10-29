@@ -108,7 +108,7 @@ export default {
 | --- | --- |
 | 설치와 실행 | [Installation](../content/ko/public/installation.md), [Commands](../content/ko/public/commands.md) |
 | 문서 작성과 정리 | [Writing](../content/ko/public/writing.md), [Navigation](../content/ko/public/navigation.md) |
-| 표현 추가 | [Parts](../content/ko/public/parts.md), [Diagrams](../content/ko/public/diagrams.md), [Images](../content/ko/public/images.md) |
+| 표현 추가 | [Parts](../content/ko/public/parts.md), [Diagrams](../content/ko/public/diagrams.md), [Figures](../content/ko/public/figures.md), [Images](../content/ko/public/images.md) |
 | 사이트 설정 | [Settings](../content/ko/public/settings.md) |
 | 배포 | [Deployment](../content/ko/public/deployment.md), [Crawling](../content/ko/public/crawling.md) |
 | 업데이트 | [Changelog](../content/ko/public/changelog.md), [Migration](../content/ko/public/migration.md) |
