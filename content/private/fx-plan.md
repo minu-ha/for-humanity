@@ -643,8 +643,13 @@ git commit -m "Add the figure control button and icon helpers | aa"
 
 ### Task 3: 단계 재생
 
+:::note[해제 경로 변경]
+Task 1 품질 검토에서 해제 채널을 하나로 줄이기로 했다. enhance 함수는 값을 돌려주지 않고 `signal`의 `abort` 이벤트에서 조작부와 상태를 되돌린다. 아래 코드의 `return () => {...}`는 `signal.addEventListener("abort", () => {...}, {once: true})`로, 빠져나가는 `return () => {};`는 `return;`으로 읽는다. `_type/enhance.ts`의 `FxEnhance`는 `(params: FxEnhanceParams) => void`가 되고 `wg-fx.tsx`는 `disposers` 배열 없이 `lifetime.abort()`만 한다. `FxCopy`는 Task 1에서 `_type/copy.ts`로 옮겨졌다.
+:::
+
 **Files:**
 - Create: `src/component/widget/fx/_function/enhance-steps.ts`
+- Modify: `src/component/widget/fx/_type/enhance.ts` (`FxEnhance`의 반환을 `void`로)
 
 - [ ] **Step 1: 단계 재생을 쓴다**
 
@@ -906,6 +911,10 @@ git commit -m "Add the step figure controls | aa"
 
 ### Task 4: 슬라이더와 실행 상자
 
+:::note[해제 경로 변경]
+Task 1 품질 검토에서 해제 채널을 하나로 줄이기로 했다. enhance 함수는 값을 돌려주지 않고 `signal`의 `abort` 이벤트에서 조작부와 상태를 되돌린다. 아래 코드의 `return () => {...}`는 `signal.addEventListener("abort", () => {...}, {once: true})`로, 빠져나가는 `return () => {};`는 `return;`으로 읽는다. `_type/enhance.ts`의 `FxEnhance`는 `(params: FxEnhanceParams) => void`가 되고 `wg-fx.tsx`는 `disposers` 배열 없이 `lifetime.abort()`만 한다. `FxCopy`는 Task 1에서 `_type/copy.ts`로 옮겨졌다.
+:::
+
 **Files:**
 - Create: `src/component/widget/fx/_function/enhance-range.ts`
 - Create: `src/component/widget/fx/_function/enhance-run.ts`
@@ -1098,6 +1107,10 @@ git commit -m "Add the slider and run box figures | aa"
 ```
 
 ### Task 5: 위젯과 셸 마운트
+
+:::note[해제 경로 변경]
+Task 1 품질 검토에서 해제 채널을 하나로 줄이기로 했다. enhance 함수는 값을 돌려주지 않고 `signal`의 `abort` 이벤트에서 조작부와 상태를 되돌린다. 아래 코드의 `return () => {...}`는 `signal.addEventListener("abort", () => {...}, {once: true})`로, 빠져나가는 `return () => {};`는 `return;`으로 읽는다. `_type/enhance.ts`의 `FxEnhance`는 `(params: FxEnhanceParams) => void`가 되고 `wg-fx.tsx`는 `disposers` 배열 없이 `lifetime.abort()`만 한다. `FxCopy`는 Task 1에서 `_type/copy.ts`로 옮겨졌다.
+:::
 
 **Files:**
 - Create: `src/component/widget/fx/wg-fx.tsx`
