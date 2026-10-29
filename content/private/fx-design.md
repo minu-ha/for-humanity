@@ -71,6 +71,7 @@ src/component/widget/shell-controls/wg-shell-controls.tsx   <WgFx onEnhanced={ha
 
 - 마운트 시점은 표 정렬과 같다. `document.readyState`가 `loading`이면 `DOMContentLoaded`를 기다린다. 작성자의 `<script type="module">`은 파싱 뒤 `DOMContentLoaded` 전에 실행되므로 custom 그림의 리스너는 위젯이 첫 `fx:step`을 보내기 전에 붙는다. 지금 nomeehej.dev의 순서(런타임 블록이 문서 끝)와 같다.
 - 조작부가 붙고 캡션이 한 항목으로 접히면 본문 높이가 바뀐다. 위젯은 enhance를 마친 뒤 `onEnhanced`를 부르고 셸의 `handlePageLoad`가 Mermaid 렌더 뒤처럼 앵커 위치를 보정한다.
+- 실행 상자의 실행 id는 그림별 카운터다. `crypto.randomUUID`는 LAN의 http dev 서버에서 없다. 메시지는 `event.source` 창과 id를 함께 대조한다.
 - 수명은 `AbortController` 하나다. enhance 함수는 값을 돌려주지 않고 `signal`의 `abort` 이벤트에서 되돌린다. 해제하면 타이머를 지우고 생성한 조작부, 입력 상자, 출력을 떼고 `fx--ready`, `data-step`, `is-on`, `is-hl`, 인라인 transform, 캡션 `hidden`을 되돌린다. 다시 마운트하면 처음부터 붙는다. 이벤트 detail 검증은 브라우저 번들 크기 때문에 `zod/mini`를 쓴다.
 - 생성 마크업은 `createElement`와 `createElementNS`로 만든다. `innerHTML`은 쓰지 않는다. 아이콘은 표 정렬 화살표처럼 path 상수에서 SVG를 만든다.
 - 토큰은 바뀌지 않는다. 런타임이 쓰던 `--app-*`는 모두 `token.css`에 있다.
@@ -81,7 +82,7 @@ src/component/widget/shell-controls/wg-shell-controls.tsx   <WgFx onEnhanced={ha
 
 | 런타임 | 규칙 | 대응 |
 | --- | --- | --- |
-| `.fx [hidden]{display:none!important}` | `declaration-no-important` | `!important` 제거. `.fx [hidden]`의 특이도(0,2,0)가 `.fx-chip` 같은 단일 클래스보다 높다 |
+| `.fx [hidden]{display:none!important}` | `declaration-no-important` | 이유를 적은 예외 주석으로 유지. 작성자 `<style>`은 본문에 있어 head의 위젯 CSS보다 뒤에 오므로 같은 특이도의 작성자 `display` 규칙이 숨긴 요소를 다시 보이게 한다. 실제 그림 셋이 이 규칙에 기댄다 |
 | `:not(.fx--ready)`, `:not(.fx-cols)`, `:hover:not(:disabled)` | `selector-pseudo-class-disallowed-list: not` | 기본 규칙 뒤에 수정자 규칙을 두는 순서로 재구성 |
 | `.fx{--fx-line:...}` | `property-disallowed-list: --` | `.fx` 블록 하나에 모아 두고 이유를 적은 예외 주석. 작성자 그림이 소비하는 공개 변수 |
 | `[aria-pressed=true]`, `[aria-disabled=true]` | `selector-attribute-name-disallowed-list` | 이유를 적은 예외 주석. 작성자 마크업 버튼의 상태 계약 |
@@ -89,6 +90,7 @@ src/component/widget/shell-controls/wg-shell-controls.tsx   <WgFx onEnhanced={ha
 | `.fx__bar button`, `.fx svg text`, `.fx-lines > li` | 소유 마크업의 요소 선택자 | 작성자 마크업이라 평면 선택자로 둔다. 파일 머리 주석에 이유 |
 | `fx__bar`, `fx--ready` 같은 생성 클래스 | `selector-class-pattern`의 `wg_` 문법 | `wg_` 밖의 클래스는 외부 클래스로 허용된다. 작성자도 같은 이름을 쓰므로 `wg_fx__*`로 바꾸지 않는다 |
 | `@media (width<640px)` | `media-feature-range-notation: context` | 그대로 |
+| `.fx [data-on]`, `.fx [data-hl]`, `.fx--ready [data-pos]` 같은 동작 규칙 | 적재 순서 | 옛 런타임의 `<style>`은 본문 끝에 있어 작성자 규칙과 특이도가 같으면 런타임이 이겼다. 위젯 CSS는 head에 있어 작성자가 이기므로 동작 규칙(단계 표시, 형광펜, 전환)만 `html` 접두로 특이도 (0,0,1)을 더해 같은 순위를 만든다. 클래스 하나를 더하면 작성자가 일부러 요소 선택자로 덮어쓴 세 쪽까지 뒤집혀서 (0,0,1)이 맞다. 모양 규칙(칩, 라벨, 버튼)은 작성자가 덮어쓸 수 있게 그대로 두고 남는 차이 아홉 군데는 이관 때 문서를 고친다 |
 
 ## 검증
 
