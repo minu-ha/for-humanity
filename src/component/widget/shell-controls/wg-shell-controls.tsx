@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import {Fragment, useLayoutEffect, useRef} from "hono/jsx";
 import {WgCursorFace} from "@/component/widget/cursor-face/wg-cursor-face";
+import {WgFx} from "@/component/widget/fx/wg-fx";
 import {WgMermaid} from "@/component/widget/mermaid/wg-mermaid";
 import {heading_highlight_hold_ms} from "@/component/widget/shell-controls/_constant/heading-highlight";
 import {WgSidebar, type WgSidebarProps} from "@/component/widget/sidebar/wg-sidebar";
@@ -12,7 +13,7 @@ import {revealHashTarget} from "@/util/dom/reveal-hash-target";
 import "./wg-shell-controls.css";
 
 /**
- * 브라우저 셸 컨트롤 입력. 사이드바, 커서 장식, 다이어그램 연결, 표 정렬, 제목 강조는 셸 소유
+ * 브라우저 셸 컨트롤 입력. 사이드바, 커서 장식, 다이어그램 연결, 표 정렬, 그림 조작부, 제목 강조는 셸 소유
  */
 export interface WgShellControlsProps {
     /**
@@ -108,7 +109,7 @@ export const WgShellControls = (props: WgShellControlsProps) => {
     };
 
     /**
-     * 초기 폰트 로드와 다이어그램 렌더 후 앵커 보정. 해제된 인스턴스와 사용자 이동에 개입하지 않음
+     * 초기 폰트 로드, 다이어그램 렌더, 그림 조작부 추가 후 앵커 보정. 해제된 인스턴스와 사용자 이동에 개입하지 않음
      *
      *   - 새로고침, 뒤로가기는 브라우저의 이전 위치 복원 사용
      *   - 사용자 입력 이후의 렌더 완료는 접은 Details를 다시 열지 않음
@@ -188,6 +189,7 @@ export const WgShellControls = (props: WgShellControlsProps) => {
             {props.data.cursorFace && <WgCursorFace ready={props.stores !== undefined} basePath={props.data.basePath} />}
             <WgMermaid onRendered={handlePageLoad} />
             <WgTableSort />
+            <WgFx onEnhanced={handlePageLoad} />
         </Fragment>
     );
 };

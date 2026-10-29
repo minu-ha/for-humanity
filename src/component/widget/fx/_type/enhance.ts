@@ -3,7 +3,7 @@ import type {FxCopy} from "@/component/widget/fx/_type/copy";
 /**
  * 그림 하나를 살리는 입력
  */
-export interface FxEnhanceParams {
+interface FxEnhanceParams {
     /**
      * data-fx를 가진 .fx 상자
      */
