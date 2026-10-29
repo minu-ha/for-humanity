@@ -63,15 +63,15 @@ src/component/widget/fx/
   _function/to-steps.ts      범위 표기 → 단계 Set. unit test
   _function/to-positions.ts  위치 표기 → [단계, x, y][]
   _function/to-run-document.ts  srcdoc 문자열. 콘솔 shim과 </script 이스케이프. unit test
-  _function/enhance-steps.ts 조작부 생성과 단계 표시. dispose 반환
-  _function/enhance-range.ts 슬라이더 연결. dispose 반환
-  _function/enhance-run.ts   실행 상자. dispose 반환
+  _function/enhance-steps.ts 조작부 생성과 단계 표시. signal abort에서 복원
+  _function/enhance-range.ts 슬라이더 연결. signal abort에서 복원
+  _function/enhance-run.ts   실행 상자. signal abort에서 복원
 src/component/widget/shell-controls/wg-shell-controls.tsx   <WgFx onEnhanced={handlePageLoad} />
 ```
 
 - 마운트 시점은 표 정렬과 같다. `document.readyState`가 `loading`이면 `DOMContentLoaded`를 기다린다. 작성자의 `<script type="module">`은 파싱 뒤 `DOMContentLoaded` 전에 실행되므로 custom 그림의 리스너는 위젯이 첫 `fx:step`을 보내기 전에 붙는다. 지금 nomeehej.dev의 순서(런타임 블록이 문서 끝)와 같다.
 - 조작부가 붙고 캡션이 한 항목으로 접히면 본문 높이가 바뀐다. 위젯은 enhance를 마친 뒤 `onEnhanced`를 부르고 셸의 `handlePageLoad`가 Mermaid 렌더 뒤처럼 앵커 위치를 보정한다.
-- 수명은 `AbortController` 하나다. 해제하면 타이머를 지우고 생성한 조작부, 입력 상자, 출력을 떼고 `fx--ready`, `data-step`, `is-on`, `is-hl`, 인라인 transform, 캡션 `hidden`을 되돌린다. 다시 마운트하면 처음부터 붙는다.
+- 수명은 `AbortController` 하나다. enhance 함수는 값을 돌려주지 않고 `signal`의 `abort` 이벤트에서 되돌린다. 해제하면 타이머를 지우고 생성한 조작부, 입력 상자, 출력을 떼고 `fx--ready`, `data-step`, `is-on`, `is-hl`, 인라인 transform, 캡션 `hidden`을 되돌린다. 다시 마운트하면 처음부터 붙는다. 이벤트 detail 검증은 브라우저 번들 크기 때문에 `zod/mini`를 쓴다.
 - 생성 마크업은 `createElement`와 `createElementNS`로 만든다. `innerHTML`은 쓰지 않는다. 아이콘은 표 정렬 화살표처럼 path 상수에서 SVG를 만든다.
 - 토큰은 바뀌지 않는다. 런타임이 쓰던 `--app-*`는 모두 `token.css`에 있다.
 
