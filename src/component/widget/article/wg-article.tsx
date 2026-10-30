@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import {Fragment} from "hono/jsx";
 import "./wg-article.css";
+import "@/style/authoring/fx.css";
 
 /**
  * Markdown HTML과 본문 부품의 공통 표현 입력

@@ -96,14 +96,15 @@ export const enhanceRun: FxEnhance = (params) => {
 
     code.value = initial;
     code.spellcheck = false;
+    code.className = "wg_fx__editor";
     code.hidden = true;
     code.setAttribute("aria-label", params.copy.code);
 
-    output.className = "fx__out";
+    output.className = "wg_fx__out";
     output.dataset.empty = params.root.dataset.empty ?? params.copy.empty;
     output.setAttribute("aria-live", "polite");
 
-    bar.className = "fx__bar";
+    bar.className = "fx__bar wg_fx__bar";
     bar.append(
         toButton({label: params.copy.run, signal: params.signal, onClick: run}),
         edit,

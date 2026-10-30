@@ -94,9 +94,9 @@ test.describe("그림", () => {
                 await expect(figure).not.toHaveAttribute("data-step");
                 await expect(figure.locator(".fx__captions > li").nth(2)).toBeVisible();
                 await expect(page.locator("#from-two")).not.toHaveClass(/is-on/);
-                await expect(page.locator("#run .fx__out")).toHaveCount(0);
+                await expect(page.locator("#run .wg_fx__out")).toHaveCount(0);
                 await expect(replay).toHaveText("Replay");
-                await expect(replay).not.toHaveClass(/fx__icon/);
+                await expect(replay).not.toHaveClass(/wg_fx__icon/);
                 await expect(replay).not.toHaveAttribute("aria-label");
             });
 

@@ -45,7 +45,7 @@ const step_mark_attributes = [
  *   - 단계 수는 data-steps, 없으면 캡션 항목 수. 1 미만이면 변경 없음
  *   - data-labels가 있으면 재생 조작부 대신 탭 버튼
  *   - 단계 변경마다 fx:step 발송, 그림의 fx:goto 수신
- *   - 처음과 끝에서도 포커스 유지, disabled 대신 aria-disabled
+ *   - 처음과 끝에서도 포커스 유지, disabled 대신 aria-disabled와 모양용 wg_fx__icon--off
  *   - 해제는 signal의 abort에서 조작부와 상태 복원
  */
 export const enhanceSteps: FxEnhance = (params) => {
@@ -162,8 +162,14 @@ export const enhanceSteps: FxEnhance = (params) => {
         scrub.value = String(step);
         scrub.style.setProperty("--fx-p", `${count > 1 ? ((step - 1) / (count - 1)) * scrub_full_percent : scrub_full_percent}%`);
         counter.textContent = `${step} / ${count}`;
-        previous.setAttribute("aria-disabled", String(step <= 1));
-        next.setAttribute("aria-disabled", String(step >= count));
+
+        const first = step <= 1;
+        const last = step >= count;
+
+        previous.setAttribute("aria-disabled", String(first));
+        previous.classList.toggle("wg_fx__icon--off", first);
+        next.setAttribute("aria-disabled", String(last));
+        next.classList.toggle("wg_fx__icon--off", last);
         tabs?.forEach((tab, index) => {
             tab.setAttribute("aria-pressed", String(index === step - 1));
         });
@@ -215,7 +221,7 @@ export const enhanceSteps: FxEnhance = (params) => {
     };
 
     scrub.type = "range";
-    scrub.className = "fx__scrub";
+    scrub.className = "wg_fx__scrub";
     scrub.min = "1";
     scrub.max = String(count);
     scrub.step = "1";
@@ -229,8 +235,8 @@ export const enhanceSteps: FxEnhance = (params) => {
         {signal: params.signal},
     );
 
-    counter.className = "fx__count";
-    bar.className = "fx__bar";
+    counter.className = "wg_fx__count";
+    bar.className = "fx__bar wg_fx__bar";
 
     // 좌우 화살표 키 단계 이동
     params.root.addEventListener(

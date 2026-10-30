@@ -1,0 +1,419 @@
+/*
+ * 인터랙티브 그림의 작성 어휘. 작성자가 Markdown에 쓰는 클래스, data 속성, --fx-* 변수와 작성자 스크립트가 토글하는 상태
+ *
+ *   - Figures 문서의 표와 같다. 이름을 바꾸면 호환성 변경이다
+ *   - wg_ 문법 밖의 공개 이름이다. 위젯이 만드는 조작부 조각은 wg-fx.css
+ *   - svg text, figcaption, button, li, input, svg는 작성자 HTML이라 클래스를 요구하지 않고 요소 선택자로 꾸민다
+ *   - --fx-* 변수는 작성자 그림의 style과 script가 읽는 공개 계약이다
+ *   - wg-article.css 뒤에 와야 .fx__captions > li가 본문 li 여백을 이긴다
+ */
+
+/* 그림 상자. 공개 변수는 사이트 토큰의 별칭이거나 light-dark 값 */
+.fx {
+    --fx-line: light-dark(#888, #777);
+    --fx-line-strong: light-dark(#222, #eee);
+    --fx-ink: var(--app-color-text);
+    --fx-ink-strong: var(--app-color-text-strong);
+    --fx-ink-muted: var(--app-color-text-muted);
+    --fx-fill: var(--app-color-accent-soft);
+    --fx-ground: var(--app-color-ground);
+    --fx-mark: var(--app-color-anchor-highlight);
+    --fx-ph: light-dark(#e6e6e0, #2e2e2e);
+    --fx-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+    margin: var(--app-space-block) 0;
+    padding: var(--app-space-block);
+    border: 1px solid var(--app-color-border);
+}
+
+/* 장면은 옆으로만 넘친다. 숨긴 data-on 요소의 translate 6px이 아래로 새어 세로 스크롤이 생기지 않게 */
+.fx__stage,
+.fx-scroll {
+    overflow: auto hidden;
+}
+
+/* 장면 안 블록 사이. 클래스 셋의 특이도로 작성자 그림의 .fx-x .fx-x__y 여백과 본문 p 여백보다 앞선다 */
+.fx .fx__stage > :nth-child(n + 2) {
+    margin-top: var(--app-space-block);
+}
+
+/* 격자와 나란히 비교 장면은 gap으로 띄운다 */
+.fx__stage.fx-cols > :nth-child(n + 2),
+.fx__stage.fx-pair > :nth-child(n + 2) {
+    margin-top: 0;
+}
+
+.fx-pair {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--app-space-subsection);
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.fx-cols {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+    gap: var(--app-space-block);
+}
+
+/* 패널 제목. 본문 p 여백보다 앞서도록 .fx 아래 */
+.fx .fx-label {
+    margin: 0 0 var(--app-space-inline);
+    color: var(--fx-ink-muted);
+    font-size: var(--app-font-size-detail);
+}
+
+/* 첫 패널 제목이 아니면 위를 띄운다. 장면 여백 규칙과 같은 특이도 */
+.fx .fx-label:nth-child(n + 2) {
+    margin-top: var(--app-space-block);
+}
+
+.fx figcaption {
+    margin-top: var(--app-space-stack);
+    color: var(--fx-ink-muted);
+    font-size: var(--app-font-size-detail);
+}
+
+.fx__captions {
+    margin: var(--app-space-stack) 0 0;
+    padding-left: 1.6em;
+}
+
+/* 본문의 ol 여백 규칙(.wg_article__root ol)보다 앞서야 그림과 설명 사이가 벌어진다 */
+.fx .fx__captions {
+    margin-top: var(--app-space-block);
+}
+
+.fx__captions > li {
+    margin: 0;
+}
+
+/* 스크립트 뒤에는 한 항목만 보여 번호가 필요 없고 두 줄 높이를 미리 잡는다 */
+.fx--ready .fx__captions {
+    min-height: calc(var(--app-line-height-body) * 2em);
+    padding-left: 0;
+    list-style: none;
+}
+
+.fx-box {
+    padding: var(--app-space-stack);
+    border: 1px solid var(--fx-line);
+    background: var(--fx-ground);
+}
+
+.fx-lane {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--app-space-inline);
+    align-items: center;
+    min-height: 42px;
+    padding: var(--app-space-inline);
+    border: 1px solid var(--fx-line);
+    background: var(--fx-ground);
+}
+
+.fx-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 30px;
+    height: 28px;
+    padding: 0 8px;
+    border: 1px solid var(--fx-line);
+    background: var(--fx-fill);
+    color: var(--fx-ink-strong);
+    font-family: var(--app-font-mono);
+    font-size: var(--app-font-size-detail);
+    white-space: nowrap;
+}
+
+.fx-chip--mine {
+    border: 1.8px solid var(--fx-line-strong);
+}
+
+.fx-chip--dash {
+    border-style: dashed;
+    background: var(--fx-ground);
+}
+
+/* 코드 줄 목록. 본문 ul 규칙보다 앞서도록 .fx 아래 */
+.fx .fx-lines {
+    margin: 0;
+    padding: var(--app-space-inline) 0;
+    border: 1px solid var(--fx-line);
+    background: var(--fx-ground);
+    font-family: var(--app-font-mono);
+    font-size: var(--app-font-size-detail);
+    line-height: var(--app-line-height-code);
+    list-style: none;
+}
+
+.fx .fx-lines > li {
+    margin: 0;
+    padding: 0 var(--app-space-stack);
+    white-space: pre;
+}
+
+.fx-muted {
+    color: var(--fx-ink-muted);
+    font-size: var(--app-font-size-detail);
+}
+
+.fx-swap {
+    display: inline-grid;
+}
+
+.fx-swap > * {
+    grid-area: 1 / 1;
+}
+
+.fx-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--app-space-inline);
+    align-items: center;
+}
+
+.fx-row + .fx-row {
+    margin-top: var(--app-space-inline);
+}
+
+.fx__stage > svg,
+.fx-scroll > svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin-inline: auto;
+    overflow: visible;
+    font-family: var(--app-font-body);
+}
+
+/* SVG 글자와 도형. fill은 SVG 속성보다 우선하므로 따로 줄 색은 인라인 style */
+.fx svg text {
+    font-size: 14px;
+    fill: var(--fx-ink);
+}
+
+.fx svg .fx-strong {
+    font-weight: var(--app-font-weight-strong);
+    fill: var(--fx-ink-strong);
+}
+
+.fx svg .fx-muted {
+    font-size: 12px;
+    fill: var(--fx-ink-muted);
+}
+
+.fx svg .fx-mono {
+    font-family: var(--app-font-mono);
+    font-size: 13px;
+}
+
+.fx svg .fx-box {
+    fill: var(--fx-fill);
+    stroke: var(--fx-line);
+    stroke-width: 1;
+}
+
+.fx svg .fx-mine {
+    fill: var(--fx-fill);
+    stroke: var(--fx-line-strong);
+    stroke-width: 1.8;
+}
+
+.fx svg .fx-ground {
+    fill: var(--fx-ground);
+    stroke: var(--fx-line);
+    stroke-width: 1;
+}
+
+.fx svg .fx-dash {
+    fill: none;
+    stroke: var(--fx-line);
+    stroke-width: 1.2;
+    stroke-dasharray: 5 4;
+}
+
+.fx svg .fx-ln {
+    fill: none;
+    stroke: var(--fx-line);
+    stroke-width: 1.2;
+}
+
+.fx svg .fx-ln-strong {
+    fill: none;
+    stroke: var(--fx-line-strong);
+    stroke-width: 1.8;
+}
+
+.fx svg .fx-arrow {
+    fill: var(--fx-line);
+}
+
+.fx svg .fx-mark {
+    fill: var(--fx-mark);
+    stroke: none;
+}
+
+/*
+ * 동작 규칙(단계 표시, 형광펜, 전환)
+ *
+ *   - 작성자 <style>은 본문에 있어 head의 사이트 CSS 뒤에 온다. 옛 런타임 <style>은 본문 끝에 있어 특이도가 같으면 런타임이 이겼다
+ *   - 동작 규칙만 html 접두로 (0,0,1)을 더해 같은 순위를 만든다. 모양 규칙은 작성자가 덮어쓸 수 있게 그대로 둔다
+ *   - 켜진 단계 요소에는 보임을 정하는 위젯 규칙(opacity, translate)이 없다. 런타임처럼 작성자 규칙이 어떤 특이도에서도 적용된다
+ */
+
+/* 형광펜. 왼쪽에서 오른쪽으로 칠해진다 */
+html .fx [data-hl] {
+    background-image: linear-gradient(var(--fx-mark), var(--fx-mark));
+    background-repeat: no-repeat;
+    background-size: 0% 100%;
+}
+
+html .fx [data-hl].is-hl {
+    background-size: 100% 100%;
+}
+
+html .fx--ready [data-hl] {
+    transition: background-size 450ms var(--fx-ease);
+}
+
+/* SVG 안의 형광펜은 배경 대신 사각형을 늘린다 */
+html .fx svg [data-hl] {
+    background-image: none;
+}
+
+html .fx svg .fx-mark[data-hl] {
+    transform: scaleX(0);
+    transform-box: fill-box;
+    transform-origin: left center;
+}
+
+html .fx svg .fx-mark[data-hl].is-hl {
+    transform: scaleX(1);
+}
+
+html .fx--ready svg .fx-mark[data-hl] {
+    transition: transform 450ms var(--fx-ease);
+}
+
+/* 단계 요소의 전환. 형광펜 전환보다 뒤, data-pos 전환보다 앞 */
+html .fx--ready [data-on] {
+    transition:
+        opacity 400ms var(--fx-ease),
+        translate 400ms var(--fx-ease);
+}
+
+/* 스크립트 뒤에는 그 단계의 요소만 보이고 나머지는 아래로 조금 밀려 사라진다. 전환과 따로 두어 data-pos 전환을 덮지 않는다 */
+/* stylelint-disable-next-line selector-pseudo-class-disallowed-list -- 꺼진 상태는 is-on의 부재라 부정 선택자가 필요하다. 켜진 요소에 opacity, translate 규칙을 두지 않아야 작성자 규칙이 어떤 특이도에서도 적용된다 */
+html .fx--ready [data-on]:not(.is-on) {
+    opacity: 0;
+    translate: 0 6px;
+    pointer-events: none;
+}
+
+/* 스크립트 전에는 끝까지 가는 요소만 보인다. 위 두 규칙과 함께 걸리지 않아 순서는 특이도 오름차순 */
+/* stylelint-disable-next-line selector-pseudo-class-disallowed-list -- 스크립트 전 상태는 fx--ready의 부재이고 끝까지 가는 요소는 빼야 해서 부정 선택자가 필요하다. 끝까지 가는 요소에 opacity: 1을 따로 주면 작성자 opacity를 덮는다 */
+html .fx:not(.fx--ready) [data-on]:not([data-on$="-"]) {
+    opacity: 0;
+}
+
+html .fx--ready [data-pos] {
+    transition: transform 600ms var(--fx-ease);
+}
+
+/* 그림 아래 조작부 띠. 상자 안쪽 여백을 되감아 가장자리까지 */
+.fx__bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--app-space-stack);
+    align-items: center;
+    margin: var(--app-space-block) calc(-1 * var(--app-space-block)) calc(-1 * var(--app-space-block));
+    padding: var(--app-space-stack) var(--app-space-block);
+    border-top: 1px solid var(--app-color-border-layout);
+    background: var(--fx-fill);
+}
+
+/*
+ * 조작부 버튼. 작성자가 fx__bar 안에 직접 둔 button과 fx-button도 같다
+ * 쉼표 묶음 안의 &는 :is()라 .fx-button 상태도 button의 (0,0,1)을 얻어 작성자 규칙과의 동률에서 이긴다. 나누지 않는다
+ */
+.fx__bar button,
+.fx-button {
+    min-width: 44px;
+    min-height: 32px;
+    padding: 4px 10px;
+    border: 1px solid var(--app-color-border);
+    border-radius: var(--app-radius-box);
+    background: var(--fx-ground);
+    color: var(--fx-ink-strong);
+    font: inherit;
+    font-size: var(--app-font-size-detail);
+    cursor: pointer;
+
+    /* 눌린 탭도 가리키면 hover 바탕 */
+    /* stylelint-disable-next-line selector-attribute-name-disallowed-list -- 위젯 탭과 작성자 fx-button이 함께 쓰는 상태 계약 */
+    &[aria-pressed="true"] {
+        background: var(--fx-mark);
+    }
+
+    &:focus-visible {
+        outline: var(--app-outline-focus);
+        outline-offset: var(--app-outline-focus-offset);
+    }
+
+    &:disabled {
+        color: var(--fx-ink-muted);
+        cursor: default;
+    }
+
+    /* 작성자 그림의 버튼 바탕보다 앞서도록 :enabled까지 */
+    &:enabled:hover {
+        background: var(--fx-fill);
+    }
+}
+
+.fx input {
+    &:focus-visible {
+        outline: var(--app-outline-focus);
+        outline-offset: var(--app-outline-focus-offset);
+    }
+}
+
+/* 작성자가 두는 슬라이더 줄 */
+.fx__range {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--app-space-stack);
+    align-items: center;
+    margin-top: var(--app-space-stack);
+    font-size: var(--app-font-size-detail);
+}
+
+.fx__range input {
+    flex: 1;
+    min-width: 160px;
+    accent-color: var(--fx-line-strong);
+}
+
+/* 실행 상자. 코드 블록 바로 아래에 붙으므로 상자 테두리와 여백 없음 */
+.fx[data-fx="run"] {
+    margin-top: calc(-1 * var(--app-space-stack));
+    padding: 0;
+    border: 0;
+}
+
+/* 위젯과 작성자 그림이 display를 정한 요소도 hidden이면 숨긴다 */
+.fx [hidden] {
+    /* 작성자 style 블록이 사이트 CSS보다 뒤라 같거나 높은 특이도의 작성자 display 규칙이 캡션과 장면 요소를 다시 보이게 한다 */
+    display: none !important;
+}
+
+/* 휴대폰 폭에서는 SVG에 적은 크기 유지. 줄이면 글자를 읽을 수 없고 장면이 옆으로 넘친다 */
+@media (width < 640px) {
+    .fx__stage > svg,
+    .fx-scroll > svg {
+        max-width: none;
+    }
+}

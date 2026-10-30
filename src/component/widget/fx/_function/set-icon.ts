@@ -47,7 +47,7 @@ export const setIcon = (params: IconParams) => {
     }
 
     params.button.replaceChildren(svg);
-    params.button.classList.add("fx__icon");
+    params.button.classList.add("wg_fx__icon");
     params.button.setAttribute("aria-label", params.label);
     params.button.dataset.tip = params.label;
 };

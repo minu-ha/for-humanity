@@ -72,7 +72,7 @@ export const WgFx = (props: WgFxProps) => {
                 lifetime.signal.addEventListener(
                     "abort",
                     () => {
-                        button.classList.remove("fx__icon");
+                        button.classList.remove("wg_fx__icon");
                         button.removeAttribute("aria-label");
                         delete button.dataset.tip;
                         button.replaceChildren(...children);
