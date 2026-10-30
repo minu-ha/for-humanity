@@ -6,6 +6,7 @@ import {test as base} from "@playwright/test";
 import {diagram_cases} from "@test/_constant/diagram";
 import {loadBrowserScript} from "@test/_fixture/load-browser-script";
 import {preview} from "vite";
+import {font_display_strategy} from "@/constant/font";
 import {toPreviewConfig} from "@/entry/preview/to-preview-config";
 
 /**
@@ -82,6 +83,8 @@ export const test = base.extend<{runtime: BrowserRuntime}, {mermaidSite: string}
 
                 const html = (await readFile(join(root, "dist/guide/index.html"), "utf8"))
                     .replace(`<script>${shell}</script>`, "")
+                    // optional은 첫 페인트 전에 받지 못한 글꼴을 페이지 수명 내내 버린다. 갤러리는 받은 글꼴로 측정하도록 swap 고정
+                    .replaceAll(`font-display: ${font_display_strategy};`, "font-display: swap;")
                     .replace("</body>", () => `<script>${fixture}</script></body>`);
 
                 await mkdir(join(root, "dist/lifecycle"));

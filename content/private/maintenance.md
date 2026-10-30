@@ -146,6 +146,10 @@ Hono 브라우저 셸, 탐색, 커서를 변경하면 자동 브라우저 검사
 
 이제 조건 변화에는 장식만 숨기고 좌표는 유지합니다. 복원 여부는 다음 문서가 자기 표시 조건으로 판정합니다. `[NAV-020]`은 같은 조건 변화를 `emulateMedia`로 모든 운영체제에서 재현합니다. [수정 확인 실행](https://github.com/nomeehej/for-humanity/actions/runs/39239457865)에서 Windows의 `[NAV-010]`과 `[NAV-020]`을 각각 30회 반복해 모두 통과했습니다.
 
+### Known font race in browser checks
+
+번들 글꼴은 `font-display: optional`이라 첫 페인트 전에 받지 못하면 그 페이지에서는 끝까지 대체 글꼴을 쓴다. `document.fonts.ready`는 이 상태를 알리지 않는다. Ubuntu 러너에는 한글 글꼴이 없어 한글이 tofu 폭으로 측정되고, 그러면 Mermaid 12가 120px 미만의 라벨을 최소 노드 폭 120으로 키운다. 그래서 `[MRM-027]`이 부하가 높을 때 간헐적으로 실패했다(2026-10-29, 2026-10-30). Mermaid 갤러리 fixture는 글꼴을 `swap`으로 고정해 받은 글꼴로 측정한다. 글꼴 폭에 기대는 e2e 단언은 같은 경주에 걸리므로 두지 않는다.
+
 ### Known first-paint check issue
 
 `0.18.0`의 [CI 실행](https://github.com/nomeehej/for-humanity/actions/runs/39748936267)에서 Ubuntu Node 22.12.0의 `[NAV-010]`이 새로고침 첫 프레임의 문서 목록 위치를 `200` 대신 `0`으로 확인하며 실패했습니다. 같은 커밋의 Windows와 Node 24는 통과했습니다.
