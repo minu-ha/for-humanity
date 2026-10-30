@@ -3005,3 +3005,41 @@ git push origin main
 ```
 
 Workers Builds 결과와 nomeehej.dev의 글 한 편을 확인한다.
+
+### Task 11: 공개 작성 CSS와 위젯 내부 CSS 분리 (0.28.1)
+
+0.28.0 공개 뒤 결정(2026-10-30). 작성자가 Markdown에 직접 조립하는 클래스는 공개 계약이고 위젯이 혼자 만드는 조각은 내부다. 둘이 `wg-fx.css` 한 파일에 섞여 있어 위젯 파일이 `wg_` 규칙을 못 지키고 예외 주석이 일곱 개다. 공개 어휘를 `src/style/authoring/fx.css`로 옮기고 위젯 파일은 `wg_fx__*`만 남긴다. 작성자 문법은 바뀌지 않는다. nomeehej.dev 문서 40편 어디에도 내부 조각 이름(`fx__icon`, `fx__scrub`, `fx__count`, `fx__out`)이 없고 Figures 문서도 그 이름을 적지 않는다.
+
+**Files:**
+- Create: `src/style/authoring/fx.css` (공개 작성 어휘)
+- Modify: `src/component/widget/fx/wg-fx.css` (내부 조각만)
+- Modify: `src/component/widget/fx/_function/set-icon.ts`, `enhance-steps.ts`, `enhance-run.ts`, `wg-fx.tsx` (생성 요소의 클래스 이름)
+- Modify: `src/component/widget/article/wg-article.tsx` (`@/style/authoring/fx.css` import, `./wg-article.css` 다음 줄)
+- Modify: `src/entry/dev/_constant/style.ts` (공개 파일을 컴포넌트 CSS 뒤에)
+- Modify: `test/2-page/2.7-fx.e2e.spec.ts`, `2.7-fx.integration.spec.ts` (locator)
+- Modify: `content/private/fx-design.md`, `content/private/architecture.md`, `content/private/design.md`, `CHANGELOG.md`
+
+**공개 파일 `src/style/authoring/fx.css`에 두는 것.** 작성자가 치거나 작성자 스크립트가 토글하는 전부.
+- `.fx` 상자와 `--fx-*` 변수 선언(`src/style/**`는 변수 선언과 `!important`가 허용되므로 예외 주석 불필요), `.fx [hidden]`
+- `fx__stage`, `fx__captions`, `fx-pair`, `fx-cols`, `fx-scroll`, `fx-row`, `fx-lane`, `fx-swap`, `fx-chip`(`--mine`, `--dash`), `fx-lines`, `fx-box`, `fx-label`, `fx-muted`, `figcaption`, SVG 클래스 전부
+- `data-on`, `data-hl`, `data-pos`의 동작 규칙(`html` 접두와 `:not` 예외 둘 그대로), `fx--ready`, `is-on`, `is-hl`
+- `fx__bar`(작성자도 custom 그림에서 직접 만든다)와 `.fx__bar button, .fx-button`의 기본 모양, `aria-pressed`(작성자 `fx-button`이 씀, 예외 주석 유지), `:disabled`
+- `fx__range`
+- `.fx[data-fx="run"]`의 상자 테두리와 여백 제거(작성자 요소)
+- `@media (width < 640px)`의 SVG 규칙
+
+**내부 파일 `wg-fx.css`에 남기는 것.** 위젯이 만드는 요소만. 생성 요소에는 내부 클래스를 주고 공개 모양이 필요한 요소는 공개 클래스도 함께 단다.
+- 생성 띠: `class="fx__bar wg_fx__bar"`. 실행 상자 띠의 여백과 배경 제거는 `.fx[data-fx="run"] .wg_fx__bar`
+- 아이콘 버튼: `wg_fx__icon`(툴팁 `data-tip` 포함, `z-index` 이유 주석 유지). 기본 모양은 공개 규칙 `.fx__bar button`이 주고, 아이콘 규칙은 `.wg_fx__bar .wg_fx__icon`(0,2,0)으로 두어 지금 `.fx__bar .fx__icon`과 같은 특이도를 유지
+- 양 끝 상태: `aria-disabled` 속성은 그대로 두되 CSS는 수정자 `wg_fx__icon--off`로 잡는다. `enhance-steps.ts`가 `aria-disabled`와 함께 토글. 예외 주석이 없어진다
+- 스크러버 `wg_fx__scrub`, 단계 수 `wg_fx__count`, 실행 상자의 `textarea`는 `wg_fx__editor`, 출력은 `wg_fx__out`(`data-empty` 포함)
+- `data-icon` 버튼 치환에서 붙이는 클래스도 `wg_fx__icon`(`set-icon.ts`, `wg-fx.tsx`의 복원)
+
+**적재 순서.** 공개 파일은 `wg-article.css` 뒤에 와야 `.fx__captions > li { margin: 0 }`가 `.wg_article__root li`를 이긴다. 빌드는 `wg-article.tsx`의 import 순서, dev는 `style_paths`에서 컴포넌트 glob 뒤에 둔다. 빌드 뒤 `dist/cli.css`에서 `.wg_article__root li`가 `.fx__captions>li`보다 앞에 있는지 확인한다.
+
+- [ ] **Step 1: 파일 분리와 이름 변경.** 값과 선택자는 유지. 공개 파일 머리 주석에 "작성자가 Markdown에 쓰는 그림 어휘. Figures 문서의 표와 같다. 이름을 바꾸면 호환성 변경"을 적는다.
+- [ ] **Step 2: JS와 테스트.** 생성 요소 클래스 변경, `wg_fx__icon--off` 토글, locator 갱신.
+- [ ] **Step 3: 검사.** `pnpm exec stylelint "src/**/*.css"`, `pnpm check`, `pnpm test`, `pnpm build:kit && pnpm exec playwright test fx`, `pnpm exec playwright test accessibility`, `git diff --check`. 위젯 파일에 남는 예외 주석은 0이어야 한다.
+- [ ] **Step 4: 40쪽 비교.** nomeehej.dev의 `content/dist`(0.28.0)와 이번 kit로 다시 빌드한 결과를 전 단계에서 비교. 계산된 스타일 차이 0, 클래스 속성 값 차이만 허용.
+- [ ] **Step 5: 문서.** `fx-design.md` 구조 절, `architecture.md`의 WgFx 문단과 Package output, `design.md`의 Figures 절에 공개 파일 위치. CHANGELOG `Unreleased`: 생성 조각 클래스가 `wg_fx__*`로 바뀌고 작성 어휘는 `src/style/authoring/fx.css`로 옮겨졌으며 작성자 문법은 그대로라는 patch 항목.
+- [ ] **Step 6: 커밋, push, 0.28.1 릴리스.** Task 9의 절차와 같다.
