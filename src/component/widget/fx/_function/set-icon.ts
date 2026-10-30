@@ -35,6 +35,7 @@ export const setIcon = (params: IconParams) => {
     svg.setAttribute("width", "16");
     svg.setAttribute("height", "16");
     svg.setAttribute("aria-hidden", "true");
+    svg.setAttribute("class", "wg_fx__glyph");
 
     for (const shape of fx_icons[params.icon]) {
         const element = document.createElementNS(svg_namespace, shape.tag);

@@ -163,13 +163,13 @@ export const enhanceSteps: FxEnhance = (params) => {
         scrub.style.setProperty("--fx-p", `${count > 1 ? ((step - 1) / (count - 1)) * scrub_full_percent : scrub_full_percent}%`);
         counter.textContent = `${step} / ${count}`;
 
-        const first = step <= 1;
-        const last = step >= count;
+        const atFirst = step <= 1;
+        const atLast = step >= count;
 
-        previous.setAttribute("aria-disabled", String(first));
-        previous.classList.toggle("wg_fx__icon--off", first);
-        next.setAttribute("aria-disabled", String(last));
-        next.classList.toggle("wg_fx__icon--off", last);
+        previous.setAttribute("aria-disabled", String(atFirst));
+        previous.classList.toggle("wg_fx__icon--off", atFirst);
+        next.setAttribute("aria-disabled", String(atLast));
+        next.classList.toggle("wg_fx__icon--off", atLast);
         tabs?.forEach((tab, index) => {
             tab.setAttribute("aria-pressed", String(index === step - 1));
         });

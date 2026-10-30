@@ -3020,7 +3020,7 @@ Workers Builds 결과와 nomeehej.dev의 글 한 편을 확인한다.
 - Modify: `content/private/fx-design.md`, `content/private/architecture.md`, `content/private/design.md`, `CHANGELOG.md`
 
 **공개 파일 `src/style/authoring/fx.css`에 두는 것.** 작성자가 치거나 작성자 스크립트가 토글하는 전부.
-- `.fx` 상자와 `--fx-*` 변수 선언(`src/style/**`는 변수 선언과 `!important`가 허용되므로 예외 주석 불필요), `.fx [hidden]`
+- `.fx` 상자와 `--fx-*` 변수 선언(`src/style/**`는 변수 선언이 허용되므로 예외 주석 불필요), `.fx [hidden]`(작성 어휘 override가 `!important`를 다시 막아 이유를 적은 예외)
 - `fx__stage`, `fx__captions`, `fx-pair`, `fx-cols`, `fx-scroll`, `fx-row`, `fx-lane`, `fx-swap`, `fx-chip`(`--mine`, `--dash`), `fx-lines`, `fx-box`, `fx-label`, `fx-muted`, `figcaption`, SVG 클래스 전부
 - `data-on`, `data-hl`, `data-pos`의 동작 규칙(`html` 접두와 `:not` 예외 둘 그대로), `fx--ready`, `is-on`, `is-hl`
 - `fx__bar`(작성자도 custom 그림에서 직접 만든다)와 `.fx__bar button, .fx-button`의 기본 모양, `aria-pressed`(작성자 `fx-button`이 씀, 예외 주석 유지), `:disabled`
@@ -3030,7 +3030,7 @@ Workers Builds 결과와 nomeehej.dev의 글 한 편을 확인한다.
 
 **내부 파일 `wg-fx.css`에 남기는 것.** 위젯이 만드는 요소만. 생성 요소에는 내부 클래스를 주고 공개 모양이 필요한 요소는 공개 클래스도 함께 단다.
 - 생성 띠: `class="fx__bar wg_fx__bar"`. 실행 상자 띠의 여백과 배경 제거는 `.fx[data-fx="run"] .wg_fx__bar`
-- 아이콘 버튼: `wg_fx__icon`(툴팁 `data-tip` 포함, `z-index` 이유 주석 유지). 기본 모양은 공개 규칙 `.fx__bar button`이 주고, 아이콘 규칙은 `.wg_fx__bar .wg_fx__icon`(0,2,0)으로 두어 지금 `.fx__bar .fx__icon`과 같은 특이도를 유지
+- 아이콘 버튼: `wg_fx__icon`(툴팁 `data-tip` 포함, `z-index` 이유 주석 유지). 기본 모양은 공개 규칙 `.fx__bar button`이 주고, 아이콘 규칙은 `.fx__bar .wg_fx__icon`(0,2,0)으로 두어 지금 `.fx__bar .fx__icon`과 같은 특이도와 대상을 유지. 작성자가 손으로 만든 `fx__bar`에도 `data-icon` 버튼이 있어(nomeehej.dev 다섯 쪽) `wg_fx__bar`로 좁히면 그 버튼이 아이콘 모양을 잃는다
 - 양 끝 상태: `aria-disabled` 속성은 그대로 두되 CSS는 수정자 `wg_fx__icon--off`로 잡는다. `enhance-steps.ts`가 `aria-disabled`와 함께 토글. 예외 주석이 없어진다
 - 스크러버 `wg_fx__scrub`, 단계 수 `wg_fx__count`, 실행 상자의 `textarea`는 `wg_fx__editor`, 출력은 `wg_fx__out`(`data-empty` 포함)
 - `data-icon` 버튼 치환에서 붙이는 클래스도 `wg_fx__icon`(`set-icon.ts`, `wg-fx.tsx`의 복원)

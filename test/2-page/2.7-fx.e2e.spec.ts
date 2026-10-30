@@ -69,6 +69,7 @@ test.describe("그림", () => {
                 await expect(figure).toHaveAttribute("data-step", "3");
                 await expect(counter).toHaveText("3 / 3");
                 await expect(next).toHaveAttribute("aria-disabled", "true");
+                await expect(next).toHaveClass(/wg_fx__icon--off/);
                 await expect(page.locator("#only-one")).not.toHaveClass(/is-on/);
                 await expect(page.locator("#from-two")).toHaveClass(/is-on/);
                 await expect(page.locator("#up-to-two")).not.toHaveClass(/is-on/);
@@ -91,7 +92,7 @@ test.describe("그림", () => {
 
                 /**
                  * THEN
-                 * 2단계, 형광펜, 둘째 캡션
+                 * 2단계, 다시 켜진 이전 단계, 형광펜, 둘째 캡션
                  */
                 await expect(figure).toHaveAttribute("data-step", "2");
                 await expect(previous).not.toHaveClass(/wg_fx__icon--off/);

@@ -215,7 +215,7 @@ In every kind of figure, a `button` with `data-icon` gets the same icon as the b
 ### Classes and variables
 
 Layout classes: `fx__stage` (the scene), `fx__captions` (one `li` per step), `fx-cols` (a grid that stacks on narrow screens), `fx-pair` (two scenes side by side), `fx-scroll` (an SVG that scrolls sideways on phones), `fx-row` (a wrapping row), `fx-lane` (a bordered row of chips), `fx-swap` (children stacked in one place). A `<figcaption>` is shown in small gray text.
-Control and state classes: `fx__range` (the slider row), `fx__bar` (a bar of your own buttons), `fx--ready` (on a figure once it is set up; the site adds it, and your script adds it to a custom figure).
+Control and state classes: `fx__range` (the slider row), `fx__bar` (a bar of your own buttons), `fx--ready` (on a figure once it is set up; the site adds it, and your script adds it to a custom figure), `is-on` and `is-hl` (the step states the site toggles on `data-on` and `data-hl` elements; a custom figure's script may toggle them on its own `data-on` and `data-hl` elements).
 Element classes: `fx-box`, `fx-chip` with `fx-chip--mine` and `fx-chip--dash`, `fx-lines` (a list of code lines), `fx-label`, `fx-muted`, `fx-button`. Inside SVG: `fx-strong`, `fx-muted`, `fx-mono` for text and `fx-box`, `fx-mine`, `fx-ground`, `fx-dash`, `fx-ln`, `fx-ln-strong`, `fx-arrow`, `fx-mark` for shapes.
 Variables on the figure, which your own styles can read: `--fx-line`, `--fx-line-strong`, `--fx-ink`, `--fx-ink-strong`, `--fx-ink-muted`, `--fx-fill`, `--fx-ground`, `--fx-mark`, `--fx-ph`, `--fx-ease`. They follow the light and dark theme. A slider figure also carries `--fx-v`.
 

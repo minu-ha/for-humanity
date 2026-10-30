@@ -308,7 +308,7 @@ gray-matter는 frontmatter를 분리하고 해석하는 다른 선택지. 여기
 
 - `dist/cli.js`: npm bin 진입점
 - `dist/site.js`: 설치 개발 서버가 읽는 공통 문서 앱
-- `dist/cli.css`: 컴포넌트 CSS 묶음
+- `dist/cli.css`: 컴포넌트 CSS와 작성 어휘 CSS 묶음
 - `dist/browser.js`: HTML에 포함하는 셸, 탐색, 커서, 표 정렬, 인터랙티브 그림의 Hono JSX 런타임
 - `dist/mermaid/`: 필요한 페이지에서 불러오는 Mermaid 진입 모듈, 지연 청크, 배포 고지
 - 자원 URL: `/_fh/`, favicon: `/favicon.svg`

@@ -101,7 +101,7 @@ export default {
             },
         },
         {
-            // 전역 스타일은 소유 클래스 문법 제외
+            // 전역 스타일과 그림 작성 어휘는 소유 클래스 문법 제외. 작성 어휘의 --fx-* 공개 변수 선언 허용
             files: ["src/style/**/*.css", "src/*.css"],
             rules: {
                 "selector-class-pattern": null,
@@ -110,6 +110,14 @@ export default {
 
                 // 움직임 줄이기의 전역 !important 예외
                 "declaration-no-important": null,
+            },
+        },
+        {
+            // 그림 작성 어휘. 전역 !important 예외 밖이고 소유 클래스 이름은 쓰지 않음
+            files: ["src/style/authoring/**/*.css"],
+            rules: {
+                "declaration-no-important": true,
+                "selector-disallowed-list": toDisallowedSelectors([/^\.(pg|wg|ui)_/]),
             },
         },
         {

@@ -215,7 +215,7 @@ root.addEventListener("fx:step", (event) => {
 ### Classes and variables
 
 배치 클래스: `fx__stage`(장면), `fx__captions`(단계마다 `li` 하나), `fx-cols`(좁은 화면에서 쌓이는 격자), `fx-pair`(나란히 놓은 두 장면), `fx-scroll`(휴대폰에서 옆으로 스크롤하는 SVG), `fx-row`(줄을 넘기는 가로 줄), `fx-lane`(테두리가 있는 칩 줄), `fx-swap`(자식을 한 자리에 겹침). `<figcaption>`은 작은 회색 글자로 보입니다.
-조작과 상태 클래스: `fx__range`(슬라이더 줄), `fx__bar`(작성자 버튼을 담는 띠), `fx--ready`(준비를 마친 그림. 사이트가 붙이고 직접 그리는 그림에는 작성자 스크립트가 붙입니다).
+조작과 상태 클래스: `fx__range`(슬라이더 줄), `fx__bar`(작성자 버튼을 담는 띠), `fx--ready`(준비를 마친 그림. 사이트가 붙이고 직접 그리는 그림에는 작성자 스크립트가 붙입니다), `is-on`과 `is-hl`(사이트가 `data-on`, `data-hl` 요소에 켜고 끄는 단계 상태. 직접 그리는 그림에서는 작성자 스크립트가 자기 `data-on`, `data-hl` 요소에 켜고 끌 수 있습니다).
 요소 클래스: `fx-box`, `fx-chip`과 `fx-chip--mine`, `fx-chip--dash`, `fx-lines`(코드 줄 목록), `fx-label`, `fx-muted`, `fx-button`. SVG 안의 글자는 `fx-strong`, `fx-muted`, `fx-mono`, 도형은 `fx-box`, `fx-mine`, `fx-ground`, `fx-dash`, `fx-ln`, `fx-ln-strong`, `fx-arrow`, `fx-mark`입니다.
 그림에 선언해 작성자 스타일이 읽을 수 있는 변수: `--fx-line`, `--fx-line-strong`, `--fx-ink`, `--fx-ink-strong`, `--fx-ink-muted`, `--fx-fill`, `--fx-ground`, `--fx-mark`, `--fx-ph`, `--fx-ease`. 밝은 테마와 어두운 테마를 따릅니다. 슬라이더 그림에는 `--fx-v`도 있습니다.
 

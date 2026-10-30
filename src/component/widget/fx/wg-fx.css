@@ -18,18 +18,8 @@
     padding: 0;
 }
 
-/* 처음과 끝의 이전, 다음. 포커스를 잃지 않도록 disabled 대신 aria-disabled와 함께 붙는다 */
-.wg_fx__bar .wg_fx__icon--off {
-    color: var(--fx-ink-muted);
-    cursor: default;
-
-    /* 꺼진 버튼만 hover 바탕을 되돌린다. 공개 :enabled:hover (0,3,1)보다 앞서도록 :enabled까지 */
-    &:enabled:hover {
-        background: var(--fx-ground);
-    }
-}
-
-.wg_fx__icon > svg {
+/* 아이콘 SVG */
+.wg_fx__glyph {
     display: block;
 }
 
@@ -63,6 +53,20 @@
         &:hover::after {
             content: attr(data-tip);
         }
+    }
+}
+
+/*
+ * 처음과 끝의 이전, 다음. 포커스를 잃지 않도록 disabled 대신 aria-disabled와 함께 붙는다
+ * 공개 .fx__bar button (0,1,1)의 color, cursor보다 앞서는 (0,2,0). 이전, 다음은 생성 띠에만 있어 wg_fx__bar 아래
+ */
+.wg_fx__bar .wg_fx__icon--off {
+    color: var(--fx-ink-muted);
+    cursor: default;
+
+    /* 꺼진 버튼만 hover 바탕을 되돌린다. 공개 :enabled:hover (0,3,1)보다 앞서도록 :enabled까지 */
+    &:enabled:hover {
+        background: var(--fx-ground);
     }
 }
 

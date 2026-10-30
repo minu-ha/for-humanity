@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import {Fragment} from "hono/jsx";
 import "./wg-article.css";
+// 본문 CSS 뒤. .fx__captions > li가 같은 특이도의 본문 li 여백을 이김
 import "@/style/authoring/fx.css";
 
 /**

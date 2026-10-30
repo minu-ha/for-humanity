@@ -406,7 +406,7 @@ html .fx--ready [data-pos] {
 
 /* 위젯과 작성자 그림이 display를 정한 요소도 hidden이면 숨긴다 */
 .fx [hidden] {
-    /* 작성자 style 블록이 사이트 CSS보다 뒤라 같거나 높은 특이도의 작성자 display 규칙이 캡션과 장면 요소를 다시 보이게 한다 */
+    /* stylelint-disable-next-line declaration-no-important -- 작성자 style 블록이 사이트 CSS보다 뒤라 같거나 높은 특이도의 작성자 display 규칙이 캡션과 장면 요소를 다시 보이게 한다 */
     display: none !important;
 }
 
