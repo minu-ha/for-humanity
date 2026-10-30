@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.28.1 — 2026-10-30
 
 **Upgrade:** Existing projects remain compatible. Rebuild and redeploy. Author syntax for figures is unchanged.
 
