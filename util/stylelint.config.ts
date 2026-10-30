@@ -117,7 +117,7 @@ export default {
             files: ["src/style/authoring/**/*.css"],
             rules: {
                 "declaration-no-important": true,
-                "selector-disallowed-list": toDisallowedSelectors([/^\.(pg|wg|ui)_/]),
+                "selector-disallowed-list": toDisallowedSelectors([/\.(pg|wg|ui)_/]),
             },
         },
         {

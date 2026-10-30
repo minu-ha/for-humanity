@@ -21,7 +21,7 @@ pnpm add -D --save-exact for-humanity@latest
 
 **Upgrade:** Existing projects remain compatible. Rebuild and redeploy. Author syntax for figures is unchanged.
 
-- Rename the control parts the figure widget generates. Icon buttons, the scrubber, the step count and the run box output carry `wg_fx__*` classes instead of `fx__icon`, `fx__scrub`, `fx__count` and `fx__out`, the run box editor, selected before as `.fx[data-fx="run"] textarea`, carries `wg_fx__editor`, and a bar the widget builds carries `wg_fx__bar` next to `fx__bar`. Site CSS that targeted the old undocumented `fx__icon`, `fx__scrub`, `fx__count` or `fx__out` classes, or `aria-disabled` buttons inside `fx__bar`, loses that styling. The authoring vocabulary (`fx`, `fx-*`, `fx__stage`, `fx__captions`, `fx__range`, `fx__bar`, `fx--ready`, `is-on`, `is-hl`, `data-*`, `--fx-*`) moved into its own stylesheet, which is the documented contract.
+- Rename the control parts the figure widget generates. Icon buttons, the scrubber, the step count and the run box output carry `wg_fx__*` classes instead of `fx__icon`, `fx__scrub`, `fx__count` and `fx__out`. The run box editor, selected before as `.fx[data-fx="run"] textarea`, now carries `wg_fx__editor`, and a bar the widget builds carries `wg_fx__bar` next to `fx__bar`. Site CSS that targeted the old undocumented `fx__icon`, `fx__scrub`, `fx__count` or `fx__out` classes, or `aria-disabled` buttons inside `fx__bar`, loses that styling. The authoring vocabulary (`fx`, `fx-*`, `fx__stage`, `fx__captions`, `fx__range`, `fx__bar`, `fx--ready`, `is-on`, `is-hl`, `data-*`, `--fx-*`) moved into its own stylesheet, which is the documented contract.
 
 ## 0.28.0 — 2026-10-29
 
