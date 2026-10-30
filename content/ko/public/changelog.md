@@ -17,6 +17,12 @@ pnpm add -D --save-exact for-humanity@latest
 
 버전별 패키지 파일은 [GitHub Releases](https://github.com/nomeehej/for-humanity/releases)에서 받을 수 있습니다.
 
+## Unreleased
+
+**Upgrade:** Existing projects remain compatible. Rebuild and redeploy. Author syntax for figures is unchanged.
+
+- Rename the control parts the figure widget generates: icon buttons, the scrubber, the step count and the run box editor and output carry `wg_fx__*` classes instead of `fx__*`. The authoring vocabulary (`fx`, `fx-*`, `data-*`, `--fx-*`, `fx__bar`, `fx--ready`, `is-on`, `is-hl`) moved into its own stylesheet, which is the documented contract.
+
 ## 0.28.0 — 2026-10-29
 
 **Upgrade:** Existing projects remain compatible. Rebuild and redeploy to get the figure widget. A site that already carries its own copy of a figure runtime script in its documents must remove it, or step figures and run boxes get two sets of controls. CLI commands, configuration, document syntax and Node.js requirements are unchanged.

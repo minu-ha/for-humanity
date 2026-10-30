@@ -263,6 +263,7 @@ SVG는 Shadow DOM 안에 삽입해 본문의 `p`, `code`, `a` 스타일과 격�
 렌더 완료는 셸에 통지하며, 초기 hash와 사용자 이동 여부를 소유한 셸이 비동기 배치 변경 후 앵커 위치를 보정합니다.
 
 인터랙티브 그림은 작성자의 원시 HTML `.fx[data-fx]`(`figure`, 실행 상자는 `div`)이며 Markdown 처리기는 손대지 않습니다. `WgFx`가 표 정렬처럼 `DOMContentLoaded` 뒤 그림마다 종류별 enhance를 붙이고 해제 시 조작부와 상태를 되돌립니다. 모든 enhance는 `AbortController` 하나의 signal을 받아 `abort`에서 각자 DOM을 복원합니다. 조작부가 붙고 캡션이 접혀 본문 높이가 바뀌면 셸에 알려 Mermaid 렌더 뒤처럼 앵커 위치를 보정합니다. 실행 상자는 `sandbox="allow-scripts"`만 준 `srcdoc` iframe에서 코드를 돌리고 실행마다 만든 id가 맞는 `postMessage`만 받습니다.
+작성자가 쓰는 클래스, data 속성, `--fx-*` 변수는 공개 계약이라 `src/style/authoring/fx.css`에 두고 `WgArticle`이 본문 CSS 다음에 가져옵니다. 위젯이 만드는 조작부 조각은 `wg-fx.css`의 `wg_fx__*`입니다.
 작성자의 `<style>`은 본문에 있어 head의 사이트 CSS보다 뒤에 옵니다. 그래서 동작 규칙(단계 표시, 형광펜, 전환)에만 `html` 접두를 붙여 특이도가 같은 작성자 규칙보다 앞서게 하고, 모양 규칙은 작성자가 덮어쓸 수 있게 둡니다. 작성 계약은 [Figures](../public/figures.md).
 
 frontmatter는 정규식으로 잘라내지 않고 AST 노드로 읽음. 본문 노드의 원본 줄과 열은 유지.

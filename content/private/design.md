@@ -205,4 +205,4 @@ TOC의 현재 위치도 같은 `anchor` 토큰 사용. 본문 끝은 `section` �
 
 ### Figures
 
-인터랙티브 그림은 본문과 같은 흑백, 가는 선, 직각 유지. 강조는 형광펜 노랑 하나(`--app-color-anchor-highlight`). 굵은 실선은 강조할 경계, 점선은 아직 없거나 검토만 한 것. 조작부 띠는 `--app-color-accent-soft` 바탕에 직각 버튼, 아이콘은 끝과 꺾인 곳만 살짝 둥글게. 움직임은 독자가 시작하며 화면 진입만으로 재생하지 않음. 변수와 클래스는 [Figures](../public/figures.md).
+인터랙티브 그림은 본문과 같은 흑백, 가는 선, 직각 유지. 강조는 형광펜 노랑 하나(`--app-color-anchor-highlight`). 굵은 실선은 강조할 경계, 점선은 아직 없거나 검토만 한 것. 조작부 띠는 `--app-color-accent-soft` 바탕에 직각 버튼, 아이콘은 끝과 꺾인 곳만 살짝 둥글게. 움직임은 독자가 시작하며 화면 진입만으로 재생하지 않음. 변수와 클래스는 [Figures](../public/figures.md). 작성 어휘는 `src/style/authoring/fx.css`, 위젯이 만드는 조작부 조각은 `wg-fx.css`의 `wg_fx__*`.
